@@ -50,13 +50,15 @@ export const SERVING_POLICY: Record<AssetCategory, ServePolicy> = {
   ebooklet_cover: { mode: "signed", ttlSeconds: 60 * MINUTE },
   profile_pic: { mode: "signed", ttlSeconds: 60 * MINUTE },
 
-  // ---- Signed by client choice — short TTL because these carry sensitive
-  //      data (payment proof) or paid content (booklet pages) ----
+  // ---- Signed, short TTL because they carry sensitive payment data ----
   payment_screenshot: { mode: "signed", ttlSeconds: 5 * MINUTE },
   purchase_watermark: { mode: "signed", ttlSeconds: 15 * MINUTE },
-  ebooklet_page_image: { mode: "signed", ttlSeconds: 10 * MINUTE },
 
   // ---- Private (proxy) ----
+  // Booklet page images stay proxy: they are the core paid content and the
+  // heaviest traffic, so every fetch goes through the backend's access check
+  // (and can be rate-limited) instead of a shareable direct link.
+  ebooklet_page_image: { mode: "proxy", ttlSeconds: 0 },
   sample_high_quality: { mode: "proxy", ttlSeconds: 0 },
   ebooklet_hotspot_media: { mode: "proxy", ttlSeconds: 0 },
   ebooklet_document: { mode: "proxy", ttlSeconds: 0 },

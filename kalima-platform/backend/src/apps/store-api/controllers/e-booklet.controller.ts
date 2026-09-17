@@ -6,7 +6,7 @@ import { validate } from "class-validator";
 import { getEBookletService } from "../services/e-booklet.service";
 import { getEBookletDomainServices } from "../services/e-booklet-domain.service";
 import { buildContentDisposition } from "../utils/filename";
-import { isR2Enabled, proxyObject } from "../../../libs/storage";
+import { isR2Enabled, proxyObject, getSignedDownloadUrl, getServePolicy } from "../../../libs/storage";
 import {
   AcceptEBookletInviteDto,
   CreateEBookletTemplateDto,
@@ -241,19 +241,41 @@ function setInlineFilename(res: Response, filename: unknown, fallback: string) {
  * path; on local disk it is sent directly. Response headers set by the caller
  * (Content-Type, Content-Disposition, Cache-Control) are preserved.
  */
+/** Derives the R2 object key from a local e-booklet path, preserving nested
+ * paths like print-batches/. */
+function eBookletKeyFromPath(filePath: string): string {
+  const normalized = filePath.split(path.sep).join("/");
+  const marker = "e-booklets/private/";
+  const idx = normalized.indexOf(marker);
+  return idx >= 0 ? normalized.slice(idx) : `${marker}${path.basename(filePath)}`;
+}
+
+/**
+ * Serves a stored e-booklet file. `mode` picks how on R2:
+ *  - "proxy" (default): stream through the backend (session-protected, no
+ *    shareable link). Used for paid/sensitive content.
+ *  - "signed": 302-redirect to a short-lived signed R2 URL (offloads the
+ *    server). Used for public assets like covers. `ttlSeconds` is the link
+ *    lifetime (defaults to 1 hour).
+ * On local disk it always sends the file directly. Caller-set response headers
+ * are preserved.
+ */
 async function serveEBookletFile(
   req: Request,
   res: Response,
   filePath: string,
+  opts: { mode?: "proxy" | "signed"; ttlSeconds?: number } = {},
 ): Promise<void> {
   if (isR2Enabled()) {
-    // The R2 key is the file's path from "e-booklets/private/" onward, which
-    // preserves nested paths like print-batches/.
-    const normalized = filePath.split(path.sep).join("/");
-    const marker = "e-booklets/private/";
-    const idx = normalized.indexOf(marker);
-    const key = idx >= 0 ? normalized.slice(idx) : `${marker}${path.basename(filePath)}`;
-    await proxyObject(key, req, res);
+    const key = eBookletKeyFromPath(filePath);
+    if (opts.mode === "signed") {
+      const url = await getSignedDownloadUrl(key, {
+        expiresIn: opts.ttlSeconds ?? 3600,
+      });
+      res.redirect(302, url);
+    } else {
+      await proxyObject(key, req, res);
+    }
   } else {
     res.sendFile(filePath);
   }
@@ -333,7 +355,11 @@ export const eBookletController = {
       res.set("Cache-Control", "public, max-age=300");
       res.type(asset.mime_type || "image/*");
       setInlineFilename(res, asset.original_filename, "e-booklet-cover");
-      await serveEBookletFile(req, res, absolutePath);
+      // Covers are public catalog images → served via a short-lived signed URL.
+      await serveEBookletFile(req, res, absolutePath, {
+        mode: "signed",
+        ttlSeconds: getServePolicy("ebooklet_cover").ttlSeconds,
+      });
     } catch (error) {
       next(error);
     }

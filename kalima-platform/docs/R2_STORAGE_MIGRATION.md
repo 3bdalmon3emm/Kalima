@@ -131,18 +131,20 @@ Current classification (agreed with the client):
 | Category | Mode |
 |----------|------|
 | product images, thumbnails, payment-method images, sample thumbnails, sample low_quality, covers, profile pics | signed |
-| payment screenshots, purchase watermark, e-booklet page images | signed (short TTL — chosen by client) |
-| sample high_quality, e-booklet hotspot media, full booklet PDF, admin access-code PDF | proxy |
+| payment screenshots, purchase watermark | signed (short TTL — sensitive) |
+| e-booklet page images, sample high_quality, e-booklet hotspot media, full booklet PDF, admin access-code PDF | proxy |
 
 **Control model:** the serve *mode* stays in code (a security decision). The
 signed-link *TTL* is tunable per category from the environment without a redeploy
 via `R2_SIGNED_TTL_<CATEGORY>` (falls back to the code default). `getServePolicy()`
 applies the override.
 
-> Note: as currently wired, e-booklet page images and covers are served by
-> **proxy** on R2 (simplest + secure). Switching them to signed is a `servingPolicy`
-> change plus using `getSignedDownloadUrl` in the e-booklet serving path; the rest
-> of the wiring does not change.
+> Note: covers are served via a **signed** URL (`previewPublicCoverAsset` calls
+> `serveEBookletFile(..., { mode: "signed" })`). Booklet **page images stay
+> proxy** — they are the core paid content and the heaviest traffic, so every
+> fetch goes through the backend access check (and can be rate-limited) rather
+> than a shareable direct link. To change either, edit `servingPolicy.ts` and the
+> relevant serving call.
 
 ---
 
@@ -269,6 +271,8 @@ only on R2, so rollback would require syncing them back first.)
 - ✅ Phase 2b — e-booklets + access-code print batches (commits `f16cfe51`, `f3ddc2da`)
 - ✅ Dev validation on real R2: serving primitives + real services (test scripts
   `be63aa0c`)
+- ✅ Serving classification finalized: covers switched to **signed**; booklet page
+  images kept **proxy** (core paid content, per-request access check)
 - ⏳ Phase 3 — rclone migration, preview pre-generation, cutover, local cleanup
 - ⏳ Frontend: retry-on-expiry for signed image URLs
 - ⏳ Fekra: same approach, after its Cloudinary account is available
