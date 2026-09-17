@@ -19,6 +19,13 @@ import { EBookletPagePreviewService } from "./e-booklet-page-preview.service";
 import { getEmailService } from "../emails/email.service";
 import { emitNotificationToUser } from "../../../libs/redis/socketNotificationEmitter";
 import { resolveEBookletStoragePath, resolveEBookletUploadRoot } from "../../../libs/uploadsRoot";
+import { createReadStream } from "fs";
+import {
+  isR2Enabled,
+  putObject,
+  deleteObject,
+  downloadToTempFile,
+} from "../../../libs/storage";
 
 type EBookletDb = PrismaClient | any;
 const execFileAsync = promisify(execFile);
@@ -883,15 +890,46 @@ export class EBookletService {
     return path.join(E_BOOKLET_UPLOAD_DIR, filename);
   }
 
+  /**
+   * Returns a readable local path for an asset's bytes. On R2 this downloads
+   * the object to a temp file (caller must call cleanup); on local disk it
+   * returns the stored path with a no-op cleanup. Used for processing that
+   * needs a real file (pdfinfo, page rendering, single-page extraction).
+   */
+  private async resolveAssetLocalFile(
+    asset: any,
+  ): Promise<{ path: string; cleanup: () => Promise<void> }> {
+    if (isR2Enabled()) {
+      const ext = path.extname(asset?.storage_key || "") || "";
+      return downloadToTempFile(asset?.storage_key || "", ext);
+    }
+    return { path: this.getAssetAbsolutePath(asset), cleanup: async () => {} };
+  }
+
+  /**
+   * Confirms an asset's bytes exist before serving. On disk this stats the
+   * file; on R2 the object is streamed by the controller via its storage key,
+   * so a missing object surfaces as a 404 there instead.
+   */
+  private async assertAssetServable(_asset: any, absolutePath: string): Promise<void> {
+    if (isR2Enabled()) return;
+    await fsPromises.access(absolutePath);
+  }
+
   private async ensurePagePreviews(asset: any, templateVersionId?: number | null, force = false): Promise<void> {
     if (!asset || asset.mime_type !== "application/pdf") return;
-    const absolutePdfPath = this.getAssetAbsolutePath(asset);
-    const result = await this.pagePreviewService.generateForDocument({
-      documentAsset: asset,
-      absolutePdfPath,
-      templateVersionId,
-      force,
-    });
+    const local = await this.resolveAssetLocalFile(asset);
+    let result;
+    try {
+      result = await this.pagePreviewService.generateForDocument({
+        documentAsset: asset,
+        absolutePdfPath: local.path,
+        templateVersionId,
+        force,
+      });
+    } finally {
+      await local.cleanup();
+    }
     if (templateVersionId) {
       await this.db.e_booklet_page_previews?.updateMany?.({
         where: { document_file_id: Number(asset.id), template_version_id: null },
@@ -1145,7 +1183,28 @@ export class EBookletService {
     await this.ensureFileStorageDir();
     try {
       const metadata = await extractPdfMetadata(file);
-      if (file.path) {
+      if (isR2Enabled()) {
+        // Upload to R2 using the storage key. Metadata was already read from the
+        // local temp above; the temp is cleaned up after a successful upload.
+        if (file.path) {
+          await putObject({
+            key: storageKey,
+            body: createReadStream(file.path),
+            contentType: file.mimetype,
+            contentLength: file.size,
+          });
+          await removeUploadedTempFile(file);
+        } else if (file.buffer) {
+          await putObject({
+            key: storageKey,
+            body: file.buffer,
+            contentType: file.mimetype,
+            contentLength: file.size,
+          });
+        } else {
+          throw new BadRequestError("No e-booklet file was uploaded.");
+        }
+      } else if (file.path) {
         await fsPromises.rename(file.path, finalPath);
       } else if (file.buffer) {
         await fsPromises.writeFile(finalPath, file.buffer);
@@ -1168,10 +1227,18 @@ export class EBookletService {
       return metadata ? { ...asset, metadata } : asset;
     } catch (error) {
       await removeUploadedTempFile(file);
-      try {
-        await fsPromises.unlink(finalPath);
-      } catch {
-        // Best-effort cleanup only.
+      if (isR2Enabled()) {
+        try {
+          await deleteObject(storageKey);
+        } catch {
+          // Best-effort cleanup only.
+        }
+      } else {
+        try {
+          await fsPromises.unlink(finalPath);
+        } catch {
+          // Best-effort cleanup only.
+        }
       }
       throw error;
     }
@@ -1187,10 +1254,17 @@ export class EBookletService {
     if (!asset) throw new NotFoundError("E-booklet file asset not found");
 
     const absolutePath = resolveEBookletStoragePath(asset.storage_key || "");
-    await fsPromises.access(absolutePath);
-    const pageBuffer = pageNumber && asset.mime_type === "application/pdf"
-      ? await this.extractSinglePagePdf(absolutePath, pageNumber)
-      : null;
+    let pageBuffer: Buffer | null = null;
+    if (pageNumber && asset.mime_type === "application/pdf") {
+      const local = await this.resolveAssetLocalFile(asset);
+      try {
+        pageBuffer = await this.extractSinglePagePdf(local.path, pageNumber);
+      } finally {
+        await local.cleanup();
+      }
+    } else {
+      await this.assertAssetServable(asset, absolutePath);
+    }
     return { asset, absolutePath, pageBuffer };
   }
 
@@ -1203,7 +1277,7 @@ export class EBookletService {
     }
 
     const absolutePdfPath = this.getAssetAbsolutePath(asset);
-    await fsPromises.access(absolutePdfPath);
+    await this.assertAssetServable(asset, absolutePdfPath);
     let preview: any = null;
     try {
       preview = await this.db.e_booklet_page_previews?.findUnique?.({
@@ -1240,11 +1314,17 @@ export class EBookletService {
 
     if (preview?.image_file) {
       const absolutePath = this.getAssetAbsolutePath(preview.image_file);
-      await fsPromises.access(absolutePath);
+      await this.assertAssetServable(preview.image_file, absolutePath);
       return { preview, asset: preview.image_file, absolutePath, pageBuffer: null };
     }
 
-    const renderedPage = await this.pagePreviewService.renderPageBuffer({ absolutePdfPath, pageNumber });
+    const localPdf = await this.resolveAssetLocalFile(asset);
+    let renderedPage;
+    try {
+      renderedPage = await this.pagePreviewService.renderPageBuffer({ absolutePdfPath: localPdf.path, pageNumber });
+    } finally {
+      await localPdf.cleanup();
+    }
     return {
       preview: null,
       asset: {
@@ -1300,7 +1380,7 @@ export class EBookletService {
 
     const filename = path.basename(asset.storage_key || "");
     const absolutePath = path.join(E_BOOKLET_UPLOAD_DIR, filename);
-    await fsPromises.access(absolutePath);
+    await this.assertAssetServable(asset, absolutePath);
     return { asset, absolutePath };
   }
 
@@ -4323,14 +4403,33 @@ export class EBookletService {
       sawPdfAsset = true;
       const filename = path.basename(asset.storage_key || "");
       const absolutePath = path.join(E_BOOKLET_UPLOAD_DIR, filename);
-      try {
-        await fsPromises.access(absolutePath);
-      } catch {
-        continue;
+      let pageBuffer: Buffer | null = null;
+      if (isR2Enabled()) {
+        // Served straight from R2 via the storage key; only pull the file
+        // locally when a single page must be extracted.
+        if (pageNumber) {
+          let local;
+          try {
+            local = await this.resolveAssetLocalFile(asset);
+          } catch {
+            continue; // object missing on R2 — try the next document asset
+          }
+          try {
+            pageBuffer = await this.extractSinglePagePdf(local.path, pageNumber);
+          } finally {
+            await local.cleanup();
+          }
+        }
+      } else {
+        try {
+          await fsPromises.access(absolutePath);
+        } catch {
+          continue;
+        }
+        pageBuffer = pageNumber
+          ? await this.extractSinglePagePdf(absolutePath, pageNumber)
+          : null;
       }
-      const pageBuffer = pageNumber
-        ? await this.extractSinglePagePdf(absolutePath, pageNumber)
-        : null;
       return {
         asset: {
           id: asset.id,

@@ -1,10 +1,12 @@
 import { Request, Response, NextFunction } from "express";
 import crypto from "crypto";
+import path from "path";
 import { plainToInstance } from "class-transformer";
 import { validate } from "class-validator";
 import { getEBookletService } from "../services/e-booklet.service";
 import { getEBookletDomainServices } from "../services/e-booklet-domain.service";
 import { buildContentDisposition } from "../utils/filename";
+import { isR2Enabled, proxyObject } from "../../../libs/storage";
 import {
   AcceptEBookletInviteDto,
   CreateEBookletTemplateDto,
@@ -233,6 +235,25 @@ function setInlineFilename(res: Response, filename: unknown, fallback: string) {
   res.set("Content-Disposition", buildContentDisposition("inline", filename, fallback));
 }
 
+/**
+ * Serves a stored e-booklet file. On R2 the file is streamed through the
+ * backend (proxy, session-protected) by deriving the object key from the
+ * path; on local disk it is sent directly. Response headers set by the caller
+ * (Content-Type, Content-Disposition, Cache-Control) are preserved.
+ */
+async function serveEBookletFile(
+  req: Request,
+  res: Response,
+  filePath: string,
+): Promise<void> {
+  if (isR2Enabled()) {
+    const key = `e-booklets/private/${path.basename(filePath)}`;
+    await proxyObject(key, req, res);
+  } else {
+    res.sendFile(filePath);
+  }
+}
+
 export const eBookletController = {
   async uploadFileAsset(req: Request, res: Response, next: NextFunction) {
     try {
@@ -273,7 +294,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -292,7 +313,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -307,7 +328,7 @@ export const eBookletController = {
       res.set("Cache-Control", "public, max-age=300");
       res.type(asset.mime_type || "image/*");
       setInlineFilename(res, asset.original_filename, "e-booklet-cover");
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -400,7 +421,7 @@ export const eBookletController = {
       res.set("Cache-Control", cacheControl || "public, max-age=60");
       res.type(asset.mime_type || "application/octet-stream");
       setInlineFilename(res, asset.original_filename, "e-booklet-file");
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -419,7 +440,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1402,7 +1423,7 @@ export const eBookletController = {
       setPrivateNoStore(res);
       res.type(asset.mime_type || "application/pdf");
       res.set("Content-Disposition", buildContentDisposition("attachment", asset.original_filename, "access-code-batch.pdf"));
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1424,7 +1445,7 @@ export const eBookletController = {
       setPrivateNoStore(res);
       res.type(asset.mime_type || "image/png");
       setInlineFilename(res, asset.original_filename, "teacher-image");
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1802,7 +1823,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1824,7 +1845,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1848,7 +1869,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1871,7 +1892,7 @@ export const eBookletController = {
         res.send(pageBuffer);
         return;
       }
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1887,7 +1908,7 @@ export const eBookletController = {
       setPrivateNoStore(res);
       res.type(asset.mime_type || "application/octet-stream");
       setInlineFilename(res, asset.original_filename, "e-booklet-file");
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
@@ -1903,7 +1924,7 @@ export const eBookletController = {
       setPrivateNoStore(res);
       res.type(asset.mime_type || "application/octet-stream");
       setInlineFilename(res, asset.original_filename, "e-booklet-file");
-      res.sendFile(absolutePath);
+      await serveEBookletFile(req, res, absolutePath);
     } catch (error) {
       next(error);
     }
