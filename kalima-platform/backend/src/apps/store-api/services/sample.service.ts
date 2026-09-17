@@ -11,6 +11,12 @@ import {
 import { normalizeOriginalFilename } from "../utils/filename";
 import { NotFoundError, BadRequestError } from "../../../libs/errors";
 import { resolveUploadedUrlPath, resolveUploadPath } from "../../../libs/uploadsRoot";
+import {
+  isR2Enabled,
+  putObject,
+  deleteObject,
+  normalizeStorageKey,
+} from "../../../libs/storage";
 
 // ============================================
 // CONSTANTS
@@ -220,12 +226,31 @@ export class SampleService {
     const ext = MIME_TO_EXT[mimeType] || path.extname(fieldName) || ".bin";
     const uniqueId = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}`;
     const filename = `${uniqueId}-${fieldName}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, filename);
 
-    await this.ensureUploadDir();
-    await fsPromises.writeFile(filePath, buffer);
+    if (isR2Enabled()) {
+      await putObject({
+        key: `samples/${filename}`,
+        body: buffer,
+        contentType: mimeType,
+      });
+    } else {
+      const filePath = path.join(UPLOAD_DIR, filename);
+      await this.ensureUploadDir();
+      await fsPromises.writeFile(filePath, buffer);
+    }
 
     return `/uploads/samples/${filename}`;
+  }
+
+  /** Remove a stored sample file (R2 or disk) by its URL. Best-effort. */
+  private removeStoredFile(url: string): void {
+    if (isR2Enabled()) {
+      void deleteObject(normalizeStorageKey(url)).catch((error) => {
+        console.error(`[storage] R2 delete failed for ${url}:`, error);
+      });
+      return;
+    }
+    void fsPromises.unlink(this.urlToAbsolutePath(url)).catch(() => {});
   }
 
   /** Resolve URL to absolute filesystem path */
@@ -373,19 +398,13 @@ export class SampleService {
     // Delete file assets for all samples
     for (const sample of section.samples) {
       if (sample.high_quality_url) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(sample.high_quality_url))
-          .catch(() => {});
+        this.removeStoredFile(sample.high_quality_url);
       }
       if (sample.low_quality_url) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(sample.low_quality_url))
-          .catch(() => {});
+        this.removeStoredFile(sample.low_quality_url);
       }
       if (sample.thumbnail_url) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(sample.thumbnail_url))
-          .catch(() => {});
+        this.removeStoredFile(sample.thumbnail_url);
       }
     }
 
@@ -616,9 +635,7 @@ export class SampleService {
         );
       }
       if (sample.high_quality_url) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(sample.high_quality_url))
-          .catch(() => {});
+        this.removeStoredFile(sample.high_quality_url);
       }
       highQualityUrl = await this.saveFileToDisk(
         highQualityFile.buffer,
@@ -637,9 +654,7 @@ export class SampleService {
         );
       }
       if (sample.low_quality_url) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(sample.low_quality_url))
-          .catch(() => {});
+        this.removeStoredFile(sample.low_quality_url);
       }
       lowQualityUrl = await this.saveFileToDisk(
         lowQualityFile.buffer,
@@ -663,9 +678,7 @@ export class SampleService {
         throw new BadRequestError("Thumbnail image must be 5MB or smaller");
       }
       if (thumbnailUrl) {
-        void fsPromises
-          .unlink(this.urlToAbsolutePath(thumbnailUrl))
-          .catch(() => {});
+        this.removeStoredFile(thumbnailUrl);
       }
       thumbnailUrl = await this.saveFileToDisk(
         thumbnailFile.buffer,
@@ -706,19 +719,13 @@ export class SampleService {
     }
 
     if (sample.high_quality_url) {
-      void fsPromises
-        .unlink(this.urlToAbsolutePath(sample.high_quality_url))
-        .catch(() => {});
+      this.removeStoredFile(sample.high_quality_url);
     }
     if (sample.low_quality_url) {
-      void fsPromises
-        .unlink(this.urlToAbsolutePath(sample.low_quality_url))
-        .catch(() => {});
+      this.removeStoredFile(sample.low_quality_url);
     }
     if (sample.thumbnail_url) {
-      void fsPromises
-        .unlink(this.urlToAbsolutePath(sample.thumbnail_url))
-        .catch(() => {});
+      this.removeStoredFile(sample.thumbnail_url);
     }
 
     await this.db.samples.delete({ where: { id: sampleId } });

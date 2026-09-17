@@ -8,6 +8,12 @@ import { images, image_mime_type_enum } from "../generated/prisma/client";
 import { normalizeOriginalFilename } from "../utils/filename";
 import { NotFoundError, BadRequestError } from "../../../libs/errors";
 import { resolveUploadedUrlPath, resolveUploadPath } from "../../../libs/uploadsRoot";
+import {
+  isR2Enabled,
+  putObject,
+  deleteObject,
+  normalizeStorageKey,
+} from "../../../libs/storage";
 
 // ============================================
 // CONSTANTS
@@ -141,12 +147,21 @@ export class ImageService {
     }
 
     const filename = `${uniqueId}${ext}`;
-    const filePath = path.join(UPLOAD_DIR, filename);
 
-    await this.ensureUploadDir();
-    await fsPromises.writeFile(filePath, finalBuffer);
+    if (isR2Enabled()) {
+      await putObject({
+        key: `images/${filename}`,
+        body: finalBuffer,
+        contentType: file.mimetype,
+      });
+    } else {
+      const filePath = path.join(UPLOAD_DIR, filename);
+      await this.ensureUploadDir();
+      await fsPromises.writeFile(filePath, finalBuffer);
+    }
 
-    // Relative URL for serving via express.static
+    // Relative URL — same shape whether stored on disk or R2; the /uploads
+    // route resolves it to the right backend.
     const url = `/uploads/images/${filename}`;
 
     // Create DB record
@@ -217,6 +232,12 @@ export class ImageService {
    * Does not throw if the file doesn't exist (already cleaned up).
    */
   removeFileFromDisk(url: string): void {
+    if (isR2Enabled()) {
+      void deleteObject(normalizeStorageKey(url)).catch((error) => {
+        console.error(`[storage] R2 delete failed for ${url}:`, error);
+      });
+      return;
+    }
     const absolutePath = resolveUploadedUrlPath(url);
     void fsPromises.unlink(absolutePath).catch(() => {});
   }
