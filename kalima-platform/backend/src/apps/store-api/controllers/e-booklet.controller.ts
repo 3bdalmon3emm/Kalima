@@ -247,7 +247,12 @@ async function serveEBookletFile(
   filePath: string,
 ): Promise<void> {
   if (isR2Enabled()) {
-    const key = `e-booklets/private/${path.basename(filePath)}`;
+    // The R2 key is the file's path from "e-booklets/private/" onward, which
+    // preserves nested paths like print-batches/.
+    const normalized = filePath.split(path.sep).join("/");
+    const marker = "e-booklets/private/";
+    const idx = normalized.indexOf(marker);
+    const key = idx >= 0 ? normalized.slice(idx) : `${marker}${path.basename(filePath)}`;
     await proxyObject(key, req, res);
   } else {
     res.sendFile(filePath);
