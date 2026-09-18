@@ -256,6 +256,15 @@ only on R2, so rollback would require syncing them back first.)
 ## 11. How to change things later
 
 - **Move a category signed ↔ proxy:** edit its line in `servingPolicy.ts`, redeploy.
+  This is a true switch for **controller-served** assets — samples
+  (`sample-section.controller` → `serveSampleFile`) and e-booklets
+  (`e-booklet.controller` → `serveEBookletFile`), which read the mode from the
+  policy per category. **Exception:** images-table assets (product images,
+  payment-method images, payment screenshots, purchase watermark, profile pics)
+  are served by the generic `/uploads` route in `server.ts`, which cannot tell
+  their category apart from the path, so it signs them **as a group**. To make
+  one of those proxy (e.g. an admin-only watermark download), add a dedicated
+  controller endpoint for it instead of relying on the policy line.
 - **Change a signed TTL without a deploy:** set `R2_SIGNED_TTL_<CATEGORY>` on Coolify
   and restart.
 - **Rotate R2 keys:** create a new API token in Cloudflare (Object Read & Write,
@@ -273,6 +282,12 @@ only on R2, so rollback would require syncing them back first.)
   `be63aa0c`)
 - ✅ Serving classification finalized: covers switched to **signed**; booklet page
   images kept **proxy** (core paid content, per-request access check)
+- ✅ Full serving audit + gap fixes: sample preview/download serving wired to R2
+  (`sample-section.controller`); e-booklet page-preview generation now writes the
+  webp to R2 (and deletes stale previews / cleans up on error via R2). Serving
+  made **policy-driven** at the controllers (samples + e-booklets read the mode
+  per category from `servingPolicy.ts`), so flipping those categories is a real
+  one-line switch; `/uploads` images remain signed as a group (see §11)
 - ⏳ Phase 3 — rclone migration, preview pre-generation, cutover, local cleanup
 - ⏳ Frontend: retry-on-expiry for signed image URLs
 - ⏳ Fekra: same approach, after its Cloudinary account is available
