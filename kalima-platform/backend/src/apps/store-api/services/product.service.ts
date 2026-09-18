@@ -29,6 +29,12 @@ import {
   resolveUploadedUrlPath,
   resolveUploadPath,
 } from "../../../libs/uploadsRoot";
+import {
+  isR2Enabled,
+  putObject,
+  deleteObject,
+  normalizeStorageKey,
+} from "../../../libs/storage";
 
 // ============================================
 // SHARED INCLUDES
@@ -758,14 +764,21 @@ export class ProductService {
       throw new NotFoundError("Product not found");
     }
 
-    const galleryVideoDir = resolveUploadPath("gallery_videos");
-    await fsPromises.mkdir(galleryVideoDir, { recursive: true });
-
     const ext = path.extname(file.originalname) || ".mp4";
     const uniqueId = `${Date.now()}-${crypto.randomBytes(6).toString("hex")}`;
     const filename = `${uniqueId}${ext}`;
-    const filePath = path.join(galleryVideoDir, filename);
-    await fsPromises.writeFile(filePath, file.buffer);
+
+    if (isR2Enabled()) {
+      await putObject({
+        key: `gallery_videos/${filename}`,
+        body: file.buffer,
+        contentType: file.mimetype,
+      });
+    } else {
+      const galleryVideoDir = resolveUploadPath("gallery_videos");
+      await fsPromises.mkdir(galleryVideoDir, { recursive: true });
+      await fsPromises.writeFile(path.join(galleryVideoDir, filename), file.buffer);
+    }
 
     const url = `/uploads/gallery_videos/${filename}`;
     const sortOrder = (maxSort?.sort_order ?? -1) + 1;
@@ -837,8 +850,13 @@ export class ProductService {
     }
 
     if (video.source_type === video_source_type_enum.upload && video.url) {
-      const absolutePath = resolveUploadedUrlPath(video.url);
-      void fsPromises.unlink(absolutePath).catch(() => {});
+      if (isR2Enabled()) {
+        void deleteObject(normalizeStorageKey(video.url)).catch((error) => {
+          console.error(`[storage] R2 delete failed for ${video.url}:`, error);
+        });
+      } else {
+        void fsPromises.unlink(resolveUploadedUrlPath(video.url)).catch(() => {});
+      }
     }
 
     await this.db.product_gallery_videos.delete({ where: { id: videoId } });
