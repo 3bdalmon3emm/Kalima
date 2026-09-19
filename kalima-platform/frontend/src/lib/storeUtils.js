@@ -42,9 +42,12 @@ export function getImageUrl(path) {
   if (!path) return null;
   if (path.startsWith("http")) return path;
 
-  // Fallback if env variable is missing
-  const baseURL =
-    import.meta.env.VITE_API_URL || "/api/v2";
+  // On the dev environment, resolve uploads against the dev origin so files
+  // uploaded on dev (which live in dev's storage) are fetched from dev, not
+  // production. Mirrors the dev detection in src/api/axios.js.
+  const baseURL = window.location.hostname.includes("dev")
+    ? "https://dev.kalima-edu.com/api/v2"
+    : import.meta.env.VITE_API_URL || "/api/v2";
   // Remove the trailing /api/vX to get the root domain
   const rootURL = baseURL.replace(/\/api\/v\d+$/, "");
 
@@ -56,7 +59,9 @@ export function getImageUrl(path) {
  * @returns {string}
  */
 export function getBaseUrl() {
-  const raw = import.meta.env.VITE_API_URL || "/api/v2";
+  const raw = window.location.hostname.includes("dev")
+    ? "https://dev.kalima-edu.com/api/v2"
+    : import.meta.env.VITE_API_URL || "/api/v2";
   try {
     return new URL(raw).origin;
   } catch {
