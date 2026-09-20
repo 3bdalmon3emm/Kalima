@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>تحديث النظام | منصة كلمة</title>
+    <!-- استدعاء خطوط Google -->
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet" />
     <style>
       * {
@@ -103,9 +104,9 @@
       h1 {
         font-size: 44px;
         font-weight: 900;
-        margin-bottom: 15px;
+        margin-bottom: 25px;
         color: #0b2248;
-        height: 60px;
+        line-height: 1.4;
       }
       h1 span {
         color: #f3510f;
@@ -113,7 +114,7 @@
       .cursor {
         display: inline-block;
         width: 4px;
-        height: 45px;
+        height: 1em;
         background-color: #f3510f;
         vertical-align: middle;
         animation: blink 0.8s infinite;
@@ -136,6 +137,33 @@
         margin-bottom: 20px;
         line-height: 1.8;
       }
+      p.sub-text {
+        font-size: 20px;
+        color: #666;
+        margin-top: 15px;
+      }
+
+      /* ---------------- Responsive (Mobile Fixes) ---------------- */
+      @media (max-width: 768px) {
+        .box {
+          padding: 40px 20px;
+        }
+        .animation {
+          transform: scale(0.9);
+          margin-bottom: 30px;
+        }
+        h1 {
+          font-size: 32px;
+          margin-bottom: 15px;
+        }
+        p {
+          font-size: 18px;
+          line-height: 1.6;
+        }
+        p.sub-text {
+          font-size: 16px;
+        }
+      }
     </style>
   </head>
   <body>
@@ -150,8 +178,10 @@
 
         <!-- تأثير الآلة الكاتبة -->
         <h1><span id="typewriter-ar"></span><span class="cursor"></span></h1>
+
+        <!-- بناءً على الصورة، قمت بإعادة الجملة التي طلبتها -->
         <p>نقوم بإجراء بعض التحديثات لتحسين الموقع.</p>
-        <p>سنعود إليكم خلال 24 ساعة.</p>
+        <p class="sub-text">سنعود إليكم خلال 24 ساعة.</p>
       </div>
     </div>
 
@@ -166,7 +196,7 @@
           iAr++;
           setTimeout(typeWriterAr, 100);
         } else {
-          document.getElementById('typewriter-ar').innerHTML = 'منصة كلمة <span>تحت الصيانة</span>';
+          document.getElementById('typewriter-ar').innerHTML = 'منصة كلمة <br><span>تحت الصيانة</span>';
         }
       }
 
