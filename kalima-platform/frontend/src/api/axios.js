@@ -4,7 +4,9 @@ import { toast } from 'sonner';
 import { performLocalLogout } from '../lib/authUtils';
 import { translateBackendMessage } from '../lib/utils';
 
-const baseURL = import.meta.env.VITE_API_URL || '/api/v2';
+const baseURL = window.location.hostname.includes('dev') 
+  ? 'https://dev.kalima-edu.com/api/v2' 
+  : (import.meta.env.VITE_API_URL || '/api/v2');
 
 const axiosInstance = axios.create({
     baseURL,

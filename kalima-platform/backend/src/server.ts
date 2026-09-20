@@ -20,6 +20,11 @@ import { registerAllExportResources } from "./apps/store-api/export";
 import { isProtectedSampleStaticPath } from "./libs/sampleStaticAccess";
 import { resolveUploadsRoot } from "./libs/uploadsRoot";
 import {
+  isR2Enabled,
+  getSignedDownloadUrl,
+  normalizeStorageKey,
+} from "./libs/storage";
+import {
   httpMetricsMiddleware,
   metricsAccessMiddleware,
   metricsHandler,
@@ -49,6 +54,31 @@ app.use(express.urlencoded({ extended: true }));
 app.use(httpMetricsMiddleware);
 
 app.get("/metrics", metricsAccessMiddleware, metricsHandler);
+
+// Public asset serving. When R2 is enabled, resolve the path to an object key
+// and 302-redirect to a short-lived signed URL so the download comes straight
+// from R2. When disabled, keep the current express.static behaviour unchanged.
+function makeUploadsHandler(localRoot: string): express.RequestHandler {
+  const staticHandler = express.static(localRoot);
+  return (req, res, next) => {
+    if (!isR2Enabled()) {
+      staticHandler(req, res, next);
+      return;
+    }
+    void (async () => {
+      try {
+        const urlPath = decodeURIComponent(req.originalUrl.split("?")[0]);
+        const key = normalizeStorageKey(urlPath);
+        const ttl = Number(process.env.R2_SIGNED_TTL_PUBLIC_ASSET || 1800);
+        const signed = await getSignedDownloadUrl(key, { expiresIn: ttl });
+        res.redirect(302, signed);
+      } catch (error) {
+        next(error);
+      }
+    })();
+  };
+}
+
 app.use(
   "/uploads/samples",
   (req, res, next) => {
@@ -61,7 +91,7 @@ app.use(
     }
     next();
   },
-  express.static(path.join(uploadsRoot, "samples")),
+  makeUploadsHandler(path.join(uploadsRoot, "samples")),
 );
 app.use("/uploads/e-booklets/private", (_req, res) => {
   res.status(403).json({
@@ -69,7 +99,7 @@ app.use("/uploads/e-booklets/private", (_req, res) => {
     message: "Protected e-booklet files cannot be downloaded directly",
   });
 });
-app.use("/uploads", express.static(uploadsRoot));
+app.use("/uploads", makeUploadsHandler(uploadsRoot));
 
 app.get("/health", (_, res) => {
   res.json({ status: "ok" });

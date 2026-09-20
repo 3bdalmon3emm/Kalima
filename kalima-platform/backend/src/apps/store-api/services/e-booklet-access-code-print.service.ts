@@ -3,6 +3,7 @@ import path from "path";
 import { promises as fsPromises } from "fs";
 import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from "../../../libs/errors";
 import { resolveEBookletStoragePath, resolveEBookletUploadRoot } from "../../../libs/uploadsRoot";
+import { isR2Enabled, putObject, getObjectBuffer } from "../../../libs/storage";
 import { EBookletAccessCodeService, type EBookletAccessCodeKind } from "./e-booklet-access-code.service";
 import { EBookletAccessCodePrintRendererService } from "./e-booklet-access-code-print-renderer.service";
 
@@ -120,14 +121,20 @@ export class EBookletAccessCodePrintService {
     private readonly accessCodeService: Pick<EBookletAccessCodeService, "generateCodes"> = new EBookletAccessCodeService(db),
     private readonly renderer: Pick<EBookletAccessCodePrintRendererService, "renderCardPng" | "renderBatchPdf"> = new EBookletAccessCodePrintRendererService(),
     private readonly storage: PrintStorageAdapter = {
-      readPrivateAsset: async (asset: any) => fsPromises.readFile(resolveEBookletStoragePath(asset.storage_key)),
+      readPrivateAsset: async (asset: any) =>
+        isR2Enabled()
+          ? getObjectBuffer(asset.storage_key)
+          : fsPromises.readFile(resolveEBookletStoragePath(asset.storage_key)),
       writePrivateFile: async ({ buffer, filename }) => {
-        const root = resolveEBookletUploadRoot();
-        const dir = path.join(root, "print-batches");
-        await fsPromises.mkdir(dir, { recursive: true });
         const safeName = filename.replace(/[^a-zA-Z0-9._-]+/g, "-");
         const storageKey = `e-booklets/private/print-batches/${Date.now()}-${crypto.randomBytes(6).toString("hex")}-${safeName}`;
-        await fsPromises.writeFile(resolveEBookletStoragePath(storageKey), buffer);
+        if (isR2Enabled()) {
+          await putObject({ key: storageKey, body: buffer, contentType: "application/pdf" });
+        } else {
+          const dir = path.join(resolveEBookletUploadRoot(), "print-batches");
+          await fsPromises.mkdir(dir, { recursive: true });
+          await fsPromises.writeFile(resolveEBookletStoragePath(storageKey), buffer);
+        }
         return { storageKey, sizeBytes: buffer.byteLength };
       },
     },

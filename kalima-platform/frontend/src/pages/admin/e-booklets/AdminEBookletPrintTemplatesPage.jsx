@@ -151,12 +151,20 @@ export default function AdminEBookletPrintTemplatesPage() {
         await updateAccessCodePrintTemplate(editingTemplateId, {
           name: templateDraft.name || t("admin.instances.defaultPrintTemplateName", { defaultValue: "E-booklet access-code card" }),
           backgroundFileAssetId: Number(templateDraft.backgroundFileAssetId),
+          // Fixed print-card dimensions the backend requires (827x438 @ 300 PPI).
+          widthPx: 827,
+          heightPx: 438,
+          ppi: 300,
           layout: templateDraft.layout,
         });
       } else {
         await createAccessCodePrintTemplate({
           name: templateDraft.name || t("admin.instances.defaultPrintTemplateName", { defaultValue: "E-booklet access-code card" }),
           backgroundFileAssetId: Number(templateDraft.backgroundFileAssetId),
+          // Fixed print-card dimensions the backend requires (827x438 @ 300 PPI).
+          widthPx: 827,
+          heightPx: 438,
+          ppi: 300,
           layout: templateDraft.layout,
         });
       }

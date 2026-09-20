@@ -10,7 +10,7 @@ import { Label } from '@/components/ui/label';
 import { toast } from 'sonner';
 import { useAdminSampleSections } from '@/hooks/admin/useAdminSampleSections';
 import { cn } from '@/lib/utils';
-import { getImageUrl } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl } from '@/lib/storeUtils';
 import {
     AlertDialog,
     AlertDialogAction,
@@ -420,7 +420,7 @@ export default function SampleManager({ product, loading, onUpdateSample, onRemo
     const abortControllerRef = useRef(null);
 
     const samples = Array.isArray(product?.samples) ? product.samples : (product?.sample ? [product?.sample] : []);
-    const apiUrl = import.meta.env.VITE_API_URL || '/api/v2';
+    const apiUrl = getApiUrl();
 
     useEffect(() => {
         fetchSections();

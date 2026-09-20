@@ -4,7 +4,7 @@ import { FileText, Image, Video, Presentation, FilePieChart, ExternalLink, Downl
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import RemoteFileSize from './RemoteFileSize';
-import { getImageUrl } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl } from '@/lib/storeUtils';
 
 const getIconForType = (mediaType) => {
     const mt = mediaType?.toLowerCase();
@@ -18,7 +18,7 @@ const getIconForType = (mediaType) => {
 
 export default function SampleTableRow({ sample, sectionId, onEdit, onDelete, loading }) {
     const { t } = useTranslation('admin');
-    const apiUrl = import.meta.env.VITE_API_URL || '/api/v2';
+    const apiUrl = getApiUrl();
     const effectiveSectionId = sample.section_id ?? sectionId;
     const downloadUrl = effectiveSectionId
         ? `${apiUrl}/sample-sections/${effectiveSectionId}/samples/${sample.id}/download`

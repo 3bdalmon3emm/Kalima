@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 import i18n from "@/i18n";
 import useApiMutation from "./useApiMutation";
+import { getApiUrl } from "@/lib/storeUtils";
 
 const E_BOOKLET_CART_KEY = "kalima:e-booklet-cart:v1";
-const API_BASE_URL = (import.meta.env.VITE_API_URL || "/api/v2").replace(/\/$/, "");
+const API_BASE_URL = getApiUrl().replace(/\/$/, "");
 
 const parseNumber = (value, fallback = 0) => {
   const parsed = Number(value);

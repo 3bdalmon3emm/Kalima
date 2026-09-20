@@ -11,6 +11,54 @@ import {
 import { buildContentDisposition } from "../utils/filename";
 import { ValidationError, BadRequestError, ForbiddenError } from "../../../libs/errors";
 import fs from "fs";
+import path from "path";
+import {
+  isR2Enabled,
+  proxyObject,
+  getSignedDownloadUrl,
+  getServePolicy,
+  AssetCategory,
+} from "../../../libs/storage";
+
+/**
+ * Serves a stored sample file. On R2 the mode is read from the serving policy
+ * for `category`: "signed" 302-redirects to a short-lived signed URL (with the
+ * content type/disposition baked in so they survive on the direct R2 response),
+ * "proxy" streams through the backend. On local disk it sends the file after an
+ * existence check. Response headers set by the caller are preserved for the
+ * proxy/local paths.
+ */
+async function serveSampleFile(
+  req: Request,
+  res: Response,
+  filePath: string,
+  category: AssetCategory,
+  meta: { contentType: string; contentDisposition: string },
+): Promise<void> {
+  if (isR2Enabled()) {
+    const key = `samples/${path.basename(filePath)}`;
+    const policy = getServePolicy(category);
+    if (policy.mode === "signed") {
+      const url = await getSignedDownloadUrl(key, {
+        expiresIn: policy.ttlSeconds,
+        contentType: meta.contentType,
+        contentDisposition: meta.contentDisposition,
+      });
+      res.redirect(302, url);
+    } else {
+      await proxyObject(key, req, res, {
+        contentType: meta.contentType,
+        contentDisposition: meta.contentDisposition,
+      });
+    }
+    return;
+  }
+  if (!fs.existsSync(filePath)) {
+    res.status(404).json({ success: false, message: "File not found" });
+    return;
+  }
+  res.sendFile(filePath);
+}
 
 // ============================================
 // HELPER
@@ -359,18 +407,18 @@ export const sampleSectionController = {
       const { path: filePath, mimeType, originalName } =
         await sampleService.getPreviewPath(sampleId, sectionId);
 
-      if (!fs.existsSync(filePath)) {
-        res.status(404).json({ success: false, message: "File not found" });
-        return;
-      }
-
+      const disposition = buildContentDisposition("inline", originalName, "sample-file");
       res.setHeader("Content-Type", mimeType);
-      res.setHeader("Content-Disposition", buildContentDisposition("inline", originalName, "sample-file"));
+      res.setHeader("Content-Disposition", disposition);
       res.setHeader("Cache-Control", "no-store, private");
       res.setHeader("Pragma", "no-cache");
       res.setHeader("X-Download-Options", "noopen");
       res.setHeader("X-Content-Type-Options", "nosniff");
-      res.sendFile(filePath);
+      // Protected preview → proxy (per serving policy).
+      await serveSampleFile(req, res, filePath, "sample_high_quality", {
+        contentType: mimeType,
+        contentDisposition: disposition,
+      });
     } catch (error) {
       next(error);
     }
@@ -392,17 +440,14 @@ export const sampleSectionController = {
       const { path: filePath, mimeType, originalName } =
         await sampleService.getDownloadPath(sampleId, sectionId);
 
-      if (!fs.existsSync(filePath)) {
-        res.status(404).json({ success: false, message: "File not found" });
-        return;
-      }
-
+      const disposition = buildContentDisposition("attachment", originalName, "sample-file");
       res.setHeader("Content-Type", mimeType);
-      res.setHeader(
-        "Content-Disposition",
-        buildContentDisposition("attachment", originalName, "sample-file"),
-      );
-      res.sendFile(filePath);
+      res.setHeader("Content-Disposition", disposition);
+      // Downloadable low-quality sample → signed URL (per serving policy).
+      await serveSampleFile(req, res, filePath, "sample_low_quality", {
+        contentType: mimeType,
+        contentDisposition: disposition,
+      });
     } catch (error) {
       next(error);
     }

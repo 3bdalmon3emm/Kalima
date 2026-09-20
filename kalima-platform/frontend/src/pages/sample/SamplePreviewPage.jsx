@@ -4,7 +4,7 @@ import { ArrowLeft, Download, AlertCircle, FileText, Music } from 'lucide-react'
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { getPdfViewerI18nConfig } from '@/lib/pdfViewerI18n';
-import { getImageUrl } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl } from '@/lib/storeUtils';
 import LazyPDFViewer from '@/components/pdf/LazyPDFViewer';
 
 const PROTECTED_PDF_DISABLED_CATEGORIES = [
@@ -61,7 +61,7 @@ export default function SamplePreviewPage() {
     }, [id, searchParams]);
 
     const mediaType = String(sample?.media_type || '').toLowerCase();
-    const apiUrl = import.meta.env.VITE_API_URL || '/api/v2';
+    const apiUrl = getApiUrl();
     const sectionId = sample?.section_id;
 
     // Prefer API-served endpoints (proper Content-Type headers, bypasses nginx static cache)

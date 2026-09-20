@@ -3,7 +3,7 @@ import { ShoppingCart, Eye, Download, Zap, Clock, ShieldAlert, ChevronUp, Chevro
 import { Button } from "@/components/ui/button";
 import { useTranslation } from "react-i18next";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { formatPrice } from "@/lib/storeUtils";
+import { formatPrice, getApiUrl } from "@/lib/storeUtils";
 import { useCart } from "@/contexts/CartContext";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { useFastBuy } from "@/hooks/useFastBuy";
@@ -56,7 +56,7 @@ export default function ProductActions({
   const { startFastBuy, loading: fastBuyLoading } = useFastBuy();
 
   const formattedPrice = formatPrice(price);
-  const apiUrl = import.meta.env.VITE_API_URL || "/api/v2";
+  const apiUrl = getApiUrl();
   const samplePath = sampleId ? `/samples/${sampleId}` : null;
   const sampleDownloadUrl =
     sampleId && sampleSectionId && hasSampleDownload

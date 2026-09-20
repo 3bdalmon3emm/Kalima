@@ -7,9 +7,10 @@ import api from "@/api/axios";
 import useAuth from "@/hooks/auth/useAuth";
 import { useStudentEBooklets } from "@/hooks/useEBookletAccess";
 import { useTranslation } from "react-i18next";
+import { getBaseUrl } from "@/lib/storeUtils";
 
 const TERMS_VERSION = "e-booklet-invite-v1";
-const apiOrigin = (import.meta.env.VITE_API_URL || "").replace(/\/api\/v\d+\/?$/, "");
+const apiOrigin = getBaseUrl();
 
 const normalizePayload = (payload) => payload?.data && !Array.isArray(payload.data) ? payload.data : payload;
 const redemptionInstanceId = (payload) => {
