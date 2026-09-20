@@ -781,7 +781,10 @@ export class SampleService {
     return {
       path: absolutePath,
       mimeType: this.getMimeTypeForFile(absolutePath, sample.mime_type),
-      originalName: this.getDownloadFileName(sample.original_name, absolutePath),
+      // Name the download after the sample's own title (admin-controlled) rather
+      // than original_name, which is derived from the high_quality/preview file
+      // and would otherwise mislabel the downloaded low_quality file.
+      originalName: this.getDownloadFileName(sample.title || sample.original_name, absolutePath),
     };
   }
 
