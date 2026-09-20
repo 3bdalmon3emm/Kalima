@@ -6,7 +6,7 @@ import HeroSection from "@/components/MarketPage/HeroSection";
 import useApiMutation from "@/hooks/useApiMutation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatFileSize, getImageUrl } from "@/lib/storeUtils";
+import { formatFileSize, getImageUrl, getApiUrl } from "@/lib/storeUtils";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import DownloadWithProgress from '@/components/ui/DownloadWithProgress';
 
@@ -110,7 +110,7 @@ export default function SamplesDirectoryPage() {
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-4">
                                                     {filteredSamples.map((sample) => {
                                                         const mt = sample.media_type?.toLowerCase();
-                                                        const apiUrl = import.meta.env.VITE_API_URL || '/api/v2';
+                                                        const apiUrl = getApiUrl();
                                                         const sectionId = sample.section_id || section.id;
                                                         // Use API-served endpoints for proper Content-Type headers
                                                         const downloadUrl = sectionId && sample.low_quality_url

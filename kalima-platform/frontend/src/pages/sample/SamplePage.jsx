@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import useApiMutation from '@/hooks/useApiMutation';
-import { getImageUrl, formatFileSize, formatPrice } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl, formatFileSize, formatPrice } from '@/lib/storeUtils';
 import { getPdfViewerI18nConfig } from '@/lib/pdfViewerI18n';
 import LazyPDFViewer from '@/components/pdf/LazyPDFViewer';
 
@@ -141,7 +141,7 @@ function MediaViewer({ sample, previewUrl, downloadUrl, viewerI18n, dir, t }) {
 
 function resolveSampleMediaUrls(sample) {
     const mediaType = String(sample?.media_type || '').toLowerCase();
-    const apiUrl = import.meta.env.VITE_API_URL || '/api/v2';
+    const apiUrl = getApiUrl();
     const sectionId = sample?.section_id;
 
     // Prefer API-served endpoints (proper Content-Type headers, bypasses nginx static cache)
