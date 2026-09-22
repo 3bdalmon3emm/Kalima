@@ -626,7 +626,12 @@
         "fonts": {
           "Noto Sans Arabic": "نوتو سانس عربي",
           "Noto Kufi Arabic": "نوتو كوفي عربي",
-          "Noto Naskh Arabic": "نوتو نسخ عربي"
+          "Noto Naskh Arabic": "نوتو نسخ عربي",
+          "Alexandria": "الإسكندرية",
+          "Aref Ruqaa": "عارف رقعة",
+          "Tajawal": "تجوّل",
+          "IBM Plex Sans Arabic": "IBM بلكس سانس عربي",
+          "Reem Kufi": "ريم كوفي"
         },
         "fields": {
           "qr": "رمز QR",

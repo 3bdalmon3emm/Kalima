@@ -11,6 +11,11 @@ export const PRINT_TEXT_FONT_OPTIONS = [
   { value: "Noto Sans Arabic", fallbackLabel: "Noto Sans Arabic" },
   { value: "Noto Kufi Arabic", fallbackLabel: "Noto Kufi Arabic" },
   { value: "Noto Naskh Arabic", fallbackLabel: "Noto Naskh Arabic" },
+  { value: "Alexandria", fallbackLabel: "Alexandria" },
+  { value: "Aref Ruqaa", fallbackLabel: "Aref Ruqaa" },
+  { value: "Tajawal", fallbackLabel: "Tajawal" },
+  { value: "IBM Plex Sans Arabic", fallbackLabel: "IBM Plex Sans Arabic" },
+  { value: "Reem Kufi", fallbackLabel: "Reem Kufi" },
 ];
 export const DEFAULT_PRINT_TEXT_FONT_FAMILY = PRINT_TEXT_FONT_OPTIONS[0].value;
 

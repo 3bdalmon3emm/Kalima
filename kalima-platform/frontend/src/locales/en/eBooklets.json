@@ -626,7 +626,12 @@
         "fonts": {
           "Noto Sans Arabic": "Noto Sans Arabic",
           "Noto Kufi Arabic": "Noto Kufi Arabic",
-          "Noto Naskh Arabic": "Noto Naskh Arabic"
+          "Noto Naskh Arabic": "Noto Naskh Arabic",
+          "Alexandria": "Alexandria",
+          "Aref Ruqaa": "Aref Ruqaa",
+          "Tajawal": "Tajawal",
+          "IBM Plex Sans Arabic": "IBM Plex Sans Arabic",
+          "Reem Kufi": "Reem Kufi"
         },
         "fields": {
           "qr": "QR code",

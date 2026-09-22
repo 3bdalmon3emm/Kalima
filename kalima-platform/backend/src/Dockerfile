@@ -26,6 +26,11 @@ WORKDIR /app
 # Required for server-rendered e-booklet page preview images and Arabic print text.
 RUN apk add --no-cache poppler-utils fontconfig font-noto font-noto-arabic font-noto-kufi-arabic font-noto-naskh-arabic
 
+# Bundled print-template fonts (OFL — Alexandria, Aref Ruqaa). Installed into the
+# system font path so Pango/sharp can resolve them by family name, then cached.
+COPY src/assets/fonts/print/ /usr/share/fonts/kalima/
+RUN fc-cache -f
+
 # Copy node_modules from builder — keeps the Prisma CLI available for migrations
 COPY --from=builder /app/node_modules ./node_modules
 
