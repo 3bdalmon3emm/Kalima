@@ -22,7 +22,15 @@ type FieldBox = {
   align?: "left" | "center" | "right" | "start" | "end";
   fontSize?: number;
   color?: string;
-  fontFamily?: "Noto Sans Arabic" | "Noto Kufi Arabic" | "Noto Naskh Arabic";
+  fontFamily?:
+    | "Noto Sans Arabic"
+    | "Noto Kufi Arabic"
+    | "Noto Naskh Arabic"
+    | "Alexandria"
+    | "Aref Ruqaa"
+    | "Tajawal"
+    | "IBM Plex Sans Arabic"
+    | "Reem Kufi";
 };
 
 type PrintLayout = {
@@ -43,6 +51,11 @@ const PRINT_TEXT_FONT_FAMILIES = {
   "Noto Sans Arabic": "Noto Sans Arabic",
   "Noto Kufi Arabic": "Noto Kufi Arabic",
   "Noto Naskh Arabic": "Noto Naskh Arabic",
+  "Alexandria": "Alexandria",
+  "Aref Ruqaa": "Aref Ruqaa",
+  "Tajawal": "Tajawal",
+  "IBM Plex Sans Arabic": "IBM Plex Sans Arabic",
+  "Reem Kufi": "Reem Kufi",
 } as const;
 
 export type PrintTextFontFamily = keyof typeof PRINT_TEXT_FONT_FAMILIES;

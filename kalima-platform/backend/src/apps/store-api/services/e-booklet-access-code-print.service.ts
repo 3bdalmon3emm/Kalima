@@ -20,7 +20,15 @@ type PrintFieldLayout = {
   align?: "left" | "center" | "right" | "start" | "end";
   fontSize?: number;
   color?: string;
-  fontFamily?: "Noto Sans Arabic" | "Noto Kufi Arabic" | "Noto Naskh Arabic";
+  fontFamily?:
+    | "Noto Sans Arabic"
+    | "Noto Kufi Arabic"
+    | "Noto Naskh Arabic"
+    | "Alexandria"
+    | "Aref Ruqaa"
+    | "Tajawal"
+    | "IBM Plex Sans Arabic"
+    | "Reem Kufi";
 };
 
 type PrintTemplateLayout = {
