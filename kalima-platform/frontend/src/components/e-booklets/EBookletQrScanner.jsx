@@ -8,30 +8,58 @@ export default function EBookletQrScanner({ onDetected, onClose, t }) {
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
   const animationFrameRef = useRef(null);
+  const barcodeDetectorRef = useRef(null);
   const [status, setStatus] = useState("starting");
 
   useEffect(() => {
     let cancelled = false;
+
+    // Prefer the platform QR engine (same one the native camera uses on
+    // Android Chrome) — jsQR alone often fails to lock on where the OS camera
+    // succeeds. Fall back to jsQR when BarcodeDetector is unavailable.
+    if ("BarcodeDetector" in window) {
+      try {
+        barcodeDetectorRef.current = new window.BarcodeDetector({ formats: ["qr_code"] });
+      } catch {
+        barcodeDetectorRef.current = null;
+      }
+    }
 
     const stopStream = () => {
       streamRef.current?.getTracks().forEach((track) => track.stop());
       streamRef.current = null;
     };
 
-    const scanFrame = () => {
+    const scanFrame = async () => {
       if (cancelled) return;
 
       const video = videoRef.current;
-      const canvas = canvasRef.current;
-      if (video?.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0 && canvas) {
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        const context = canvas.getContext("2d", { willReadFrequently: true });
-        context.drawImage(video, 0, 0, canvas.width, canvas.height);
-        const image = context.getImageData(0, 0, canvas.width, canvas.height);
-        const result = jsQR(image.data, image.width, image.height, { inversionAttempts: "attemptBoth" });
-        if (result?.data) {
-          onDetected(result.data);
+      if (video?.readyState >= 2 && video.videoWidth > 0 && video.videoHeight > 0) {
+        let detectedValue = null;
+
+        if (barcodeDetectorRef.current) {
+          try {
+            const codes = await barcodeDetectorRef.current.detect(video);
+            if (codes?.length) detectedValue = codes[0].rawValue;
+          } catch {
+            // Detector hiccup on a frame — fall through to jsQR.
+          }
+        }
+
+        const canvas = canvasRef.current;
+        if (!detectedValue && canvas) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          const context = canvas.getContext("2d", { willReadFrequently: true });
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+          const image = context.getImageData(0, 0, canvas.width, canvas.height);
+          const result = jsQR(image.data, image.width, image.height, { inversionAttempts: "attemptBoth" });
+          if (result?.data) detectedValue = result.data;
+        }
+
+        if (cancelled) return;
+        if (detectedValue) {
+          onDetected(detectedValue);
           stopStream();
           return;
         }
