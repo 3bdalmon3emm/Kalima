@@ -1386,7 +1386,11 @@ export default function CreateProductPage() {
                                                     selected={quickCouponExpiresAt ? new Date(quickCouponExpiresAt) : undefined}
                                                     onSelect={(date) => {
                                                         if (!date) return;
-                                                        setQuickCouponExpiresAt(date.toISOString());
+                                                        // End of the chosen day, so picking today still yields a
+                                                        // future expiry (backend requires expires_at > now).
+                                                        const endOfDay = new Date(date);
+                                                        endOfDay.setHours(23, 59, 59, 999);
+                                                        setQuickCouponExpiresAt(endOfDay.toISOString());
                                                     }}
                                                     locale={isRtl ? arSA : undefined}
                                                     dir={isRtl ? 'rtl' : 'ltr'}

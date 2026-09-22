@@ -223,7 +223,17 @@ export default function CreateCouponDialog({
                 : { category_id: values.category_id }),
             active: true,
             ...(values.starts_at ? { starts_at: new Date(values.starts_at).toISOString() } : {}),
-            ...(values.expires_at ? { expires_at: new Date(values.expires_at).toISOString() } : {}),
+            ...(values.expires_at
+                ? {
+                      // End of the chosen day, so picking today still yields a
+                      // future expiry (backend requires expires_at > now).
+                      expires_at: (() => {
+                          const d = new Date(values.expires_at);
+                          d.setHours(23, 59, 59, 999);
+                          return d.toISOString();
+                      })(),
+                  }
+                : {}),
             ...(values.discount_type === 'PERCENTAGE'
                 ? { discount_percentage: values.discount_percentage }
                 : { discount_amount: values.discount_amount }),
