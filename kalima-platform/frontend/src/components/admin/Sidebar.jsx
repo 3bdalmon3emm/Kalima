@@ -53,7 +53,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
       matchPaths: ['/admin/products', '/admin/orders', '/admin/samples', '/admin/categories'],
     },
     { name: t('nav.eBooklets', 'E-Booklets'), href: '/admin/e-booklets', icon: BookOpenCheck, id: 'e-booklets' },
-    { name: t('nav.eBookletTermsMilestones', 'Terms & Milestones'), href: '/admin/e-booklet-terms-milestones', icon: Award, id: 'e-booklet-terms-milestones', managerOnly: true },
+    { name: t('nav.eBookletTermsMilestones', 'Terms & Milestones'), href: '/admin/e-booklets/settings/terms-milestones', icon: Award, id: 'e-booklet-terms-milestones', managerOnly: true },
     { name: t('nav.coupons'), href: '/admin/coupons', icon: Ticket, id: 'coupons' },
     { name: t('nav.requiredFields'), href: '/admin/required-fields', icon: FormInput, id: 'required-fields' },
     { name: t('nav.paymentMethods', 'Payment Methods'), href: '/admin/payment-methods', icon: CreditCard, id: 'payment-methods' },
@@ -72,6 +72,30 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
 
   // Calculate width class
   const widthClass = isCollapsed ? "w-64 lg:w-20" : "w-64";
+
+  // Boundary-aware path match: exact, or a sub-path segment (avoids
+  // "/admin/e-booklets" matching "/admin/e-booklet-terms-milestones").
+  const pathMatches = (base) =>
+    location.pathname === base || location.pathname.startsWith(`${base}/`);
+
+  const visibleNavigation = navigation
+    .filter((item) => !item.managerOnly || isAdmin || isSubAdmin)
+    .filter((item) => !item.adminOnly || canAccessAdminAnalytics(storeRoles))
+    .filter((item) => !item.employeePerformanceOnly || canAccessEmployeePerformance(storeRoles));
+
+  // Longest-prefix-wins: only the most specific matching item is highlighted,
+  // so a nested route (e.g. Terms & Milestones under /admin/e-booklets) does
+  // not leave its parent item stuck as active.
+  const activeNavId = visibleNavigation.reduce(
+    (best, item) => {
+      const matchLen = (item.matchPaths || [item.href]).reduce(
+        (max, p) => (pathMatches(p) ? Math.max(max, p.length) : max),
+        -1,
+      );
+      return matchLen > best.len ? { id: item.id, len: matchLen } : best;
+    },
+    { id: null, len: -1 },
+  ).id;
 
   return (
     <aside
@@ -112,12 +136,8 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
 
       {/* Navigation Links */}
       <nav className="flex-1 space-y-2 px-2 py-4 overflow-y-auto">
-        {navigation
-          .filter((item) => !item.managerOnly || isAdmin || isSubAdmin)
-          .filter((item) => !item.adminOnly || canAccessAdminAnalytics(storeRoles))
-          .filter((item) => !item.employeePerformanceOnly || canAccessEmployeePerformance(storeRoles))
-          .map((item) => {
-          const isActive = (item.matchPaths || [item.href]).some((href) => location.pathname.startsWith(href));
+        {visibleNavigation.map((item) => {
+          const isActive = item.id === activeNavId;
           return (
             <Link
               key={item.href}
