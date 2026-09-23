@@ -465,6 +465,23 @@ export class PurchasesService {
       );
     }
 
+    // 2b. Count e-booklets delivered by these admins in the target month. This
+    // is the e-booklet equivalent of "confirming" a regular order; the
+    // e_booklet_purchases table has no "delivered_by" column, so the delivering
+    // admin is read from the e-booklet audit log (action "booklet_delivered").
+    const eBookletDeliveries = await this.db.e_booklet_audit_logs.groupBy({
+      by: ["actor_user_id"],
+      _count: { _all: true },
+      where: {
+        action: "booklet_delivered",
+        actor_user_id: { in: adminIds },
+        created_at: { gte: startDate, lt: endDate },
+      },
+    });
+    const eBookletsMap = new Map<number, number>(
+      eBookletDeliveries.map((g) => [g.actor_user_id as number, g._count._all]),
+    );
+
     // 3. Merge data
     const stats = admins.map((admin) => ({
       id: admin.id,
@@ -474,6 +491,7 @@ export class PurchasesService {
       role: admin.user_roles[0]?.role || null,
       count: countsMap.get(admin.id) || 0,
       productsSold: productsSoldMap.get(admin.id) || 0,
+      eBookletsDelivered: eBookletsMap.get(admin.id) || 0,
     }));
 
     return {

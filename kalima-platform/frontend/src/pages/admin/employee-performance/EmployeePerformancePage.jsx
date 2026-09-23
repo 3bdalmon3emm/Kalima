@@ -228,8 +228,9 @@ export default function EmployeePerformancePage() {
                                     <th className="px-6 py-3 font-medium text-start">{t('table.email', 'Email')}</th>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.phone', 'Phone')}</th>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.role', 'Role')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.confirmedCount', 'Count')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.confirmedCount', 'Store Sales')}</th>
                                     <th className="kalima-number px-6 py-3 font-medium">{t('table.productsSold', 'Products Sold')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.eBookletsDelivered', 'E-Booklets Delivered')}</th>
                                     <th className="px-6 py-3 font-medium text-center">{t('table.actions', 'Actions')}</th>
                                 </tr>
                             </thead>
@@ -245,6 +246,7 @@ export default function EmployeePerformancePage() {
                                                 <td className="px-6 py-4">{t(`roles.${item.role}`, item.role)}</td>
                                                 <td className="kalima-number px-6 py-4 text-primary">{item.count || 0}</td>
                                                 <td className="kalima-number px-6 py-4 text-primary">{item.productsSold || 0}</td>
+                                                <td className="kalima-number px-6 py-4 text-primary">{item.eBookletsDelivered || 0}</td>
                                                 <td className="px-6 py-4 text-center">
                                                     <Button
                                                         variant="outline"
@@ -264,7 +266,7 @@ export default function EmployeePerformancePage() {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="8" className="px-6 py-8 text-center text-muted-foreground">
+                                        <td colSpan="9" className="px-6 py-8 text-center text-muted-foreground">
                                             {t('table.noData', 'No data available')}
                                         </td>
                                     </tr>
