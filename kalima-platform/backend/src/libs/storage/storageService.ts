@@ -72,6 +72,8 @@ export interface SignedUrlOptions {
   contentType?: string;
   /** Sets Content-Disposition (e.g. attachment; filename="..."). */
   contentDisposition?: string;
+  /** Sets Cache-Control on the R2 response (e.g. "public, max-age=604800"). */
+  cacheControl?: string;
 }
 
 /**
@@ -89,6 +91,7 @@ export async function getSignedDownloadUrl(
     Key: key,
     ResponseContentType: options.contentType,
     ResponseContentDisposition: options.contentDisposition,
+    ResponseCacheControl: options.cacheControl,
   });
   return presignUrl(getR2Client(), command, { expiresIn: options.expiresIn });
 }

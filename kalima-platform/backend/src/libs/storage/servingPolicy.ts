@@ -65,6 +65,35 @@ export const SERVING_POLICY: Record<AssetCategory, ServePolicy> = {
   admin_access_code_pdf: { mode: 'proxy', ttlSeconds: 0 },
 };
 
+// Browser cache policy per category. `public` may be cached by shared/CDN caches
+// (non-sensitive assets); `private` is cached only in the requesting user's own
+// browser (paid but content-stable); `no-store` is never cached (sensitive).
+const DAY = 24 * 60 * 60;
+const CACHE_CONTROL: Record<AssetCategory, string> = {
+  // ---- Public, non-sensitive — long, shared-cacheable ----
+  product_image: `public, max-age=${7 * DAY}`,
+  product_thumbnail: `public, max-age=${7 * DAY}`,
+  payment_method_image: `public, max-age=${7 * DAY}`,
+  sample_thumbnail: `public, max-age=${7 * DAY}`,
+  sample_low_quality: `public, max-age=${1 * DAY}`,
+  ebooklet_cover: `public, max-age=${7 * DAY}`,
+  profile_pic: `public, max-age=${1 * DAY}`,
+  // ---- Paid but content-stable — cache in the viewer's OWN browser only ----
+  ebooklet_page_image: `private, max-age=${1 * DAY}`,
+  ebooklet_document: `private, max-age=${1 * DAY}`,
+  ebooklet_hotspot_media: `private, max-age=${1 * DAY}`,
+  sample_high_quality: `private, max-age=3600`,
+  // ---- Sensitive — never cache ----
+  payment_screenshot: 'no-store',
+  purchase_watermark: 'no-store',
+  admin_access_code_pdf: 'no-store',
+};
+
+/** Cache-Control header for a category. Falls back to no caching. */
+export function getCacheControl(category: AssetCategory): string {
+  return CACHE_CONTROL[category] || 'private, max-age=0';
+}
+
 // The serve MODE (signed vs proxy) is a security decision and stays in code —
 // change it here and redeploy. The signed-link TTL, however, can be tuned per
 // category from the server environment WITHOUT a redeploy, by setting

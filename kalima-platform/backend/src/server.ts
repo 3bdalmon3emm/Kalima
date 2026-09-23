@@ -70,7 +70,16 @@ function makeUploadsHandler(localRoot: string): express.RequestHandler {
         const urlPath = decodeURIComponent(req.originalUrl.split("?")[0]);
         const key = normalizeStorageKey(urlPath);
         const ttl = Number(process.env.R2_SIGNED_TTL_PUBLIC_ASSET || 1800);
-        const signed = await getSignedDownloadUrl(key, { expiresIn: ttl });
+        // /uploads/images is a flat folder that also holds sensitive images
+        // (payment screenshots, watermarks), so cache PRIVATELY — the requester's
+        // own browser only, never a shared/CDN cache — and below the signed
+        // link's TTL so it never expires while cached. This still removes most
+        // repeat fetches for product/cover/gallery images within a session.
+        // Long public/CDN caching of genuinely-public images needs them split
+        // out of this shared folder first.
+        const cacheControl = `private, max-age=${Math.max(60, Math.floor(ttl * 0.8))}`;
+        const signed = await getSignedDownloadUrl(key, { expiresIn: ttl, cacheControl });
+        res.setHeader("Cache-Control", cacheControl);
         res.redirect(302, signed);
       } catch (error) {
         next(error);

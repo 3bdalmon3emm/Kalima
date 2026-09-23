@@ -11,6 +11,7 @@ import {
   proxyObject,
   getSignedDownloadUrl,
   getServePolicy,
+  getCacheControl,
   AssetCategory,
 } from "../../../libs/storage";
 import {
@@ -271,16 +272,29 @@ async function serveEBookletFile(
   filePath: string,
   category: AssetCategory,
 ): Promise<void> {
+  const cacheControl = getCacheControl(category);
   if (isR2Enabled()) {
     const key = eBookletKeyFromPath(filePath);
     const policy = getServePolicy(category);
     if (policy.mode === "signed") {
-      const url = await getSignedDownloadUrl(key, { expiresIn: policy.ttlSeconds });
+      const url = await getSignedDownloadUrl(key, {
+        expiresIn: policy.ttlSeconds,
+        cacheControl,
+      });
+      // Cache the redirect itself for most of the signed link's lifetime, so the
+      // browser reuses the same signed URL (and its cached image) instead of
+      // re-hitting the backend on every load. Kept below the TTL so the link
+      // never expires while still cached.
+      if (!res.getHeader("Cache-Control")) {
+        const redirectTtl = Math.max(60, Math.floor(policy.ttlSeconds * 0.8));
+        res.setHeader("Cache-Control", `public, max-age=${redirectTtl}`);
+      }
       res.redirect(302, url);
     } else {
-      await proxyObject(key, req, res);
+      await proxyObject(key, req, res, { cacheControl });
     }
   } else {
+    if (!res.getHeader("Cache-Control")) res.setHeader("Cache-Control", cacheControl);
     res.sendFile(filePath);
   }
 }
