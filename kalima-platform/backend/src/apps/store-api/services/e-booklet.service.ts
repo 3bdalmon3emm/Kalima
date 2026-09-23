@@ -3715,6 +3715,28 @@ export class EBookletService {
     });
   }
 
+  async updateInstanceAccessExpiry(instanceId: number, accessExpiresAt: Date): Promise<unknown> {
+    const instance = await this.db.e_booklet_instances.findUnique({
+      where: { id: instanceId },
+      select: { id: true, status: true, archive_reason: true },
+    });
+    if (!instance) throw new NotFoundError("Teacher e-booklet not found");
+
+    const data: any = { access_expires_at: accessExpiresAt, updated_at: new Date() };
+    // If it was auto-archived for expiring and the corrected date is in the
+    // future, bring it back to active (e.g. admin fixes a wrong past date).
+    if (
+      instance.status === "archived" &&
+      instance.archive_reason === "expired" &&
+      accessExpiresAt.getTime() > Date.now()
+    ) {
+      data.status = "active";
+      data.archived_at = null;
+      data.archive_reason = null;
+    }
+    return this.db.e_booklet_instances.update({ where: { id: instanceId }, data });
+  }
+
   async archiveExpiredInstances(now = new Date(), options: { dryRun?: boolean } = {}) {
     const where = { status: "active", access_expires_at: { lte: now } };
     if (options.dryRun) {

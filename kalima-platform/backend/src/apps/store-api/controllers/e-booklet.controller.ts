@@ -25,6 +25,7 @@ import {
   EBookletInviteAccessPathDto,
   UpdateEBookletPurchaseStatusDto,
   UpdateEBookletQuotaDto,
+  UpdateEBookletAccessExpiryDto,
   UpdateEBookletTemplateDto,
   UpsertEBookletHotspotDto,
 } from "../dtos/e-booklet.dto";
@@ -898,6 +899,19 @@ export const eBookletController = {
       const data = await getEBookletService().updateQuota(
         parseId(req.params.id, "instance ID"),
         dto.invite_quota,
+      );
+      res.status(200).json({ success: true, data });
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  async updateAccessExpiry(req: Request, res: Response, next: NextFunction) {
+    try {
+      const dto = await validateDto(UpdateEBookletAccessExpiryDto, req.body);
+      const data = await getEBookletService().updateInstanceAccessExpiry(
+        parseId(req.params.id, "instance ID"),
+        new Date(dto.access_expires_at),
       );
       res.status(200).json({ success: true, data });
     } catch (error) {

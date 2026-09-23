@@ -773,6 +773,7 @@ export function useAdminEBookletInstances() {
   const setPage = useCallback((page) => setPagination((current) => ({ ...current, page })), []);
   const setStatus = useCallback((value) => { setStatusState(value); setPagination((current) => ({ ...current, page: 1 })); }, []);
   const updateQuota = useCallback((instanceId, invite_quota) => fetchApi({ endpoint: `/admin/e-booklet-instances/${instanceId}/update-quota`, method: "post", data: { invite_quota }, defaultSuccessMessage: i18n.t("eBooklets:toasts.quotaUpdated") }), [fetchApi]);
+  const updateInstanceAccessExpiry = useCallback((instanceId, access_expires_at) => fetchApi({ endpoint: `/admin/e-booklet-instances/${instanceId}/access-expiry`, method: "post", data: { access_expires_at }, defaultSuccessMessage: i18n.t("eBooklets:toasts.accessExpiryUpdated", { defaultValue: "Access expiry updated" }) }), [fetchApi]);
   const revokeTeacherAccess = useCallback((instanceId) => fetchApi({ endpoint: `/admin/e-booklet-instances/${instanceId}/revoke-access`, method: "post", defaultSuccessMessage: i18n.t("eBooklets:toasts.teacherAccessRevoked") }), [fetchApi]);
   const listAccessCodes = useCallback((filters = {}) => {
     const query = new URLSearchParams();
@@ -861,6 +862,7 @@ export function useAdminEBookletInstances() {
     setPage,
     setStatus,
     updateQuota,
+    updateInstanceAccessExpiry,
     revokeTeacherAccess,
     listAccessCodes,
     generateAccessCodes,

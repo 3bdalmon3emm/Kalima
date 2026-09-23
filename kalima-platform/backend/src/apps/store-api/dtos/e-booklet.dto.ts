@@ -435,6 +435,11 @@ export class UpdateEBookletQuotaDto {
   invite_quota!: number;
 }
 
+export class UpdateEBookletAccessExpiryDto {
+  @IsDateString()
+  access_expires_at!: string;
+}
+
 export class AcceptEBookletInviteDto {
   @IsString()
   token!: string;

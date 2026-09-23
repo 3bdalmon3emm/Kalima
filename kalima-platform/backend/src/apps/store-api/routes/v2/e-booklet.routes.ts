@@ -267,6 +267,11 @@ router.post(
   eBookletController.updateQuota,
 );
 router.post(
+  "/admin/e-booklet-instances/:id/access-expiry",
+  ...adminAuth,
+  eBookletController.updateAccessExpiry,
+);
+router.post(
   "/admin/e-booklet-instances/:id/revoke-access",
   ...adminAuth,
   eBookletController.revokeTeacherAccess,

@@ -4,9 +4,10 @@ import { BookOpenCheck, CheckCircle2, ChevronLeft, ExternalLink, Save } from "lu
 import { useTranslation } from "react-i18next";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import LoadingSpinner from "@/components/ui/loading-spinner";
-import { useAdminEBookletPurchases } from "@/hooks/admin/useAdminEBooklets";
+import { useAdminEBookletPurchases, useAdminEBookletInstances } from "@/hooks/admin/useAdminEBooklets";
 import { formatCurrency, formatOrderDate, getImageUrl } from "@/lib/storeUtils";
 import { getEBookletOrderAmount } from "@/components/e-booklets/eBookletOrderUtils";
 
@@ -48,8 +49,11 @@ export default function AdminEBookletPurchaseDetailPage() {
     updatePurchaseStatus,
     markPaid,
   } = useAdminEBookletPurchases();
+  const { updateInstanceAccessExpiry } = useAdminEBookletInstances();
   const [purchase, setPurchase] = useState(null);
   const [adminNotes, setAdminNotes] = useState("");
+  const [editingExpiry, setEditingExpiry] = useState(false);
+  const [expiryDraft, setExpiryDraft] = useState("");
 
   const loadPurchase = useCallback(async () => {
     if (!purchaseId) return;
@@ -99,6 +103,16 @@ export default function AdminEBookletPurchaseDetailPage() {
   };
   const setStatus = async (nextStatus) => {
     await updatePurchaseStatus(purchase.id, nextStatus, adminNotes);
+    await loadPurchase();
+  };
+  const startEditExpiry = () => {
+    setExpiryDraft(instance?.access_expires_at ? new Date(instance.access_expires_at).toISOString().slice(0, 10) : "");
+    setEditingExpiry(true);
+  };
+  const saveExpiry = async () => {
+    if (!instance?.id || !expiryDraft) return;
+    await updateInstanceAccessExpiry(instance.id, expiryDraft);
+    setEditingExpiry(false);
     await loadPurchase();
   };
 
@@ -207,6 +221,21 @@ export default function AdminEBookletPurchaseDetailPage() {
             <DetailRow label={t("admin.purchases.instance", { defaultValue: "Instance" })} value={instance?.id ? `#${instance.id}` : "-"} />
             <DetailRow label={t("admin.purchases.inviteQuota", { defaultValue: "Student seat quota" })} value={instance?.invite_quota} />
             <DetailRow label={t("teacher.expiry", { defaultValue: "Expiry" })} value={instance?.access_expires_at ? formatOrderDate(instance.access_expires_at, i18n.language) : "-"} />
+            {instance?.id && (
+              editingExpiry ? (
+                <div className="space-y-2 rounded-md border bg-muted/30 p-2">
+                  <Input type="date" value={expiryDraft} onChange={(event) => setExpiryDraft(event.target.value)} data-testid="admin-e-booklet-expiry-input" />
+                  <div className="flex gap-2">
+                    <Button size="sm" onClick={saveExpiry} disabled={loading || !expiryDraft} data-testid="admin-e-booklet-expiry-save">{t("common.save", { defaultValue: "Save" })}</Button>
+                    <Button size="sm" variant="outline" onClick={() => setEditingExpiry(false)}>{t("common.cancel", { defaultValue: "Cancel" })}</Button>
+                  </div>
+                </div>
+              ) : (
+                <Button variant="outline" size="sm" className="w-full" onClick={startEditExpiry} data-testid="admin-e-booklet-edit-expiry-button">
+                  {t("admin.purchases.editExpiry", { defaultValue: "Edit expiry date" })}
+                </Button>
+              )
+            )}
             {instance?.id && <Button asChild variant="outline" size="sm" className="w-full"><Link to={`/admin/e-booklets/access/${instance.id}/students`}>{t("admin.instances.students", { defaultValue: "View students" })}</Link></Button>}
           </Card>
         </div>
