@@ -645,7 +645,6 @@ export class PurchasesService {
     let totalRevenue = 0;
     let totalProductsSold = 0;
     let normalProductsCount = 0;
-    let ebookletsCount = 0;
 
     for (const purchase of allConfirmedPurchases) {
       const isEBookletPurchase = Boolean(purchase.e_booklet_student_purchase_link);
@@ -656,22 +655,21 @@ export class PurchasesService {
           prod?.product_categories
             ?.map((pc) => pc.categories?.title)
             .filter((title): title is string => Boolean(title)) || [];
-        const isEBookletItem =
-          isEBookletPurchase ||
-          prod?.type === "Book" ||
-          categories.some((c) => /مذكرة|مذكرات|تفاعلية|كراسة|كتيب|e-booklet|ebooklet/i.test(c)) ||
-          /مذكرة تفاعلية|e-booklet|ebooklet/i.test(prod?.title || "");
-
-        const itemType: "normal" | "ebooklet" = isEBookletItem ? "ebooklet" : "normal";
+        // An item counts as an e-booklet sale ONLY when its purchase is an
+        // actual e-booklet purchase (linked via e_booklet_student_purchase_links).
+        // Product type "Book" is a normal STORE product (a physical book), NOT an
+        // e-booklet — classifying it here wrongly inflated the "interactive
+        // booklets" figure with ordinary store sales.
+        const itemType: "normal" | "ebooklet" = isEBookletPurchase ? "ebooklet" : "normal";
         const quantity = item.quantity || 0;
         const unitPrice = Number(item.price_at_purchase || 0);
         const finalPrice = Number(item.final_price || 0);
 
         totalProductsSold += quantity;
         totalRevenue += finalPrice;
-        if (itemType === "ebooklet") {
-          ebookletsCount += quantity;
-        } else {
+        // Store products only. E-booklets are counted separately from the
+        // delivery audit log below, not from purchase line items.
+        if (itemType === "normal") {
           normalProductsCount += quantity;
         }
 
@@ -702,6 +700,20 @@ export class PurchasesService {
         });
       }
     }
+
+    // "Interactive booklets" for this employee = e-booklets they DELIVERED (the
+    // e-booklet equivalent of confirming a store order), read from the audit log
+    // — same source as the "e-booklets delivered" column on the summary table.
+    // Employees confirm store orders, not e-booklet sales, so counting e-booklet
+    // line items here would always be zero (or, before this fix, wrongly counted
+    // physical "Book" store products).
+    const ebookletsCount = await this.db.e_booklet_audit_logs.count({
+      where: {
+        action: "booklet_delivered",
+        actor_user_id: employeeId,
+        ...(dateFilter ? { created_at: dateFilter } : {}),
+      },
+    });
 
     let filteredItems = allItems;
     if (options.type && options.type !== "all") {
