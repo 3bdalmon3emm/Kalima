@@ -154,7 +154,7 @@ export const adminDashboardController = {
 
       const products = await prisma.products.findMany({
         where: { id: { in: productIds } },
-        select: { id: true, title: true, price: true }, // Select essential fields
+        select: { id: true, title: true, price: true, serial: true }, // Select essential fields (serial shown in the analytics table)
       });
 
       const productMap = new Map();
