@@ -1,6 +1,10 @@
 import { useState, useCallback } from 'react';
 import useApiMutation from '../useApiMutation';
 
+// Upper bound for eligible staff (Admin/SubAdmin/Moderator) shown in the
+// confirmed-purchases-by-manager table, which has no pagination controls.
+const CONFIRMED_COUNT_PAGE_LIMIT = '500';
+
 export const useEmployeePerformance = () => {
     const { mutate: fetchApi, loading: apiLoading } = useApiMutation();
 
@@ -25,6 +29,11 @@ export const useEmployeePerformance = () => {
             const queries = new URLSearchParams();
             if (month) queries.append('month', month);
             if (year) queries.append('year', year);
+            // This table has no pagination UI, so request all eligible staff in a
+            // single page. Without an explicit limit the API defaults to 10 rows,
+            // which silently hides every employee past the first 10 (Arabic names
+            // sort after Latin ones, so real staff fell off the visible page).
+            queries.append('limit', CONFIRMED_COUNT_PAGE_LIMIT);
             const data = await fetchApi({ endpoint: `/purchases/confirmed-count?${queries.toString()}`, method: 'get' });
             if (data?.success) setConfirmedCount(data.data);
         } finally { setLoading(false); }
