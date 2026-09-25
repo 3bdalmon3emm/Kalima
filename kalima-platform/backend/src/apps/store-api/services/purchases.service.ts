@@ -717,6 +717,9 @@ export class PurchasesService {
       orderBy: { created_at: "desc" },
     });
     const ebookletsCount = deliveryLogs.length;
+    // "Total units sold" spans both channels: store products + delivered
+    // e-booklets. This keeps the card equal to the "All" tab (normal + e-booklet).
+    totalProductsSold += ebookletsCount;
 
     if (deliveryLogs.length > 0) {
       const instanceIds = Array.from(

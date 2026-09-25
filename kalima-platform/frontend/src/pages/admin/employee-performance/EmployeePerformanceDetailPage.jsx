@@ -371,7 +371,7 @@ export default function EmployeePerformanceDetailPage() {
                         <Layers className="h-3.5 w-3.5" />
                         <span>{t('employeePerformanceDetails.allTypes', 'All')}</span>
                         <span className="rounded-full bg-muted-foreground/15 px-1.5 py-0.2 text-[10px] tabular-nums">
-                            {rawItems.length}
+                            {summary.totalProductsSold || 0}
                         </span>
                     </button>
 
@@ -388,7 +388,7 @@ export default function EmployeePerformanceDetailPage() {
                         <Package className="h-3.5 w-3.5" />
                         <span>{t('employeePerformanceDetails.normalProducts', 'Normal Products')}</span>
                         <span className="rounded-full bg-sky-500/15 text-sky-700 dark:text-sky-400 px-1.5 py-0.2 text-[10px] tabular-nums">
-                            {rawItems.filter(i => i.itemType === 'normal').length}
+                            {summary.normalProductsCount || 0}
                         </span>
                     </button>
 
@@ -405,7 +405,7 @@ export default function EmployeePerformanceDetailPage() {
                         <BookOpen className="h-3.5 w-3.5" />
                         <span>{t('employeePerformanceDetails.ebooklets', 'E-Booklets')}</span>
                         <span className="rounded-full bg-purple-500/15 text-purple-700 dark:text-purple-400 px-1.5 py-0.2 text-[10px] tabular-nums">
-                            {rawItems.filter(i => i.itemType === 'ebooklet').length}
+                            {summary.ebookletsCount || 0}
                         </span>
                     </button>
                 </div>
