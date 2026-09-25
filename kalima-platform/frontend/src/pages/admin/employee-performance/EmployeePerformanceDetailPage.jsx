@@ -525,7 +525,7 @@ export default function EmployeePerformanceDetailPage() {
                                                 {/* Order Link */}
                                                 <td className="px-6 py-4">
                                                     <Link
-                                                        to={`/admin/orders/${item.purchaseId}`}
+                                                        to={isEBooklet ? `/admin/e-booklets/orders/${item.purchaseId}` : `/admin/orders/${item.purchaseId}`}
                                                         className="inline-flex items-center gap-1 font-mono text-xs text-primary hover:underline"
                                                     >
                                                         <span>{item.purchaseSerial || `#${item.purchaseId}`}</span>

@@ -621,7 +621,7 @@ export class PurchasesService {
     });
 
     const allItems: Array<{
-      id: number;
+      id: number | string;
       purchaseId: number;
       purchaseSerial: string | null;
       customer: { id: number; name: string | null; email: string | null; phone: string | null };
@@ -702,18 +702,78 @@ export class PurchasesService {
     }
 
     // "Interactive booklets" for this employee = e-booklets they DELIVERED (the
-    // e-booklet equivalent of confirming a store order), read from the audit log
-    // — same source as the "e-booklets delivered" column on the summary table.
-    // Employees confirm store orders, not e-booklet sales, so counting e-booklet
-    // line items here would always be zero (or, before this fix, wrongly counted
-    // physical "Book" store products).
-    const ebookletsCount = await this.db.e_booklet_audit_logs.count({
+    // e-booklet equivalent of confirming a store order). Employees confirm store
+    // orders, not e-booklet sales, so these live in the e-booklet delivery audit
+    // log, not in purchase line items. Build one list row per delivery so the
+    // e-booklets tab and its count stay in sync. The audit entity is the booklet
+    // instance (entity_id); its purchase carries the price and buying teacher.
+    const deliveryLogs = await this.db.e_booklet_audit_logs.findMany({
       where: {
         action: "booklet_delivered",
         actor_user_id: employeeId,
         ...(dateFilter ? { created_at: dateFilter } : {}),
       },
+      select: { id: true, entity_id: true, created_at: true },
+      orderBy: { created_at: "desc" },
     });
+    const ebookletsCount = deliveryLogs.length;
+
+    if (deliveryLogs.length > 0) {
+      const instanceIds = Array.from(
+        new Set(deliveryLogs.map((log: any) => log.entity_id).filter(Boolean)),
+      );
+      const instances = await this.db.e_booklet_instances.findMany({
+        where: { id: { in: instanceIds } },
+        select: {
+          id: true,
+          display_title: true,
+          teacher: { select: { id: true, name: true, email: true, phone: true } },
+          purchase: { select: { id: true, price: true, final_payable_price: true } },
+        },
+      });
+      const instanceById = new Map<number, any>(
+        instances.map((inst: any) => [inst.id, inst]),
+      );
+
+      // One row per delivery (keeps the card count and the tab badge equal, even
+      // for re-deliveries or a missing instance lookup).
+      for (const log of deliveryLogs) {
+        const inst = instanceById.get(log.entity_id);
+        const unitPrice = Number(inst?.purchase?.price ?? 0);
+        const finalPrice = Number(
+          inst?.purchase?.final_payable_price ?? inst?.purchase?.price ?? 0,
+        );
+        allItems.push({
+          id: `eb-${log.id}`,
+          purchaseId: inst?.purchase?.id ?? 0,
+          purchaseSerial: null,
+          customer:
+            inst?.teacher || { id: 0, name: "Unknown", email: null, phone: null },
+          product: {
+            id: inst?.id || 0,
+            title: inst?.display_title || "E-Booklet",
+            type: "E-Booklet",
+            serial: null,
+            price: unitPrice,
+            thumbnailUrl: null,
+            categories: [],
+          },
+          itemType: "ebooklet",
+          quantity: 1,
+          unitPrice,
+          finalPrice,
+          confirmedAt: log.created_at,
+          createdAt: log.created_at,
+        });
+      }
+
+      // Merge store items and e-booklet deliveries into one timeline.
+      allItems.sort((a, b) => {
+        const ta = a.confirmedAt ? new Date(a.confirmedAt).getTime() : 0;
+        const tb = b.confirmedAt ? new Date(b.confirmedAt).getTime() : 0;
+        return tb - ta;
+      });
+    }
 
     let filteredItems = allItems;
     if (options.type && options.type !== "all") {
