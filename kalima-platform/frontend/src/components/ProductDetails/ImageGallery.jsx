@@ -72,6 +72,11 @@ export default function ImageGallery({ images, badge }) {
   const selectedMediaIsImage = selectedMedia && (
     typeof selectedMedia === "string" || selectedMedia.type !== "video"
   );
+  // URL of the current image, used to paint a blurred backdrop so the letterbox
+  // area around a "contain"-fitted image picks up the image's own colours.
+  const selectedImageUrl = selectedMediaIsImage
+    ? (typeof selectedMedia === "string" ? selectedMedia : selectedMedia?.url)
+    : null;
 
   const openViewer = useCallback(() => {
     if (!selectedMediaIsImage) return;
@@ -107,7 +112,7 @@ export default function ImageGallery({ images, badge }) {
         <img
           src={mediaItem}
           alt={isThumbnail ? t("info.thumbnail") : t("info.view")}
-          className="w-full h-full object-cover"
+          className={`w-full h-full ${isThumbnail ? "object-cover" : "object-contain"}`}
           onError={(e) => {
             e.target.onerror = null;
             e.target.src = fallbackImage;
@@ -198,7 +203,7 @@ export default function ImageGallery({ images, badge }) {
       <img
         src={url}
         alt={t("info.view")}
-        className="w-full h-full object-cover"
+        className="w-full h-full object-contain"
         onError={(e) => {
           e.target.onerror = null;
           e.target.src = fallbackImage;
@@ -211,11 +216,19 @@ export default function ImageGallery({ images, badge }) {
     <div className="flex flex-col gap-4">
       {/* Main Slider */}
       <div className="relative w-full aspect-square md:aspect-4/3 rounded-2xl overflow-hidden bg-muted group">
+        {selectedImageUrl && (
+          <img
+            src={selectedImageUrl}
+            alt=""
+            aria-hidden="true"
+            className="pointer-events-none absolute inset-0 w-full h-full object-cover scale-110 blur-2xl opacity-60"
+          />
+        )}
         {selectedMediaIsImage ? (
           <button
             type="button"
             onClick={openViewer}
-            className="block h-full w-full cursor-zoom-in rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
+            className="relative block h-full w-full cursor-zoom-in rounded-2xl focus:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-inset"
             aria-label={t("actions.openImageViewer", { defaultValue: "Open image viewer" })}
             data-testid="product-gallery-main-button"
           >
