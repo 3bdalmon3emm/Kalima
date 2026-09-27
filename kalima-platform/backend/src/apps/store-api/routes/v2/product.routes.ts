@@ -122,7 +122,7 @@ router.delete("/:id/sample", ...adminAuth, productController.removeSample);
 router.post(
   "/:id/gallery",
   ...adminAuth,
-  uploadMultipleImages("gallery", 10),
+  uploadMultipleImages("gallery", 25),
   productController.addToGallery,
 );
 

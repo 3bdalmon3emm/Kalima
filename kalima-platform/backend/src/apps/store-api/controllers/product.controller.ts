@@ -339,7 +339,7 @@ export const productController = {
 
   /**
    * POST /products/:id/gallery
-   * multipart/form-data — field "gallery" (1–10 images)
+   * multipart/form-data — field "gallery" (1–25 images)
    * Query: ?compress=false to skip compression
    */
   async addToGallery(
