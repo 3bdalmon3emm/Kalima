@@ -3611,7 +3611,7 @@ export class EBookletService {
     const defaultAllowedStudentDevices = Number(settings.default_allowed_devices_per_student ?? 1);
     const accessRows = await this.db.e_booklet_access.findMany({
       where: { booklet_instance_id: { in: uniqueInstanceIds }, role: "student", status: "active" },
-      include: { user: { select: { id: true, name: true, email: true } } },
+      include: { user: { select: { id: true, name: true, email: true, phone: true } } },
       orderBy: { granted_at: "desc" },
     });
     if (!accessRows?.length) return rowsByInstance;
@@ -3858,6 +3858,107 @@ export class EBookletService {
     if (!instance) throw new NotFoundError("Teacher e-booklet not found");
 
     return (await this.getInstanceStudentRowsByInstanceId([instanceId])).get(instanceId) || [];
+  }
+
+  /**
+   * Builds a flat, export-ready view of one e-booklet instance's students:
+   * teacher name, booklet title, and every student's contact details plus how
+   * they got access and whether they opened the booklet. Used by the per-booklet
+   * "Export" button on the teacher-access page.
+   */
+  async buildInstanceStudentsExport(instanceId: number, teacherId?: number) {
+    const instanceWhere: Record<string, unknown> = { id: instanceId };
+    if (teacherId) instanceWhere.teacher_id = teacherId;
+    const instance = await this.db.e_booklet_instances.findFirst({
+      where: instanceWhere,
+      select: EBookletService.EXPORT_INSTANCE_SELECT,
+    });
+    if (!instance) throw new NotFoundError("Teacher e-booklet not found");
+
+    const studentsByInstance = await this.getInstanceStudentRowsByInstanceId([instanceId]);
+    return this.composeStudentsExport([instance], studentsByInstance);
+  }
+
+  /**
+   * Same export for ONE teacher: all of that teacher's e-booklets in a single
+   * sheet, grouped by booklet. Used by the page-level "Export Excel" button
+   * when the page is scoped to a teacher.
+   */
+  async buildTeacherStudentsExport(teacherId: number) {
+    const instances = await this.db.e_booklet_instances.findMany({
+      where: { teacher_id: teacherId },
+      select: EBookletService.EXPORT_INSTANCE_SELECT,
+      orderBy: { id: "asc" },
+    });
+    if (!instances.length) throw new NotFoundError("This teacher has no e-booklets");
+
+    const studentsByInstance = await this.getInstanceStudentRowsByInstanceId(
+      instances.map((instance: any) => Number(instance.id)),
+    );
+    return this.composeStudentsExport(instances, studentsByInstance);
+  }
+
+  private static readonly EXPORT_INSTANCE_SELECT = {
+    id: true,
+    display_title: true,
+    teacher: { select: { name: true, email: true, phone: true } },
+    template: { select: { title: true } },
+    template_version: { select: { version_number: true } },
+  };
+
+  /**
+   * Turns instances + their student rows into flat export rows. The teacher's
+   * details are written once, on the first row of the file; each booklet's
+   * title / template / version only on that booklet's first row (so they
+   * repeat only when the booklet changes). A booklet without students still
+   * gets one row so it is not silently missing from the file.
+   */
+  private composeStudentsExport(instances: any[], studentsByInstance: Map<number, any[]>) {
+    const teacher = instances[0]?.teacher;
+    const teacherName = teacher?.name || teacher?.email || "—";
+    const teacherEmail = teacher?.email || "—";
+    const teacherPhone = teacher?.phone || "—";
+
+    const rows: Record<string, unknown>[] = [];
+    let bookletTitleForName = "—";
+
+    instances.forEach((instance: any, instanceIndex: number) => {
+      const bookletTitle =
+        resolveInstanceDisplayTitle(instance) || instance.display_title || instance.template?.title || "—";
+      if (instanceIndex === 0) bookletTitleForName = bookletTitle;
+      const templateTitle = instance.template?.title || "—";
+      const versionNumber = instance.template_version?.version_number ?? "—";
+      const students = studentsByInstance.get(Number(instance.id)) || [];
+
+      const makeRow = (student: any | null, firstOfBooklet: boolean) => {
+        const firstOfFile = rows.length === 0;
+        const analytics = student?.analytics_summary || {};
+        return {
+          teacher_name: firstOfFile ? teacherName : "",
+          teacher_email: firstOfFile ? teacherEmail : "",
+          teacher_phone: firstOfFile ? teacherPhone : "",
+          booklet_title: firstOfBooklet ? bookletTitle : "",
+          template_title: firstOfBooklet ? templateTitle : "",
+          version: firstOfBooklet ? versionNumber : "",
+          student_name: student ? (student.user?.name ?? "—") : "",
+          email: student ? (student.user?.email ?? "—") : "",
+          phone: student ? (student.user?.phone ?? "—") : "",
+          access_date: student?.granted_at ? new Date(student.granted_at).toISOString().split("T")[0] : "",
+          viewer_opens: student ? Number(analytics.viewer_opened ?? 0) : "",
+        };
+      };
+
+      if (students.length === 0) {
+        rows.push(makeRow(null, true));
+        return;
+      }
+      students.forEach((student: any, studentIndex: number) => {
+        rows.push(makeRow(student, studentIndex === 0));
+      });
+    });
+
+    const studentCount = rows.filter((row) => row.student_name !== "").length;
+    return { teacherName, bookletTitle: bookletTitleForName, studentCount, rows };
   }
 
   async revokeStudentAccess(

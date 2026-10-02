@@ -6,6 +6,7 @@ import { validate } from "class-validator";
 import { getEBookletService } from "../services/e-booklet.service";
 import { getEBookletDomainServices } from "../services/e-booklet-domain.service";
 import { buildContentDisposition } from "../utils/filename";
+import { toExcel, toCSV } from "../../../libs/export";
 import {
   isR2Enabled,
   proxyObject,
@@ -107,6 +108,43 @@ function optionalNumber(raw: unknown): number | undefined {
   if (raw === undefined || raw === null || raw === "") return undefined;
   const n = Number(raw);
   return Number.isFinite(n) ? n : undefined;
+}
+
+// Column layout shared by the per-booklet and per-teacher students exports.
+const STUDENTS_EXPORT_COLUMNS = [
+  "teacher_name", "teacher_email", "teacher_phone",
+  "booklet_title", "template_title", "version",
+  "student_name", "email", "phone", "access_date", "viewer_opens",
+];
+const STUDENTS_EXPORT_HEADERS = [
+  "اسم المعلم", "بريد المعلم", "هاتف المعلم",
+  "عنوان المذكرة", "عنوان القالب", "الإصدار",
+  "اسم الطالب", "البريد الإلكتروني", "هاتف الطالب", "تاريخ الوصول", "مرات فتح العرض",
+];
+
+/** Writes the students export as xlsx (default) or csv, named after `title`. */
+function sendStudentsExport(
+  req: Request,
+  res: Response,
+  rows: Record<string, unknown>[],
+  title: string,
+): void {
+  const format = String(req.query.format || "xlsx").toLowerCase() === "csv" ? "csv" : "xlsx";
+  const columns = STUDENTS_EXPORT_COLUMNS;
+  const headers = STUDENTS_EXPORT_HEADERS;
+  const safeName = title.replace(/[\\/:*?"<>|]+/g, "-").slice(0, 80) || "ebooklet-students";
+
+  if (format === "csv") {
+    res.type("text/csv");
+    res.set("Content-Disposition", buildContentDisposition("attachment", `${safeName}.csv`, "ebooklet-students.csv"));
+    res.status(200).send(toCSV(rows, { columns, headers }));
+    return;
+  }
+
+  const buffer = toExcel(rows, { sheetName: "الطلاب", columns, headers, rtl: true });
+  res.type("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+  res.set("Content-Disposition", buildContentDisposition("attachment", `${safeName}.xlsx`, "ebooklet-students.xlsx"));
+  res.status(200).send(buffer);
 }
 
 function parseBoolean(raw: unknown): boolean {
@@ -1080,6 +1118,43 @@ export const eBookletController = {
       res.type("text/csv");
       res.set("Content-Disposition", "attachment; filename=\"e-booklet-analytics.csv\"");
       res.status(200).send(csv);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * GET /admin/e-booklet-instances/:instanceId/students/export?format=xlsx|csv
+   * One file per booklet: teacher, booklet title and every student's contact
+   * details, how they got access and whether they opened it.
+   */
+  async exportInstanceStudents(req: Request, res: Response, next: NextFunction) {
+    try {
+      const instanceId = optionalNumber(req.params.instanceId);
+      if (!instanceId) throw new BadRequestError("Invalid e-booklet instance ID");
+      const teacherId = optionalNumber(req.query.teacher_id);
+
+      const { teacherName, bookletTitle, rows } = await getEBookletService().buildInstanceStudentsExport(
+        instanceId,
+        teacherId,
+      );
+      sendStudentsExport(req, res, rows, `${teacherName}-${bookletTitle}`);
+    } catch (error) {
+      next(error);
+    }
+  },
+
+  /**
+   * GET /admin/e-booklet-teachers/:teacherId/students/export?format=xlsx|csv
+   * One file per teacher: all of that teacher's booklets, grouped by booklet.
+   */
+  async exportTeacherStudents(req: Request, res: Response, next: NextFunction) {
+    try {
+      const teacherId = optionalNumber(req.params.teacherId);
+      if (!teacherId) throw new BadRequestError("Invalid teacher ID");
+
+      const { teacherName, rows } = await getEBookletService().buildTeacherStudentsExport(teacherId);
+      sendStudentsExport(req, res, rows, teacherName);
     } catch (error) {
       next(error);
     }

@@ -529,6 +529,7 @@
       "revoke": "إلغاء الوصول",
       "revokeConfirm": "إلغاء وصول المعلم لهذه النسخة من المذكرة التفاعلية؟",
       "showStudents": "الطلاب",
+      "exportStudents": "تصدير الطلاب",
       "hideStudents": "إخفاء الطلاب",
       "studentsForEBooklet": "الطلاب الذين اشتروا هذه المذكرة التفاعلية",
       "studentsForEBookletHint": "صفوف وصول طلاب نشطة مع ملخصات آمنة للأجهزة والتحليلات.",

@@ -529,6 +529,7 @@
       "revoke": "Revoke",
       "revokeConfirm": "Revoke teacher access for this e-booklet instance?",
       "showStudents": "Students",
+      "exportStudents": "Export students",
       "hideStudents": "Hide students",
       "studentsForEBooklet": "Students who bought this e-booklet",
       "studentsForEBookletHint": "Active student access rows with safe device and analytics summaries.",

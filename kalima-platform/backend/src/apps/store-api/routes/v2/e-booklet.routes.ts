@@ -282,6 +282,16 @@ router.get(
   eBookletController.listInstanceStudents,
 );
 router.get(
+  "/admin/e-booklet-instances/:instanceId/students/export",
+  ...adminAuth,
+  eBookletController.exportInstanceStudents,
+);
+router.get(
+  "/admin/e-booklet-teachers/:teacherId/students/export",
+  ...adminAuth,
+  eBookletController.exportTeacherStudents,
+);
+router.get(
   "/admin/e-booklet-instances/:instanceId/users/:userId/devices",
   ...adminAuth,
   eBookletController.listViewerDevices,

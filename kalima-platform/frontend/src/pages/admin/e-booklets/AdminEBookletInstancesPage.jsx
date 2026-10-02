@@ -689,12 +689,34 @@ export default function AdminEBookletInstancesPage({ teacherId = null }) {
   };
 
   const handleExport = (lang = "ar") => {
+    // On a single teacher's page, export just that teacher's booklets and
+    // students (slim layout). On the all-teachers page keep the full export.
+    if (selectedTeacherId) {
+      exportData({
+        resource: `admin/e-booklet-teachers/${selectedTeacherId}/students`,
+        format: "xlsx",
+        lang,
+        rtl: lang === "ar",
+      });
+      return;
+    }
     exportData({
       resource: "admin/e-booklet-instances",
       format: "xlsx",
       filters: status && status !== "all" ? { status } : {},
       lang,
       rtl: lang === "ar",
+    });
+  };
+
+  // Per-booklet export: one Excel file for a single instance's students
+  // (teacher, booklet title, and each student's details + access/opened status).
+  const handleExportInstanceStudents = (instance) => {
+    exportData({
+      resource: `admin/e-booklet-instances/${instance.id}/students`,
+      format: "xlsx",
+      lang: "ar",
+      rtl: true,
     });
   };
 
@@ -1204,6 +1226,18 @@ export default function AdminEBookletInstancesPage({ teacherId = null }) {
                                       <Users className="h-4 w-4" />
                                       {t("admin.instances.showStudents")}
                                     </Link>
+                                  </Button>
+                                  <Button
+                                    type="button"
+                                    size="sm"
+                                    variant="outline"
+                                    className="justify-start rounded-xl"
+                                    onClick={() => handleExportInstanceStudents(instance)}
+                                    disabled={exportLoading}
+                                    data-testid={`admin-e-booklet-instance-export-${instance.id}`}
+                                  >
+                                    <Download className="h-4 w-4" />
+                                    {t("admin.instances.exportStudents", { defaultValue: "تصدير الطلاب" })}
                                   </Button>
                                   <Button asChild size="sm" variant="outline" className="justify-start rounded-xl">
                                     <Link to={`/admin/e-booklets/access/${instance.id}/view`}>
