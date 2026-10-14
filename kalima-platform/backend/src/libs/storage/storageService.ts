@@ -171,14 +171,36 @@ export async function proxyObject(
   const { bucket } = getR2Config();
   const range = req.headers.range;
 
+  // Tie the R2 request to the client connection for its WHOLE life. If the
+  // client goes away while we wait for R2 (a cancelled page load, a closed tab)
+  // abort the request, and if it goes away mid-stream destroy the body. Without
+  // this the pipe below never ends and the socket stays held, so the pool
+  // slowly fills with abandoned downloads until every request queues.
+  const abort = new AbortController();
+  let body: Readable | undefined;
+  res.once("close", () => {
+    abort.abort();
+    body?.destroy();
+  });
+
   let result;
   try {
     result = await getR2Client().send(
       new GetObjectCommand({ Bucket: bucket, Key: key, Range: range }),
+      { abortSignal: abort.signal },
     );
   } catch (error) {
+    if (abort.signal.aborted) return; // client already gone; nothing to send
     if (isNotFound(error)) throw new NotFoundError("File not found");
     throw error;
+  }
+
+  body = result.Body as Readable;
+  // The client may have left while R2 was answering, after the close event
+  // already fired — release the body instead of piping into a dead response.
+  if (abort.signal.aborted || res.destroyed) {
+    body.destroy();
+    return;
   }
 
   if (range && result.ContentRange) {
@@ -204,9 +226,7 @@ export async function proxyObject(
     res.setHeader("Cache-Control", options.cacheControl || "private, max-age=0");
   }
 
-  const body = result.Body as Readable;
-  // Stop pulling from R2 if the client disconnects mid-stream.
-  res.on("close", () => body.destroy());
+  // (A mid-stream client disconnect is handled by the close listener above.)
   body.on("error", () => {
     if (!res.headersSent) res.status(502);
     res.end();
