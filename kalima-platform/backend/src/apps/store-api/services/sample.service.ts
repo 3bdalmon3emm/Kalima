@@ -17,6 +17,7 @@ import {
   deleteObject,
   normalizeStorageKey,
 } from "../../../libs/storage";
+import { IMAGE_SIZES, optimizeImage } from "../../../libs/imageOptimize";
 
 // ============================================
 // CONSTANTS
@@ -218,6 +219,26 @@ export class SampleService {
   }
 
   /** Save file buffer to disk and return the URL path */
+  /**
+   * Saves a sample cover image downsized to a display-friendly size (see
+   * IMAGE_SIZES). If the image cannot be re-encoded the original is kept, so an
+   * upload is never blocked by the optimisation step.
+   */
+  private async saveThumbnail(file: Express.Multer.File): Promise<string> {
+    let buffer = file.buffer;
+    let mimeType = file.mimetype;
+    try {
+      const optimized = await optimizeImage(buffer, mimeType, IMAGE_SIZES.sampleThumbnail);
+      if (optimized.changed) {
+        buffer = optimized.buffer;
+        mimeType = optimized.mimeType;
+      }
+    } catch {
+      // keep the original upload
+    }
+    return this.saveFileToDisk(buffer, mimeType, "thumbnail");
+  }
+
   async saveFileToDisk(
     buffer: Buffer,
     mimeType: string,
@@ -561,11 +582,7 @@ export class SampleService {
     // Write files to disk in parallel when both are provided
     const fileWrites: Promise<string | null>[] = [
       thumbnailFile?.buffer
-        ? this.saveFileToDisk(
-            thumbnailFile.buffer,
-            thumbnailFile.mimetype,
-            "thumbnail",
-          )
+        ? this.saveThumbnail(thumbnailFile)
         : Promise.resolve(null),
       highQualityFile?.buffer
         ? this.saveFileToDisk(
@@ -680,11 +697,7 @@ export class SampleService {
       if (thumbnailUrl) {
         this.removeStoredFile(thumbnailUrl);
       }
-      thumbnailUrl = await this.saveFileToDisk(
-        thumbnailFile.buffer,
-        thumbnailFile.mimetype,
-        "thumbnail",
-      );
+      thumbnailUrl = await this.saveThumbnail(thumbnailFile);
     }
 
     return this.db.samples.update({

@@ -13,6 +13,7 @@ import {
   ForbiddenError,
   NotFoundError,
 } from "../../../libs/errors";
+import { IMAGE_SIZES, optimizeImage } from "../../../libs/imageOptimize";
 import { generateInviteToken, hashInviteToken } from "../utils/e-booklet-token";
 import { normalizeOriginalFilename } from "../utils/filename";
 import { EBookletPagePreviewService } from "./e-booklet-page-preview.service";
@@ -1185,6 +1186,28 @@ export class EBookletService {
       throw new BadRequestError(`Unsupported e-booklet file type: ${file.mimetype}`);
     }
     await assertReadableEBookletImage(file);
+
+    // Template covers are shown as small cards: store a downsized WebP instead of
+    // the multi-megabyte original. Other image assets (hotspots, print backgrounds)
+    // are left exactly as uploaded.
+    if (inferredFileType === "image" && input.ownerType === "template" && (!input.fileType || input.fileType === "image")) {
+      try {
+        const source = file.buffer ?? (file.path ? await fsPromises.readFile(file.path) : null);
+        if (source) {
+          const optimized = await optimizeImage(source, file.mimetype, IMAGE_SIZES.eBookletCover);
+          if (optimized.changed) {
+            if (file.path) await removeUploadedTempFile(file);
+            file.path = undefined as any;
+            file.buffer = optimized.buffer;
+            file.size = optimized.buffer.length;
+            file.mimetype = optimized.mimeType;
+            file.originalname = file.originalname.replace(/.[^.]+$/, "") + ".webp";
+          }
+        }
+      } catch {
+        // keep the original upload if it cannot be re-encoded
+      }
+    }
     const requestedFileType = input.fileType === "document" ? "pdf" : input.fileType;
     const requestedSafeAttachment = requestedFileType === "file";
     const inferredStorageType =
@@ -2988,7 +3011,7 @@ export class EBookletService {
         const { validatePaymentForCheckout } = await import("./checkout-validation.service");
         const paymentScreenshot = await imageService.uploadImage(
           paymentScreenshotFile,
-          { compress: true, quality: 80 },
+          { optimize: IMAGE_SIZES.paymentReceipt },
         );
         paymentScreenshotId = paymentScreenshot.id;
         await validatePaymentForCheckout(this.db, {
@@ -3100,7 +3123,7 @@ export class EBookletService {
       const { validatePaymentForCheckout } = await import("./checkout-validation.service");
       const paymentScreenshot = await imageService.uploadImage(
         paymentScreenshotFile,
-        { compress: true, quality: 80 },
+        { optimize: IMAGE_SIZES.paymentReceipt },
       );
       paymentScreenshotId = paymentScreenshot.id;
       paymentMethod = await validatePaymentForCheckout(this.db, {
@@ -5396,7 +5419,7 @@ export class EBookletService {
           const { validatePaymentForCheckout } = await import("./checkout-validation.service");
           const paymentScreenshot = await imageService.uploadImage(
             paymentScreenshotFile,
-            { compress: true, quality: 80 },
+            { optimize: IMAGE_SIZES.paymentReceipt },
           );
           paymentScreenshotId = paymentScreenshot.id;
           paymentMethod = await validatePaymentForCheckout(this.db, {

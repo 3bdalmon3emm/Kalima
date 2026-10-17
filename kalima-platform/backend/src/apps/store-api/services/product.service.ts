@@ -22,6 +22,7 @@ import {
   NotFoundError,
   ConflictError,
 } from "../../../libs/errors";
+import { IMAGE_SIZES, optimizeImage } from "../../../libs/imageOptimize";
 import { normalizeOriginalFilename } from "../utils/filename";
 import { reviewService } from "./review.service";
 import { sampleService as defaultSampleService } from "./sample.service";
@@ -150,8 +151,7 @@ export class ProductService {
     let thumbnailId: number | null = null;
     if (thumbnailFile) {
       const image = await imageService.uploadImage(thumbnailFile, {
-        compress: true,
-        quality: 75,
+        optimize: IMAGE_SIZES.productThumbnail,
       });
       thumbnailId = image.id;
     }
@@ -555,7 +555,7 @@ export class ProductService {
     const newImage = await imageService.replaceImage(
       product.thumbnail_id,
       file,
-      { compress: true, quality: 75 },
+      { optimize: IMAGE_SIZES.productThumbnail },
     );
 
     const updated = await this.db.products.update({
@@ -648,7 +648,10 @@ export class ProductService {
 
     const images = await Promise.all(
       files.map((file) =>
-        imageService.uploadImage(file, { compress, quality: 75 }),
+        imageService.uploadImage(
+          file,
+          compress ? { optimize: IMAGE_SIZES.productGallery } : {},
+        ),
       ),
     );
 

@@ -3,6 +3,7 @@ import { redis } from "../../../libs/redis/client";
 import { getEmailService } from "../emails/email.service";
 import { prisma } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
+import { IMAGE_SIZES } from "../../../libs/imageOptimize";
 import {
   CreateCartDto,
   AddCartItemDto,
@@ -897,7 +898,7 @@ class CartService {
 
       const paymentScreenshot = await imageService.uploadImage(
         payment_screenshot_file,
-        { compress: true, quality: 80 },
+        { optimize: IMAGE_SIZES.paymentReceipt },
       );
       payment_screenshot_id = paymentScreenshot.id;
 

@@ -8,6 +8,7 @@ import { images, image_mime_type_enum } from "../generated/prisma/client";
 import { normalizeOriginalFilename } from "../utils/filename";
 import { NotFoundError, BadRequestError } from "../../../libs/errors";
 import { resolveUploadedUrlPath, resolveUploadPath } from "../../../libs/uploadsRoot";
+import { optimizeImage, type OptimizeOptions } from "../../../libs/imageOptimize";
 import {
   isR2Enabled,
   putObject,
@@ -63,6 +64,12 @@ export interface UploadImageOptions {
   width?: number;
   /** Resize height (only when compress=true). Null = keep original. */
   height?: number;
+  /**
+   * Downsize to a maximum width and store as WebP (see libs/imageOptimize).
+   * For public, non-sensitive images and payment receipts. Takes precedence
+   * over compress/width/height. SVG and GIF are stored untouched.
+   */
+  optimize?: OptimizeOptions;
 }
 
 // ============================================
@@ -110,7 +117,22 @@ export class ImageService {
     let finalMime: image_mime_type_enum;
     let ext: string;
 
-    if (compress && file.mimetype !== "image/svg+xml") {
+    let storedContentType = file.mimetype;
+    const optimized = options.optimize
+      ? await optimizeImage(file.buffer, file.mimetype, options.optimize).catch(() => {
+          // sharp/libvips fails on truncated or corrupt images (e.g. "premature end
+          // of JPEG"). That is bad input from the client, not a server fault, so
+          // answer 400 with a message the buyer can act on instead of a generic 500.
+          throw new BadRequestError("The image is damaged or incomplete. Please choose another image.");
+        })
+      : null;
+
+    if (optimized?.changed) {
+      finalBuffer = optimized.buffer;
+      finalMime = image_mime_type_enum.webp;
+      ext = ".webp";
+      storedContentType = optimized.mimeType;
+    } else if (!optimized && compress && file.mimetype !== "image/svg+xml") {
       // Re-encode in the original format so compression never changes the
       // file type advertised to callers or the extension used on disk.
       let pipeline = sharp(file.buffer);
@@ -159,7 +181,7 @@ export class ImageService {
       await putObject({
         key: `images/${filename}`,
         body: finalBuffer,
-        contentType: file.mimetype,
+        contentType: storedContentType,
       });
     } else {
       const filePath = path.join(UPLOAD_DIR, filename);
