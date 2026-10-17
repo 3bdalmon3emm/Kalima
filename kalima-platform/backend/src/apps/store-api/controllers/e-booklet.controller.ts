@@ -324,7 +324,7 @@ async function serveEBookletFile(
       // re-hitting the backend on every load. Kept below the TTL so the link
       // never expires while still cached.
       if (!res.getHeader("Cache-Control")) {
-        const redirectTtl = Math.max(60, Math.floor(policy.ttlSeconds * 0.8));
+        const redirectTtl = Math.max(60, Math.floor(policy.ttlSeconds * 0.95));
         res.setHeader("Cache-Control", `public, max-age=${redirectTtl}`);
       }
       res.redirect(302, url);

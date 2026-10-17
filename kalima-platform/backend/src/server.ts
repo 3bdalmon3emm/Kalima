@@ -77,7 +77,9 @@ function makeUploadsHandler(localRoot: string): express.RequestHandler {
         // repeat fetches for product/cover/gallery images within a session.
         // Long public/CDN caching of genuinely-public images needs them split
         // out of this shared folder first.
-        const cacheControl = `private, max-age=${Math.max(60, Math.floor(ttl * 0.8))}`;
+        // 95% of the link lifetime: the cached copy stays as long as possible
+        // while the cached redirect still cannot outlive the signed link.
+        const cacheControl = `private, max-age=${Math.max(60, Math.floor(ttl * 0.95))}`;
         const signed = await getSignedDownloadUrl(key, { expiresIn: ttl, cacheControl });
         res.setHeader("Cache-Control", cacheControl);
         res.redirect(302, signed);
