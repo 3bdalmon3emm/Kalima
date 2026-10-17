@@ -82,7 +82,7 @@ const CACHE_CONTROL: Record<AssetCategory, string> = {
   ebooklet_page_image: `private, max-age=${1 * DAY}`,
   ebooklet_document: `private, max-age=${1 * DAY}`,
   ebooklet_hotspot_media: `private, max-age=${1 * DAY}`,
-  sample_high_quality: `private, max-age=3600`,
+  sample_high_quality: `private, max-age=${1 * DAY}`,
   // ---- Sensitive — never cache ----
   payment_screenshot: 'no-store',
   purchase_watermark: 'no-store',

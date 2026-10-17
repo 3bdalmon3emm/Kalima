@@ -410,10 +410,10 @@ export const sampleSectionController = {
       const disposition = buildContentDisposition("inline", originalName, "sample-file");
       res.setHeader("Content-Type", mimeType);
       res.setHeader("Content-Disposition", disposition);
-      // Keep a copy in the viewer's own browser for an hour (same policy as the
+      // Keep a copy in the viewer's own browser for a full day (same policy as the
       // serving-policy table) so reopening or reloading the sample does not
       // download the whole file again. "private" keeps shared caches out.
-      res.setHeader("Cache-Control", "private, max-age=3600");
+      res.setHeader("Cache-Control", "private, max-age=86400");
       res.setHeader("X-Download-Options", "noopen");
       res.setHeader("X-Content-Type-Options", "nosniff");
       // Protected preview → proxy (per serving policy).
