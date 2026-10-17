@@ -69,6 +69,8 @@ function EBookletCover({ template, featured = false, t }) {
       <img
         src={template.coverUrl}
         alt={`${template.title} cover`}
+        loading="lazy"
+        decoding="async"
         className="h-full w-full object-cover"
       />
     );
