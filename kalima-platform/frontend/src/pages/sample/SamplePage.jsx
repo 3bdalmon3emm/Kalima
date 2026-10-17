@@ -28,7 +28,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import useApiMutation from '@/hooks/useApiMutation';
-import { getImageUrl, getApiUrl, formatFileSize, formatPrice } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl, formatFileSize, formatPrice, withSampleVersion } from '@/lib/storeUtils';
 import { getPdfViewerI18nConfig } from '@/lib/pdfViewerI18n';
 import LazyPDFViewer from '@/components/pdf/LazyPDFViewer';
 
@@ -147,7 +147,7 @@ function resolveSampleMediaUrls(sample) {
     // Prefer API-served endpoints (proper Content-Type headers, bypasses nginx static cache)
     // Falls back to raw static URLs if section_id is unavailable
     const highQualityUrl = sectionId && sample?.high_quality_url
-        ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`
+        ? withSampleVersion(`${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`, sample.high_quality_url)
         : (sample?.high_quality_url ? getImageUrl(sample.high_quality_url) : '');
     const lowQualityUrl = sectionId && sample?.low_quality_url
         ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/download`

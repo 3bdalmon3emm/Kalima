@@ -4,7 +4,7 @@ import { ArrowLeft, Download, AlertCircle, FileText, Music } from 'lucide-react'
 import { useTranslation } from 'react-i18next';
 import { Button } from '@/components/ui/button';
 import { getPdfViewerI18nConfig } from '@/lib/pdfViewerI18n';
-import { getImageUrl, getApiUrl } from '@/lib/storeUtils';
+import { getImageUrl, getApiUrl, withSampleVersion } from '@/lib/storeUtils';
 import LazyPDFViewer from '@/components/pdf/LazyPDFViewer';
 
 const PROTECTED_PDF_DISABLED_CATEGORIES = [
@@ -66,7 +66,7 @@ export default function SamplePreviewPage() {
 
     // Prefer API-served endpoints (proper Content-Type headers, bypasses nginx static cache)
     const highQualityUrl = sectionId && sample?.high_quality_url
-        ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`
+        ? withSampleVersion(`${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`, sample.high_quality_url)
         : (getImageUrl(sample?.high_quality_url) || '');
     const downloadUrl = sectionId && sample?.low_quality_url
         ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/download`

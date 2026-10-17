@@ -353,3 +353,14 @@ export function formatTimeUntilRelease(ms, t) {
   if (minutes > 0) return `${minutes}${m} ${seconds}${s}`;
   return `${seconds}${s}`;
 }
+
+/**
+ * Appends a version to a sample preview URL. The stored file name changes every
+ * time the sample file is replaced, so the URL changes with it and browsers that
+ * cached the old preview (for up to a day) fetch the new one immediately.
+ */
+export function withSampleVersion(url, storedFileUrl) {
+  if (!url || !storedFileUrl) return url;
+  const version = String(storedFileUrl).split("/").pop();
+  return version ? `${url}?v=${encodeURIComponent(version)}` : url;
+}

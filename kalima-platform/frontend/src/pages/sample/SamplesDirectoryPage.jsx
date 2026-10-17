@@ -6,7 +6,7 @@ import HeroSection from "@/components/MarketPage/HeroSection";
 import useApiMutation from "@/hooks/useApiMutation";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { formatFileSize, getImageUrl, getApiUrl } from "@/lib/storeUtils";
+import { formatFileSize, getImageUrl, getApiUrl, withSampleVersion } from "@/lib/storeUtils";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
 import DownloadWithProgress from '@/components/ui/DownloadWithProgress';
 
@@ -117,7 +117,7 @@ export default function SamplesDirectoryPage() {
                                                             ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/download`
                                                             : '';
                                                         const previewThumbnailUrl = sectionId && sample.high_quality_url
-                                                            ? `${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`
+                                                            ? withSampleVersion(`${apiUrl}/sample-sections/${sectionId}/samples/${sample.id}/preview`, sample.high_quality_url)
                                                             : '';
                                                         const uploadedThumbnailUrl = getImageUrl(sample.thumbnail_url);
                                                         const thumbnailUrl = uploadedThumbnailUrl || previewThumbnailUrl;
