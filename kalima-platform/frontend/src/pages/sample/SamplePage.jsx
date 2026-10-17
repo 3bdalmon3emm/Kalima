@@ -556,6 +556,8 @@ export default function SamplePage() {
                                             <img
                                                 src={getImageUrl(product.thumbnail_image.url)}
                                                 alt={product.title}
+                                                loading="lazy"
+                                                decoding="async"
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>

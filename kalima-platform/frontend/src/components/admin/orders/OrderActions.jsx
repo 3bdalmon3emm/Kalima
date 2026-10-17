@@ -33,7 +33,9 @@ import useOrders from '@/hooks/useOrders';
 
 export default function OrderActions({ order, onActionSuccess }) {
     const { t, i18n } = useTranslation('admin');
-    const { receiveOrder, confirmOrder, deliverOrder, returnOrder, deleteOrder, actionLoading } = useOrders();
+    // autoFetch off: the parent page owns the list; without this every row
+    // would fetch the whole orders list itself on mount.
+    const { receiveOrder, confirmOrder, deliverOrder, returnOrder, deleteOrder, actionLoading } = useOrders({ autoFetch: false });
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [noteDialogOpen, setNoteDialogOpen] = useState(false);

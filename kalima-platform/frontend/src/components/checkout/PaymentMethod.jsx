@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { PhoneInput, egyptPhoneSchema } from "@/components/ui/phone-input";
 import { motion } from "framer-motion";
+import { checkImageFile } from "@/lib/imageFile";
 
 export default function PaymentMethod({ getPaymentMethods, selectedId, onSelect,
     numberTransferredFrom, setNumberTransferredFrom,
@@ -244,6 +245,10 @@ export default function PaymentMethod({ getPaymentMethods, selectedId, onSelect,
                                     onChange={e => {
                                         const file = e.target.files?.[0];
                                         if (file) {
+                                            if (!checkImageFile(file)) {
+                                                e.target.value = "";
+                                                return;
+                                            }
                                             setScreenshotFile(file);
                                         }
                                     }}

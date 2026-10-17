@@ -208,7 +208,7 @@ export default function PaymentStep({ onBack }) {
             </div>
 
             {showReceipt && (
-                <PurchaseTrackingDialog purchase={purchase} paymentMethodName={paymentMethodName} />
+                <PurchaseTrackingDialog purchase={purchase} paymentMethodName={paymentMethodName} onClose={() => navigate("/orders")} />
             )}
             <PrintableReceipt purchase={purchase} paymentMethodName={paymentMethodName} baseURL={baseURL} receiptRef={receiptRef} dir={i18n.dir()} />
             <RepeatPurchaseWarningDialog

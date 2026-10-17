@@ -88,7 +88,7 @@ export default function SamplesDirectoryPage() {
                                     <AccordionTrigger className="hover:no-underline py-4">
                                         <div className="flex items-center gap-4 text-start">
                                             {section.thumbnail_url ? (
-                                                <img src={section.thumbnail_url} alt="" className="w-10 h-10 rounded-md object-cover" />
+                                                <img src={section.thumbnail_url} alt="" loading="lazy" decoding="async" className="w-10 h-10 rounded-md object-cover" />
                                             ) : (
                                                 <div className="h-10 w-10 rounded-md bg-primary/10 flex items-center justify-center text-primary shrink-0">
                                                     <Folder className="h-5 w-5" />
@@ -144,6 +144,8 @@ export default function SamplesDirectoryPage() {
                                                                             <img
                                                                                 src={thumbnailUrl}
                                                                                 alt={sample.title || ''}
+                                                                                loading="lazy"
+                                                                                decoding="async"
                                                                                 className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
                                                                                 data-testid={`samples-directory-thumb-${sample.id}`}
                                                                             />

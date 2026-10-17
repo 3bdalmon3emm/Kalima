@@ -156,5 +156,7 @@
   "google account linked successfully": "تم ربط حساب جوجل بنجاح",
   "google account unlinked successfully": "تم فك ربط حساب جوجل بنجاح",
   "optional message": "رسالة اختيارية",
-  "string (optional)": "سلسلة (اختياري)"
+  "string (optional)": "سلسلة (اختياري)",
+  "Uploaded file exceeds the allowed size limit.": "حجم الصورة أكبر من الحد المسموح (5 ميجابايت). اختر صورة أصغر.",
+  "The image is damaged or incomplete. Please choose another image.": "الصورة تالفة أو غير مكتملة. اختر صورة أخرى."
 }

@@ -122,8 +122,15 @@
     "copied": "Copied to clipboard"
   },
   "failed": "Checkout failed, please try again",
+  "imageUpload": {
+    "tooLarge": "The image is larger than 5 MB. Please choose a smaller one.",
+    "notImage": "The selected file is not an image. Please choose a JPG or PNG image.",
+    "empty": "The image is empty or damaged. Please choose another one.",
+    "corrupted": "The image is damaged or incomplete. Please choose another one."
+  },
   "receipt": {
     "title": "Purchase Receipt",
+    "close": "Close",
     "serial": "Serial",
     "status": "Status",
     "subtotal": "Subtotal",

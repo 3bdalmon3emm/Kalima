@@ -17,6 +17,7 @@ import { PhoneInput, egyptPhoneSchema } from "@/components/ui/phone-input";
 import { Label } from "@/components/ui/label";
 import { getImageUrl } from "@/lib/storeUtils";
 import { cn } from "@/lib/utils";
+import { checkImageFile } from "@/lib/imageFile";
 
 export default function FastBuyPaymentDetailsCard({
   state,
@@ -209,9 +210,14 @@ export default function FastBuyPaymentDetailsCard({
                         id="screenshot"
                         type="file"
                         accept="image/*"
-                        onChange={(e) =>
-                          updateField("paymentScreenshot", e.target.files?.[0] ?? null)
-                        }
+                        onChange={(e) => {
+                          const file = e.target.files?.[0] ?? null;
+                          if (file && !checkImageFile(file)) {
+                            e.target.value = "";
+                            return;
+                          }
+                          updateField("paymentScreenshot", file);
+                        }}
                         className="hidden"
                         data-testid="fastbuy-payment-file-input"
                       />

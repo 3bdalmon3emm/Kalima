@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { checkImageFile } from "@/lib/imageFile";
 
 export default function PaymentDetailsCard({
   state,
@@ -88,9 +89,14 @@ export default function PaymentDetailsCard({
               id="screenshot"
               type="file"
               accept="image/*"
-              onChange={(e) =>
-                updateField("paymentScreenshot", e.target.files?.[0] ?? null)
-              }
+              onChange={(e) => {
+                const file = e.target.files?.[0] ?? null;
+                if (file && !checkImageFile(file)) {
+                  e.target.value = "";
+                  return;
+                }
+                updateField("paymentScreenshot", file);
+              }}
               className="hidden"
               data-testid="checkout-payment-file-input"
             />

@@ -136,7 +136,14 @@ export class ImageService {
           break;
       }
 
-      finalBuffer = await pipeline.toBuffer();
+      try {
+        finalBuffer = await pipeline.toBuffer();
+      } catch (error) {
+        // sharp/libvips fails on truncated or corrupt images (e.g. "premature end
+        // of JPEG"). That is bad input from the client, not a server fault, so
+        // answer 400 with a message the buyer can act on instead of a generic 500.
+        throw new BadRequestError("The image is damaged or incomplete. Please choose another image.");
+      }
       finalMime = mimeEnum;
       ext = extensionForImage(file, mimeEnum);
     } else {

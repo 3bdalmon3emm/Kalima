@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { MessageCircle } from "lucide-react";
+import { MessageCircle, X } from "lucide-react";
 import { AlertDialog, AlertDialogContent, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { getImageUrl } from "@/lib/storeUtils";
@@ -7,7 +7,9 @@ import { buildWhatsAppLink } from "@/lib/whatsappUtils";
 
 const ORDER_TRACKING_WHATSAPP_NUMBER = "201044067113";
 
-export default function PurchaseTrackingDialog({ purchase, paymentMethodName = "" }) {
+// onClose is optional: without it the receipt stays up until the user continues
+// on WhatsApp (fast-buy flow). With it, an X lets the buyer dismiss the receipt.
+export default function PurchaseTrackingDialog({ purchase, paymentMethodName = "", onClose }) {
   const { t } = useTranslation("checkout");
   const trackingMessage = purchase
     ? `مرحباً، رقم طلبي المميز هو ${purchase.purchase_serial || `#${purchase.id}`} وأرغب في معرفة حالة الطلب`
@@ -21,6 +23,17 @@ export default function PurchaseTrackingDialog({ purchase, paymentMethodName = "
         onEscapeKeyDown={(event) => event.preventDefault()}
         onPointerDownOutside={(event) => event.preventDefault()}
       >
+        {onClose && (
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label={t("receipt.close", "Close")}
+            className="absolute end-3 top-3 rounded-sm p-1 text-muted-foreground opacity-70 transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring"
+            data-testid="checkout-payment-step-receipt-close-button"
+          >
+            <X className="h-4 w-4" />
+          </button>
+        )}
         <AlertDialogHeader>
           <AlertDialogTitle className="text-lg font-bold text-center">
             {t("receipt.title", "Purchase Receipt")}

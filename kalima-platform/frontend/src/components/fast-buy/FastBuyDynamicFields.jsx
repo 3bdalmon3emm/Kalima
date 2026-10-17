@@ -4,6 +4,7 @@ import { Label } from "@/components/ui/label";
 import { Upload, Package } from "lucide-react";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { motion } from "framer-motion";
+import { checkImageFile } from "@/lib/imageFile";
 
 export default function FastBuyDynamicFields({
   requiredFieldItems,
@@ -59,8 +60,13 @@ const DynamicFieldInput = ({ field, cartItemId, value, onChange }) => {
 
   const handleChange = (e) => {
     if (isImage) {
-      if (e.target.files?.[0]) {
-        onChange(cartItemId, field.id, e.target.files[0]);
+      const file = e.target.files?.[0];
+      if (file) {
+        if (!checkImageFile(file)) {
+          e.target.value = "";
+          return;
+        }
+        onChange(cartItemId, field.id, file);
       }
     } else {
       onChange(cartItemId, field.id, e.target.value);

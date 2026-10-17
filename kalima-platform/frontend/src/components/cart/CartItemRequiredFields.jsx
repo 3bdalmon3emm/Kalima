@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { PhoneInput, egyptPhoneSchema } from '@/components/ui/phone-input';
 import { cn } from '@/lib/utils';
+import { checkImageFile } from '@/lib/imageFile';
 import {
     Accordion,
     AccordionItem,
@@ -532,6 +533,10 @@ export default function CartItemRequiredFields({
                                                     accept="image/*"
                                                     onChange={e => {
                                                         const file = e.target.files?.[0];
+                                                        if (file && !checkImageFile(file)) {
+                                                            e.target.value = "";
+                                                            return;
+                                                        }
                                                         if (file) {
                                                             setImageFields(prev => ({
                                                                 ...prev,
