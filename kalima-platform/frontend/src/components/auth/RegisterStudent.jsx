@@ -1,3 +1,4 @@
+import LevelSelectItems from "@/components/LevelSelectItems";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -174,11 +175,7 @@ function StudentFields() {
                                 </SelectTrigger>
                             </FormControl>
                             <SelectContent>
-                                {levels.map((lvl) => (
-                                    <SelectItem key={lvl.id} value={String(lvl.id)}>
-                                        {lvl.title}
-                                    </SelectItem>
-                                ))}
+                                <LevelSelectItems levels={levels} />
                             </SelectContent>
                         </Select>
                         <FormMessage />

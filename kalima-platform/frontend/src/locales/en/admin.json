@@ -1080,7 +1080,27 @@
       "whatsappAuthFailedReason": "WhatsApp authentication failed: {{reason}}",
       "whatsappDisconnectedReason": "WhatsApp disconnected: {{reason}}"
     },
-    "expandSidebar": "Expand Sidebar"
+    "expandSidebar": "Expand Sidebar",
+    "levels": {
+      "title": "School levels",
+      "description": "Levels in Arabic and English, grouped by stage and ordered. Yearly promotion follows this order.",
+      "add": "Add level",
+      "edit": "Edit level",
+      "titleAr": "Arabic name",
+      "titleEn": "English name",
+      "stage": "Stage",
+      "selectStage": "Select stage",
+      "order": "Order",
+      "orderHint": "One order across all levels, from 1st Primary to 3rd Secondary. A student is promoted to the level with the next order.",
+      "active": "Active",
+      "inactive": "Inactive",
+      "noStage": "No stage",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Level saved",
+      "saveError": "Could not save the level",
+      "loadError": "Could not load levels"
+    }
   },
   "paymentMethods": {
     "title": "Payment Methods Management",

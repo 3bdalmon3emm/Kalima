@@ -1,3 +1,5 @@
+import LevelSelectItems from "@/components/LevelSelectItems";
+import { levelTitle } from "@/lib/levelUtils";
 import React from 'react';
 import { User, MapPin, GraduationCap } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -51,7 +53,7 @@ export default function LecturerCard({
                                     <SelectValue placeholder={t('details.selectLevel', 'Select Level')} />
                                 </SelectTrigger>
                                 <SelectContent position="popper">
-                                    {levels.map(l => <SelectItem key={l.id} value={String(l.id)}>{l.title}</SelectItem>)}
+                                    <LevelSelectItems levels={levels} />
                                 </SelectContent>
                             </Select>
                         </div>
@@ -103,7 +105,7 @@ export default function LecturerCard({
                                 <InfoRow
                                     icon={GraduationCap}
                                     label={t('details.level')}
-                                    value={lecturer.level?.title || lecturer.levels?.title || na}
+                                    value={levelTitle(lecturer.level || lecturer.levels) || na}
                                 />
                                 <InfoRow
                                     icon={MapPin}

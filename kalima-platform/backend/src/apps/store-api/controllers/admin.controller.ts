@@ -549,6 +549,7 @@ export const adminController = {
         userId,
         dto,
         roles,
+        { allowLevelChange: true },
       );
       res.status(200).json({
         success: true,

@@ -78,6 +78,11 @@ export type lecturers = Prisma.lecturersModel
  */
 export type levels = Prisma.levelsModel
 /**
+ * Model stages
+ * 
+ */
+export type stages = Prisma.stagesModel
+/**
  * Model parent_children
  * 
  */

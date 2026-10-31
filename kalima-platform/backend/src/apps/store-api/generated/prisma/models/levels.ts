@@ -28,56 +28,82 @@ export type AggregateLevels = {
 
 export type LevelsAvgAggregateOutputType = {
   id: number | null
+  stage_id: number | null
+  sort_order: number | null
 }
 
 export type LevelsSumAggregateOutputType = {
   id: number | null
+  stage_id: number | null
+  sort_order: number | null
 }
 
 export type LevelsMinAggregateOutputType = {
   id: number | null
   title: string | null
+  title_ar: string | null
   active: boolean | null
+  stage_id: number | null
+  sort_order: number | null
 }
 
 export type LevelsMaxAggregateOutputType = {
   id: number | null
   title: string | null
+  title_ar: string | null
   active: boolean | null
+  stage_id: number | null
+  sort_order: number | null
 }
 
 export type LevelsCountAggregateOutputType = {
   id: number
   title: number
+  title_ar: number
   active: number
+  stage_id: number
+  sort_order: number
   _all: number
 }
 
 
 export type LevelsAvgAggregateInputType = {
   id?: true
+  stage_id?: true
+  sort_order?: true
 }
 
 export type LevelsSumAggregateInputType = {
   id?: true
+  stage_id?: true
+  sort_order?: true
 }
 
 export type LevelsMinAggregateInputType = {
   id?: true
   title?: true
+  title_ar?: true
   active?: true
+  stage_id?: true
+  sort_order?: true
 }
 
 export type LevelsMaxAggregateInputType = {
   id?: true
   title?: true
+  title_ar?: true
   active?: true
+  stage_id?: true
+  sort_order?: true
 }
 
 export type LevelsCountAggregateInputType = {
   id?: true
   title?: true
+  title_ar?: true
   active?: true
+  stage_id?: true
+  sort_order?: true
   _all?: true
 }
 
@@ -170,7 +196,10 @@ export type levelsGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 export type LevelsGroupByOutputType = {
   id: number
   title: string
+  title_ar: string | null
   active: boolean | null
+  stage_id: number | null
+  sort_order: number | null
   _count: LevelsCountAggregateOutputType | null
   _avg: LevelsAvgAggregateOutputType | null
   _sum: LevelsSumAggregateOutputType | null
@@ -199,15 +228,23 @@ export type levelsWhereInput = {
   NOT?: Prisma.levelsWhereInput | Prisma.levelsWhereInput[]
   id?: Prisma.IntFilter<"levels"> | number
   title?: Prisma.StringFilter<"levels"> | string
+  title_ar?: Prisma.StringNullableFilter<"levels"> | string | null
   active?: Prisma.BoolNullableFilter<"levels"> | boolean | null
+  stage_id?: Prisma.IntNullableFilter<"levels"> | number | null
+  sort_order?: Prisma.IntNullableFilter<"levels"> | number | null
   students?: Prisma.StudentsListRelationFilter
+  stages?: Prisma.XOR<Prisma.StagesNullableScalarRelationFilter, Prisma.stagesWhereInput> | null
 }
 
 export type levelsOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  title_ar?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrderInput | Prisma.SortOrder
+  stage_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  sort_order?: Prisma.SortOrderInput | Prisma.SortOrder
   students?: Prisma.studentsOrderByRelationAggregateInput
+  stages?: Prisma.stagesOrderByWithRelationInput
 }
 
 export type levelsWhereUniqueInput = Prisma.AtLeast<{
@@ -216,14 +253,21 @@ export type levelsWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.levelsWhereInput | Prisma.levelsWhereInput[]
   OR?: Prisma.levelsWhereInput[]
   NOT?: Prisma.levelsWhereInput | Prisma.levelsWhereInput[]
+  title_ar?: Prisma.StringNullableFilter<"levels"> | string | null
   active?: Prisma.BoolNullableFilter<"levels"> | boolean | null
+  stage_id?: Prisma.IntNullableFilter<"levels"> | number | null
+  sort_order?: Prisma.IntNullableFilter<"levels"> | number | null
   students?: Prisma.StudentsListRelationFilter
+  stages?: Prisma.XOR<Prisma.StagesNullableScalarRelationFilter, Prisma.stagesWhereInput> | null
 }, "id" | "title">
 
 export type levelsOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  title_ar?: Prisma.SortOrderInput | Prisma.SortOrder
   active?: Prisma.SortOrderInput | Prisma.SortOrder
+  stage_id?: Prisma.SortOrderInput | Prisma.SortOrder
+  sort_order?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.levelsCountOrderByAggregateInput
   _avg?: Prisma.levelsAvgOrderByAggregateInput
   _max?: Prisma.levelsMaxOrderByAggregateInput
@@ -237,81 +281,169 @@ export type levelsScalarWhereWithAggregatesInput = {
   NOT?: Prisma.levelsScalarWhereWithAggregatesInput | Prisma.levelsScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"levels"> | number
   title?: Prisma.StringWithAggregatesFilter<"levels"> | string
+  title_ar?: Prisma.StringNullableWithAggregatesFilter<"levels"> | string | null
   active?: Prisma.BoolNullableWithAggregatesFilter<"levels"> | boolean | null
+  stage_id?: Prisma.IntNullableWithAggregatesFilter<"levels"> | number | null
+  sort_order?: Prisma.IntNullableWithAggregatesFilter<"levels"> | number | null
 }
 
 export type levelsCreateInput = {
   title: string
+  title_ar?: string | null
   active?: boolean | null
+  sort_order?: number | null
   students?: Prisma.studentsCreateNestedManyWithoutLevelsInput
+  stages?: Prisma.stagesCreateNestedOneWithoutLevelsInput
 }
 
 export type levelsUncheckedCreateInput = {
   id?: number
   title: string
+  title_ar?: string | null
   active?: boolean | null
+  stage_id?: number | null
+  sort_order?: number | null
   students?: Prisma.studentsUncheckedCreateNestedManyWithoutLevelsInput
 }
 
 export type levelsUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUpdateManyWithoutLevelsNestedInput
+  stages?: Prisma.stagesUpdateOneWithoutLevelsNestedInput
 }
 
 export type levelsUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUncheckedUpdateManyWithoutLevelsNestedInput
 }
 
 export type levelsCreateManyInput = {
   id?: number
   title: string
+  title_ar?: string | null
   active?: boolean | null
+  stage_id?: number | null
+  sort_order?: number | null
 }
 
 export type levelsUpdateManyMutationInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type levelsUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 export type levelsCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  title_ar?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  stage_id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type levelsAvgOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  stage_id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type levelsMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  title_ar?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  stage_id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type levelsMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
+  title_ar?: Prisma.SortOrder
   active?: Prisma.SortOrder
+  stage_id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
 }
 
 export type levelsSumOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  stage_id?: Prisma.SortOrder
+  sort_order?: Prisma.SortOrder
+}
+
+export type LevelsListRelationFilter = {
+  every?: Prisma.levelsWhereInput
+  some?: Prisma.levelsWhereInput
+  none?: Prisma.levelsWhereInput
+}
+
+export type levelsOrderByRelationAggregateInput = {
+  _count?: Prisma.SortOrder
 }
 
 export type LevelsNullableScalarRelationFilter = {
   is?: Prisma.levelsWhereInput | null
   isNot?: Prisma.levelsWhereInput | null
+}
+
+export type levelsCreateNestedManyWithoutStagesInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput> | Prisma.levelsCreateWithoutStagesInput[] | Prisma.levelsUncheckedCreateWithoutStagesInput[]
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutStagesInput | Prisma.levelsCreateOrConnectWithoutStagesInput[]
+  createMany?: Prisma.levelsCreateManyStagesInputEnvelope
+  connect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+}
+
+export type levelsUncheckedCreateNestedManyWithoutStagesInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput> | Prisma.levelsCreateWithoutStagesInput[] | Prisma.levelsUncheckedCreateWithoutStagesInput[]
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutStagesInput | Prisma.levelsCreateOrConnectWithoutStagesInput[]
+  createMany?: Prisma.levelsCreateManyStagesInputEnvelope
+  connect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+}
+
+export type levelsUpdateManyWithoutStagesNestedInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput> | Prisma.levelsCreateWithoutStagesInput[] | Prisma.levelsUncheckedCreateWithoutStagesInput[]
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutStagesInput | Prisma.levelsCreateOrConnectWithoutStagesInput[]
+  upsert?: Prisma.levelsUpsertWithWhereUniqueWithoutStagesInput | Prisma.levelsUpsertWithWhereUniqueWithoutStagesInput[]
+  createMany?: Prisma.levelsCreateManyStagesInputEnvelope
+  set?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  disconnect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  delete?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  connect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  update?: Prisma.levelsUpdateWithWhereUniqueWithoutStagesInput | Prisma.levelsUpdateWithWhereUniqueWithoutStagesInput[]
+  updateMany?: Prisma.levelsUpdateManyWithWhereWithoutStagesInput | Prisma.levelsUpdateManyWithWhereWithoutStagesInput[]
+  deleteMany?: Prisma.levelsScalarWhereInput | Prisma.levelsScalarWhereInput[]
+}
+
+export type levelsUncheckedUpdateManyWithoutStagesNestedInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput> | Prisma.levelsCreateWithoutStagesInput[] | Prisma.levelsUncheckedCreateWithoutStagesInput[]
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutStagesInput | Prisma.levelsCreateOrConnectWithoutStagesInput[]
+  upsert?: Prisma.levelsUpsertWithWhereUniqueWithoutStagesInput | Prisma.levelsUpsertWithWhereUniqueWithoutStagesInput[]
+  createMany?: Prisma.levelsCreateManyStagesInputEnvelope
+  set?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  disconnect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  delete?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  connect?: Prisma.levelsWhereUniqueInput | Prisma.levelsWhereUniqueInput[]
+  update?: Prisma.levelsUpdateWithWhereUniqueWithoutStagesInput | Prisma.levelsUpdateWithWhereUniqueWithoutStagesInput[]
+  updateMany?: Prisma.levelsUpdateManyWithWhereWithoutStagesInput | Prisma.levelsUpdateManyWithWhereWithoutStagesInput[]
+  deleteMany?: Prisma.levelsScalarWhereInput | Prisma.levelsScalarWhereInput[]
 }
 
 export type levelsCreateNestedOneWithoutStudentsInput = {
@@ -330,15 +462,76 @@ export type levelsUpdateOneWithoutStudentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.levelsUpdateToOneWithWhereWithoutStudentsInput, Prisma.levelsUpdateWithoutStudentsInput>, Prisma.levelsUncheckedUpdateWithoutStudentsInput>
 }
 
+export type levelsCreateWithoutStagesInput = {
+  title: string
+  title_ar?: string | null
+  active?: boolean | null
+  sort_order?: number | null
+  students?: Prisma.studentsCreateNestedManyWithoutLevelsInput
+}
+
+export type levelsUncheckedCreateWithoutStagesInput = {
+  id?: number
+  title: string
+  title_ar?: string | null
+  active?: boolean | null
+  sort_order?: number | null
+  students?: Prisma.studentsUncheckedCreateNestedManyWithoutLevelsInput
+}
+
+export type levelsCreateOrConnectWithoutStagesInput = {
+  where: Prisma.levelsWhereUniqueInput
+  create: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput>
+}
+
+export type levelsCreateManyStagesInputEnvelope = {
+  data: Prisma.levelsCreateManyStagesInput | Prisma.levelsCreateManyStagesInput[]
+  skipDuplicates?: boolean
+}
+
+export type levelsUpsertWithWhereUniqueWithoutStagesInput = {
+  where: Prisma.levelsWhereUniqueInput
+  update: Prisma.XOR<Prisma.levelsUpdateWithoutStagesInput, Prisma.levelsUncheckedUpdateWithoutStagesInput>
+  create: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput>
+}
+
+export type levelsUpdateWithWhereUniqueWithoutStagesInput = {
+  where: Prisma.levelsWhereUniqueInput
+  data: Prisma.XOR<Prisma.levelsUpdateWithoutStagesInput, Prisma.levelsUncheckedUpdateWithoutStagesInput>
+}
+
+export type levelsUpdateManyWithWhereWithoutStagesInput = {
+  where: Prisma.levelsScalarWhereInput
+  data: Prisma.XOR<Prisma.levelsUpdateManyMutationInput, Prisma.levelsUncheckedUpdateManyWithoutStagesInput>
+}
+
+export type levelsScalarWhereInput = {
+  AND?: Prisma.levelsScalarWhereInput | Prisma.levelsScalarWhereInput[]
+  OR?: Prisma.levelsScalarWhereInput[]
+  NOT?: Prisma.levelsScalarWhereInput | Prisma.levelsScalarWhereInput[]
+  id?: Prisma.IntFilter<"levels"> | number
+  title?: Prisma.StringFilter<"levels"> | string
+  title_ar?: Prisma.StringNullableFilter<"levels"> | string | null
+  active?: Prisma.BoolNullableFilter<"levels"> | boolean | null
+  stage_id?: Prisma.IntNullableFilter<"levels"> | number | null
+  sort_order?: Prisma.IntNullableFilter<"levels"> | number | null
+}
+
 export type levelsCreateWithoutStudentsInput = {
   title: string
+  title_ar?: string | null
   active?: boolean | null
+  sort_order?: number | null
+  stages?: Prisma.stagesCreateNestedOneWithoutLevelsInput
 }
 
 export type levelsUncheckedCreateWithoutStudentsInput = {
   id?: number
   title: string
+  title_ar?: string | null
   active?: boolean | null
+  stage_id?: number | null
+  sort_order?: number | null
 }
 
 export type levelsCreateOrConnectWithoutStudentsInput = {
@@ -359,13 +552,52 @@ export type levelsUpdateToOneWithWhereWithoutStudentsInput = {
 
 export type levelsUpdateWithoutStudentsInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  stages?: Prisma.stagesUpdateOneWithoutLevelsNestedInput
 }
 
 export type levelsUncheckedUpdateWithoutStudentsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+}
+
+export type levelsCreateManyStagesInput = {
+  id?: number
+  title: string
+  title_ar?: string | null
+  active?: boolean | null
+  sort_order?: number | null
+}
+
+export type levelsUpdateWithoutStagesInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  students?: Prisma.studentsUpdateManyWithoutLevelsNestedInput
+}
+
+export type levelsUncheckedUpdateWithoutStagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  students?: Prisma.studentsUncheckedUpdateManyWithoutLevelsNestedInput
+}
+
+export type levelsUncheckedUpdateManyWithoutStagesInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
 }
 
 
@@ -402,46 +634,70 @@ export type LevelsCountOutputTypeCountStudentsArgs<ExtArgs extends runtime.Types
 export type levelsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  title_ar?: boolean
   active?: boolean
+  stage_id?: boolean
+  sort_order?: boolean
   students?: boolean | Prisma.levels$studentsArgs<ExtArgs>
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
   _count?: boolean | Prisma.LevelsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["levels"]>
 
 export type levelsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  title_ar?: boolean
   active?: boolean
+  stage_id?: boolean
+  sort_order?: boolean
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
 }, ExtArgs["result"]["levels"]>
 
 export type levelsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
+  title_ar?: boolean
   active?: boolean
+  stage_id?: boolean
+  sort_order?: boolean
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
 }, ExtArgs["result"]["levels"]>
 
 export type levelsSelectScalar = {
   id?: boolean
   title?: boolean
+  title_ar?: boolean
   active?: boolean
+  stage_id?: boolean
+  sort_order?: boolean
 }
 
-export type levelsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "active", ExtArgs["result"]["levels"]>
+export type levelsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "title_ar" | "active" | "stage_id" | "sort_order", ExtArgs["result"]["levels"]>
 export type levelsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   students?: boolean | Prisma.levels$studentsArgs<ExtArgs>
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
   _count?: boolean | Prisma.LevelsCountOutputTypeDefaultArgs<ExtArgs>
 }
-export type levelsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
-export type levelsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
+export type levelsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
+}
+export type levelsIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
+}
 
 export type $levelsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   name: "levels"
   objects: {
     students: Prisma.$studentsPayload<ExtArgs>[]
+    stages: Prisma.$stagesPayload<ExtArgs> | null
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
     title: string
+    title_ar: string | null
     active: boolean | null
+    stage_id: number | null
+    sort_order: number | null
   }, ExtArgs["result"]["levels"]>
   composites: {}
 }
@@ -837,6 +1093,7 @@ readonly fields: levelsFieldRefs;
 export interface Prisma__levelsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   students<T extends Prisma.levels$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.levels$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$studentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  stages<T extends Prisma.levels$stagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.levels$stagesArgs<ExtArgs>>): Prisma.Prisma__stagesClient<runtime.Types.Result.GetResult<Prisma.$stagesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -868,7 +1125,10 @@ export interface Prisma__levelsClient<T, Null = never, ExtArgs extends runtime.T
 export interface levelsFieldRefs {
   readonly id: Prisma.FieldRef<"levels", 'Int'>
   readonly title: Prisma.FieldRef<"levels", 'String'>
+  readonly title_ar: Prisma.FieldRef<"levels", 'String'>
   readonly active: Prisma.FieldRef<"levels", 'Boolean'>
+  readonly stage_id: Prisma.FieldRef<"levels", 'Int'>
+  readonly sort_order: Prisma.FieldRef<"levels", 'Int'>
 }
     
 
@@ -1124,6 +1384,10 @@ export type levelsCreateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    */
   data: Prisma.levelsCreateManyInput | Prisma.levelsCreateManyInput[]
   skipDuplicates?: boolean
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.levelsIncludeCreateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1195,6 +1459,10 @@ export type levelsUpdateManyAndReturnArgs<ExtArgs extends runtime.Types.Extensio
    * Limit how many levels to update.
    */
   limit?: number
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.levelsIncludeUpdateManyAndReturn<ExtArgs> | null
 }
 
 /**
@@ -1287,6 +1555,25 @@ export type levels$studentsArgs<ExtArgs extends runtime.Types.Extensions.Interna
   take?: number
   skip?: number
   distinct?: Prisma.StudentsScalarFieldEnum | Prisma.StudentsScalarFieldEnum[]
+}
+
+/**
+ * levels.stages
+ */
+export type levels$stagesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the stages
+   */
+  select?: Prisma.stagesSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the stages
+   */
+  omit?: Prisma.stagesOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.stagesInclude<ExtArgs> | null
+  where?: Prisma.stagesWhereInput
 }
 
 /**

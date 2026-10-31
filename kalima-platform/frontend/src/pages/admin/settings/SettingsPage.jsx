@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next';
-import { Settings, User, Lock, Shield, Mail, History, Settings2, Users } from 'lucide-react';
+import { Settings, User, Lock, Shield, Mail, History, Settings2, Users, GraduationCap } from 'lucide-react';
 
 import ProfileSection from '@/components/admin/settings/ProfileSection';
 import PasswordSection from '@/components/admin/settings/PasswordSection';
@@ -8,6 +8,7 @@ import SecuritySection from '@/components/admin/settings/SecuritySection';
 import SessionSection from '@/components/admin/settings/SessionSection';
 import AccountReviewSection from '@/components/admin/settings/AccountReviewSection';
 import GeneralSettingsSection from '@/components/admin/settings/GeneralSettingsSection';
+import LevelsSection from '@/components/admin/settings/LevelsSection';
 import SettingsSearch from '@/components/admin/settings/SettingsSearch';
 
 export default function SettingsPage() {
@@ -21,6 +22,7 @@ export default function SettingsPage() {
         { id: 'security', dataKey: 'email', subKeys: ['account.delete', 'account.dangerZone'], translationKey: 'settings.email.title', icon: Mail, component: SecuritySection },
         { id: 'session', dataKey: 'session', translationKey: 'settings.session.title', icon: History, component: SessionSection },
         { id: 'general', dataKey: 'general', translationKey: 'settings.general.title', icon: Settings2, component: GeneralSettingsSection },
+        { id: 'levels', dataKey: 'levels', translationKey: 'settings.levels.title', icon: GraduationCap, component: LevelsSection },
         { id: 'review', dataKey: 'accountReview', translationKey: 'settings.accountReview.title', icon: Users, component: AccountReviewSection },
     ];
 

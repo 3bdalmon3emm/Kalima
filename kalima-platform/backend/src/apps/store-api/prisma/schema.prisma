@@ -193,10 +193,22 @@ model lecturers {
 }
 
 model levels {
-  id       Int        @id @default(autoincrement())
-  title    String     @unique @db.VarChar(255)
-  active   Boolean?   @default(true)
-  students students[]
+  id         Int        @id @default(autoincrement())
+  title      String     @unique @db.VarChar(255)
+  title_ar   String?    @db.VarChar(255)
+  active     Boolean?   @default(true)
+  stage_id   Int?
+  sort_order Int?
+  students   students[]
+  stages     stages?    @relation(fields: [stage_id], references: [id], onUpdate: NoAction)
+}
+
+model stages {
+  id         Int      @id @default(autoincrement())
+  title      String   @unique @db.VarChar(255)
+  title_ar   String   @db.VarChar(255)
+  sort_order Int      @default(0)
+  levels     levels[]
 }
 
 model parent_children {

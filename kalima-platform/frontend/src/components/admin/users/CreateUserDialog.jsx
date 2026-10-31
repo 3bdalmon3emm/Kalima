@@ -1,3 +1,4 @@
+import LevelSelectItems from "@/components/LevelSelectItems";
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Plus } from 'lucide-react';
@@ -598,11 +599,7 @@ export default function CreateUserDialog({ onSuccess }) {
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    {levels.map((lvl) => (
-                                                        <SelectItem key={lvl.id} value={String(lvl.id)}>
-                                                            {lvl.title}
-                                                        </SelectItem>
-                                                    ))}
+                                                    <LevelSelectItems levels={levels} />
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />

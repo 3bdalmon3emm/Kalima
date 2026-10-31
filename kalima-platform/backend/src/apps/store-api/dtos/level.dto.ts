@@ -4,6 +4,8 @@ import {
   IsOptional,
   MaxLength,
   IsBoolean,
+  IsInt,
+  Min,
 } from "class-validator";
 
 export class CreateLevelDto {
@@ -11,6 +13,18 @@ export class CreateLevelDto {
   @IsNotEmpty()
   @MaxLength(255)
   title: string;
+
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  title_ar: string;
+
+  @IsInt()
+  stage_id: number;
+
+  @IsInt()
+  @Min(1)
+  sort_order: number;
 
   @IsOptional()
   @IsBoolean()
@@ -23,6 +37,21 @@ export class UpdateLevelDto {
   @IsNotEmpty()
   @MaxLength(255)
   title?: string;
+
+  @IsOptional()
+  @IsString()
+  @IsNotEmpty()
+  @MaxLength(255)
+  title_ar?: string;
+
+  @IsOptional()
+  @IsInt()
+  stage_id?: number;
+
+  @IsOptional()
+  @IsInt()
+  @Min(1)
+  sort_order?: number;
 
   @IsOptional()
   @IsBoolean()

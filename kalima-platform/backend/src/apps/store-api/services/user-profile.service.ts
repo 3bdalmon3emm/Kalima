@@ -41,7 +41,7 @@ const PROFILE_INCLUDE = {
       parent_phone_number: true,
       sequenced_id: true,
       faction: true,
-      levels: { select: { id: true, title: true } },
+      levels: { select: { id: true, title: true, title_ar: true } },
       government: { select: { id: true, title: true } },
       zones: { select: { id: true, title: true } },
     },
@@ -134,6 +134,7 @@ class UserProfileService {
     userId: number,
     dto: UpdateProfileDto,
     userRoles: string[],
+    options: { allowLevelChange?: boolean } = {},
   ) {
     const user = await this.db.users.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundError("User not found");
@@ -219,6 +220,19 @@ class UserProfileService {
       let hasStudentUpdate = false;
 
       if (dto.level_id !== undefined) {
+        // A student never picks their own level after signup: it moves with
+        // the yearly promotion or by an admin from the users list.
+        if (!options.allowLevelChange) {
+          const current = await this.db.students.findUnique({
+            where: { user_id: userId },
+            select: { level_id: true },
+          });
+          if (current?.level_id !== dto.level_id) {
+            throw new ForbiddenError(
+              "Students cannot change their own level",
+            );
+          }
+        }
         const lvl = await this.db.levels.findUnique({
           where: { id: dto.level_id },
         });

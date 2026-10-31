@@ -396,6 +396,7 @@ export const ModelName = {
   government: 'government',
   lecturers: 'lecturers',
   levels: 'levels',
+  stages: 'stages',
   parent_children: 'parent_children',
   parents: 'parents',
   sites: 'sites',
@@ -479,7 +480,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications"
+    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1368,6 +1369,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         count: {
           args: Prisma.levelsCountArgs<ExtArgs>
           result: runtime.Types.Utils.Optional<Prisma.LevelsCountAggregateOutputType> | number
+        }
+      }
+    }
+    stages: {
+      payload: Prisma.$stagesPayload<ExtArgs>
+      fields: Prisma.stagesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.stagesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.stagesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        findFirst: {
+          args: Prisma.stagesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.stagesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        findMany: {
+          args: Prisma.stagesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>[]
+        }
+        create: {
+          args: Prisma.stagesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        createMany: {
+          args: Prisma.stagesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.stagesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>[]
+        }
+        delete: {
+          args: Prisma.stagesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        update: {
+          args: Prisma.stagesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        deleteMany: {
+          args: Prisma.stagesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.stagesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.stagesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>[]
+        }
+        upsert: {
+          args: Prisma.stagesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$stagesPayload>
+        }
+        aggregate: {
+          args: Prisma.StagesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateStages>
+        }
+        groupBy: {
+          args: Prisma.stagesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StagesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.stagesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.StagesCountAggregateOutputType> | number
         }
       }
     }
@@ -6586,10 +6661,23 @@ export type LecturersScalarFieldEnum = (typeof LecturersScalarFieldEnum)[keyof t
 export const LevelsScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  active: 'active'
+  title_ar: 'title_ar',
+  active: 'active',
+  stage_id: 'stage_id',
+  sort_order: 'sort_order'
 } as const
 
 export type LevelsScalarFieldEnum = (typeof LevelsScalarFieldEnum)[keyof typeof LevelsScalarFieldEnum]
+
+
+export const StagesScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  title_ar: 'title_ar',
+  sort_order: 'sort_order'
+} as const
+
+export type StagesScalarFieldEnum = (typeof StagesScalarFieldEnum)[keyof typeof StagesScalarFieldEnum]
 
 
 export const Parent_childrenScalarFieldEnum = {
@@ -6792,6 +6880,7 @@ export const ProductsScalarFieldEnum = {
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
+  deleted_by: 'deleted_by',
   perks: 'perks'
 } as const
 
@@ -8384,6 +8473,7 @@ export type GlobalOmitConfig = {
   government?: Prisma.governmentOmit
   lecturers?: Prisma.lecturersOmit
   levels?: Prisma.levelsOmit
+  stages?: Prisma.stagesOmit
   parent_children?: Prisma.parent_childrenOmit
   parents?: Prisma.parentsOmit
   sites?: Prisma.sitesOmit

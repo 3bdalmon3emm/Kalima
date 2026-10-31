@@ -133,10 +133,13 @@ export const userProfileController = {
       const targetProfile = await userProfileService.getProfile(userId);
       const roles = (targetProfile.user_roles || []).map((r) => r.role);
 
+      // Only the admin path (/users/:userId) may move a student to another
+      // level; the self path keeps it locked.
       const updated = await userProfileService.updateProfile(
         userId,
         dto,
         roles,
+        { allowLevelChange: Boolean(req.params.userId) },
       );
       res.status(200).json({
         success: true,

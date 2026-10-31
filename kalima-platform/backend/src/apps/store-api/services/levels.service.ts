@@ -1,15 +1,32 @@
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
 import { CreateLevelDto, UpdateLevelDto } from "../dtos/level.dto";
-import { levels } from "../generated/prisma/client";
+import { levels, stages } from "../generated/prisma/client";
 import {
   NotFoundError,
   ConflictError,
   BadRequestError,
 } from "../../../libs/errors";
 
+// Stage order first, then the level's own order; levels not yet placed in a
+// stage fall to the end. The same order drives the yearly promotion.
+const LEVEL_ORDER = [
+  { stages: { sort_order: "asc" as const } },
+  { sort_order: { sort: "asc" as const, nulls: "last" as const } },
+  { title: "asc" as const },
+];
+
+const LEVEL_INCLUDE = {
+  stages: { select: { id: true, title: true, title_ar: true, sort_order: true } },
+};
+
 class LevelsService {
   constructor(private db: PrismaClient = prisma) {}
+
+  private async assertStage(stageId: number): Promise<void> {
+    const stage = await this.db.stages.findUnique({ where: { id: stageId } });
+    if (!stage) throw new BadRequestError("Stage not found");
+  }
 
   async createLevel(dto: CreateLevelDto): Promise<levels> {
     const existing = await this.db.levels.findFirst({
@@ -18,8 +35,17 @@ class LevelsService {
     if (existing)
       throw new ConflictError("Level with this title already exists");
 
+    await this.assertStage(dto.stage_id);
+
     const created = await this.db.levels.create({
-      data: { title: dto.title, active: dto.active ?? true },
+      data: {
+        title: dto.title,
+        title_ar: dto.title_ar,
+        stage_id: dto.stage_id,
+        sort_order: dto.sort_order,
+        active: dto.active ?? true,
+      },
+      include: LEVEL_INCLUDE,
     });
     return created;
   }
@@ -27,11 +53,22 @@ class LevelsService {
   async getAllLevels(filters?: { active?: boolean }): Promise<levels[]> {
     const where: any = {};
     if (filters?.active !== undefined) where.active = filters.active;
-    return this.db.levels.findMany({ where, orderBy: { title: "asc" } });
+    return this.db.levels.findMany({
+      where,
+      include: LEVEL_INCLUDE,
+      orderBy: LEVEL_ORDER,
+    });
+  }
+
+  async getAllStages(): Promise<stages[]> {
+    return this.db.stages.findMany({ orderBy: { sort_order: "asc" } });
   }
 
   async getLevelById(id: number): Promise<levels> {
-    const lvl = await this.db.levels.findUnique({ where: { id } });
+    const lvl = await this.db.levels.findUnique({
+      where: { id },
+      include: LEVEL_INCLUDE,
+    });
     if (!lvl) throw new NotFoundError("Level not found");
     return lvl;
   }
@@ -48,11 +85,20 @@ class LevelsService {
         throw new ConflictError("Level with this title already exists");
     }
 
+    if (dto.stage_id !== undefined) await this.assertStage(dto.stage_id);
+
     const data: any = {};
     if (dto.title !== undefined) data.title = dto.title;
+    if (dto.title_ar !== undefined) data.title_ar = dto.title_ar;
+    if (dto.stage_id !== undefined) data.stage_id = dto.stage_id;
+    if (dto.sort_order !== undefined) data.sort_order = dto.sort_order;
     if (dto.active !== undefined) data.active = dto.active;
 
-    const updated = await this.db.levels.update({ where: { id }, data });
+    const updated = await this.db.levels.update({
+      where: { id },
+      data,
+      include: LEVEL_INCLUDE,
+    });
     return updated;
   }
 

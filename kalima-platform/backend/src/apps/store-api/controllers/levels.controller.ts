@@ -60,6 +60,19 @@ export const levelsController = {
     }
   },
 
+  async getAllStages(
+    _req: Request,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> {
+    try {
+      const list = await levelsService.getAllStages();
+      res.status(200).json({ success: true, results: list.length, data: list });
+    } catch (err) {
+      _next(err);
+    }
+  },
+
   async getLevelById(
     req: Request,
     res: Response,

@@ -1,3 +1,4 @@
+import { levelTitle } from "@/lib/levelUtils";
 import React from 'react';
 import { GraduationCap, Hash, BookOpen, MapPin, User } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -160,7 +161,7 @@ export default function TeacherCard({
                                 teacher.is_primary && t('details.primary'),
                                 teacher.is_preparatory && t('details.preparatory'),
                                 teacher.is_secondary && t('details.secondary'),
-                                (teacher.level?.title || teacher.levels?.title),
+                                levelTitle(teacher.level || teacher.levels),
                             ].filter(Boolean);
 
                             return (

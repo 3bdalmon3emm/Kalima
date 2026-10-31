@@ -63,6 +63,7 @@ export const ModelName = {
   government: 'government',
   lecturers: 'lecturers',
   levels: 'levels',
+  stages: 'stages',
   parent_children: 'parent_children',
   parents: 'parents',
   sites: 'sites',
@@ -293,10 +294,23 @@ export type LecturersScalarFieldEnum = (typeof LecturersScalarFieldEnum)[keyof t
 export const LevelsScalarFieldEnum = {
   id: 'id',
   title: 'title',
-  active: 'active'
+  title_ar: 'title_ar',
+  active: 'active',
+  stage_id: 'stage_id',
+  sort_order: 'sort_order'
 } as const
 
 export type LevelsScalarFieldEnum = (typeof LevelsScalarFieldEnum)[keyof typeof LevelsScalarFieldEnum]
+
+
+export const StagesScalarFieldEnum = {
+  id: 'id',
+  title: 'title',
+  title_ar: 'title_ar',
+  sort_order: 'sort_order'
+} as const
+
+export type StagesScalarFieldEnum = (typeof StagesScalarFieldEnum)[keyof typeof StagesScalarFieldEnum]
 
 
 export const Parent_childrenScalarFieldEnum = {
@@ -499,6 +513,7 @@ export const ProductsScalarFieldEnum = {
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
+  deleted_by: 'deleted_by',
   perks: 'perks'
 } as const
 

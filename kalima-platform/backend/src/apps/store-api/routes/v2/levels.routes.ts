@@ -15,6 +15,7 @@ const adminOnlyAuth = [authenticateToken, requireRole([role_enum.Admin])];
 // PUBLIC
 router.get("/export", ...adminAuth, makeExportHandler("levels"));
 router.get("/", levelsController.getAllLevels);
+router.get("/stages", levelsController.getAllStages);
 router.get("/:id", levelsController.getLevelById);
 
 // ADMIN / SUBADMIN

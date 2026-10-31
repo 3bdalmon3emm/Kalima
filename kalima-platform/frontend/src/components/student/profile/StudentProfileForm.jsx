@@ -1,3 +1,4 @@
+import { levelTitle } from "@/lib/levelUtils";
 import { useTranslation } from 'react-i18next';
 import { User, BookOpen } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -23,7 +24,7 @@ export default function StudentProfileForm({
     const { t } = useTranslation(['student', 'common']);
     const government = governments.find((item) => item.id === defaultValues.government_id)?.title;
     const zone = zones.find((item) => item.id === defaultValues.zone_id)?.title;
-    const level = levels.find((item) => item.id === defaultValues.level_id)?.title;
+    const level = levelTitle(levels.find((item) => item.id === defaultValues.level_id));
     const gender = defaultValues.gender ? t(`student:profile.${defaultValues.gender}`, defaultValues.gender) : '';
 
     return (

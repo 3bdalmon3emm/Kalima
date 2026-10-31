@@ -1,3 +1,4 @@
+import { levelTitle } from "@/lib/levelUtils";
 import { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Camera, Loader2, Info } from 'lucide-react';
@@ -65,7 +66,7 @@ export default function StudentAvatarCard({ profile, uploadAvatar, fetchProfile 
 
                         <div className="mt-2 flex flex-wrap items-center gap-2">
                             {student?.levels?.title && (
-                                <Badge variant="secondary">{student.levels.title}</Badge>
+                                <Badge variant="secondary">{levelTitle(student.levels)}</Badge>
                             )}
 
                             {/* Student ID with tooltip */}
