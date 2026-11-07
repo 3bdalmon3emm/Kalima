@@ -168,6 +168,21 @@ export const userProfileController = {
     }
   },
 
+  async resolvePromotionNotice(req: Request, res: Response, next: NextFunction) {
+    try {
+      const { id } = getAuth(req);
+      const raw = req.body?.level_id;
+      const levelId =
+        raw === undefined || raw === null || raw === ""
+          ? undefined
+          : parseIntParam(String(raw), "level_id");
+      await userProfileService.resolvePromotionNotice(id, levelId);
+      res.status(200).json({ success: true, message: "Level confirmed" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async deleteAvatar(req: Request, res: Response, next: NextFunction) {
     try {
       const userId = resolveTargetUserId(req);

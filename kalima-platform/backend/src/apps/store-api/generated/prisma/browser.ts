@@ -83,6 +83,11 @@ export type levels = Prisma.levelsModel
  */
 export type stages = Prisma.stagesModel
 /**
+ * Model level_promotions
+ * 
+ */
+export type level_promotions = Prisma.level_promotionsModel
+/**
  * Model parent_children
  * 
  */

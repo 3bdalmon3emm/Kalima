@@ -211,6 +211,14 @@ model stages {
   levels     levels[]
 }
 
+model level_promotions {
+  year      Int      @id
+  ran_at    DateTime @default(now()) @db.Timestamptz(6)
+  promoted  Int      @default(0)
+  graduated Int      @default(0)
+  baseline  Boolean  @default(false)
+}
+
 model parent_children {
   id              Int      @id @default(autoincrement())
   parent_user_id  Int
@@ -256,6 +264,8 @@ model students {
   parent_phone_number String?           @db.VarChar(255)
   sequenced_id        Int?
   faction             String?           @db.VarChar(255)
+  graduated           Boolean           @default(false)
+  promotion_notice    Boolean           @default(false)
   parent_children     parent_children[]
   government          government?       @relation(fields: [government_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   levels              levels?           @relation(fields: [level_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

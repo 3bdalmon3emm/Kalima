@@ -125,6 +125,7 @@
     "bio": "Bio",
     "lecturerId": "Lecturer ID",
     "level": "Level",
+    "graduate": "Graduate",
     "government": "Government",
     "zone": "Zone",
     "subject": "Subject",

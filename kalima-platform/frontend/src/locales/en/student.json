@@ -179,5 +179,18 @@
     "loading": "Loading...",
     "cancel": "Cancel",
     "save": "Save"
+  },
+  "promotion": {
+    "title": "You moved up to a new school year",
+    "body": "The school year ended on 30 June and you were promoted automatically to {{level}}. If you already picked your new year when you signed up in June, you may have moved up one year too many, so pick your correct year.",
+    "once": "You can change your year here only once; after that an admin changes it.",
+    "stage": "Stage",
+    "selectStage": "Select stage",
+    "level": "School year",
+    "selectLevel": "Select school year",
+    "confirm": "Confirm year",
+    "saved": "Your school year was saved",
+    "saveError": "Could not save your school year",
+    "graduate": "Graduate"
   }
 }

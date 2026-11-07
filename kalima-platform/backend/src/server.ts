@@ -17,6 +17,7 @@ import { emitStorePurchaseToAdmins } from "./libs/redis/socketNotificationEmitte
 import cors from "cors";
 import corsOptions from "./config/corsOptions";
 import { registerAllExportResources } from "./apps/store-api/export";
+import { promotionService } from "./apps/store-api/services/promotion.service";
 import { isProtectedSampleStaticPath } from "./libs/sampleStaticAccess";
 import { resolveUploadsRoot } from "./libs/uploadsRoot";
 import {
@@ -155,6 +156,8 @@ async function start() {
     httpServer.listen(PORT, () => {
       console.log(`🚀 Server running on port ${PORT}`);
     });
+
+    promotionService.startScheduler();
   } catch (err) {
     console.error(err);
     process.exit(1);

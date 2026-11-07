@@ -166,5 +166,7 @@
   "Stage with this title already exists": "توجد مرحلة بهذا الاسم بالفعل",
   "Cannot delete a stage that still has levels": "لا يمكن حذف مرحلة تحتوي على صفوف",
   "Level with this title already exists": "يوجد صف بهذا الاسم بالفعل",
-  "Students cannot change their own level": "لا يمكن للطالب تغيير سنته الدراسية بنفسه"
+  "Students cannot change their own level": "لا يمكن للطالب تغيير سنته الدراسية بنفسه",
+  "No pending promotion notice": "لا يوجد تأكيد سنة دراسية مطلوب",
+  "Level confirmed": "تم تأكيد السنة الدراسية"
 }

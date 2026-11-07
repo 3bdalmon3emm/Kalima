@@ -68,6 +68,9 @@ export default function StudentAvatarCard({ profile, uploadAvatar, fetchProfile 
                             {student?.levels?.title && (
                                 <Badge variant="secondary">{levelTitle(student.levels)}</Badge>
                             )}
+                            {student?.graduated && (
+                                <Badge>{t('promotion.graduate')}</Badge>
+                            )}
 
                             {/* Student ID with tooltip */}
                             {profile?.id && (

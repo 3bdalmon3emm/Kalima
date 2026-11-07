@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Menu } from 'lucide-react';
 import StudentSidebar from '../components/student/StudentSidebar';
 import GlobalBackButton from '../components/GlobalBackButton';
+import PromotionNoticeDialog from '../components/student/PromotionNoticeDialog';
 
 export default function StudentLayout() {
     const { t } = useTranslation('student');
@@ -47,6 +48,7 @@ export default function StudentLayout() {
                     </div>
                     <Outlet />
                 </main>
+                <PromotionNoticeDialog />
             </div>
         </div>
     );

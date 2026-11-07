@@ -50,6 +50,8 @@ export type StudentsMinAggregateOutputType = {
   parent_phone_number: string | null
   sequenced_id: number | null
   faction: string | null
+  graduated: boolean | null
+  promotion_notice: boolean | null
 }
 
 export type StudentsMaxAggregateOutputType = {
@@ -60,6 +62,8 @@ export type StudentsMaxAggregateOutputType = {
   parent_phone_number: string | null
   sequenced_id: number | null
   faction: string | null
+  graduated: boolean | null
+  promotion_notice: boolean | null
 }
 
 export type StudentsCountAggregateOutputType = {
@@ -70,6 +74,8 @@ export type StudentsCountAggregateOutputType = {
   parent_phone_number: number
   sequenced_id: number
   faction: number
+  graduated: number
+  promotion_notice: number
   _all: number
 }
 
@@ -98,6 +104,8 @@ export type StudentsMinAggregateInputType = {
   parent_phone_number?: true
   sequenced_id?: true
   faction?: true
+  graduated?: true
+  promotion_notice?: true
 }
 
 export type StudentsMaxAggregateInputType = {
@@ -108,6 +116,8 @@ export type StudentsMaxAggregateInputType = {
   parent_phone_number?: true
   sequenced_id?: true
   faction?: true
+  graduated?: true
+  promotion_notice?: true
 }
 
 export type StudentsCountAggregateInputType = {
@@ -118,6 +128,8 @@ export type StudentsCountAggregateInputType = {
   parent_phone_number?: true
   sequenced_id?: true
   faction?: true
+  graduated?: true
+  promotion_notice?: true
   _all?: true
 }
 
@@ -215,6 +227,8 @@ export type StudentsGroupByOutputType = {
   parent_phone_number: string | null
   sequenced_id: number | null
   faction: string | null
+  graduated: boolean
+  promotion_notice: boolean
   _count: StudentsCountAggregateOutputType | null
   _avg: StudentsAvgAggregateOutputType | null
   _sum: StudentsSumAggregateOutputType | null
@@ -248,6 +262,8 @@ export type studentsWhereInput = {
   parent_phone_number?: Prisma.StringNullableFilter<"students"> | string | null
   sequenced_id?: Prisma.IntNullableFilter<"students"> | number | null
   faction?: Prisma.StringNullableFilter<"students"> | string | null
+  graduated?: Prisma.BoolFilter<"students"> | boolean
+  promotion_notice?: Prisma.BoolFilter<"students"> | boolean
   parent_children?: Prisma.Parent_childrenListRelationFilter
   government?: Prisma.XOR<Prisma.GovernmentNullableScalarRelationFilter, Prisma.governmentWhereInput> | null
   levels?: Prisma.XOR<Prisma.LevelsNullableScalarRelationFilter, Prisma.levelsWhereInput> | null
@@ -263,6 +279,8 @@ export type studentsOrderByWithRelationInput = {
   parent_phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
   sequenced_id?: Prisma.SortOrderInput | Prisma.SortOrder
   faction?: Prisma.SortOrderInput | Prisma.SortOrder
+  graduated?: Prisma.SortOrder
+  promotion_notice?: Prisma.SortOrder
   parent_children?: Prisma.parent_childrenOrderByRelationAggregateInput
   government?: Prisma.governmentOrderByWithRelationInput
   levels?: Prisma.levelsOrderByWithRelationInput
@@ -281,6 +299,8 @@ export type studentsWhereUniqueInput = Prisma.AtLeast<{
   parent_phone_number?: Prisma.StringNullableFilter<"students"> | string | null
   sequenced_id?: Prisma.IntNullableFilter<"students"> | number | null
   faction?: Prisma.StringNullableFilter<"students"> | string | null
+  graduated?: Prisma.BoolFilter<"students"> | boolean
+  promotion_notice?: Prisma.BoolFilter<"students"> | boolean
   parent_children?: Prisma.Parent_childrenListRelationFilter
   government?: Prisma.XOR<Prisma.GovernmentNullableScalarRelationFilter, Prisma.governmentWhereInput> | null
   levels?: Prisma.XOR<Prisma.LevelsNullableScalarRelationFilter, Prisma.levelsWhereInput> | null
@@ -296,6 +316,8 @@ export type studentsOrderByWithAggregationInput = {
   parent_phone_number?: Prisma.SortOrderInput | Prisma.SortOrder
   sequenced_id?: Prisma.SortOrderInput | Prisma.SortOrder
   faction?: Prisma.SortOrderInput | Prisma.SortOrder
+  graduated?: Prisma.SortOrder
+  promotion_notice?: Prisma.SortOrder
   _count?: Prisma.studentsCountOrderByAggregateInput
   _avg?: Prisma.studentsAvgOrderByAggregateInput
   _max?: Prisma.studentsMaxOrderByAggregateInput
@@ -314,12 +336,16 @@ export type studentsScalarWhereWithAggregatesInput = {
   parent_phone_number?: Prisma.StringNullableWithAggregatesFilter<"students"> | string | null
   sequenced_id?: Prisma.IntNullableWithAggregatesFilter<"students"> | number | null
   faction?: Prisma.StringNullableWithAggregatesFilter<"students"> | string | null
+  graduated?: Prisma.BoolWithAggregatesFilter<"students"> | boolean
+  promotion_notice?: Prisma.BoolWithAggregatesFilter<"students"> | boolean
 }
 
 export type studentsCreateInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenCreateNestedManyWithoutStudentsInput
   government?: Prisma.governmentCreateNestedOneWithoutStudentsInput
   levels?: Prisma.levelsCreateNestedOneWithoutStudentsInput
@@ -335,6 +361,8 @@ export type studentsUncheckedCreateInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenUncheckedCreateNestedManyWithoutStudentsInput
 }
 
@@ -342,6 +370,8 @@ export type studentsUpdateInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUpdateManyWithoutStudentsNestedInput
   government?: Prisma.governmentUpdateOneWithoutStudentsNestedInput
   levels?: Prisma.levelsUpdateOneWithoutStudentsNestedInput
@@ -357,6 +387,8 @@ export type studentsUncheckedUpdateInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUncheckedUpdateManyWithoutStudentsNestedInput
 }
 
@@ -368,12 +400,16 @@ export type studentsCreateManyInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
 export type studentsUpdateManyMutationInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type studentsUncheckedUpdateManyInput = {
@@ -384,6 +420,8 @@ export type studentsUncheckedUpdateManyInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type StudentsNullableScalarRelationFilter = {
@@ -414,6 +452,8 @@ export type studentsCountOrderByAggregateInput = {
   parent_phone_number?: Prisma.SortOrder
   sequenced_id?: Prisma.SortOrder
   faction?: Prisma.SortOrder
+  graduated?: Prisma.SortOrder
+  promotion_notice?: Prisma.SortOrder
 }
 
 export type studentsAvgOrderByAggregateInput = {
@@ -432,6 +472,8 @@ export type studentsMaxOrderByAggregateInput = {
   parent_phone_number?: Prisma.SortOrder
   sequenced_id?: Prisma.SortOrder
   faction?: Prisma.SortOrder
+  graduated?: Prisma.SortOrder
+  promotion_notice?: Prisma.SortOrder
 }
 
 export type studentsMinOrderByAggregateInput = {
@@ -442,6 +484,8 @@ export type studentsMinOrderByAggregateInput = {
   parent_phone_number?: Prisma.SortOrder
   sequenced_id?: Prisma.SortOrder
   faction?: Prisma.SortOrder
+  graduated?: Prisma.SortOrder
+  promotion_notice?: Prisma.SortOrder
 }
 
 export type studentsSumOrderByAggregateInput = {
@@ -628,6 +672,8 @@ export type studentsCreateWithoutUsersInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenCreateNestedManyWithoutStudentsInput
   government?: Prisma.governmentCreateNestedOneWithoutStudentsInput
   levels?: Prisma.levelsCreateNestedOneWithoutStudentsInput
@@ -641,6 +687,8 @@ export type studentsUncheckedCreateWithoutUsersInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenUncheckedCreateNestedManyWithoutStudentsInput
 }
 
@@ -664,6 +712,8 @@ export type studentsUpdateWithoutUsersInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUpdateManyWithoutStudentsNestedInput
   government?: Prisma.governmentUpdateOneWithoutStudentsNestedInput
   levels?: Prisma.levelsUpdateOneWithoutStudentsNestedInput
@@ -677,6 +727,8 @@ export type studentsUncheckedUpdateWithoutUsersInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUncheckedUpdateManyWithoutStudentsNestedInput
 }
 
@@ -684,6 +736,8 @@ export type studentsCreateWithoutGovernmentInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenCreateNestedManyWithoutStudentsInput
   levels?: Prisma.levelsCreateNestedOneWithoutStudentsInput
   users: Prisma.usersCreateNestedOneWithoutStudentsInput
@@ -697,6 +751,8 @@ export type studentsUncheckedCreateWithoutGovernmentInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenUncheckedCreateNestedManyWithoutStudentsInput
 }
 
@@ -737,12 +793,16 @@ export type studentsScalarWhereInput = {
   parent_phone_number?: Prisma.StringNullableFilter<"students"> | string | null
   sequenced_id?: Prisma.IntNullableFilter<"students"> | number | null
   faction?: Prisma.StringNullableFilter<"students"> | string | null
+  graduated?: Prisma.BoolFilter<"students"> | boolean
+  promotion_notice?: Prisma.BoolFilter<"students"> | boolean
 }
 
 export type studentsCreateWithoutLevelsInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenCreateNestedManyWithoutStudentsInput
   government?: Prisma.governmentCreateNestedOneWithoutStudentsInput
   users: Prisma.usersCreateNestedOneWithoutStudentsInput
@@ -756,6 +816,8 @@ export type studentsUncheckedCreateWithoutLevelsInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenUncheckedCreateNestedManyWithoutStudentsInput
 }
 
@@ -789,6 +851,8 @@ export type studentsCreateWithoutParent_childrenInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   government?: Prisma.governmentCreateNestedOneWithoutStudentsInput
   levels?: Prisma.levelsCreateNestedOneWithoutStudentsInput
   users: Prisma.usersCreateNestedOneWithoutStudentsInput
@@ -803,6 +867,8 @@ export type studentsUncheckedCreateWithoutParent_childrenInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
 export type studentsCreateOrConnectWithoutParent_childrenInput = {
@@ -825,6 +891,8 @@ export type studentsUpdateWithoutParent_childrenInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   government?: Prisma.governmentUpdateOneWithoutStudentsNestedInput
   levels?: Prisma.levelsUpdateOneWithoutStudentsNestedInput
   users?: Prisma.usersUpdateOneRequiredWithoutStudentsNestedInput
@@ -839,12 +907,16 @@ export type studentsUncheckedUpdateWithoutParent_childrenInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type studentsCreateWithoutZonesInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenCreateNestedManyWithoutStudentsInput
   government?: Prisma.governmentCreateNestedOneWithoutStudentsInput
   levels?: Prisma.levelsCreateNestedOneWithoutStudentsInput
@@ -858,6 +930,8 @@ export type studentsUncheckedCreateWithoutZonesInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: Prisma.parent_childrenUncheckedCreateNestedManyWithoutStudentsInput
 }
 
@@ -894,12 +968,16 @@ export type studentsCreateManyGovernmentInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
 export type studentsUpdateWithoutGovernmentInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUpdateManyWithoutStudentsNestedInput
   levels?: Prisma.levelsUpdateOneWithoutStudentsNestedInput
   users?: Prisma.usersUpdateOneRequiredWithoutStudentsNestedInput
@@ -913,6 +991,8 @@ export type studentsUncheckedUpdateWithoutGovernmentInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUncheckedUpdateManyWithoutStudentsNestedInput
 }
 
@@ -923,6 +1003,8 @@ export type studentsUncheckedUpdateManyWithoutGovernmentInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type studentsCreateManyLevelsInput = {
@@ -932,12 +1014,16 @@ export type studentsCreateManyLevelsInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
 export type studentsUpdateWithoutLevelsInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUpdateManyWithoutStudentsNestedInput
   government?: Prisma.governmentUpdateOneWithoutStudentsNestedInput
   users?: Prisma.usersUpdateOneRequiredWithoutStudentsNestedInput
@@ -951,6 +1037,8 @@ export type studentsUncheckedUpdateWithoutLevelsInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUncheckedUpdateManyWithoutStudentsNestedInput
 }
 
@@ -961,6 +1049,8 @@ export type studentsUncheckedUpdateManyWithoutLevelsInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 export type studentsCreateManyZonesInput = {
@@ -970,12 +1060,16 @@ export type studentsCreateManyZonesInput = {
   parent_phone_number?: string | null
   sequenced_id?: number | null
   faction?: string | null
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
 export type studentsUpdateWithoutZonesInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUpdateManyWithoutStudentsNestedInput
   government?: Prisma.governmentUpdateOneWithoutStudentsNestedInput
   levels?: Prisma.levelsUpdateOneWithoutStudentsNestedInput
@@ -989,6 +1083,8 @@ export type studentsUncheckedUpdateWithoutZonesInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
   parent_children?: Prisma.parent_childrenUncheckedUpdateManyWithoutStudentsNestedInput
 }
 
@@ -999,6 +1095,8 @@ export type studentsUncheckedUpdateManyWithoutZonesInput = {
   parent_phone_number?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   sequenced_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   faction?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  graduated?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  promotion_notice?: Prisma.BoolFieldUpdateOperationsInput | boolean
 }
 
 
@@ -1040,6 +1138,8 @@ export type studentsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   parent_phone_number?: boolean
   sequenced_id?: boolean
   faction?: boolean
+  graduated?: boolean
+  promotion_notice?: boolean
   parent_children?: boolean | Prisma.students$parent_childrenArgs<ExtArgs>
   government?: boolean | Prisma.students$governmentArgs<ExtArgs>
   levels?: boolean | Prisma.students$levelsArgs<ExtArgs>
@@ -1056,6 +1156,8 @@ export type studentsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   parent_phone_number?: boolean
   sequenced_id?: boolean
   faction?: boolean
+  graduated?: boolean
+  promotion_notice?: boolean
   government?: boolean | Prisma.students$governmentArgs<ExtArgs>
   levels?: boolean | Prisma.students$levelsArgs<ExtArgs>
   users?: boolean | Prisma.usersDefaultArgs<ExtArgs>
@@ -1070,6 +1172,8 @@ export type studentsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   parent_phone_number?: boolean
   sequenced_id?: boolean
   faction?: boolean
+  graduated?: boolean
+  promotion_notice?: boolean
   government?: boolean | Prisma.students$governmentArgs<ExtArgs>
   levels?: boolean | Prisma.students$levelsArgs<ExtArgs>
   users?: boolean | Prisma.usersDefaultArgs<ExtArgs>
@@ -1084,9 +1188,11 @@ export type studentsSelectScalar = {
   parent_phone_number?: boolean
   sequenced_id?: boolean
   faction?: boolean
+  graduated?: boolean
+  promotion_notice?: boolean
 }
 
-export type studentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "level_id" | "government_id" | "zone_id" | "parent_phone_number" | "sequenced_id" | "faction", ExtArgs["result"]["students"]>
+export type studentsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"user_id" | "level_id" | "government_id" | "zone_id" | "parent_phone_number" | "sequenced_id" | "faction" | "graduated" | "promotion_notice", ExtArgs["result"]["students"]>
 export type studentsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   parent_children?: boolean | Prisma.students$parent_childrenArgs<ExtArgs>
   government?: boolean | Prisma.students$governmentArgs<ExtArgs>
@@ -1125,6 +1231,8 @@ export type $studentsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     parent_phone_number: string | null
     sequenced_id: number | null
     faction: string | null
+    graduated: boolean
+    promotion_notice: boolean
   }, ExtArgs["result"]["students"]>
   composites: {}
 }
@@ -1560,6 +1668,8 @@ export interface studentsFieldRefs {
   readonly parent_phone_number: Prisma.FieldRef<"students", 'String'>
   readonly sequenced_id: Prisma.FieldRef<"students", 'Int'>
   readonly faction: Prisma.FieldRef<"students", 'String'>
+  readonly graduated: Prisma.FieldRef<"students", 'Boolean'>
+  readonly promotion_notice: Prisma.FieldRef<"students", 'Boolean'>
 }
     
 

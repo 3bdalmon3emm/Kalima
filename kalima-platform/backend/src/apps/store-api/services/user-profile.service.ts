@@ -41,7 +41,9 @@ const PROFILE_INCLUDE = {
       parent_phone_number: true,
       sequenced_id: true,
       faction: true,
-      levels: { select: { id: true, title: true, title_ar: true } },
+      graduated: true,
+      promotion_notice: true,
+      levels: { select: { id: true, title: true, title_ar: true, stage_id: true } },
       government: { select: { id: true, title: true } },
       zones: { select: { id: true, title: true } },
     },
@@ -222,22 +224,25 @@ class UserProfileService {
       if (dto.level_id !== undefined) {
         // A student never picks their own level after signup: it moves with
         // the yearly promotion or by an admin from the users list.
-        if (!options.allowLevelChange) {
-          const current = await this.db.students.findUnique({
-            where: { user_id: userId },
-            select: { level_id: true },
-          });
-          if (current?.level_id !== dto.level_id) {
-            throw new ForbiddenError(
-              "Students cannot change their own level",
-            );
-          }
+        const current = await this.db.students.findUnique({
+          where: { user_id: userId },
+          select: { level_id: true },
+        });
+        const changed = current?.level_id !== dto.level_id;
+        if (changed && !options.allowLevelChange) {
+          throw new ForbiddenError("Students cannot change their own level");
         }
         const lvl = await this.db.levels.findUnique({
           where: { id: dto.level_id },
         });
         if (!lvl) throw new NotFoundError("Level not found");
         studentData.level_id = dto.level_id;
+        // A new level from the admin starts the student over: no longer a
+        // graduate, and any pending promotion notice is settled.
+        if (changed) {
+          studentData.graduated = false;
+          studentData.promotion_notice = false;
+        }
         hasStudentUpdate = true;
       }
       if (dto.faction !== undefined) {
@@ -335,6 +340,28 @@ class UserProfileService {
 
   get teachesAt() {
     return teachesAtService;
+  }
+
+  // A student who signed up in June confirms the level the promotion gave
+  // them, or picks the right one. This is the only time a student sets their
+  // own level after signup, and it works once.
+  async resolvePromotionNotice(userId: number, levelId?: number) {
+    const student = await this.db.students.findUnique({
+      where: { user_id: userId },
+      select: { promotion_notice: true },
+    });
+    if (!student?.promotion_notice) {
+      throw new BadRequestError("No pending promotion notice");
+    }
+
+    const data: Record<string, unknown> = { promotion_notice: false };
+    if (levelId !== undefined) {
+      const lvl = await this.db.levels.findUnique({ where: { id: levelId } });
+      if (!lvl || lvl.active === false) throw new NotFoundError("Level not found");
+      data.level_id = levelId;
+      data.graduated = false;
+    }
+    await this.db.students.update({ where: { user_id: userId }, data });
   }
 
   // ==========================================

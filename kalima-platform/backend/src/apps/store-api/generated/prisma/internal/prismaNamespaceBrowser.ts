@@ -64,6 +64,7 @@ export const ModelName = {
   lecturers: 'lecturers',
   levels: 'levels',
   stages: 'stages',
+  level_promotions: 'level_promotions',
   parent_children: 'parent_children',
   parents: 'parents',
   sites: 'sites',
@@ -313,6 +314,17 @@ export const StagesScalarFieldEnum = {
 export type StagesScalarFieldEnum = (typeof StagesScalarFieldEnum)[keyof typeof StagesScalarFieldEnum]
 
 
+export const Level_promotionsScalarFieldEnum = {
+  year: 'year',
+  ran_at: 'ran_at',
+  promoted: 'promoted',
+  graduated: 'graduated',
+  baseline: 'baseline'
+} as const
+
+export type Level_promotionsScalarFieldEnum = (typeof Level_promotionsScalarFieldEnum)[keyof typeof Level_promotionsScalarFieldEnum]
+
+
 export const Parent_childrenScalarFieldEnum = {
   id: 'id',
   parent_user_id: 'parent_user_id',
@@ -358,7 +370,9 @@ export const StudentsScalarFieldEnum = {
   zone_id: 'zone_id',
   parent_phone_number: 'parent_phone_number',
   sequenced_id: 'sequenced_id',
-  faction: 'faction'
+  faction: 'faction',
+  graduated: 'graduated',
+  promotion_notice: 'promotion_notice'
 } as const
 
 export type StudentsScalarFieldEnum = (typeof StudentsScalarFieldEnum)[keyof typeof StudentsScalarFieldEnum]

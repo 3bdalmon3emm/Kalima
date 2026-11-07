@@ -718,10 +718,6 @@ export type cart_itemsUncheckedUpdateManyWithoutCartsNestedInput = {
   deleteMany?: Prisma.cart_itemsScalarWhereInput | Prisma.cart_itemsScalarWhereInput[]
 }
 
-export type BoolFieldUpdateOperationsInput = {
-  set?: boolean
-}
-
 export type cart_itemsCreateNestedOneWithoutCart_item_required_fieldsInput = {
   create?: Prisma.XOR<Prisma.cart_itemsCreateWithoutCart_item_required_fieldsInput, Prisma.cart_itemsUncheckedCreateWithoutCart_item_required_fieldsInput>
   connectOrCreate?: Prisma.cart_itemsCreateOrConnectWithoutCart_item_required_fieldsInput

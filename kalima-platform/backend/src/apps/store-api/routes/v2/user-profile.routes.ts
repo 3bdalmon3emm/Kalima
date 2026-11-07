@@ -22,6 +22,7 @@ meRouter.post(
   userProfileController.uploadAvatar,
 );
 meRouter.delete("/avatar", userProfileController.deleteAvatar);
+meRouter.post("/promotion-notice", userProfileController.resolvePromotionNotice);
 
 // Teaches-at (Teacher)
 meRouter.get("/teaches-at", userProfileController.getAllTeachesAt);

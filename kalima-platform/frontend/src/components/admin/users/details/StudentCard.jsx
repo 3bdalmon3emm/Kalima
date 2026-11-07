@@ -132,7 +132,7 @@ export default function StudentCard({
                                 <InfoRow
                                     icon={GraduationCap}
                                     label={t('details.level')}
-                                    value={levelTitle(student.level || student.levels) || na}
+                                    value={[levelTitle(student.level || student.levels), student.graduated && t('details.graduate')].filter(Boolean).join(' · ') || na}
                                 />
                                 <InfoRow
                                     icon={MapPin}
