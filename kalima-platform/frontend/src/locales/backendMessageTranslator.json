@@ -158,5 +158,13 @@
   "optional message": "رسالة اختيارية",
   "string (optional)": "سلسلة (اختياري)",
   "Uploaded file exceeds the allowed size limit.": "حجم الصورة أكبر من الحد المسموح (5 ميجابايت). اختر صورة أصغر.",
-  "The image is damaged or incomplete. Please choose another image.": "الصورة تالفة أو غير مكتملة. اختر صورة أخرى."
+  "The image is damaged or incomplete. Please choose another image.": "الصورة تالفة أو غير مكتملة. اختر صورة أخرى.",
+  "Stage created successfully": "تمت إضافة المرحلة",
+  "Stage updated successfully": "تم تحديث المرحلة",
+  "Stage deleted successfully": "تم حذف المرحلة",
+  "Stage not found": "المرحلة غير موجودة",
+  "Stage with this title already exists": "توجد مرحلة بهذا الاسم بالفعل",
+  "Cannot delete a stage that still has levels": "لا يمكن حذف مرحلة تحتوي على صفوف",
+  "Level with this title already exists": "يوجد صف بهذا الاسم بالفعل",
+  "Students cannot change their own level": "لا يمكن للطالب تغيير سنته الدراسية بنفسه"
 }

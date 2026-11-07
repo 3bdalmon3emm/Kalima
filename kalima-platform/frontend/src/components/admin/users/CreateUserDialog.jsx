@@ -1,4 +1,4 @@
-import LevelSelectItems from "@/components/LevelSelectItems";
+import StageLevelSelect from "@/components/StageLevelSelect";
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Eye, EyeOff, Plus } from 'lucide-react';
@@ -591,17 +591,15 @@ export default function CreateUserDialog({ onSuccess }) {
                                     name="level_id"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>{t('createDialog.level', 'Level')}</FormLabel>
-                                            <Select dir={i18n.dir()} onValueChange={field.onChange} defaultValue={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder={t('createDialog.selectLevel', 'Select level')} />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <LevelSelectItems levels={levels} />
-                                                </SelectContent>
-                                            </Select>
+                                            <StageLevelSelect
+                                                levels={levels}
+                                                value={field.value}
+                                                onChange={field.onChange}
+                                                stageLabel={t('createDialog.stage', 'Stage')}
+                                                stagePlaceholder={t('createDialog.selectStage', 'Select stage')}
+                                                levelLabel={t('createDialog.level', 'School year')}
+                                                levelPlaceholder={t('createDialog.selectLevel', 'Select school year')}
+                                            />
                                             <FormMessage />
                                         </FormItem>
                                     )}

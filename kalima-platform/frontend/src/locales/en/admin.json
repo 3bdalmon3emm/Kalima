@@ -1083,7 +1083,7 @@
     "expandSidebar": "Expand Sidebar",
     "levels": {
       "title": "School levels",
-      "description": "Levels in Arabic and English, grouped by stage and ordered. Yearly promotion follows this order.",
+      "description": "Stages and their levels in Arabic and English, ordered. Students are promoted by stage order, then by level order inside each stage.",
       "add": "Add level",
       "edit": "Edit level",
       "titleAr": "Arabic name",
@@ -1091,7 +1091,7 @@
       "stage": "Stage",
       "selectStage": "Select stage",
       "order": "Order",
-      "orderHint": "One order across all levels, from 1st Primary to 3rd Secondary. A student is promoted to the level with the next order.",
+      "orderHint": "A student is promoted to the next level in order, and from the last level of a stage to the first level of the next stage.",
       "active": "Active",
       "inactive": "Inactive",
       "noStage": "No stage",
@@ -1099,7 +1099,16 @@
       "cancel": "Cancel",
       "saved": "Level saved",
       "saveError": "Could not save the level",
-      "loadError": "Could not load levels"
+      "loadError": "Could not load levels",
+      "addStage": "Add stage",
+      "editStage": "Edit stage",
+      "addToStage": "Add level",
+      "emptyStage": "No levels in this stage yet.",
+      "stageOrderHint": "The stage position among stages, e.g. Primary 1, Preparatory 2, Secondary 3, College 4.",
+      "stageSaved": "Stage saved",
+      "stageDeleted": "Stage deleted",
+      "deleteStage": "Delete stage",
+      "deleteStageConfirm": "Delete this stage?"
     }
   },
   "paymentMethods": {

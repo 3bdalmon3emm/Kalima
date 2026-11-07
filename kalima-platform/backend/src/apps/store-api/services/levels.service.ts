@@ -1,6 +1,7 @@
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
 import { CreateLevelDto, UpdateLevelDto } from "../dtos/level.dto";
+import { CreateStageDto, UpdateStageDto } from "../dtos/stage.dto";
 import { levels, stages } from "../generated/prisma/client";
 import {
   NotFoundError,
@@ -62,6 +63,49 @@ class LevelsService {
 
   async getAllStages(): Promise<stages[]> {
     return this.db.stages.findMany({ orderBy: { sort_order: "asc" } });
+  }
+
+  private async assertStageTitleFree(title: string, exceptId?: number) {
+    const existing = await this.db.stages.findFirst({ where: { title } });
+    if (existing && existing.id !== exceptId)
+      throw new ConflictError("Stage with this title already exists");
+  }
+
+  async createStage(dto: CreateStageDto): Promise<stages> {
+    await this.assertStageTitleFree(dto.title);
+    return this.db.stages.create({
+      data: {
+        title: dto.title,
+        title_ar: dto.title_ar,
+        sort_order: dto.sort_order,
+      },
+    });
+  }
+
+  async updateStage(id: number, dto: UpdateStageDto): Promise<stages> {
+    const stage = await this.db.stages.findUnique({ where: { id } });
+    if (!stage) throw new NotFoundError("Stage not found");
+    if (dto.title !== undefined) await this.assertStageTitleFree(dto.title, id);
+
+    const data: any = {};
+    if (dto.title !== undefined) data.title = dto.title;
+    if (dto.title_ar !== undefined) data.title_ar = dto.title_ar;
+    if (dto.sort_order !== undefined) data.sort_order = dto.sort_order;
+    return this.db.stages.update({ where: { id }, data });
+  }
+
+  async deleteStage(id: number): Promise<void> {
+    const stage = await this.db.stages.findUnique({ where: { id } });
+    if (!stage) throw new NotFoundError("Stage not found");
+
+    // Only an empty stage can go; its levels would otherwise lose their place
+    // in the promotion order.
+    const levelsCount = await this.db.levels.count({ where: { stage_id: id } });
+    if (levelsCount > 0) {
+      throw new BadRequestError("Cannot delete a stage that still has levels");
+    }
+
+    await this.db.stages.delete({ where: { id } });
   }
 
   async getLevelById(id: number): Promise<levels> {

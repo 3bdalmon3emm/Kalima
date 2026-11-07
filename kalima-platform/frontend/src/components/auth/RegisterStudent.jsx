@@ -1,4 +1,4 @@
-import LevelSelectItems from "@/components/LevelSelectItems";
+import StageLevelSelect from "@/components/StageLevelSelect";
 import { useTranslation } from "react-i18next";
 import { useFormContext } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
@@ -167,17 +167,15 @@ function StudentFields() {
                 name="level_id"
                 render={({ field }) => (
                     <FormItem>
-                        <FormLabel>{t("signup.fields.level")}</FormLabel>
-                        <Select dir={isRTL ? "rtl" : "ltr"} onValueChange={field.onChange} defaultValue={field.value}>
-                            <FormControl>
-                                <SelectTrigger>
-                                    <SelectValue placeholder={t("signup.fields.selectLevel")} />
-                                </SelectTrigger>
-                            </FormControl>
-                            <SelectContent>
-                                <LevelSelectItems levels={levels} />
-                            </SelectContent>
-                        </Select>
+                        <StageLevelSelect
+                            levels={levels}
+                            value={field.value}
+                            onChange={field.onChange}
+                            stageLabel={t("signup.fields.stage")}
+                            stagePlaceholder={t("signup.fields.selectStage")}
+                            levelLabel={t("signup.fields.level")}
+                            levelPlaceholder={t("signup.fields.selectLevel")}
+                        />
                         <FormMessage />
                     </FormItem>
                 )}

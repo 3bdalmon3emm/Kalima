@@ -3,6 +3,7 @@ import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
 import { levelsService } from "../services/levels.service";
 import { CreateLevelDto, UpdateLevelDto } from "../dtos/level.dto";
+import { CreateStageDto, UpdateStageDto } from "../dtos/stage.dto";
 import { ValidationError, BadRequestError } from "../../../libs/errors";
 
 async function validateDto<T extends object>(
@@ -68,6 +69,61 @@ export const levelsController = {
     try {
       const list = await levelsService.getAllStages();
       res.status(200).json({ success: true, results: list.length, data: list });
+    } catch (err) {
+      _next(err);
+    }
+  },
+
+  async createStage(
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> {
+    try {
+      const dto = await validateDto(CreateStageDto, req.body);
+      const created = await levelsService.createStage(dto);
+      res.status(201).json({
+        success: true,
+        message: "Stage created successfully",
+        data: created,
+      });
+    } catch (err) {
+      _next(err);
+    }
+  },
+
+  async updateStage(
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> {
+    try {
+      const id = parseInt(req.params.id as string, 10);
+      if (isNaN(id)) throw new BadRequestError("Invalid stage ID");
+      const dto = await validateDto(UpdateStageDto, req.body);
+      const updated = await levelsService.updateStage(id, dto);
+      res.status(200).json({
+        success: true,
+        message: "Stage updated successfully",
+        data: updated,
+      });
+    } catch (err) {
+      _next(err);
+    }
+  },
+
+  async deleteStage(
+    req: Request,
+    res: Response,
+    _next: NextFunction,
+  ): Promise<void> {
+    try {
+      const id = parseInt(req.params.id as string, 10);
+      if (isNaN(id)) throw new BadRequestError("Invalid stage ID");
+      await levelsService.deleteStage(id);
+      res
+        .status(200)
+        .json({ success: true, message: "Stage deleted successfully" });
     } catch (err) {
       _next(err);
     }
