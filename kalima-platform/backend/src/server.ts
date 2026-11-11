@@ -9,6 +9,7 @@ import { createServer } from "http";
 import storeV2Routes from "./apps/store-api/routes/v2/index";
 import authRoutes from "./apps/store-api/routes/v2/auth.routes";
 import adminRoutes from "./apps/store-api/routes/v2/admin.routes";
+import questionBankRoutes from "./apps/exam-api/routes/questionBank.routes";
 import { errorHandler } from "./libs/errors";
 import { setupStoreSocket } from "./libs/socket/setupStoreSocket";
 import { startPurchaseNotificationConsumer } from "./apps/store-api/services/notificationStream.service";
@@ -111,6 +112,11 @@ app.use("/uploads/e-booklets/private", (_req, res) => {
     message: "Protected e-booklet files cannot be downloaded directly",
   });
 });
+// Question bank files hold answers; the bank API hands out signed links.
+app.use("/uploads/question-bank", (req, res, next) => {
+  if (!isR2Enabled()) return next();
+  res.status(403).json({ success: false, message: "Question bank files cannot be downloaded directly" });
+});
 app.use("/uploads", makeUploadsHandler(uploadsRoot));
 
 app.get("/health", (_, res) => {
@@ -128,6 +134,7 @@ app.get("/api/v2/health", async (_, res) => {
 app.use("/api/v2", storeV2Routes);
 app.use("/api/v2/auth", authRoutes);
 app.use("/api/v2/admin", adminRoutes);
+app.use("/api/v2/question-bank", questionBankRoutes);
 
 if (sentryDsn) {
   Sentry.setupExpressErrorHandler(app);

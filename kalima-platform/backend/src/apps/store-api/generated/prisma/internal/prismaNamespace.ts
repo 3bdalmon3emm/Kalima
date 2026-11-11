@@ -465,7 +465,14 @@ export const ModelName = {
   product_gallery: 'product_gallery',
   product_gallery_videos: 'product_gallery_videos',
   general_settings: 'general_settings',
-  notifications: 'notifications'
+  notifications: 'notifications',
+  qb_media: 'qb_media',
+  qb_folders: 'qb_folders',
+  qb_folder_levels: 'qb_folder_levels',
+  qb_categories: 'qb_categories',
+  qb_questions: 'qb_questions',
+  qb_question_options: 'qb_question_options',
+  qb_matching_items: 'qb_matching_items'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -481,7 +488,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications"
+    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -6553,6 +6560,524 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    qb_media: {
+      payload: Prisma.$qb_mediaPayload<ExtArgs>
+      fields: Prisma.qb_mediaFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_mediaFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_mediaFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_mediaFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_mediaFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        findMany: {
+          args: Prisma.qb_mediaFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>[]
+        }
+        create: {
+          args: Prisma.qb_mediaCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        createMany: {
+          args: Prisma.qb_mediaCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_mediaCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_mediaDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        update: {
+          args: Prisma.qb_mediaUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_mediaDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_mediaUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_mediaUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_mediaUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_mediaPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_mediaAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_media>
+        }
+        groupBy: {
+          args: Prisma.qb_mediaGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_mediaGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_mediaCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_mediaCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_folders: {
+      payload: Prisma.$qb_foldersPayload<ExtArgs>
+      fields: Prisma.qb_foldersFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_foldersFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_foldersFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_foldersFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_foldersFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        findMany: {
+          args: Prisma.qb_foldersFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>[]
+        }
+        create: {
+          args: Prisma.qb_foldersCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        createMany: {
+          args: Prisma.qb_foldersCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_foldersCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_foldersDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        update: {
+          args: Prisma.qb_foldersUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_foldersDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_foldersUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_foldersUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_foldersUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_foldersPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_foldersAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_folders>
+        }
+        groupBy: {
+          args: Prisma.qb_foldersGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_foldersGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_foldersCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_foldersCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_folder_levels: {
+      payload: Prisma.$qb_folder_levelsPayload<ExtArgs>
+      fields: Prisma.qb_folder_levelsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_folder_levelsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_folder_levelsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_folder_levelsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_folder_levelsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        findMany: {
+          args: Prisma.qb_folder_levelsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>[]
+        }
+        create: {
+          args: Prisma.qb_folder_levelsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        createMany: {
+          args: Prisma.qb_folder_levelsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_folder_levelsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_folder_levelsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        update: {
+          args: Prisma.qb_folder_levelsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_folder_levelsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_folder_levelsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_folder_levelsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_folder_levelsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_folder_levelsPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_folder_levelsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_folder_levels>
+        }
+        groupBy: {
+          args: Prisma.qb_folder_levelsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_folder_levelsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_folder_levelsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_folder_levelsCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_categories: {
+      payload: Prisma.$qb_categoriesPayload<ExtArgs>
+      fields: Prisma.qb_categoriesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_categoriesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_categoriesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_categoriesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_categoriesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        findMany: {
+          args: Prisma.qb_categoriesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>[]
+        }
+        create: {
+          args: Prisma.qb_categoriesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        createMany: {
+          args: Prisma.qb_categoriesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_categoriesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_categoriesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        update: {
+          args: Prisma.qb_categoriesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_categoriesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_categoriesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_categoriesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_categoriesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_categoriesPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_categoriesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_categories>
+        }
+        groupBy: {
+          args: Prisma.qb_categoriesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_categoriesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_categoriesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_categoriesCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_questions: {
+      payload: Prisma.$qb_questionsPayload<ExtArgs>
+      fields: Prisma.qb_questionsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_questionsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_questionsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_questionsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_questionsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        findMany: {
+          args: Prisma.qb_questionsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>[]
+        }
+        create: {
+          args: Prisma.qb_questionsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        createMany: {
+          args: Prisma.qb_questionsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_questionsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_questionsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        update: {
+          args: Prisma.qb_questionsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_questionsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_questionsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_questionsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_questionsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_questionsPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_questionsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_questions>
+        }
+        groupBy: {
+          args: Prisma.qb_questionsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_questionsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_questionsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_questionsCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_question_options: {
+      payload: Prisma.$qb_question_optionsPayload<ExtArgs>
+      fields: Prisma.qb_question_optionsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_question_optionsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_question_optionsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_question_optionsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_question_optionsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        findMany: {
+          args: Prisma.qb_question_optionsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>[]
+        }
+        create: {
+          args: Prisma.qb_question_optionsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        createMany: {
+          args: Prisma.qb_question_optionsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_question_optionsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_question_optionsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        update: {
+          args: Prisma.qb_question_optionsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_question_optionsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_question_optionsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_question_optionsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_question_optionsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_question_optionsPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_question_optionsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_question_options>
+        }
+        groupBy: {
+          args: Prisma.qb_question_optionsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_question_optionsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_question_optionsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_question_optionsCountAggregateOutputType> | number
+        }
+      }
+    }
+    qb_matching_items: {
+      payload: Prisma.$qb_matching_itemsPayload<ExtArgs>
+      fields: Prisma.qb_matching_itemsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.qb_matching_itemsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.qb_matching_itemsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        findFirst: {
+          args: Prisma.qb_matching_itemsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.qb_matching_itemsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        findMany: {
+          args: Prisma.qb_matching_itemsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>[]
+        }
+        create: {
+          args: Prisma.qb_matching_itemsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        createMany: {
+          args: Prisma.qb_matching_itemsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.qb_matching_itemsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>[]
+        }
+        delete: {
+          args: Prisma.qb_matching_itemsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        update: {
+          args: Prisma.qb_matching_itemsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        deleteMany: {
+          args: Prisma.qb_matching_itemsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.qb_matching_itemsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.qb_matching_itemsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>[]
+        }
+        upsert: {
+          args: Prisma.qb_matching_itemsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$qb_matching_itemsPayload>
+        }
+        aggregate: {
+          args: Prisma.Qb_matching_itemsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateQb_matching_items>
+        }
+        groupBy: {
+          args: Prisma.qb_matching_itemsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_matching_itemsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.qb_matching_itemsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Qb_matching_itemsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -7862,6 +8387,121 @@ export const NotificationsScalarFieldEnum = {
 export type NotificationsScalarFieldEnum = (typeof NotificationsScalarFieldEnum)[keyof typeof NotificationsScalarFieldEnum]
 
 
+export const Qb_mediaScalarFieldEnum = {
+  id: 'id',
+  storage_key: 'storage_key',
+  kind: 'kind',
+  mime_type: 'mime_type',
+  size_bytes: 'size_bytes',
+  original_filename: 'original_filename',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Qb_mediaScalarFieldEnum = (typeof Qb_mediaScalarFieldEnum)[keyof typeof Qb_mediaScalarFieldEnum]
+
+
+export const Qb_foldersScalarFieldEnum = {
+  id: 'id',
+  bank_id: 'bank_id',
+  parent_id: 'parent_id',
+  path: 'path',
+  name: 'name',
+  subject_id: 'subject_id',
+  copy_status: 'copy_status',
+  sort_order: 'sort_order',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Qb_foldersScalarFieldEnum = (typeof Qb_foldersScalarFieldEnum)[keyof typeof Qb_foldersScalarFieldEnum]
+
+
+export const Qb_folder_levelsScalarFieldEnum = {
+  folder_id: 'folder_id',
+  level_id: 'level_id'
+} as const
+
+export type Qb_folder_levelsScalarFieldEnum = (typeof Qb_folder_levelsScalarFieldEnum)[keyof typeof Qb_folder_levelsScalarFieldEnum]
+
+
+export const Qb_categoriesScalarFieldEnum = {
+  id: 'id',
+  bank_id: 'bank_id',
+  parent_id: 'parent_id',
+  name: 'name',
+  sort_order: 'sort_order',
+  created_at: 'created_at'
+} as const
+
+export type Qb_categoriesScalarFieldEnum = (typeof Qb_categoriesScalarFieldEnum)[keyof typeof Qb_categoriesScalarFieldEnum]
+
+
+export const Qb_questionsScalarFieldEnum = {
+  id: 'id',
+  serial: 'serial',
+  reference_no: 'reference_no',
+  folder_id: 'folder_id',
+  passage_id: 'passage_id',
+  type: 'type',
+  difficulty: 'difficulty',
+  category_id: 'category_id',
+  subcategory_id: 'subcategory_id',
+  sort_order: 'sort_order',
+  version: 'version',
+  stem_text: 'stem_text',
+  stem_image_id: 'stem_image_id',
+  stem_audio_id: 'stem_audio_id',
+  explanation_mode: 'explanation_mode',
+  explanation_text: 'explanation_text',
+  explanation_image_id: 'explanation_image_id',
+  model_answer_text: 'model_answer_text',
+  model_answer_image_id: 'model_answer_image_id',
+  font: 'font',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Qb_questionsScalarFieldEnum = (typeof Qb_questionsScalarFieldEnum)[keyof typeof Qb_questionsScalarFieldEnum]
+
+
+export const Qb_question_optionsScalarFieldEnum = {
+  id: 'id',
+  question_id: 'question_id',
+  sort_order: 'sort_order',
+  text: 'text',
+  image_id: 'image_id',
+  label: 'label',
+  is_correct: 'is_correct',
+  explanation_text: 'explanation_text',
+  removed_at: 'removed_at'
+} as const
+
+export type Qb_question_optionsScalarFieldEnum = (typeof Qb_question_optionsScalarFieldEnum)[keyof typeof Qb_question_optionsScalarFieldEnum]
+
+
+export const Qb_matching_itemsScalarFieldEnum = {
+  id: 'id',
+  question_id: 'question_id',
+  side: 'side',
+  sort_order: 'sort_order',
+  text: 'text',
+  image_id: 'image_id',
+  audio_id: 'audio_id',
+  match_item_id: 'match_item_id',
+  removed_at: 'removed_at'
+} as const
+
+export type Qb_matching_itemsScalarFieldEnum = (typeof Qb_matching_itemsScalarFieldEnum)[keyof typeof Qb_matching_itemsScalarFieldEnum]
+
+
 export const SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -8442,6 +9082,62 @@ export type ListEnumnotification_key_enumFieldRefInput<$PrismaModel> = FieldRefI
 
 
 /**
+ * Reference to a field of type 'qb_question_type_enum'
+ */
+export type Enumqb_question_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_question_type_enum'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_question_type_enum[]'
+ */
+export type ListEnumqb_question_type_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_question_type_enum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_difficulty_enum'
+ */
+export type Enumqb_difficulty_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_difficulty_enum'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_difficulty_enum[]'
+ */
+export type ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_difficulty_enum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_explanation_mode_enum'
+ */
+export type Enumqb_explanation_mode_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_explanation_mode_enum'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_explanation_mode_enum[]'
+ */
+export type ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_explanation_mode_enum[]'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_matching_side_enum'
+ */
+export type Enumqb_matching_side_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_matching_side_enum'>
+    
+
+
+/**
+ * Reference to a field of type 'qb_matching_side_enum[]'
+ */
+export type ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'qb_matching_side_enum[]'>
+    
+
+
+/**
  * Reference to a field of type 'Float'
  */
 export type FloatFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'Float'>
@@ -8631,6 +9327,13 @@ export type GlobalOmitConfig = {
   product_gallery_videos?: Prisma.product_gallery_videosOmit
   general_settings?: Prisma.general_settingsOmit
   notifications?: Prisma.notificationsOmit
+  qb_media?: Prisma.qb_mediaOmit
+  qb_folders?: Prisma.qb_foldersOmit
+  qb_folder_levels?: Prisma.qb_folder_levelsOmit
+  qb_categories?: Prisma.qb_categoriesOmit
+  qb_questions?: Prisma.qb_questionsOmit
+  qb_question_options?: Prisma.qb_question_optionsOmit
+  qb_matching_items?: Prisma.qb_matching_itemsOmit
 }
 
 /* Types for Logging */

@@ -335,3 +335,43 @@ export const notification_key_enum = {
 } as const
 
 export type notification_key_enum = (typeof notification_key_enum)[keyof typeof notification_key_enum]
+
+
+export const qb_question_type_enum = {
+  mcq_single: 'mcq_single',
+  mcq_multi: 'mcq_multi',
+  true_false: 'true_false',
+  essay: 'essay',
+  matching: 'matching',
+  passage: 'passage'
+} as const
+
+export type qb_question_type_enum = (typeof qb_question_type_enum)[keyof typeof qb_question_type_enum]
+
+
+export const qb_difficulty_enum = {
+  easy: 'easy',
+  medium: 'medium',
+  hard: 'hard',
+  very_hard: 'very_hard'
+} as const
+
+export type qb_difficulty_enum = (typeof qb_difficulty_enum)[keyof typeof qb_difficulty_enum]
+
+
+export const qb_explanation_mode_enum = {
+  none: 'none',
+  combined_text: 'combined_text',
+  per_option: 'per_option',
+  image: 'image'
+} as const
+
+export type qb_explanation_mode_enum = (typeof qb_explanation_mode_enum)[keyof typeof qb_explanation_mode_enum]
+
+
+export const qb_matching_side_enum = {
+  left: 'left',
+  right: 'right'
+} as const
+
+export type qb_matching_side_enum = (typeof qb_matching_side_enum)[keyof typeof qb_matching_side_enum]

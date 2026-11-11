@@ -132,7 +132,14 @@ export const ModelName = {
   product_gallery: 'product_gallery',
   product_gallery_videos: 'product_gallery_videos',
   general_settings: 'general_settings',
-  notifications: 'notifications'
+  notifications: 'notifications',
+  qb_media: 'qb_media',
+  qb_folders: 'qb_folders',
+  qb_folder_levels: 'qb_folder_levels',
+  qb_categories: 'qb_categories',
+  qb_questions: 'qb_questions',
+  qb_question_options: 'qb_question_options',
+  qb_matching_items: 'qb_matching_items'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1419,6 +1426,121 @@ export const NotificationsScalarFieldEnum = {
 } as const
 
 export type NotificationsScalarFieldEnum = (typeof NotificationsScalarFieldEnum)[keyof typeof NotificationsScalarFieldEnum]
+
+
+export const Qb_mediaScalarFieldEnum = {
+  id: 'id',
+  storage_key: 'storage_key',
+  kind: 'kind',
+  mime_type: 'mime_type',
+  size_bytes: 'size_bytes',
+  original_filename: 'original_filename',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Qb_mediaScalarFieldEnum = (typeof Qb_mediaScalarFieldEnum)[keyof typeof Qb_mediaScalarFieldEnum]
+
+
+export const Qb_foldersScalarFieldEnum = {
+  id: 'id',
+  bank_id: 'bank_id',
+  parent_id: 'parent_id',
+  path: 'path',
+  name: 'name',
+  subject_id: 'subject_id',
+  copy_status: 'copy_status',
+  sort_order: 'sort_order',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Qb_foldersScalarFieldEnum = (typeof Qb_foldersScalarFieldEnum)[keyof typeof Qb_foldersScalarFieldEnum]
+
+
+export const Qb_folder_levelsScalarFieldEnum = {
+  folder_id: 'folder_id',
+  level_id: 'level_id'
+} as const
+
+export type Qb_folder_levelsScalarFieldEnum = (typeof Qb_folder_levelsScalarFieldEnum)[keyof typeof Qb_folder_levelsScalarFieldEnum]
+
+
+export const Qb_categoriesScalarFieldEnum = {
+  id: 'id',
+  bank_id: 'bank_id',
+  parent_id: 'parent_id',
+  name: 'name',
+  sort_order: 'sort_order',
+  created_at: 'created_at'
+} as const
+
+export type Qb_categoriesScalarFieldEnum = (typeof Qb_categoriesScalarFieldEnum)[keyof typeof Qb_categoriesScalarFieldEnum]
+
+
+export const Qb_questionsScalarFieldEnum = {
+  id: 'id',
+  serial: 'serial',
+  reference_no: 'reference_no',
+  folder_id: 'folder_id',
+  passage_id: 'passage_id',
+  type: 'type',
+  difficulty: 'difficulty',
+  category_id: 'category_id',
+  subcategory_id: 'subcategory_id',
+  sort_order: 'sort_order',
+  version: 'version',
+  stem_text: 'stem_text',
+  stem_image_id: 'stem_image_id',
+  stem_audio_id: 'stem_audio_id',
+  explanation_mode: 'explanation_mode',
+  explanation_text: 'explanation_text',
+  explanation_image_id: 'explanation_image_id',
+  model_answer_text: 'model_answer_text',
+  model_answer_image_id: 'model_answer_image_id',
+  font: 'font',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Qb_questionsScalarFieldEnum = (typeof Qb_questionsScalarFieldEnum)[keyof typeof Qb_questionsScalarFieldEnum]
+
+
+export const Qb_question_optionsScalarFieldEnum = {
+  id: 'id',
+  question_id: 'question_id',
+  sort_order: 'sort_order',
+  text: 'text',
+  image_id: 'image_id',
+  label: 'label',
+  is_correct: 'is_correct',
+  explanation_text: 'explanation_text',
+  removed_at: 'removed_at'
+} as const
+
+export type Qb_question_optionsScalarFieldEnum = (typeof Qb_question_optionsScalarFieldEnum)[keyof typeof Qb_question_optionsScalarFieldEnum]
+
+
+export const Qb_matching_itemsScalarFieldEnum = {
+  id: 'id',
+  question_id: 'question_id',
+  side: 'side',
+  sort_order: 'sort_order',
+  text: 'text',
+  image_id: 'image_id',
+  audio_id: 'audio_id',
+  match_item_id: 'match_item_id',
+  removed_at: 'removed_at'
+} as const
+
+export type Qb_matching_itemsScalarFieldEnum = (typeof Qb_matching_itemsScalarFieldEnum)[keyof typeof Qb_matching_itemsScalarFieldEnum]
 
 
 export const SortOrder = {

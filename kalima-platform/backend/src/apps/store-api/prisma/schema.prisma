@@ -201,6 +201,7 @@ model levels {
   sort_order Int?
   students   students[]
   stages     stages?    @relation(fields: [stage_id], references: [id], onUpdate: NoAction)
+  qb_folder_levels qb_folder_levels[]
 }
 
 model stages {
@@ -278,6 +279,7 @@ model subjects {
   title    String     @unique @db.VarChar(255)
   active   Boolean?   @default(true)
   teachers teachers[]
+  qb_folders qb_folders[]
 }
 
 model teachers {
@@ -1863,4 +1865,219 @@ model notifications {
   @@index([role], map: "ix_notifications_role")
   @@index([entity_type, entity_id], map: "ix_notifications_entity")
   @@index([created_at], map: "ix_notifications_created_at")
+}
+
+// ============================================
+// QUESTION BANK
+// ============================================
+// A bank is a root folder (bank_id null). Folders nest freely; a folder holds
+// either subfolders or questions, never both (checked in the service).
+// Nothing is deleted from the UI: banks, folders and questions are archived.
+
+enum qb_question_type_enum {
+  mcq_single
+  mcq_multi
+  true_false
+  essay
+  matching
+  passage
+}
+
+enum qb_difficulty_enum {
+  easy
+  medium
+  hard
+  very_hard
+}
+
+enum qb_explanation_mode_enum {
+  none
+  combined_text
+  per_option
+  image
+}
+
+enum qb_matching_side_enum {
+  left
+  right
+}
+
+// Uploaded images and audio. Copies of a question share the same rows; a
+// replaced file gets a new row, so the other copies keep theirs.
+model qb_media {
+  id                Int      @id @default(autoincrement())
+  storage_key       String   @unique @db.VarChar(500)
+  kind              String   @db.VarChar(20)
+  mime_type         String   @db.VarChar(150)
+  size_bytes        Int
+  original_filename String?  @db.VarChar(255)
+  created_by        Int?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+
+  question_stem_images       qb_questions[]        @relation("QbQuestionStemImage")
+  question_stem_audios       qb_questions[]        @relation("QbQuestionStemAudio")
+  question_explanation_imgs  qb_questions[]        @relation("QbQuestionExplanationImage")
+  question_model_answer_imgs qb_questions[]        @relation("QbQuestionModelAnswerImage")
+  option_images              qb_question_options[] @relation("QbOptionImage")
+  matching_images            qb_matching_items[]   @relation("QbMatchingImage")
+  matching_audios            qb_matching_items[]   @relation("QbMatchingAudio")
+}
+
+model qb_folders {
+  id          Int       @id @default(autoincrement())
+  // The bank (root folder) this folder belongs to; null on the bank itself.
+  bank_id     Int?
+  parent_id   Int?
+  // Ids from the bank down to this folder, e.g. "/3/8/21/". Folders never
+  // move, so it stays valid and makes "this folder and everything under it"
+  // one prefix match.
+  path        String    @default("") @db.VarChar(1000)
+  name        String    @db.VarChar(255)
+  // Set on banks only.
+  subject_id  Int?
+  // A bank being filled by "copy bank" in the background: "copying" or
+  // "failed"; null once it is ready.
+  copy_status String?   @db.VarChar(20)
+  sort_order  Int       @default(0)
+  archived_at DateTime? @db.Timestamptz(6)
+  archived_by Int?
+  created_by  Int?
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  bank         qb_folders?        @relation("QbFolderBank", fields: [bank_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  bank_folders qb_folders[]       @relation("QbFolderBank")
+  parent       qb_folders?        @relation("QbFolderParent", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  children     qb_folders[]       @relation("QbFolderParent")
+  subjects     subjects?          @relation(fields: [subject_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  levels       qb_folder_levels[]
+  categories   qb_categories[]
+  questions    qb_questions[]
+
+  @@index([bank_id], map: "ix_qb_folders_bank")
+  @@index([parent_id, sort_order], map: "ix_qb_folders_parent")
+  @@index([path], map: "ix_qb_folders_path")
+}
+
+// Levels set on a folder. A folder without its own levels takes its parent's.
+model qb_folder_levels {
+  folder_id Int
+  level_id  Int
+
+  folder qb_folders @relation(fields: [folder_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  level  levels     @relation(fields: [level_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([folder_id, level_id])
+}
+
+// Categories belong to a bank. A row with parent_id is a subcategory.
+model qb_categories {
+  id         Int      @id @default(autoincrement())
+  bank_id    Int
+  parent_id  Int?
+  name       String   @db.VarChar(255)
+  sort_order Int      @default(0)
+  created_at DateTime @default(now()) @db.Timestamptz(6)
+
+  bank          qb_folders      @relation(fields: [bank_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  parent        qb_categories?  @relation("QbCategoryParent", fields: [parent_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  subcategories qb_categories[] @relation("QbCategoryParent")
+  questions     qb_questions[]  @relation("QbQuestionCategory")
+  sub_questions qb_questions[]  @relation("QbQuestionSubcategory")
+
+  @@index([bank_id, parent_id], map: "ix_qb_categories_bank")
+}
+
+// Questions and passages. A passage is a row of type "passage"; its child
+// questions point at it with passage_id and live in the same folder.
+model qb_questions {
+  id                    Int                      @id @default(autoincrement())
+  serial                String                   @unique @db.VarChar(12)
+  // Free text the teacher gives the question; may repeat, bank view only.
+  reference_no          String?                  @db.VarChar(50)
+  folder_id             Int
+  passage_id            Int?
+  type                  qb_question_type_enum
+  difficulty            qb_difficulty_enum?
+  category_id           Int?
+  subcategory_id        Int?
+  sort_order            Int                      @default(0)
+  // Bumped on every edit, so attempts can tell which version they answered.
+  version               Int                      @default(1)
+  stem_text             String?
+  stem_image_id         Int?
+  stem_audio_id         Int?
+  explanation_mode      qb_explanation_mode_enum @default(none)
+  explanation_text      String?
+  explanation_image_id  Int?
+  model_answer_text     String?
+  model_answer_image_id Int?
+  // Font of the whole question; passage children copy the passage's.
+  font                  String                   @default("default") @db.VarChar(20)
+  archived_at           DateTime?                @db.Timestamptz(6)
+  archived_by           Int?
+  created_by            Int?
+  updated_by            Int?
+  created_at            DateTime                 @default(now()) @db.Timestamptz(6)
+  updated_at            DateTime                 @default(now()) @updatedAt @db.Timestamptz(6)
+
+  folder             qb_folders            @relation(fields: [folder_id], references: [id], onUpdate: NoAction)
+  passage            qb_questions?         @relation("QbPassageChildren", fields: [passage_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  children           qb_questions[]        @relation("QbPassageChildren")
+  category           qb_categories?        @relation("QbQuestionCategory", fields: [category_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  subcategory        qb_categories?        @relation("QbQuestionSubcategory", fields: [subcategory_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  stem_image         qb_media?             @relation("QbQuestionStemImage", fields: [stem_image_id], references: [id], onUpdate: NoAction)
+  stem_audio         qb_media?             @relation("QbQuestionStemAudio", fields: [stem_audio_id], references: [id], onUpdate: NoAction)
+  explanation_image  qb_media?             @relation("QbQuestionExplanationImage", fields: [explanation_image_id], references: [id], onUpdate: NoAction)
+  model_answer_image qb_media?             @relation("QbQuestionModelAnswerImage", fields: [model_answer_image_id], references: [id], onUpdate: NoAction)
+  options            qb_question_options[]
+  matching_items     qb_matching_items[]
+
+  @@index([folder_id, passage_id, sort_order], map: "ix_qb_questions_folder")
+  @@index([passage_id, sort_order], map: "ix_qb_questions_passage")
+  @@index([category_id], map: "ix_qb_questions_category")
+  @@index([subcategory_id], map: "ix_qb_questions_subcategory")
+  @@index([reference_no], map: "ix_qb_questions_reference_no")
+}
+
+// Options of MCQ and true/false questions. Rows keep their id across edits
+// (answers and re-grading point at them); a dropped option gets removed_at.
+model qb_question_options {
+  id               Int       @id @default(autoincrement())
+  question_id      Int
+  sort_order       Int       @default(0)
+  text             String?
+  image_id         Int?
+  // A bare label such as "1" or "A" pointing at the stem image.
+  label            String?   @db.VarChar(20)
+  is_correct       Boolean   @default(false)
+  explanation_text String?
+  removed_at       DateTime? @db.Timestamptz(6)
+
+  question qb_questions @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  image    qb_media?    @relation("QbOptionImage", fields: [image_id], references: [id], onUpdate: NoAction)
+
+  @@index([question_id, sort_order], map: "ix_qb_question_options_question")
+}
+
+// Items of a matching question. A left item names its right partner; items
+// with no partner on either side are decoys. Ids are stable like options.
+model qb_matching_items {
+  id            Int                   @id @default(autoincrement())
+  question_id   Int
+  side          qb_matching_side_enum
+  sort_order    Int                   @default(0)
+  text          String?
+  image_id      Int?
+  audio_id      Int?
+  match_item_id Int?
+  removed_at    DateTime?             @db.Timestamptz(6)
+
+  question   qb_questions        @relation(fields: [question_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  image      qb_media?           @relation("QbMatchingImage", fields: [image_id], references: [id], onUpdate: NoAction)
+  audio      qb_media?           @relation("QbMatchingAudio", fields: [audio_id], references: [id], onUpdate: NoAction)
+  match_item qb_matching_items?  @relation("QbMatchingPair", fields: [match_item_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  matched_by qb_matching_items[] @relation("QbMatchingPair")
+
+  @@index([question_id, side, sort_order], map: "ix_qb_matching_items_question")
 }

@@ -33,6 +33,12 @@ export default defineConfig(({ command, mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        // Files kept on the backend's local disk (no R2) in development.
+        '/uploads': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+          secure: false,
+        },
       },
       cors: true,
     },

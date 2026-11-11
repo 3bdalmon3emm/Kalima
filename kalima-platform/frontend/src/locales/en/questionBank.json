@@ -1,0 +1,218 @@
+{
+  "title": "Question Bank",
+  "subtitle": "Banks, folders and the questions exams are built from",
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "create": "Create",
+    "name": "Name",
+    "rename": "Rename",
+    "delete": "Delete",
+    "edit": "Edit",
+    "archive": "Archive",
+    "archived": "Archived",
+    "saved": "Saved",
+    "loading": "Loading..."
+  },
+  "math": {
+    "insert": "Insert equation",
+    "hint": "Write the equation with the symbol keyboard, then press Add to place it at the cursor.",
+    "add": "Add equation",
+    "update": "Update equation",
+    "preview": "Preview"
+  },
+  "media": {
+    "addImage": "Add image",
+    "addAudio": "Add audio",
+    "remove": "Remove",
+    "uploadError": "Could not upload the file"
+  },
+  "font": {
+    "font": "Font",
+    "followsPassage": "Passage questions use the passage's font.",
+    "fonts": {
+      "default": "Platform font",
+      "amiri": "Amiri",
+      "scheherazade": "Scheherazade",
+      "naskh": "Naskh",
+      "times": "Times"
+    }
+  },
+  "smartPaste": {
+    "button": "Smart paste",
+    "title": "Paste a ready question",
+    "description": "Paste the question and its options from Word or a PDF; each part goes to its own field. An answer underlined in Word is marked correct, or put * after it to mark it. If you paste the question alone with no options, it is an essay question.",
+    "placeholder": "Example:\nWhat is the capital of Egypt?\na) Cairo *\nb) Alexandria\nc) Aswan",
+    "question": "Question",
+    "found": "Options found: {{count}}",
+    "apply": "Use"
+  },
+  "types": {
+    "mcq_single": "Multiple choice",
+    "mcq_multi": "Multiple answers",
+    "true_false": "True or false",
+    "essay": "Essay",
+    "matching": "Matching",
+    "passage": "Passage"
+  },
+  "difficulty": {
+    "easy": "Easy",
+    "medium": "Medium",
+    "hard": "Hard",
+    "very_hard": "Very hard"
+  },
+  "explanation": {
+    "none": "No explanation",
+    "combined_text": "One text explanation",
+    "per_option": "Explanation per option",
+    "image": "Explanation image"
+  },
+  "editor": {
+    "basics": "Basics",
+    "difficulty": "Difficulty",
+    "pickDifficulty": "Pick difficulty",
+    "category": "Category",
+    "noCategory": "No category",
+    "subcategory": "Subcategory",
+    "noSubcategory": "No subcategory",
+    "referenceNo": "Reference number",
+    "referenceNoHint": "The teacher's number (optional)",
+    "questionText": "Question",
+    "passageText": "Passage",
+    "stemHint": "Text, an image, an audio file, or any of them together.",
+    "options": "Options",
+    "singleHint": "Mark the one correct answer.",
+    "multiHint": "Mark every correct answer (at least two). Students see that the question has more than one answer.",
+    "tfHint": "Mark the correct answer.",
+    "true": "True",
+    "false": "False",
+    "optionText": "Option text",
+    "optionExplanation": "Explanation of this option",
+    "addOption": "Add option",
+    "removeOption": "Remove option",
+    "matching": "Matching items",
+    "matchingIntro": "Each item in the first column pairs with an item in the second. Items left without a pair are decoys.",
+    "leftColumn": "First column",
+    "rightColumn": "Second column",
+    "itemText": "Item text",
+    "pairsWith": "Pairs with",
+    "noPair": "No pair",
+    "addItem": "Add item",
+    "decoy": "Decoy",
+    "matchingHint": "Correct pairs: {{count}}. The question's mark in an exam is its number of pairs.",
+    "modelAnswer": "Model answer",
+    "modelAnswerHint": "Text or an image; students see it after grading.",
+    "explanation": "Explanation",
+    "explanationHint": "Students see it after the exam ends.",
+    "perOptionHint": "Write each option's explanation under it in the options section.",
+    "optionLabel": "Label",
+    "optionLabelHint": "Shown to students instead of the numbering. Only for numbered shapes in the question image."
+  },
+  "card": {
+    "ref": "Ref",
+    "showDetails": "Show explanation and answer",
+    "hideDetails": "Hide explanation",
+    "pairs": "Correct pairs:"
+  },
+  "errors": {
+    "save": "Could not save",
+    "load": "Could not load the data"
+  },
+  "bank": {
+    "new": "New bank",
+    "empty": "No banks yet. Start with a bank for each subject.",
+    "subject": "Subject",
+    "noSubject": "No subject",
+    "created": "Bank created",
+    "copy": "Copy bank",
+    "copyTitle": "Copy the bank \"{{name}}\"",
+    "copyName": "Copy of {{name}}",
+    "archiveConfirm": "Archive the bank \"{{name}}\" with everything in it? You can restore it from the archive.",
+    "copyStarted": "Copying the bank; it will be ready in a moment",
+    "copying": "Copying",
+    "copyFailed": "Copy failed",
+    "copyingHint": "This bank is being filled with the copied content. Nothing can be added until it is done.",
+    "copyFailedHint": "Copying this bank failed. Archive it and copy the original bank again."
+  },
+  "folder": {
+    "tree": "Folders",
+    "actions": "Options",
+    "subfolders": "Folders",
+    "new": "New folder",
+    "created": "Folder created",
+    "emptyHint": "This folder is empty. Add folders, questions, or both.",
+    "levels": "School years",
+    "levelsHint": "They apply to everything in the folder. With none picked, the folder takes its parent's years.",
+    "levelsSaved": "School years saved",
+    "otherLevels": "Other years",
+    "clearLevels": "Clear",
+    "noLevels": "No school years",
+    "inherited": "from the parent folder",
+    "archiveConfirm": "Archive the folder \"{{name}}\" with everything in it? You can restore it from the archive."
+  },
+  "categories": {
+    "title": "Categories",
+    "description": "This bank's categories and subcategories, used in question draw rules.",
+    "empty": "No categories yet.",
+    "new": "New category",
+    "newSub": "New subcategory",
+    "add": "Add",
+    "deleteConfirm": "Delete the category \"{{name}}\"? Its questions stay, without a category."
+  },
+  "copy": {
+    "title": "Copy {{count}} questions",
+    "description": "Pick the folder to copy into. Each copy is independent with a new serial.",
+    "pickBank": "Pick a bank",
+    "confirm": "Copy here",
+    "done": "{{count}} questions copied"
+  },
+  "search": {
+    "placeholder": "Question serial",
+    "button": "Search",
+    "archived": "The question is archived",
+    "notFound": "No question has this serial"
+  },
+  "archive": {
+    "title": "Archive",
+    "description": "Everything archived from the bank. Restoring puts it back where it was.",
+    "folders": "Banks and folders",
+    "questions": "Questions",
+    "none": "Nothing here.",
+    "bank": "Bank",
+    "restore": "Restore",
+    "restored": "Restored"
+  },
+  "question": {
+    "list": "Questions",
+    "new": "New question",
+    "pickType": "Question type",
+    "newOf": "New question: {{type}}",
+    "newPassage": "New passage",
+    "edit": "Edit question",
+    "editPassage": "Edit passage",
+    "saved": "Question {{serial}} saved",
+    "saveAndAdd": "Save and add another",
+    "duplicate": "Duplicate",
+    "duplicated": "Question duplicated",
+    "copyTo": "Copy to...",
+    "selectAll": "Select all",
+    "selected": "Selected: {{count}}",
+    "empty": "No questions in this folder yet.",
+    "archiveConfirm": "Archive {{count}} questions? You can restore them from the archive.",
+    "pasteHint": "Paste a ready question here (Ctrl+V) to open a new question with its text and options filled in. Underlined answers are marked correct: one means multiple choice, more than one means multiple answers, two options only means true/false, and the question alone with no options means an essay question. Or paste a picture to use it as the question image."
+  },
+  "passage": {
+    "child": "Question {{n}}",
+    "empty": "No questions under this passage yet.",
+    "addQuestion": "Question on the passage",
+    "inside": "Question on the passage:"
+  },
+  "filters": {
+    "allCategories": "All categories",
+    "allSubcategories": "All subcategories",
+    "referenceNo": "Search by reference number",
+    "noReorder": "Drag to reorder only without filters.",
+    "noResults": "No matching questions.",
+    "noCategory": "No category"
+  }
+}

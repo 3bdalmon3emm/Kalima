@@ -234,6 +234,7 @@ export type levelsWhereInput = {
   sort_order?: Prisma.IntNullableFilter<"levels"> | number | null
   students?: Prisma.StudentsListRelationFilter
   stages?: Prisma.XOR<Prisma.StagesNullableScalarRelationFilter, Prisma.stagesWhereInput> | null
+  qb_folder_levels?: Prisma.Qb_folder_levelsListRelationFilter
 }
 
 export type levelsOrderByWithRelationInput = {
@@ -245,6 +246,7 @@ export type levelsOrderByWithRelationInput = {
   sort_order?: Prisma.SortOrderInput | Prisma.SortOrder
   students?: Prisma.studentsOrderByRelationAggregateInput
   stages?: Prisma.stagesOrderByWithRelationInput
+  qb_folder_levels?: Prisma.qb_folder_levelsOrderByRelationAggregateInput
 }
 
 export type levelsWhereUniqueInput = Prisma.AtLeast<{
@@ -259,6 +261,7 @@ export type levelsWhereUniqueInput = Prisma.AtLeast<{
   sort_order?: Prisma.IntNullableFilter<"levels"> | number | null
   students?: Prisma.StudentsListRelationFilter
   stages?: Prisma.XOR<Prisma.StagesNullableScalarRelationFilter, Prisma.stagesWhereInput> | null
+  qb_folder_levels?: Prisma.Qb_folder_levelsListRelationFilter
 }, "id" | "title">
 
 export type levelsOrderByWithAggregationInput = {
@@ -294,6 +297,7 @@ export type levelsCreateInput = {
   sort_order?: number | null
   students?: Prisma.studentsCreateNestedManyWithoutLevelsInput
   stages?: Prisma.stagesCreateNestedOneWithoutLevelsInput
+  qb_folder_levels?: Prisma.qb_folder_levelsCreateNestedManyWithoutLevelInput
 }
 
 export type levelsUncheckedCreateInput = {
@@ -304,6 +308,7 @@ export type levelsUncheckedCreateInput = {
   stage_id?: number | null
   sort_order?: number | null
   students?: Prisma.studentsUncheckedCreateNestedManyWithoutLevelsInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedCreateNestedManyWithoutLevelInput
 }
 
 export type levelsUpdateInput = {
@@ -313,6 +318,7 @@ export type levelsUpdateInput = {
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUpdateManyWithoutLevelsNestedInput
   stages?: Prisma.stagesUpdateOneWithoutLevelsNestedInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUpdateManyWithoutLevelNestedInput
 }
 
 export type levelsUncheckedUpdateInput = {
@@ -323,6 +329,7 @@ export type levelsUncheckedUpdateInput = {
   stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUncheckedUpdateManyWithoutLevelsNestedInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedUpdateManyWithoutLevelNestedInput
 }
 
 export type levelsCreateManyInput = {
@@ -404,6 +411,11 @@ export type LevelsNullableScalarRelationFilter = {
   isNot?: Prisma.levelsWhereInput | null
 }
 
+export type LevelsScalarRelationFilter = {
+  is?: Prisma.levelsWhereInput
+  isNot?: Prisma.levelsWhereInput
+}
+
 export type levelsCreateNestedManyWithoutStagesInput = {
   create?: Prisma.XOR<Prisma.levelsCreateWithoutStagesInput, Prisma.levelsUncheckedCreateWithoutStagesInput> | Prisma.levelsCreateWithoutStagesInput[] | Prisma.levelsUncheckedCreateWithoutStagesInput[]
   connectOrCreate?: Prisma.levelsCreateOrConnectWithoutStagesInput | Prisma.levelsCreateOrConnectWithoutStagesInput[]
@@ -462,12 +474,27 @@ export type levelsUpdateOneWithoutStudentsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.levelsUpdateToOneWithWhereWithoutStudentsInput, Prisma.levelsUpdateWithoutStudentsInput>, Prisma.levelsUncheckedUpdateWithoutStudentsInput>
 }
 
+export type levelsCreateNestedOneWithoutQb_folder_levelsInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedCreateWithoutQb_folder_levelsInput>
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutQb_folder_levelsInput
+  connect?: Prisma.levelsWhereUniqueInput
+}
+
+export type levelsUpdateOneRequiredWithoutQb_folder_levelsNestedInput = {
+  create?: Prisma.XOR<Prisma.levelsCreateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedCreateWithoutQb_folder_levelsInput>
+  connectOrCreate?: Prisma.levelsCreateOrConnectWithoutQb_folder_levelsInput
+  upsert?: Prisma.levelsUpsertWithoutQb_folder_levelsInput
+  connect?: Prisma.levelsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.levelsUpdateToOneWithWhereWithoutQb_folder_levelsInput, Prisma.levelsUpdateWithoutQb_folder_levelsInput>, Prisma.levelsUncheckedUpdateWithoutQb_folder_levelsInput>
+}
+
 export type levelsCreateWithoutStagesInput = {
   title: string
   title_ar?: string | null
   active?: boolean | null
   sort_order?: number | null
   students?: Prisma.studentsCreateNestedManyWithoutLevelsInput
+  qb_folder_levels?: Prisma.qb_folder_levelsCreateNestedManyWithoutLevelInput
 }
 
 export type levelsUncheckedCreateWithoutStagesInput = {
@@ -477,6 +504,7 @@ export type levelsUncheckedCreateWithoutStagesInput = {
   active?: boolean | null
   sort_order?: number | null
   students?: Prisma.studentsUncheckedCreateNestedManyWithoutLevelsInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedCreateNestedManyWithoutLevelInput
 }
 
 export type levelsCreateOrConnectWithoutStagesInput = {
@@ -523,6 +551,7 @@ export type levelsCreateWithoutStudentsInput = {
   active?: boolean | null
   sort_order?: number | null
   stages?: Prisma.stagesCreateNestedOneWithoutLevelsInput
+  qb_folder_levels?: Prisma.qb_folder_levelsCreateNestedManyWithoutLevelInput
 }
 
 export type levelsUncheckedCreateWithoutStudentsInput = {
@@ -532,6 +561,7 @@ export type levelsUncheckedCreateWithoutStudentsInput = {
   active?: boolean | null
   stage_id?: number | null
   sort_order?: number | null
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedCreateNestedManyWithoutLevelInput
 }
 
 export type levelsCreateOrConnectWithoutStudentsInput = {
@@ -556,6 +586,7 @@ export type levelsUpdateWithoutStudentsInput = {
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   stages?: Prisma.stagesUpdateOneWithoutLevelsNestedInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUpdateManyWithoutLevelNestedInput
 }
 
 export type levelsUncheckedUpdateWithoutStudentsInput = {
@@ -565,6 +596,61 @@ export type levelsUncheckedUpdateWithoutStudentsInput = {
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedUpdateManyWithoutLevelNestedInput
+}
+
+export type levelsCreateWithoutQb_folder_levelsInput = {
+  title: string
+  title_ar?: string | null
+  active?: boolean | null
+  sort_order?: number | null
+  students?: Prisma.studentsCreateNestedManyWithoutLevelsInput
+  stages?: Prisma.stagesCreateNestedOneWithoutLevelsInput
+}
+
+export type levelsUncheckedCreateWithoutQb_folder_levelsInput = {
+  id?: number
+  title: string
+  title_ar?: string | null
+  active?: boolean | null
+  stage_id?: number | null
+  sort_order?: number | null
+  students?: Prisma.studentsUncheckedCreateNestedManyWithoutLevelsInput
+}
+
+export type levelsCreateOrConnectWithoutQb_folder_levelsInput = {
+  where: Prisma.levelsWhereUniqueInput
+  create: Prisma.XOR<Prisma.levelsCreateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedCreateWithoutQb_folder_levelsInput>
+}
+
+export type levelsUpsertWithoutQb_folder_levelsInput = {
+  update: Prisma.XOR<Prisma.levelsUpdateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedUpdateWithoutQb_folder_levelsInput>
+  create: Prisma.XOR<Prisma.levelsCreateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedCreateWithoutQb_folder_levelsInput>
+  where?: Prisma.levelsWhereInput
+}
+
+export type levelsUpdateToOneWithWhereWithoutQb_folder_levelsInput = {
+  where?: Prisma.levelsWhereInput
+  data: Prisma.XOR<Prisma.levelsUpdateWithoutQb_folder_levelsInput, Prisma.levelsUncheckedUpdateWithoutQb_folder_levelsInput>
+}
+
+export type levelsUpdateWithoutQb_folder_levelsInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  students?: Prisma.studentsUpdateManyWithoutLevelsNestedInput
+  stages?: Prisma.stagesUpdateOneWithoutLevelsNestedInput
+}
+
+export type levelsUncheckedUpdateWithoutQb_folder_levelsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  title_ar?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  stage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  students?: Prisma.studentsUncheckedUpdateManyWithoutLevelsNestedInput
 }
 
 export type levelsCreateManyStagesInput = {
@@ -581,6 +667,7 @@ export type levelsUpdateWithoutStagesInput = {
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUpdateManyWithoutLevelsNestedInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUpdateManyWithoutLevelNestedInput
 }
 
 export type levelsUncheckedUpdateWithoutStagesInput = {
@@ -590,6 +677,7 @@ export type levelsUncheckedUpdateWithoutStagesInput = {
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   sort_order?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   students?: Prisma.studentsUncheckedUpdateManyWithoutLevelsNestedInput
+  qb_folder_levels?: Prisma.qb_folder_levelsUncheckedUpdateManyWithoutLevelNestedInput
 }
 
 export type levelsUncheckedUpdateManyWithoutStagesInput = {
@@ -607,10 +695,12 @@ export type levelsUncheckedUpdateManyWithoutStagesInput = {
 
 export type LevelsCountOutputType = {
   students: number
+  qb_folder_levels: number
 }
 
 export type LevelsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   students?: boolean | LevelsCountOutputTypeCountStudentsArgs
+  qb_folder_levels?: boolean | LevelsCountOutputTypeCountQb_folder_levelsArgs
 }
 
 /**
@@ -630,6 +720,13 @@ export type LevelsCountOutputTypeCountStudentsArgs<ExtArgs extends runtime.Types
   where?: Prisma.studentsWhereInput
 }
 
+/**
+ * LevelsCountOutputType without action
+ */
+export type LevelsCountOutputTypeCountQb_folder_levelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.qb_folder_levelsWhereInput
+}
+
 
 export type levelsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -640,6 +737,7 @@ export type levelsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   sort_order?: boolean
   students?: boolean | Prisma.levels$studentsArgs<ExtArgs>
   stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
+  qb_folder_levels?: boolean | Prisma.levels$qb_folder_levelsArgs<ExtArgs>
   _count?: boolean | Prisma.LevelsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["levels"]>
 
@@ -676,6 +774,7 @@ export type levelsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
 export type levelsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   students?: boolean | Prisma.levels$studentsArgs<ExtArgs>
   stages?: boolean | Prisma.levels$stagesArgs<ExtArgs>
+  qb_folder_levels?: boolean | Prisma.levels$qb_folder_levelsArgs<ExtArgs>
   _count?: boolean | Prisma.LevelsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type levelsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -690,6 +789,7 @@ export type $levelsPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   objects: {
     students: Prisma.$studentsPayload<ExtArgs>[]
     stages: Prisma.$stagesPayload<ExtArgs> | null
+    qb_folder_levels: Prisma.$qb_folder_levelsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1094,6 +1194,7 @@ export interface Prisma__levelsClient<T, Null = never, ExtArgs extends runtime.T
   readonly [Symbol.toStringTag]: "PrismaPromise"
   students<T extends Prisma.levels$studentsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.levels$studentsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$studentsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   stages<T extends Prisma.levels$stagesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.levels$stagesArgs<ExtArgs>>): Prisma.Prisma__stagesClient<runtime.Types.Result.GetResult<Prisma.$stagesPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  qb_folder_levels<T extends Prisma.levels$qb_folder_levelsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.levels$qb_folder_levelsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$qb_folder_levelsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1574,6 +1675,30 @@ export type levels$stagesArgs<ExtArgs extends runtime.Types.Extensions.InternalA
    */
   include?: Prisma.stagesInclude<ExtArgs> | null
   where?: Prisma.stagesWhereInput
+}
+
+/**
+ * levels.qb_folder_levels
+ */
+export type levels$qb_folder_levelsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the qb_folder_levels
+   */
+  select?: Prisma.qb_folder_levelsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the qb_folder_levels
+   */
+  omit?: Prisma.qb_folder_levelsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.qb_folder_levelsInclude<ExtArgs> | null
+  where?: Prisma.qb_folder_levelsWhereInput
+  orderBy?: Prisma.qb_folder_levelsOrderByWithRelationInput | Prisma.qb_folder_levelsOrderByWithRelationInput[]
+  cursor?: Prisma.qb_folder_levelsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Qb_folder_levelsScalarFieldEnum | Prisma.Qb_folder_levelsScalarFieldEnum[]
 }
 
 /**

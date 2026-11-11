@@ -932,6 +932,74 @@ export type Enumnotification_key_enumWithAggregatesFilter<$PrismaModel = never> 
   _max?: Prisma.NestedEnumnotification_key_enumFilter<$PrismaModel>
 }
 
+export type Enumqb_question_type_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_question_type_enum | Prisma.Enumqb_question_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel> | $Enums.qb_question_type_enum
+}
+
+export type Enumqb_difficulty_enumNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_difficulty_enum | Prisma.Enumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel> | $Enums.qb_difficulty_enum | null
+}
+
+export type Enumqb_explanation_mode_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_explanation_mode_enum | Prisma.Enumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel> | $Enums.qb_explanation_mode_enum
+}
+
+export type Enumqb_question_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_question_type_enum | Prisma.Enumqb_question_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_question_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_question_type_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel>
+}
+
+export type Enumqb_difficulty_enumNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_difficulty_enum | Prisma.Enumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumqb_difficulty_enumNullableWithAggregatesFilter<$PrismaModel> | $Enums.qb_difficulty_enum | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel>
+}
+
+export type Enumqb_explanation_mode_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_explanation_mode_enum | Prisma.Enumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_explanation_mode_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_explanation_mode_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel>
+}
+
+export type Enumqb_matching_side_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_matching_side_enum | Prisma.Enumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel> | $Enums.qb_matching_side_enum
+}
+
+export type Enumqb_matching_side_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_matching_side_enum | Prisma.Enumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_matching_side_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_matching_side_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -1807,6 +1875,74 @@ export type NestedEnumnotification_key_enumWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumnotification_key_enumFilter<$PrismaModel>
   _max?: Prisma.NestedEnumnotification_key_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumqb_question_type_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_question_type_enum | Prisma.Enumqb_question_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel> | $Enums.qb_question_type_enum
+}
+
+export type NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_difficulty_enum | Prisma.Enumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel> | $Enums.qb_difficulty_enum | null
+}
+
+export type NestedEnumqb_explanation_mode_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_explanation_mode_enum | Prisma.Enumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel> | $Enums.qb_explanation_mode_enum
+}
+
+export type NestedEnumqb_question_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_question_type_enum | Prisma.Enumqb_question_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_question_type_enum[] | Prisma.ListEnumqb_question_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_question_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_question_type_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_question_type_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumqb_difficulty_enumNullableWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_difficulty_enum | Prisma.Enumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  in?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  notIn?: $Enums.qb_difficulty_enum[] | Prisma.ListEnumqb_difficulty_enumFieldRefInput<$PrismaModel> | null
+  not?: Prisma.NestedEnumqb_difficulty_enumNullableWithAggregatesFilter<$PrismaModel> | $Enums.qb_difficulty_enum | null
+  _count?: Prisma.NestedIntNullableFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_difficulty_enumNullableFilter<$PrismaModel>
+}
+
+export type NestedEnumqb_explanation_mode_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_explanation_mode_enum | Prisma.Enumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_explanation_mode_enum[] | Prisma.ListEnumqb_explanation_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_explanation_mode_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_explanation_mode_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_explanation_mode_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumqb_matching_side_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_matching_side_enum | Prisma.Enumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel> | $Enums.qb_matching_side_enum
+}
+
+export type NestedEnumqb_matching_side_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.qb_matching_side_enum | Prisma.Enumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.qb_matching_side_enum[] | Prisma.ListEnumqb_matching_side_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumqb_matching_side_enumWithAggregatesFilter<$PrismaModel> | $Enums.qb_matching_side_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
 }
 
 

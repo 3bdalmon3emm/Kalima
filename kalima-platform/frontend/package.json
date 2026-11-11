@@ -19,6 +19,9 @@
     "src/**/*"
   ],
   "dependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@embedpdf/react-pdf-viewer": "^2.6.2",
     "@hookform/resolvers": "^5.2.2",
     "@lottiefiles/dotlottie-react": "^0.17.13",
@@ -54,6 +57,7 @@
     "libphonenumber-js": "^1.12.38",
     "lodash": "^4.17.23",
     "lucide-react": "^0.563.0",
+    "mathlive": "^0.111.4",
     "pdfjs-dist": "^4.10.38",
     "qrcode.react": "^4.2.0",
     "radix-ui": "^1.4.3",

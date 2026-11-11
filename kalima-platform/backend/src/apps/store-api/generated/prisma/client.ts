@@ -447,3 +447,38 @@ export type general_settings = Prisma.general_settingsModel
  * 
  */
 export type notifications = Prisma.notificationsModel
+/**
+ * Model qb_media
+ * 
+ */
+export type qb_media = Prisma.qb_mediaModel
+/**
+ * Model qb_folders
+ * 
+ */
+export type qb_folders = Prisma.qb_foldersModel
+/**
+ * Model qb_folder_levels
+ * 
+ */
+export type qb_folder_levels = Prisma.qb_folder_levelsModel
+/**
+ * Model qb_categories
+ * 
+ */
+export type qb_categories = Prisma.qb_categoriesModel
+/**
+ * Model qb_questions
+ * 
+ */
+export type qb_questions = Prisma.qb_questionsModel
+/**
+ * Model qb_question_options
+ * 
+ */
+export type qb_question_options = Prisma.qb_question_optionsModel
+/**
+ * Model qb_matching_items
+ * 
+ */
+export type qb_matching_items = Prisma.qb_matching_itemsModel

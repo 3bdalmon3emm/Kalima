@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Users, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Package, Ticket, Settings, CreditCard, FormInput, BarChart3, Activity, Bell, BookOpenCheck, Award } from 'lucide-react';
+import { Users, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Package, Ticket, Settings, CreditCard, FormInput, BarChart3, Activity, Bell, BookOpenCheck, Award, Library } from 'lucide-react';
 import useAuth from '@/hooks/auth/useAuth';
 import { useRole } from '@/hooks/useRole';
 import { canAccessAdminAnalytics } from '@/lib/adminAnalyticsAccess';
@@ -53,6 +53,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
       matchPaths: ['/admin/products', '/admin/orders', '/admin/samples', '/admin/categories'],
     },
     { name: t('nav.eBooklets', 'E-Booklets'), href: '/admin/e-booklets', icon: BookOpenCheck, id: 'e-booklets' },
+    { name: t('nav.questionBank', 'Question Bank'), href: '/admin/question-bank', icon: Library, id: 'question-bank' },
     { name: t('nav.eBookletTermsMilestones', 'Terms & Milestones'), href: '/admin/e-booklets/settings/terms-milestones', icon: Award, id: 'e-booklet-terms-milestones', managerOnly: true },
     { name: t('nav.coupons'), href: '/admin/coupons', icon: Ticket, id: 'coupons' },
     { name: t('nav.requiredFields'), href: '/admin/required-fields', icon: FormInput, id: 'required-fields' },

@@ -201,6 +201,7 @@ export type subjectsWhereInput = {
   title?: Prisma.StringFilter<"subjects"> | string
   active?: Prisma.BoolNullableFilter<"subjects"> | boolean | null
   teachers?: Prisma.TeachersListRelationFilter
+  qb_folders?: Prisma.Qb_foldersListRelationFilter
 }
 
 export type subjectsOrderByWithRelationInput = {
@@ -208,6 +209,7 @@ export type subjectsOrderByWithRelationInput = {
   title?: Prisma.SortOrder
   active?: Prisma.SortOrderInput | Prisma.SortOrder
   teachers?: Prisma.teachersOrderByRelationAggregateInput
+  qb_folders?: Prisma.qb_foldersOrderByRelationAggregateInput
 }
 
 export type subjectsWhereUniqueInput = Prisma.AtLeast<{
@@ -218,6 +220,7 @@ export type subjectsWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.subjectsWhereInput | Prisma.subjectsWhereInput[]
   active?: Prisma.BoolNullableFilter<"subjects"> | boolean | null
   teachers?: Prisma.TeachersListRelationFilter
+  qb_folders?: Prisma.Qb_foldersListRelationFilter
 }, "id" | "title">
 
 export type subjectsOrderByWithAggregationInput = {
@@ -244,6 +247,7 @@ export type subjectsCreateInput = {
   title: string
   active?: boolean | null
   teachers?: Prisma.teachersCreateNestedManyWithoutSubjectsInput
+  qb_folders?: Prisma.qb_foldersCreateNestedManyWithoutSubjectsInput
 }
 
 export type subjectsUncheckedCreateInput = {
@@ -251,12 +255,14 @@ export type subjectsUncheckedCreateInput = {
   title: string
   active?: boolean | null
   teachers?: Prisma.teachersUncheckedCreateNestedManyWithoutSubjectsInput
+  qb_folders?: Prisma.qb_foldersUncheckedCreateNestedManyWithoutSubjectsInput
 }
 
 export type subjectsUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   teachers?: Prisma.teachersUpdateManyWithoutSubjectsNestedInput
+  qb_folders?: Prisma.qb_foldersUpdateManyWithoutSubjectsNestedInput
 }
 
 export type subjectsUncheckedUpdateInput = {
@@ -264,6 +270,7 @@ export type subjectsUncheckedUpdateInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   teachers?: Prisma.teachersUncheckedUpdateManyWithoutSubjectsNestedInput
+  qb_folders?: Prisma.qb_foldersUncheckedUpdateManyWithoutSubjectsNestedInput
 }
 
 export type subjectsCreateManyInput = {
@@ -330,15 +337,33 @@ export type subjectsUpdateOneWithoutTeachersNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.subjectsUpdateToOneWithWhereWithoutTeachersInput, Prisma.subjectsUpdateWithoutTeachersInput>, Prisma.subjectsUncheckedUpdateWithoutTeachersInput>
 }
 
+export type subjectsCreateNestedOneWithoutQb_foldersInput = {
+  create?: Prisma.XOR<Prisma.subjectsCreateWithoutQb_foldersInput, Prisma.subjectsUncheckedCreateWithoutQb_foldersInput>
+  connectOrCreate?: Prisma.subjectsCreateOrConnectWithoutQb_foldersInput
+  connect?: Prisma.subjectsWhereUniqueInput
+}
+
+export type subjectsUpdateOneWithoutQb_foldersNestedInput = {
+  create?: Prisma.XOR<Prisma.subjectsCreateWithoutQb_foldersInput, Prisma.subjectsUncheckedCreateWithoutQb_foldersInput>
+  connectOrCreate?: Prisma.subjectsCreateOrConnectWithoutQb_foldersInput
+  upsert?: Prisma.subjectsUpsertWithoutQb_foldersInput
+  disconnect?: Prisma.subjectsWhereInput | boolean
+  delete?: Prisma.subjectsWhereInput | boolean
+  connect?: Prisma.subjectsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.subjectsUpdateToOneWithWhereWithoutQb_foldersInput, Prisma.subjectsUpdateWithoutQb_foldersInput>, Prisma.subjectsUncheckedUpdateWithoutQb_foldersInput>
+}
+
 export type subjectsCreateWithoutTeachersInput = {
   title: string
   active?: boolean | null
+  qb_folders?: Prisma.qb_foldersCreateNestedManyWithoutSubjectsInput
 }
 
 export type subjectsUncheckedCreateWithoutTeachersInput = {
   id?: number
   title: string
   active?: boolean | null
+  qb_folders?: Prisma.qb_foldersUncheckedCreateNestedManyWithoutSubjectsInput
 }
 
 export type subjectsCreateOrConnectWithoutTeachersInput = {
@@ -360,12 +385,56 @@ export type subjectsUpdateToOneWithWhereWithoutTeachersInput = {
 export type subjectsUpdateWithoutTeachersInput = {
   title?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  qb_folders?: Prisma.qb_foldersUpdateManyWithoutSubjectsNestedInput
 }
 
 export type subjectsUncheckedUpdateWithoutTeachersInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  qb_folders?: Prisma.qb_foldersUncheckedUpdateManyWithoutSubjectsNestedInput
+}
+
+export type subjectsCreateWithoutQb_foldersInput = {
+  title: string
+  active?: boolean | null
+  teachers?: Prisma.teachersCreateNestedManyWithoutSubjectsInput
+}
+
+export type subjectsUncheckedCreateWithoutQb_foldersInput = {
+  id?: number
+  title: string
+  active?: boolean | null
+  teachers?: Prisma.teachersUncheckedCreateNestedManyWithoutSubjectsInput
+}
+
+export type subjectsCreateOrConnectWithoutQb_foldersInput = {
+  where: Prisma.subjectsWhereUniqueInput
+  create: Prisma.XOR<Prisma.subjectsCreateWithoutQb_foldersInput, Prisma.subjectsUncheckedCreateWithoutQb_foldersInput>
+}
+
+export type subjectsUpsertWithoutQb_foldersInput = {
+  update: Prisma.XOR<Prisma.subjectsUpdateWithoutQb_foldersInput, Prisma.subjectsUncheckedUpdateWithoutQb_foldersInput>
+  create: Prisma.XOR<Prisma.subjectsCreateWithoutQb_foldersInput, Prisma.subjectsUncheckedCreateWithoutQb_foldersInput>
+  where?: Prisma.subjectsWhereInput
+}
+
+export type subjectsUpdateToOneWithWhereWithoutQb_foldersInput = {
+  where?: Prisma.subjectsWhereInput
+  data: Prisma.XOR<Prisma.subjectsUpdateWithoutQb_foldersInput, Prisma.subjectsUncheckedUpdateWithoutQb_foldersInput>
+}
+
+export type subjectsUpdateWithoutQb_foldersInput = {
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  teachers?: Prisma.teachersUpdateManyWithoutSubjectsNestedInput
+}
+
+export type subjectsUncheckedUpdateWithoutQb_foldersInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  title?: Prisma.StringFieldUpdateOperationsInput | string
+  active?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  teachers?: Prisma.teachersUncheckedUpdateManyWithoutSubjectsNestedInput
 }
 
 
@@ -375,10 +444,12 @@ export type subjectsUncheckedUpdateWithoutTeachersInput = {
 
 export type SubjectsCountOutputType = {
   teachers: number
+  qb_folders: number
 }
 
 export type SubjectsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teachers?: boolean | SubjectsCountOutputTypeCountTeachersArgs
+  qb_folders?: boolean | SubjectsCountOutputTypeCountQb_foldersArgs
 }
 
 /**
@@ -398,12 +469,20 @@ export type SubjectsCountOutputTypeCountTeachersArgs<ExtArgs extends runtime.Typ
   where?: Prisma.teachersWhereInput
 }
 
+/**
+ * SubjectsCountOutputType without action
+ */
+export type SubjectsCountOutputTypeCountQb_foldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.qb_foldersWhereInput
+}
+
 
 export type subjectsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
   title?: boolean
   active?: boolean
   teachers?: boolean | Prisma.subjects$teachersArgs<ExtArgs>
+  qb_folders?: boolean | Prisma.subjects$qb_foldersArgs<ExtArgs>
   _count?: boolean | Prisma.SubjectsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["subjects"]>
 
@@ -428,6 +507,7 @@ export type subjectsSelectScalar = {
 export type subjectsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "active", ExtArgs["result"]["subjects"]>
 export type subjectsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teachers?: boolean | Prisma.subjects$teachersArgs<ExtArgs>
+  qb_folders?: boolean | Prisma.subjects$qb_foldersArgs<ExtArgs>
   _count?: boolean | Prisma.SubjectsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type subjectsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {}
@@ -437,6 +517,7 @@ export type $subjectsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   name: "subjects"
   objects: {
     teachers: Prisma.$teachersPayload<ExtArgs>[]
+    qb_folders: Prisma.$qb_foldersPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -837,6 +918,7 @@ readonly fields: subjectsFieldRefs;
 export interface Prisma__subjectsClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   teachers<T extends Prisma.subjects$teachersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.subjects$teachersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$teachersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  qb_folders<T extends Prisma.subjects$qb_foldersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.subjects$qb_foldersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$qb_foldersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1287,6 +1369,30 @@ export type subjects$teachersArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.TeachersScalarFieldEnum | Prisma.TeachersScalarFieldEnum[]
+}
+
+/**
+ * subjects.qb_folders
+ */
+export type subjects$qb_foldersArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the qb_folders
+   */
+  select?: Prisma.qb_foldersSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the qb_folders
+   */
+  omit?: Prisma.qb_foldersOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.qb_foldersInclude<ExtArgs> | null
+  where?: Prisma.qb_foldersWhereInput
+  orderBy?: Prisma.qb_foldersOrderByWithRelationInput | Prisma.qb_foldersOrderByWithRelationInput[]
+  cursor?: Prisma.qb_foldersWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Qb_foldersScalarFieldEnum | Prisma.Qb_foldersScalarFieldEnum[]
 }
 
 /**

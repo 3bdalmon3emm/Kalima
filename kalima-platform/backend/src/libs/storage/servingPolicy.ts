@@ -32,6 +32,8 @@ export type AssetCategory =
   | 'payment_screenshot'
   | 'purchase_watermark'
   | 'ebooklet_page_image'
+  // Question bank images and audio (answers and explanations included)
+  | 'question_media'
   // Private — proxy
   | 'sample_high_quality'
   | 'ebooklet_hotspot_media'
@@ -53,6 +55,8 @@ export const SERVING_POLICY: Record<AssetCategory, ServePolicy> = {
   // ---- Signed, short TTL because they carry sensitive payment data ----
   payment_screenshot: { mode: 'signed', ttlSeconds: 40 * MINUTE },
   purchase_watermark: { mode: 'signed', ttlSeconds: 40 * MINUTE },
+  // Long enough for a data-entry page that stays open while questions are added.
+  question_media: { mode: 'signed', ttlSeconds: 120 * MINUTE },
 
   // ---- Private (proxy) ----
   // Booklet page images stay proxy: they are the core paid content and the
@@ -86,6 +90,7 @@ const CACHE_CONTROL: Record<AssetCategory, string> = {
   // ---- Sensitive — never cache ----
   payment_screenshot: 'no-store',
   purchase_watermark: 'no-store',
+  question_media: 'private, max-age=0',
   admin_access_code_pdf: 'no-store',
 };
 

@@ -116,6 +116,10 @@ const DeleteMyDataPage = lazy(() => import("./pages/privacy/DeleteMyDataPage"));
 const MyOrdersPage = lazy(() => import("./pages/orders/MyOrdersPage"));
 const NotificationsPage = lazy(() => import("./pages/notifications/NotificationsPage"));
 const AdminNotificationsPage = lazy(() => import("./pages/admin/notifications/AdminNotificationsPage"));
+const QuestionBankPage = lazy(() => import("./pages/admin/question-bank/QuestionBankPage"));
+const BankFolderPage = lazy(() => import("./pages/admin/question-bank/BankFolderPage"));
+const QuestionEditorPage = lazy(() => import("./pages/admin/question-bank/QuestionEditorPage"));
+const QuestionBankArchivePage = lazy(() => import("./pages/admin/question-bank/QuestionBankArchivePage"));
 
 // Teacher lazy-loaded pages
 const TeacherLayout = lazy(() => import("./layouts/TeacherLayout"));
@@ -292,6 +296,11 @@ const router = createBrowserRouter(
           <Route path="/admin/e-booklet-terms-milestones" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/milestones/:achievementId" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/access-codes" element={<LegacyEBookletRedirect type="accessCodes" />} />
+          <Route path="/admin/question-bank" element={<QuestionBankPage />} />
+          <Route path="/admin/question-bank/archive" element={<QuestionBankArchivePage />} />
+          <Route path="/admin/question-bank/folders/:id" element={<BankFolderPage />} />
+          <Route path="/admin/question-bank/folders/:folderId/questions/new" element={<QuestionEditorPage />} />
+          <Route path="/admin/question-bank/questions/:questionId/edit" element={<QuestionEditorPage />} />
           <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
           <Route path="/admin/required-fields" element={<RequiredFieldsPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
