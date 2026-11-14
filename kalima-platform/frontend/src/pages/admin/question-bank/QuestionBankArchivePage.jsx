@@ -2,18 +2,21 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ArchiveRestore, Folder, Library, FileQuestion } from 'lucide-react';
+import { ArchiveRestore, Folder, Library, FileQuestion, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import MathText from '@/components/admin/question-bank/MathText';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { qbGet, qbSend } from '@/components/admin/question-bank/api';
+import { useRole } from '@/hooks/useRole';
 
-// Everything archived from the bank, with one-click restore.
+// Everything archived from the bank, with one-click restore. The Admin can
+// also delete an item permanently (not the SubAdmin).
 export default function QuestionBankArchivePage() {
     const { t, i18n } = useTranslation('questionBank');
     const [data, setData] = useState(null);
+    const { isAdmin } = useRole();
 
     const load = () => qbGet('/archive').then(setData).catch((err) => { showError(err, t('errors.load')); setData({ folders: [], questions: [] }); });
     useEffect(() => { load(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -22,6 +25,17 @@ export default function QuestionBankArchivePage() {
         try {
             await qbSend('post', path, body);
             toast.success(t('archive.restored'));
+            load();
+        } catch (err) {
+            showError(err, t('errors.save'));
+        }
+    };
+
+    const purge = async (confirmText, method, url, body) => {
+        if (!window.confirm(confirmText)) return;
+        try {
+            await qbSend(method, url, body);
+            toast.success(t('archive.deleted'));
             load();
         } catch (err) {
             showError(err, t('errors.save'));
@@ -60,6 +74,19 @@ export default function QuestionBankArchivePage() {
                                 <Button size="sm" variant="outline" onClick={() => restore(`/folders/${f.id}/restore`)}>
                                     <ArchiveRestore className="h-4 w-4" />{t('archive.restore')}
                                 </Button>
+                                {isAdmin && (
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="text-destructive"
+                                        onClick={() => purge(
+                                            t(f.is_bank ? 'archive.deleteBankConfirm' : 'archive.deleteFolderConfirm', { name: f.name }),
+                                            'delete', `/archive/folders/${f.id}`,
+                                        )}
+                                    >
+                                        <Trash2 className="h-4 w-4" />{t('archive.delete')}
+                                    </Button>
+                                )}
                             </div>
                         ))}
                     </section>
@@ -82,6 +109,19 @@ export default function QuestionBankArchivePage() {
                                 <Button size="sm" variant="outline" onClick={() => restore('/questions/restore', { ids: [q.id] })}>
                                     <ArchiveRestore className="h-4 w-4" />{t('archive.restore')}
                                 </Button>
+                                {isAdmin && (
+                                    <Button
+                                        size="sm"
+                                        variant="outline"
+                                        className="text-destructive"
+                                        onClick={() => purge(
+                                            t('archive.deleteQuestionConfirm', { serial: q.serial }),
+                                            'post', '/archive/questions/delete', { ids: [q.id] },
+                                        )}
+                                    >
+                                        <Trash2 className="h-4 w-4" />{t('archive.delete')}
+                                    </Button>
+                                )}
                             </div>
                         ))}
                     </section>

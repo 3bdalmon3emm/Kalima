@@ -235,5 +235,11 @@
   "Validation failed": "البيانات غير مكتملة",
   "Bank copy started": "بدأ نسخ البنك",
   "This bank is still being copied": "هذا البنك ما زال قيد النسخ",
-  "Write the text of both options": "اكتب نص الاختيارين"
+  "Write the text of both options": "اكتب نص الاختيارين",
+  "Folder copy started": "بدأ نسخ المجلد",
+  "This folder is still being copied": "هذا المجلد ما زال قيد النسخ",
+  "A folder cannot be copied into itself": "لا يمكن نسخ المجلد داخل نفسه",
+  "Use copy bank to copy a whole bank": "لنسخ بنك كامل استخدم \"نسخ البنك\"",
+  "Deleted permanently": "تم الحذف نهائيًا",
+  "Only archived items can be deleted permanently": "لا يمكن الحذف النهائي إلا لعنصر في الأرشيف"
 }

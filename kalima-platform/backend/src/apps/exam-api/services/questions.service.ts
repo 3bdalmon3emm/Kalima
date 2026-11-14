@@ -360,7 +360,7 @@ class QuestionsService {
 
   // Category ids of the source bank mapped to the target bank by name. Same
   // bank keeps them as they are; a name missing in the target leaves it empty.
-  private async categoryMapper(tx: Tx, sourceBankId: number, targetBankId: number) {
+  async categoryMapper(tx: Tx, sourceBankId: number, targetBankId: number) {
     if (sourceBankId === targetBankId) {
       return (c: number | null, s: number | null) => ({ category_id: c, subcategory_id: s });
     }

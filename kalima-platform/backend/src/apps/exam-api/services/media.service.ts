@@ -7,7 +7,7 @@ import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { optimizeImage } from "../../../libs/imageOptimize";
-import { isR2Enabled, putObject, getSignedDownloadUrl, getServePolicy } from "../../../libs/storage";
+import { isR2Enabled, putObject, deleteObject, getSignedDownloadUrl, getServePolicy } from "../../../libs/storage";
 import { resolveUploadPath } from "../../../libs/uploadsRoot";
 import { foldersService } from "./folders.service";
 
@@ -113,6 +113,49 @@ class MediaService {
     if (found.length !== wanted.length || found.some((m) => m.kind !== kind)) {
       throw new NotFoundError(kind === "image" ? "Image not found" : "Audio file not found");
     }
+  }
+
+  // Deletes the media rows and files that no question uses any more. Copies
+  // share media, so a file goes only with its last user. A file that fails to
+  // delete is logged and left behind; the rows are gone either way.
+  async removeUnused(ids: number[]) {
+    const wanted = [...new Set(ids)];
+    if (!wanted.length) return;
+    const stillUsed = new Set<number>();
+    const [questions, options, items] = await Promise.all([
+      this.db.qb_questions.findMany({
+        where: { OR: [
+          { stem_image_id: { in: wanted } }, { stem_audio_id: { in: wanted } },
+          { explanation_image_id: { in: wanted } }, { model_answer_image_id: { in: wanted } },
+        ] },
+        select: { stem_image_id: true, stem_audio_id: true, explanation_image_id: true, model_answer_image_id: true },
+      }),
+      this.db.qb_question_options.findMany({ where: { image_id: { in: wanted } }, select: { image_id: true } }),
+      this.db.qb_matching_items.findMany({
+        where: { OR: [{ image_id: { in: wanted } }, { audio_id: { in: wanted } }] },
+        select: { image_id: true, audio_id: true },
+      }),
+    ]);
+    [
+      ...questions.flatMap((q) => [q.stem_image_id, q.stem_audio_id, q.explanation_image_id, q.model_answer_image_id]),
+      ...options.map((o) => o.image_id),
+      ...items.flatMap((i) => [i.image_id, i.audio_id]),
+    ].forEach((id) => id && stillUsed.add(id));
+
+    const unused = await this.db.qb_media.findMany({
+      where: { id: { in: wanted.filter((id) => !stillUsed.has(id)) } },
+      select: { id: true, storage_key: true },
+    });
+    if (!unused.length) return;
+    await this.db.qb_media.deleteMany({ where: { id: { in: unused.map((m) => m.id) } } });
+    await Promise.all(unused.map(async (m) => {
+      try {
+        if (isR2Enabled()) await deleteObject(m.storage_key);
+        else await fs.rm(resolveUploadPath(m.storage_key), { force: true });
+      } catch (err) {
+        console.error(`[question-bank] could not delete file ${m.storage_key}:`, err);
+      }
+    }));
   }
 
   // Signed R2 link (short-lived) or the local path in development.

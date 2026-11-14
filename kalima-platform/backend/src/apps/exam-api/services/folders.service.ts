@@ -47,13 +47,17 @@ class FoldersService {
     return count > 0;
   }
 
+  // A bank or folder still being filled by a copy (or whose copy failed) takes
+  // no changes, and neither does anything inside it.
   async assertUsable(folder: FolderRow): Promise<void> {
     if (await this.isHidden(folder)) throw new BadRequestError("This folder is archived");
-    const bank = await this.db.qb_folders.findUnique({
-      where: { id: this.bankIdOf(folder) },
-      select: { copy_status: true },
+    const copying = await this.db.qb_folders.findFirst({
+      where: { id: { in: pathIds(folder.path) }, copy_status: { not: null } },
+      select: { bank_id: true },
     });
-    if (bank?.copy_status) throw new BadRequestError("This bank is still being copied");
+    if (copying) {
+      throw new BadRequestError(copying.bank_id === null ? "This bank is still being copied" : "This folder is still being copied");
+    }
   }
 
   async listBanks(archived = false) {
@@ -155,7 +159,7 @@ class FoldersService {
       this.db.qb_folders.findMany({
         where: { parent_id: id, archived_at: null },
         orderBy: [{ sort_order: "asc" }, { created_at: "asc" }],
-        select: { id: true, name: true, sort_order: true },
+        select: { id: true, name: true, sort_order: true, copy_status: true },
       }),
       this.db.qb_questions.count({ where: { folder_id: id, passage_id: null, archived_at: null } }),
       this.effectiveLevels(folder),
@@ -165,7 +169,8 @@ class FoldersService {
       ...folder,
       bank_id: this.bankIdOf(folder),
       is_bank: folder.bank_id === null,
-      copy_status: byId.get(this.bankIdOf(folder))?.copy_status ?? null,
+      // Its own copy state, or that of the bank or folder copy it sits in.
+      copy_status: breadcrumb.find((a) => a!.copy_status)?.copy_status ?? null,
       hidden: breadcrumb.some((a) => a!.archived_at !== null),
       breadcrumb: breadcrumb.map((a) => ({ id: a!.id, name: a!.name })),
       children,

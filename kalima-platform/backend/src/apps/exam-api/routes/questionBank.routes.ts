@@ -8,6 +8,7 @@ import { foldersService } from "../services/folders.service";
 import { categoriesService } from "../services/categories.service";
 import { questionsService } from "../services/questions.service";
 import { bankCopyService } from "../services/bankCopy.service";
+import { bankPurgeService } from "../services/bankPurge.service";
 import { mediaService, uploadQuestionMedia } from "../services/media.service";
 import { parseQuestionInput } from "../services/questionInput";
 
@@ -88,6 +89,16 @@ router.post("/folders/:id/archive", handle(async (req, res) => {
 router.post("/folders/:id/restore", handle(async (req, res) => {
   await foldersService.restore(idParam(req));
   res.json(ok(undefined, "Restored"));
+}));
+
+// Copies a folder with its subfolders and questions under parent_id, in the
+// background. The same parent makes a duplicate right after the original.
+router.post("/folders/:id/copy", handle(async (req, res) => {
+  const parentId = optionalId(req.body?.parent_id, "parent_id");
+  if (!parentId) throw new BadRequestError("parent_id is required");
+  const name = req.body?.name === undefined || req.body?.name === null ? null : requiredName(req.body.name);
+  const folder = await bankCopyService.copyFolder(idParam(req), parentId, name, userId(req));
+  res.status(202).json(ok(folder, "Folder copy started"));
 }));
 
 // ---------- Categories ----------
@@ -189,6 +200,19 @@ router.post("/questions/:id/duplicate", handle(async (req, res) => {
 
 router.get("/archive", handle(async (_req, res) => {
   res.json(ok(await questionsService.listArchive()));
+}));
+
+// Permanent delete of archived items: Admin only, not SubAdmin.
+const adminOnly = requireRole([role_enum.Admin]);
+
+router.delete("/archive/folders/:id", adminOnly, handle(async (req, res) => {
+  await bankPurgeService.purgeFolder(idParam(req));
+  res.json(ok(undefined, "Deleted permanently"));
+}));
+
+router.post("/archive/questions/delete", adminOnly, handle(async (req, res) => {
+  await bankPurgeService.purgeQuestions(idList(req.body?.ids));
+  res.json(ok(undefined, "Deleted permanently"));
 }));
 
 export default router;

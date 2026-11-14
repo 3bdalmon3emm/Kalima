@@ -266,8 +266,9 @@ export function CategoriesDialog({ open, onOpenChange, bankId, onChanged }) {
     );
 }
 
-// Picks a folder that can hold questions, in any bank.
-export function CopyToDialog({ open, onOpenChange, currentBankId, count, onCopy }) {
+// Picks a target folder in any bank: one that can hold questions, or (for
+// mode "folder") any folder outside the one being copied.
+export function CopyToDialog({ open, onOpenChange, currentBankId, count, onCopy, mode = 'questions', sourceFolderId = null, title }) {
     const { t } = useTranslation('questionBank');
     const [banks, setBanks] = useState([]);
     const [bankId, setBankId] = useState(currentBankId);
@@ -288,11 +289,18 @@ export function CopyToDialog({ open, onOpenChange, currentBankId, count, onCopy 
 
     const hasChildren = new Set(tree.map((f) => f.parent_id).filter(Boolean));
     const childrenOf = (id) => tree.filter((f) => f.parent_id === id);
+    // The copied folder and everything under it.
+    const inside = new Set();
+    if (sourceFolderId) {
+        const walk = (id) => { inside.add(id); childrenOf(id).forEach((c) => walk(c.id)); };
+        walk(sourceFolderId);
+    }
+    const blocked = (f) => (mode === 'folder' ? inside.has(f.id) : hasChildren.has(f.id));
     const renderNode = (f, depth) => (
         <div key={f.id}>
             <button
                 type="button"
-                disabled={hasChildren.has(f.id)}
+                disabled={blocked(f)}
                 onClick={() => setTarget(f.id)}
                 className={`flex w-full items-center gap-2 rounded px-2 py-1 text-sm text-start disabled:opacity-60 disabled:cursor-default ${target === f.id ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'}`}
                 style={{ paddingInlineStart: `${depth * 16 + 8}px` }}
@@ -321,8 +329,8 @@ export function CopyToDialog({ open, onOpenChange, currentBankId, count, onCopy 
         <Dialog open={open} onOpenChange={onOpenChange}>
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
-                    <DialogTitle>{t('copy.title', { count })}</DialogTitle>
-                    <DialogDescription>{t('copy.description')}</DialogDescription>
+                    <DialogTitle>{title || t('copy.title', { count })}</DialogTitle>
+                    <DialogDescription>{t(mode === 'folder' ? 'copy.folderDescription' : 'copy.description')}</DialogDescription>
                 </DialogHeader>
                 <Select value={bankId ? String(bankId) : ''} onValueChange={(v) => { setBankId(Number(v)); setTarget(null); }}>
                     <SelectTrigger><SelectValue placeholder={t('copy.pickBank')} /></SelectTrigger>

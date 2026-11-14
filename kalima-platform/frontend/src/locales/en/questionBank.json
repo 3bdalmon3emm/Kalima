@@ -148,7 +148,11 @@
     "clearLevels": "Clear",
     "noLevels": "No school years",
     "inherited": "from the parent folder",
-    "archiveConfirm": "Archive the folder \"{{name}}\" with everything in it? You can restore it from the archive."
+    "archiveConfirm": "Archive the folder \"{{name}}\" with everything in it? You can restore it from the archive.",
+    "copyName": "{{name}} - copy",
+    "copyStarted": "Folder copy started; it will be ready in a moment",
+    "copyingHint": "This folder is still being copied. Nothing can be added to it until the copy finishes.",
+    "copyFailedHint": "Copying this folder failed. You can archive it and copy the original folder again."
   },
   "categories": {
     "title": "Categories",
@@ -164,7 +168,9 @@
     "description": "Pick the folder to copy into. Each copy is independent with a new serial.",
     "pickBank": "Pick a bank",
     "confirm": "Copy here",
-    "done": "{{count}} questions copied"
+    "done": "{{count}} questions copied",
+    "folderTitle": "Copy folder \"{{name}}\"",
+    "folderDescription": "Pick the folder to copy into, with all its subfolders and questions. The copy is independent with new serials; in another bank, categories carry over by name."
   },
   "search": {
     "placeholder": "Question serial",
@@ -180,7 +186,12 @@
     "none": "Nothing here.",
     "bank": "Bank",
     "restore": "Restore",
-    "restored": "Restored"
+    "restored": "Restored",
+    "delete": "Delete permanently",
+    "deleted": "Deleted permanently",
+    "deleteBankConfirm": "Delete the bank \"{{name}}\" permanently, with all its folders, questions and categories? This cannot be undone.",
+    "deleteFolderConfirm": "Delete the folder \"{{name}}\" permanently, with everything inside? This cannot be undone.",
+    "deleteQuestionConfirm": "Delete question {{serial}} permanently? This cannot be undone."
   },
   "question": {
     "list": "Questions",

@@ -113,6 +113,8 @@ export default function BankFolderPage() {
     const [filters, setFilters] = useState({ category_id: null, subcategory_id: null, reference_no: '' });
     const [dialog, setDialog] = useState(null); // 'newFolder' | 'rename' | 'levels' | 'categories' | 'copyBank'
     const [copyIds, setCopyIds] = useState(null);
+    const [copyFolder, setCopyFolder] = useState(null); // { id, name } picked for "copy to"
+    const [levelsFolder, setLevelsFolder] = useState(null); // a subfolder's details, for its levels
     const [treeOpen, setTreeOpen] = useState(false);
     const focusId = Number(params.get('focus')) || null;
 
@@ -158,12 +160,14 @@ export default function BankFolderPage() {
         return () => clearTimeout(timer);
     }, [loadQuestions, filters.reference_no]);
 
-    // A bank being filled by "copy bank": refresh until it is ready.
+    // A bank or folder still being filled by a copy (this one or a subfolder
+    // card on it): refresh until it is ready.
+    const anyCopying = folder?.copy_status === 'copying' || !!folder?.children?.some((c) => c.copy_status === 'copying');
     useEffect(() => {
-        if (folder?.copy_status !== 'copying') return;
+        if (!anyCopying) return;
         const timer = setInterval(refresh, 3000);
         return () => clearInterval(timer);
-    }, [folder?.copy_status]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [anyCopying]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Ctrl+V on the page (outside any field) opens a new question with the
     // pasted text split into its fields, or the pasted picture as the question
@@ -171,7 +175,7 @@ export default function BankFolderPage() {
     // is saved until the admin saves.
     useEffect(() => {
         const onPaste = (e) => {
-            if (!folder || folder.copy_status || folder.hidden || dialog || copyIds) return;
+            if (!folder || folder.copy_status || folder.hidden || dialog || copyIds || copyFolder || levelsFolder) return;
             if (isTypingTarget(e.target) || document.querySelector('[role="dialog"]')) return;
             const text = pastedText({
                 text: e.clipboardData?.getData('text/plain')?.trim(),
@@ -188,7 +192,7 @@ export default function BankFolderPage() {
         };
         document.addEventListener('paste', onPaste);
         return () => document.removeEventListener('paste', onPaste);
-    }, [folder, folderId, dialog, copyIds, navigate]);
+    }, [folder, folderId, dialog, copyIds, copyFolder, levelsFolder, navigate]);
 
     // Coming from a serial search: scroll to the question and light it up.
     useEffect(() => {
@@ -217,6 +221,19 @@ export default function BankFolderPage() {
     };
 
     const duplicate = (q) => act(() => qbSend('post', `/questions/${q.id}/duplicate`), t('question.duplicated'));
+    // A subfolder's levels from its menu, without opening it.
+    const openFolderLevels = async (f) => {
+        try {
+            setLevelsFolder(await qbGet(`/folders/${f.id}`));
+        } catch (err) {
+            showError(err, t('errors.load'));
+        }
+    };
+    // A copy of the subfolder right after it, with everything inside.
+    const duplicateFolder = (f) => act(
+        () => qbSend('post', `/folders/${f.id}/copy`, { parent_id: folderId, name: t('folder.copyName', { name: f.name }) }),
+        t('folder.copyStarted'),
+    );
     const archiveQuestions = (ids) => {
         if (!window.confirm(t('question.archiveConfirm', { count: ids.length }))) return;
         act(() => qbSend('post', '/questions/archive', { ids }), t('common.archived'));
@@ -373,7 +390,7 @@ export default function BankFolderPage() {
 
                 {folder.copy_status && (
                     <div className={`rounded-lg border p-3 text-sm ${folder.copy_status === 'failed' ? 'border-destructive text-destructive' : 'border-amber-300 bg-amber-50 text-amber-900 dark:bg-amber-950/30 dark:text-amber-200'}`}>
-                        {folder.copy_status === 'failed' ? t('bank.copyFailedHint') : t('bank.copyingHint')}
+                        {t(`${folder.is_bank ? 'bank' : 'folder'}.${folder.copy_status === 'failed' ? 'copyFailedHint' : 'copyingHint'}`)}
                     </div>
                 )}
 
@@ -399,7 +416,21 @@ export default function BankFolderPage() {
                                     <Link to={`/admin/question-bank/folders/${f.id}`} className="flex flex-1 items-center gap-2 min-w-0">
                                         <Folder className="h-5 w-5 text-primary shrink-0" />
                                         <span className="truncate font-medium">{f.name}</span>
+                                        {f.copy_status === 'copying' && <Badge className="bg-amber-100 text-amber-800 shrink-0">{t('bank.copying')}</Badge>}
+                                        {f.copy_status === 'failed' && <Badge variant="destructive" className="shrink-0">{t('bank.copyFailed')}</Badge>}
                                     </Link>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" aria-label={t('folder.actions')}>
+                                                <MoreVertical className="h-4 w-4" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => openFolderLevels(f)}><GraduationCap className="h-4 w-4" />{t('folder.levels')}</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => duplicateFolder(f)}><CopyPlus className="h-4 w-4" />{t('question.duplicate')}</DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setCopyFolder(f)}><Copy className="h-4 w-4" />{t('question.copyTo')}</DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
                                 </div>
                             )}
                         />
@@ -528,6 +559,7 @@ export default function BankFolderPage() {
                 }}
             />
             <LevelsDialog open={dialog === 'levels'} onOpenChange={(o) => !o && setDialog(null)} folder={folder} onSaved={loadFolder} />
+            <LevelsDialog open={!!levelsFolder} onOpenChange={(o) => !o && setLevelsFolder(null)} folder={levelsFolder} onSaved={loadFolder} />
             <CategoriesDialog
                 open={dialog === 'categories'}
                 onOpenChange={(o) => !o && setDialog(null)}
@@ -543,6 +575,19 @@ export default function BankFolderPage() {
                     await qbSend('post', '/questions/copy', { ids: copyIds, folder_id: target });
                     toast.success(t('copy.done', { count: copyIds.length }));
                     setSelected(new Set());
+                    if (target === folderId) refresh();
+                }}
+            />
+            <CopyToDialog
+                open={!!copyFolder}
+                onOpenChange={(o) => !o && setCopyFolder(null)}
+                currentBankId={folder.bank_id}
+                mode="folder"
+                sourceFolderId={copyFolder?.id}
+                title={t('copy.folderTitle', { name: copyFolder?.name })}
+                onCopy={async (target) => {
+                    await qbSend('post', `/folders/${copyFolder.id}/copy`, { parent_id: target });
+                    toast.success(t('folder.copyStarted'));
                     if (target === folderId) refresh();
                 }}
             />
