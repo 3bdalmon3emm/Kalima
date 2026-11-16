@@ -179,7 +179,10 @@ export function registerAllExportResources(): void {
     label: "purchases",
     mapper: purchaseMapper,
     fetcher: (ids, filters) => {
+      // Deleted orders never export.
       const where: any = {
+        deleted_at: null,
+        is_deleted: { not: true },
         ...(ids ? { id: { in: ids } } : {}),
       };
 

@@ -1059,8 +1059,11 @@ export class PurchasesService {
     return updated;
   }
 
-  /** Hard-delete a purchase. Restores used coupons if confirmed. */
-  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null) {
+  /** Delete a purchase (kept for the record, out of every count) with who,
+   * when and why. Restores used coupons if confirmed. */
+  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null, reason?: string) {
+    const why = (reason ?? "").trim();
+    if (why.length < 3) throw new BadRequestError("A reason is required to delete an order");
     const purchase = await this.db.purchases.findUnique({
       where: { id: purchaseId },
       include: {
@@ -1069,6 +1072,7 @@ export class PurchasesService {
       },
     });
     if (!purchase) throw new NotFoundError("Purchase not found");
+    if (purchase.deleted_at || purchase.is_deleted) throw new BadRequestError("This order is already deleted");
 
     await this.db.$transaction(async (tx) => {
       if (purchase.status === "confirmed") {
@@ -1076,7 +1080,7 @@ export class PurchasesService {
       }
       await tx.purchases.update({
         where: { id: purchaseId },
-        data: { deleted_at: new Date(), is_deleted: true },
+        data: { deleted_at: new Date(), is_deleted: true, deleted_by: adminId ?? null, delete_reason: why.slice(0, 1000) },
       });
       await tx.user_analytics.update({
         where: { user_id: purchase.user_id },
@@ -1104,6 +1108,48 @@ export class PurchasesService {
         })
       .catch((err) => console.error("[Purchases] Failed to send delete email:", err));
     }
+  }
+
+  /** Deleted orders for the Admin: who deleted each one, when and why. */
+  async listDeleted(filters: { search?: string; page: number; limit: number }) {
+    const where: Prisma.purchasesWhereInput = { OR: [{ deleted_at: { not: null } }, { is_deleted: true }] };
+    const s = filters.search?.trim();
+    if (s) {
+      where.AND = [{
+        OR: [
+          { purchase_serial: { contains: s, mode: "insensitive" } },
+          { users: { name: { contains: s, mode: "insensitive" } } },
+          { users: { phone: { contains: s, mode: "insensitive" } } },
+          { delete_reason: { contains: s, mode: "insensitive" } },
+        ],
+      }];
+    }
+    const [rows, total] = await Promise.all([
+      this.db.purchases.findMany({
+        where,
+        orderBy: [{ deleted_at: "desc" }, { id: "desc" }],
+        skip: (filters.page - 1) * filters.limit,
+        take: filters.limit,
+        select: {
+          id: true, purchase_serial: true, status: true, total: true, created_at: true,
+          deleted_at: true, deleted_by: true, delete_reason: true,
+          users: { select: { id: true, name: true, phone: true } },
+        },
+      }),
+      this.db.purchases.count({ where }),
+    ]);
+    const deleters = await this.db.users.findMany({
+      where: { id: { in: [...new Set(rows.map((r) => r.deleted_by).filter((x): x is number => x !== null))] } },
+      select: { id: true, name: true },
+    });
+    const nameOf = new Map(deleters.map((u) => [u.id, u.name]));
+    return {
+      orders: rows.map((r) => ({ ...r, deleted_by_user: r.deleted_by ? { id: r.deleted_by, name: nameOf.get(r.deleted_by) ?? null } : null })),
+      total,
+      page: filters.page,
+      pages: Math.max(Math.ceil(total / filters.limit), 1),
+      limit: filters.limit,
+    };
   }
 
   /** Remove a single item; recalculate totals. Cannot remove last item. */

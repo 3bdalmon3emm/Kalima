@@ -126,6 +126,7 @@ const ExamEditorPage = lazy(() => import("./pages/admin/exams/ExamEditorPage"));
 const ExamArchivePage = lazy(() => import("./pages/admin/exams/ExamArchivePage"));
 const ExamAttemptReviewPage = lazy(() => import("./pages/admin/exams/ExamAttemptReviewPage"));
 const ImpersonationLogPage = lazy(() => import("./pages/admin/users/ImpersonationLogPage"));
+const DeletedOrdersPage = lazy(() => import("./pages/admin/orders/DeletedOrdersPage"));
 const ExamStartPage = lazy(() => import("./pages/exams/ExamStartPage"));
 const ExamAttemptPage = lazy(() => import("./pages/exams/ExamAttemptPage"));
 const ExamResultPage = lazy(() => import("./pages/exams/ExamResultPage"));
@@ -324,6 +325,7 @@ const router = createBrowserRouter(
           <Route path="/admin/users/:id" element={<UserDetailPage />} />
           <Route element={<RoleRoute requiredRole={["Admin"]} />}>
             <Route path="/admin/impersonation-log" element={<ImpersonationLogPage />} />
+            <Route path="/admin/orders/deleted" element={<DeletedOrdersPage />} />
           </Route>
           <Route path="/users/:id" element={<LegacyAdminNotificationRedirect type="user" />} />
           <Route path="/admin/users/:id/appreciation" element={<UserAppreciationPage />} />

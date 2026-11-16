@@ -305,5 +305,7 @@
   "You cannot create a Moderator account": "لا يمكنك إنشاء حساب مودريتور",
   "This payment method is not available; choose another one": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
   "Invalid or inactive payment method": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
-  "Selected payment method is inactive or invalid.": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى"
+  "Selected payment method is inactive or invalid.": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
+  "A reason is required to delete an order": "اكتب سبب حذف الطلب",
+  "This order is already deleted": "هذا الطلب محذوف بالفعل"
 }

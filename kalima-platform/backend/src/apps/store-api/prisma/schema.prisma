@@ -587,6 +587,9 @@ model purchases {
   updated_at                        DateTime?                           @db.Timestamp(6)
   deleted_at                        DateTime?                           @db.Timestamp(6)
   is_deleted                        Boolean?                            @default(false)
+  // Who deleted the order and why (required when deleting).
+  deleted_by                        Int?
+  delete_reason                     String?
   purchase_items                    purchase_items[]
   coupon_usages                     coupon_usages[]
   e_booklet_access_code_redemptions e_booklet_access_code_redemptions[]

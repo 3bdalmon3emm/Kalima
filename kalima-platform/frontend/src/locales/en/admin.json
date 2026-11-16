@@ -192,7 +192,24 @@
     "statusRefunded": "Refunded",
     "statusReturned": "Returned",
     "statusCreated": "Created",
-    "deleted": "Deleted",
+    "deleted": {
+      "title": "Deleted orders",
+      "subtitle": "Kept for the record; they count nowhere. Admin only.",
+      "back": "Back to orders",
+      "search": "Search by order number, customer or reason",
+      "error": "Could not load deleted orders",
+      "empty": "No deleted orders.",
+      "order": "Order",
+      "customer": "Customer",
+      "total": "Total",
+      "statusAtDelete": "Status",
+      "by": "Deleted by",
+      "at": "Deleted at",
+      "reason": "Reason",
+      "unknown": "Not recorded",
+      "prev": "Previous",
+      "next": "Next"
+    },
     "clearFilters": "Clear",
     "filterByDate": "Filter by date",
     "table": {
@@ -302,6 +319,11 @@
       "range": "{{from}} – {{to}}",
       "since": "Since {{from}}",
       "until": "Until {{to}}"
+    },
+    "delete": {
+      "reason": "Reason for deleting",
+      "reasonPlaceholder": "For example: duplicate order, test order...",
+      "reasonHint": "Required. A deleted order is kept for the record but counts nowhere."
     }
   },
   "products": {

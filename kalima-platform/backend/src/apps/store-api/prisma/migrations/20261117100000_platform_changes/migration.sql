@@ -43,3 +43,7 @@ ALTER TABLE "purchase_items" ADD COLUMN IF NOT EXISTS "quantity" INTEGER NOT NUL
 ALTER TABLE "purchase_items" ADD COLUMN IF NOT EXISTS "coupon_id" INTEGER;
 ALTER TABLE "purchase_items" ADD COLUMN IF NOT EXISTS "is_deleted" BOOLEAN DEFAULT false;
 ALTER TABLE "payment_methods" ADD COLUMN IF NOT EXISTS "is_deleted" BOOLEAN DEFAULT false;
+
+-- Who deleted an order and why (the reason is required from now on).
+ALTER TABLE "purchases" ADD COLUMN IF NOT EXISTS "deleted_by" INTEGER;
+ALTER TABLE "purchases" ADD COLUMN IF NOT EXISTS "delete_reason" TEXT;
