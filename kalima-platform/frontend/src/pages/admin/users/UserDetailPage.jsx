@@ -137,8 +137,8 @@ export default function UserDetailPage() {
         fetchUserById(id);
     };
 
-    const handleDeleteUser = async () => {
-        const res = await deleteUser(id);
+    const handleDeleteUser = async (reason) => {
+        const res = await deleteUser(id, reason);
         if (res?.success) {
             fetchUserById(id);
         }

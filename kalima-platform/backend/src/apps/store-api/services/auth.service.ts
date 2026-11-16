@@ -457,7 +457,7 @@ class AuthService {
 
   async deleteAccount(userId: number): Promise<{ message: string }> {
     await revokeAllRefreshTokensForUser(userId);
-    await this.userService.deleteUser(userId);
+    await this.userService.deleteUser(userId, { actorId: userId, reason: "Deleted by the account owner" });
     return { message: "Account deleted successfully" };
   }
 

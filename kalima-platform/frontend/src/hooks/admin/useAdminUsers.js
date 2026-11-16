@@ -110,11 +110,12 @@ export const useAdminUsers = () => {
     }, [mutate]);
 
     // ─── Delete User ─────────────────────────────────────────────────────────
-    const deleteUser = async (userId) => {
+    const deleteUser = async (userId, reason) => {
         try {
             const res = await mutate({
                 endpoint: `/admin/users/${userId}`,
                 method: 'delete',
+                data: reason ? { reason } : undefined,
                 defaultSuccessMessage: t('messages.deleteSuccess'),
             });
             return res;

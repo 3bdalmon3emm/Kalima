@@ -52,6 +52,9 @@ model users {
   updated_at                          DateTime?                             @default(now()) @db.Timestamptz(6)
   deleted_at                          DateTime?                             @db.Timestamptz(6)
   is_deleted                          Boolean?                              @default(false)
+  // Who deleted the account and why.
+  deleted_by                          Int?
+  delete_reason                       String?
   secondary_phone                     String?                               @db.VarChar
   profile_pic_url                     String?
   password_changed_at                 DateTime?                             @db.Timestamp(6)

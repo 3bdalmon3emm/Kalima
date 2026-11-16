@@ -60,6 +60,7 @@ export default function DetailHeader({
     const [bannerColors, setBannerColors] = useState(null);
     const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [deleteReason, setDeleteReason] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -273,9 +274,13 @@ export default function DetailHeader({
                                                 <AlertDialogTitle>{t('details.confirmDeleteTitle')}</AlertDialogTitle>
                                                 <AlertDialogDescription>{t('details.confirmDeleteDesc')}</AlertDialogDescription>
                                             </AlertDialogHeader>
+                                            <div className="space-y-1.5">
+                                                <label className="text-sm font-medium">{t('details.deleteReason', 'Reason (optional)')}</label>
+                                                <textarea className="w-full rounded-md border bg-background p-2 text-sm" rows={3} value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} />
+                                            </div>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
-                                                <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                                <AlertDialogAction onClick={() => onDelete(deleteReason.trim())} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                                                     {t('actions.delete')}
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>

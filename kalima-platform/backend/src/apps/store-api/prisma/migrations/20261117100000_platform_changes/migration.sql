@@ -79,3 +79,8 @@ CREATE TRIGGER "trg_purchases_customer_flag" BEFORE INSERT ON "purchases"
 DROP TRIGGER IF EXISTS "trg_e_booklet_purchases_customer_flag" ON "e_booklet_purchases";
 CREATE TRIGGER "trg_e_booklet_purchases_customer_flag" BEFORE INSERT ON "e_booklet_purchases"
   FOR EACH ROW EXECUTE FUNCTION "set_e_booklet_purchase_customer_flag"();
+
+-- Who deleted an account and why. A deleted account keeps its roles and
+-- orders; only its personal data is wiped.
+ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "deleted_by" INTEGER;
+ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "delete_reason" TEXT;

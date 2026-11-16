@@ -223,6 +223,8 @@ export const UsersScalarFieldEnum = {
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
+  deleted_by: 'deleted_by',
+  delete_reason: 'delete_reason',
   secondary_phone: 'secondary_phone',
   profile_pic_url: 'profile_pic_url',
   password_changed_at: 'password_changed_at',

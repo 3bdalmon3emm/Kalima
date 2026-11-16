@@ -1073,34 +1073,44 @@ class UserManagementService {
   // DELETE USER
   // ============================================
 
-  async deleteUser(userId: number): Promise<void> {
+  // Deleting an account wipes its personal data only (name, email, phones,
+  // password, photo, Google sign-in) and signs it out everywhere. Its roles,
+  // orders and records stay, under "Deleted account #id", so statistics and
+  // order history are unchanged. Who deleted it, when and why are recorded.
+  async deleteUser(userId: number, by?: { actorId?: number; reason?: string }): Promise<void> {
     const user = await this.db.users.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, phone: true },
+      select: { id: true, is_deleted: true },
     });
 
     if (!user) {
       throw new NotFoundError("User not found");
     }
+    if (user.is_deleted) {
+      throw new BadRequestError("This account is already deleted");
+    }
 
-    const ts = Date.now();
-    await this.db.users.update({
-      where: { id: userId },
-      data: {
-        email: user.email ? `${user.email}_deleted_${ts}` : null,
-        phone: user.phone ? `${user.phone}_deleted_${ts}` : null,
-                password: null,
-        // we leave 'name' and relations intact for order history
-        updated_at: new Date(),
-        deleted_at: new Date(),
-        is_deleted: true,
-      },
-    });
-
-    // Cleanup active sessions
-    await this.db.refresh_tokens.deleteMany({ where: { user_id: userId } });
-    await this.db.user_roles.deleteMany({ where: { user_id: userId } });
-    await this.db.auth_identities.deleteMany({ where: { user_id: userId } });
+    await this.db.$transaction([
+      this.db.users.update({
+        where: { id: userId },
+        data: {
+          name: `حساب محذوف #${userId}`,
+          email: null,
+          phone: null,
+          secondary_phone: null,
+          password: null,
+          profile_pic_url: null,
+          updated_at: new Date(),
+          deleted_at: new Date(),
+          is_deleted: true,
+          deleted_by: by?.actorId ?? null,
+          delete_reason: by?.reason?.trim() ? by.reason.trim().slice(0, 1000) : null,
+        },
+      }),
+      this.db.students.updateMany({ where: { user_id: userId }, data: { parent_phone_number: null } }),
+      this.db.refresh_tokens.deleteMany({ where: { user_id: userId } }),
+      this.db.auth_identities.deleteMany({ where: { user_id: userId } }),
+    ]);
   }
 
   // ============================================

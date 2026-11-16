@@ -897,7 +897,10 @@ export const adminController = {
       }
 
       await assertCanManage(req, targetUserId);
-      await userManagementService.deleteUser(targetUserId);
+      await userManagementService.deleteUser(targetUserId, {
+        actorId: callerUserId,
+        reason: typeof req.body?.reason === "string" ? req.body.reason : undefined,
+      });
       res
         .status(200)
         .json({ success: true, message: "User deleted successfully" });

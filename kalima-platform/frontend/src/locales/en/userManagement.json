@@ -116,7 +116,7 @@
     "parents": "Parents",
     "assists": "Assists",
     "confirmDeleteTitle": "Are you sure?",
-    "confirmDeleteDesc": "This action cannot be undone. This will permanently delete the user account.",
+    "confirmDeleteDesc": "This cannot be undone. The account's personal data (name, email, phones, password, photo, Google sign-in) is wiped and it is signed out everywhere. Its orders, roles and records stay, under \"Deleted account\".",
     "userNotFound": "User not found.",
     "idLabel": "ID",
     "parentPhone": "Parent",
@@ -161,7 +161,8 @@
     "changePasswordDescription": "Set a new password for {{name}}. Their active sessions will be signed out.",
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
-    "passwordMinLength": "Password must be at least 8 characters."
+    "passwordMinLength": "Password must be at least 8 characters.",
+    "deleteReason": "Reason (optional)"
   },
   "createDialog": {
     "title": "Create New User",
