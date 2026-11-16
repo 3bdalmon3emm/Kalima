@@ -9,9 +9,6 @@ import {
     BookOpen,
     TrendingUp,
     ClipboardCheck,
-    Calendar as CalendarIcon,
-    Filter,
-    X,
     Search,
     ChevronLeft,
     ChevronRight,
@@ -27,11 +24,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
+import DayRangeFilter from '@/components/admin/DayRangeFilter';
 import { cn } from '@/lib/utils';
 import { formatCurrency, getImageUrl } from '@/lib/storeUtils';
 import LoadingSpinner from '@/components/ui/loading-spinner';
@@ -42,18 +35,19 @@ export default function EmployeePerformanceDetailPage() {
     const [searchParams, setSearchParams] = useSearchParams();
     const { t, i18n } = useTranslation('admin');
 
-    const initialMonth = searchParams.get('month') ? parseInt(searchParams.get('month'), 10) : null;
-    const initialYear = searchParams.get('year') ? parseInt(searchParams.get('year'), 10) : (initialMonth ? new Date().getFullYear() : null);
-
-    const [date, setDate] = useState(() => {
-        if (initialMonth && initialYear) {
-            return new Date(initialYear, initialMonth - 1, 1);
+    const [range, setRange] = useState(() => {
+        const from = searchParams.get('from');
+        const to = searchParams.get('to');
+        if (from || to) return { from: from || '', to: to || '' };
+        const month = Number(searchParams.get('month'));
+        const year = Number(searchParams.get('year')) || new Date().getFullYear();
+        if (month) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const last = new Date(year, month, 0).getDate();
+            return { from: `${year}-${pad(month)}-01`, to: `${year}-${pad(month)}-${pad(last)}` };
         }
         return null;
     });
-
-    const [activeYear, setActiveYear] = useState(() => initialYear || new Date().getFullYear());
-    const [isMonthPickerOpen, setIsMonthPickerOpen] = useState(false);
     const [selectedType, setSelectedType] = useState('all'); // 'all' | 'normal' | 'ebooklet'
     const [searchQuery, setSearchQuery] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
@@ -65,31 +59,9 @@ export default function EmployeePerformanceDetailPage() {
         fetchEmployeeProducts
     } = useEmployeePerformance();
 
-    const getMonthName = (monthIndex, type = 'long') => {
-        try {
-            return new Intl.DateTimeFormat(i18n.language, { month: type }).format(new Date(2025, monthIndex, 1));
-        } catch (e) {
-            return format(new Date(2025, monthIndex, 1), type === 'long' ? "MMMM" : "MMM");
-        }
-    };
-
-    const months = Array.from({ length: 12 }, (_, i) => ({
-        name: getMonthName(i, 'long'),
-        short: getMonthName(i, 'short'),
-        index: i
-    }));
-
     useEffect(() => {
-        if (date) {
-            setActiveYear(date.getFullYear());
-            setSearchParams({
-                month: String(date.getMonth() + 1),
-                year: String(date.getFullYear())
-            });
-        } else {
-            setSearchParams({});
-        }
-    }, [date, setSearchParams]);
+        setSearchParams(range ? { from: range.from || '', to: range.to || '' } : {}, { replace: true });
+    }, [range, setSearchParams]);
 
     const loadData = () => {
         if (!id) return;
@@ -97,9 +69,9 @@ export default function EmployeePerformanceDetailPage() {
             page: currentPage,
             limit: 100, // Fetch up to 100 items for rich client-side search & filtering
         };
-        if (date) {
-            params.month = date.getMonth() + 1;
-            params.year = date.getFullYear();
+        if (range) {
+            params.from = range.from;
+            params.to = range.to;
         }
         fetchEmployeeProducts(id, params);
     };
@@ -107,7 +79,7 @@ export default function EmployeePerformanceDetailPage() {
     useEffect(() => {
         loadData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, date]);
+    }, [id, range?.from, range?.to, !range]);
 
     const employee = employeeSalesDetails?.employee;
     const summary = employeeSalesDetails?.summary || {
@@ -145,10 +117,6 @@ export default function EmployeePerformanceDetailPage() {
         return filteredItems.slice(start, start + itemsPerPage);
     }, [filteredItems, currentPage, itemsPerPage]);
 
-    const handleClearDate = () => {
-        setDate(null);
-        setCurrentPage(1);
-    };
 
     const isRtl = i18n.dir() === 'rtl';
     const BackIcon = isRtl ? ArrowRight : ArrowLeft;
@@ -200,86 +168,7 @@ export default function EmployeePerformanceDetailPage() {
                     </div>
                 </div>
 
-                {/* Date Filter */}
-                <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4 text-muted-foreground" />
-                    <Popover open={isMonthPickerOpen} onOpenChange={setIsMonthPickerOpen}>
-                        <PopoverTrigger asChild>
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                className={cn(
-                                    "w-[220px] justify-start text-start font-normal",
-                                    !date && "text-muted-foreground"
-                                )}
-                            >
-                                <CalendarIcon className="mr-2 h-4 w-4" />
-                                {date ? `${getMonthName(date.getMonth(), 'long')} ${date.getFullYear()}` : <span>{t('employeePerformanceDetails.allTime', 'All Time')}</span>}
-                            </Button>
-                        </PopoverTrigger>
-                        <PopoverContent className="w-64 p-3" align="end">
-                            <div className="flex items-center justify-between mb-4 px-1">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActiveYear(activeYear - 1);
-                                    }}
-                                    aria-label={t('dashboard.prevYear', 'Previous year')}
-                                >
-                                    <ChevronLeft className="h-4 w-4" />
-                                </Button>
-                                <div className="font-semibold text-sm select-none tabular-nums">
-                                    {activeYear}
-                                </div>
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    className="h-7 w-7"
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        setActiveYear(activeYear + 1);
-                                    }}
-                                    aria-label={t('dashboard.nextYear', 'Next year')}
-                                >
-                                    <ChevronRight className="h-4 w-4" />
-                                </Button>
-                            </div>
-                            <div className="grid grid-cols-3 gap-2">
-                                {months.map((m) => {
-                                    const isSelected = date && date.getMonth() === m.index && date.getFullYear() === activeYear;
-                                    return (
-                                        <Button
-                                            key={m.index}
-                                            variant={isSelected ? "default" : "ghost"}
-                                            className="h-9 text-xs font-medium"
-                                            onClick={() => {
-                                                setDate(new Date(activeYear, m.index, 1));
-                                                setIsMonthPickerOpen(false);
-                                                setCurrentPage(1);
-                                            }}
-                                        >
-                                            {m.short}
-                                        </Button>
-                                    );
-                                })}
-                            </div>
-                        </PopoverContent>
-                    </Popover>
-                    {date && (
-                        <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={handleClearDate}
-                            className="h-8 px-2"
-                            title={t('common.cancel', 'Clear')}
-                        >
-                            <X className="h-4 w-4" />
-                        </Button>
-                    )}
-                </div>
+                <DayRangeFilter value={range} onChange={(r) => { setRange(r); setCurrentPage(1); }} />
             </div>
 
             {/* KPI Metric Summary Cards */}

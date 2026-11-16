@@ -1385,5 +1385,14 @@
     "messages": {
       "started": "Impersonation started"
     }
+  },
+  "range": {
+    "today": "Today",
+    "week": "Last 7 days",
+    "month": "This month",
+    "all": "All time",
+    "from": "From",
+    "to": "To",
+    "clear": "Clear"
   }
 }
