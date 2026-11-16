@@ -37,6 +37,7 @@ import { userProfileService } from "../services/user-profile.service";
 import { UpdateProfileDto } from "../dtos/user-profile.dto";
 import { SendNotificationDto, NotificationFilterDto } from "../dtos/notification.dto";
 import { revokeAllRefreshTokensForUser } from "../../../libs/auth/jwt";
+import { canGrant, isStaff, outranks } from "../../../libs/auth/roleRank";
 
 // ============================================
 // HELPER FUNCTIONS
@@ -62,69 +63,36 @@ async function validateDto<T extends object>(
 const VALID_ROLES = Object.values(role_enum);
 const VALID_PORTALS = Object.values(portal_enum);
 
-function canViewOrEditUserFlag(user: any): boolean {
-  const roles: Array<{ role: role_enum }> = user?.roles ?? [];
-  const allowedRoles: role_enum[] = [
-    role_enum.Admin,
-    role_enum.SubAdmin,
-    role_enum.Moderator,
-  ];
-  return roles.some((r) => allowedRoles.includes(r.role));
+// Staff act only on accounts below their own rank (see libs/auth/roleRank).
+// The Admin may also edit their own kind of account's profile and level.
+function callerRoles(req: Request): role_enum[] {
+  return (((req as any).user?.roles ?? []) as Array<{ role: role_enum }>).map((r) => r.role);
 }
 
-function canViewOrEditUserProfile(
-  caller: any,
-  userRoles: role_enum[],
-): boolean {
-  const callerRoles: role_enum[] = (caller?.roles ?? []).map(
-    (r: any) => r.role,
-  );
-
-  const allowedRoles: role_enum[] = [
-    role_enum.Admin,
-    role_enum.SubAdmin,
-    role_enum.Moderator,
+async function targetRoles(userId: number): Promise<role_enum[]> {
+  const target = await userManagementService.getUserWithRoles(userId);
+  return [
+    ...((target as any).role ? [(target as any).role as role_enum] : []),
+    ...(target.user_roles || []).map((r) => r.role),
   ];
-
-  if (callerRoles.includes(role_enum.Admin)) {
-    return true;
-  }
-
-  if (callerRoles.includes(role_enum.SubAdmin)) {
-    if (userRoles.includes(role_enum.Admin)) return false;
-    return true;
-  }
-
-  if (callerRoles.includes(role_enum.Moderator)) {
-    if (
-      userRoles.includes(role_enum.Admin) ||
-      userRoles.includes(role_enum.SubAdmin)
-    )
-      return false;
-    return true;
-  }
-
-  return false;
 }
 
-function canResetUserPassword(
-  caller: any,
-  userRoles: role_enum[],
-): boolean {
-  const callerRoles: role_enum[] = (caller?.roles ?? []).map(
-    (r: any) => r.role,
-  );
-
-  if (callerRoles.includes(role_enum.Admin)) {
-    return true;
+async function assertCanManage(req: Request, userId: number): Promise<role_enum[]> {
+  const callerId = Number((req as any).user?.userId);
+  if (callerId === userId) {
+    throw new ForbiddenError("You cannot do this to your own account");
   }
-
-  if (callerRoles.includes(role_enum.SubAdmin)) {
-    if (userRoles.includes(role_enum.Admin)) return false;
-    return true;
+  const roles = await targetRoles(userId);
+  if (!outranks(callerRoles(req), roles)) {
+    throw new ForbiddenError("You cannot manage an account at your level or above");
   }
+  return roles;
+}
 
-  return false;
+function assertCanGrant(req: Request, role: role_enum): void {
+  if (!canGrant(callerRoles(req), role)) {
+    throw new ForbiddenError(`You cannot give or remove the ${role} role`);
+  }
 }
 
 function validateEnums(
@@ -176,6 +144,10 @@ export const adminController = {
         userId: (req as any).user.userId || (req as any).user.id,
         roles: (req as any).user.roles || [],
       };
+      // Staff accounts only below the creator's own rank.
+      if (!canGrant(creator.roles, role)) {
+        throw new ForbiddenError(`You cannot create a ${role} account`);
+      }
 
       let result;
       switch (role as role_enum) {
@@ -483,7 +455,7 @@ export const adminController = {
         portal: portal as portal_enum | undefined,
         confirmed,
         isDeleted,
-        includeFlag: canViewOrEditUserFlag((req as any).user),
+        includeFlag: isStaff(callerRoles(req)),
       });
 
       res.status(200).json({ success: true, data: result });
@@ -512,7 +484,7 @@ export const adminController = {
 
       const user = await userManagementService.getUserWithRolesByPermission(
         userId,
-        canViewOrEditUserFlag((req as any).user),
+        isStaff(callerRoles(req)),
       );
       res.status(200).json({ success: true, data: user });
     } catch (error) {
@@ -538,7 +510,7 @@ export const adminController = {
       const targetProfile = await userProfileService.getProfile(userId);
       const roles = (targetProfile.user_roles || []).map((r) => r.role);
 
-      if (!canViewOrEditUserProfile((req as any).user, roles)) {
+      if (!callerRoles(req).includes(role_enum.Admin) && !outranks(callerRoles(req), roles)) {
         throw new ForbiddenError(
           "You don't have permission to edit this profile",
         );
@@ -580,28 +552,7 @@ export const adminController = {
       if (!targetUser) {
         throw new BadRequestError("User not found");
       }
-
-      const roles: role_enum[] = [
-        ...(targetUser.role ? [targetUser.role] : []),
-        ...((targetUser.user_roles || []).map((r) => r.role)),
-      ];
-
-      if (!canResetUserPassword((req as any).user, roles)) {
-        const callerRoles: role_enum[] = ((req as any).user?.roles ?? []).map(
-          (r: any) => r.role,
-        );
-        if (
-          callerRoles.includes(role_enum.SubAdmin) &&
-          roles.includes(role_enum.Admin)
-        ) {
-          throw new ForbiddenError(
-            "Sub-admins cannot reset passwords for admin accounts",
-          );
-        }
-        throw new ForbiddenError(
-          "You don't have permission to reset this user's password",
-        );
-      }
+      await assertCanManage(req, userId);
 
       const dto = await validateDto(AdminResetUserPasswordDto, req.body);
       const passwordHash = await userManagementService.hashPassword(dto.password);
@@ -630,15 +581,12 @@ export const adminController = {
     _next: NextFunction,
   ): Promise<void> {
     try {
-      if (!canViewOrEditUserFlag((req as any).user)) {
-        throw new ForbiddenError(
-          "Only Admin, SubAdmin, or Moderator can update user flag",
-        );
-      }
-
       const userId = parseInt(req.params.userId as string, 10);
       if (isNaN(userId)) {
         throw new BadRequestError("Invalid user ID");
+      }
+      if (!callerRoles(req).includes(role_enum.Admin)) {
+        await assertCanManage(req, userId);
       }
 
       const dto = await validateDto(UpdateUserFlagDto, req.body);
@@ -678,6 +626,8 @@ export const adminController = {
 
       const dto = await validateDto(AssignRoleDto, req.body);
       const validated = validateEnums(dto.portal, dto.role);
+      await assertCanManage(req, userId);
+      assertCanGrant(req, validated.role);
 
       const result = await userManagementService.assignRole(
         userId,
@@ -716,6 +666,8 @@ export const adminController = {
 
       const dto = await validateDto(RevokeRoleDto, req.body);
       const validated = validateEnums(dto.portal, dto.role);
+      await assertCanManage(req, userId);
+      assertCanGrant(req, validated.role);
 
       const result = await userManagementService.revokeRole(
         userId,
@@ -761,6 +713,8 @@ export const adminController = {
         const validated = validateEnums(entry.portal, entry.role);
         validatedRoles.push(validated);
       }
+      await assertCanManage(req, userId);
+      for (const entry of validatedRoles) assertCanGrant(req, entry.role);
 
       const result = await userManagementService.setRoles(
         userId,
@@ -872,6 +826,7 @@ export const adminController = {
         throw new BadRequestError("Invalid user ID");
       }
 
+      await assertCanManage(req, userId);
       const user = await accountReviewService.approveUser(userId);
       res.status(200).json({
         success: true,
@@ -897,6 +852,7 @@ export const adminController = {
         throw new BadRequestError("Invalid user ID");
       }
 
+      await assertCanManage(req, userId);
       const user = await accountReviewService.rejectUser(userId);
       res.status(200).json({
         success: true,
@@ -914,7 +870,7 @@ export const adminController = {
 
   /**
    * DELETE /admin/users/:userId
-   * Admin/SubAdmin can delete any user except themselves.
+   * Staff delete only accounts below their own rank, never their own.
    */
   async deleteUser(
     req: Request,
@@ -939,6 +895,7 @@ export const adminController = {
         return;
       }
 
+      await assertCanManage(req, targetUserId);
       await userManagementService.deleteUser(targetUserId);
       res
         .status(200)

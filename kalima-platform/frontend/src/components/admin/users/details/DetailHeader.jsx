@@ -49,6 +49,8 @@ export default function DetailHeader({
     onResetPassword,
     actionLoading,
     canResetPassword,
+    canManage = true,
+    canEdit = true,
     isRtl,
     t
 }) {
@@ -230,7 +232,7 @@ export default function DetailHeader({
                             </>
                         ) : (
                             <>
-                                {!user.is_deleted && !user.confirmed && (
+                                {!user.is_deleted && !user.confirmed && canManage && (
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -242,7 +244,7 @@ export default function DetailHeader({
                                         {t('actions.approve')}
                                     </Button>
                                 )}
-                                {!user.is_deleted && user.confirmed && (
+                                {!user.is_deleted && user.confirmed && canManage && (
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -254,17 +256,19 @@ export default function DetailHeader({
                                         {t('actions.reject')}
                                     </Button>
                                 )}
-                                <Button size="sm" onClick={onEdit}>
-                                    <Edit3 className="h-4 w-4 me-2" />
-                                    {t('actions.edit')}
-                                </Button>
+                                {canEdit && (
+                                    <Button size="sm" onClick={onEdit}>
+                                        <Edit3 className="h-4 w-4 me-2" />
+                                        {t('actions.edit')}
+                                    </Button>
+                                )}
                                 {canResetPassword && !user.is_deleted && (
                                     <Button variant="outline" size="sm" onClick={() => setIsPasswordDialogOpen(true)}>
                                         <KeyRound className="h-4 w-4 me-2" />
                                         {t('actions.changePassword')}
                                     </Button>
                                 )}
-                                {!user.is_deleted && (
+                                {!user.is_deleted && canManage && (
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10 border-destructive/30">

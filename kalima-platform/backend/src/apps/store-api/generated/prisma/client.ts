@@ -532,3 +532,8 @@ export type ex_answer_files = Prisma.ex_answer_filesModel
  * 
  */
 export type ex_celebration_sounds = Prisma.ex_celebration_soundsModel
+/**
+ * Model impersonation_logs
+ * 
+ */
+export type impersonation_logs = Prisma.impersonation_logsModel

@@ -293,5 +293,14 @@
   "Mark is out of range": "الدرجة خارج الحدود المسموحة",
   "Only essay questions are graded by hand": "التصحيح اليدوي للأسئلة المقالية فقط",
   "This attempt is still running": "هذه المحاولة ما زالت جارية",
-  "grades must be a non-empty list": "لا توجد درجات للحفظ"
+  "grades must be a non-empty list": "لا توجد درجات للحفظ",
+  "You cannot do this to your own account": "لا يمكنك تنفيذ هذا على حسابك",
+  "You cannot manage an account at your level or above": "لا يمكنك التعامل مع حساب في نفس مستواك أو أعلى منك",
+  "You cannot impersonate an account at your level or above": "لا يمكنك الدخول على حساب في نفس مستواك أو أعلى منك",
+  "You cannot give or remove the Admin role": "لا يمكنك إعطاء أو سحب دور أدمن",
+  "You cannot create a Admin account": "لا يمكنك إنشاء حساب أدمن",
+  "You cannot give or remove the SubAdmin role": "لا يمكنك إعطاء أو سحب دور سب أدمن",
+  "You cannot create a SubAdmin account": "لا يمكنك إنشاء حساب سب أدمن",
+  "You cannot give or remove the Moderator role": "لا يمكنك إعطاء أو سحب دور مودريتور",
+  "You cannot create a Moderator account": "لا يمكنك إنشاء حساب مودريتور"
 }

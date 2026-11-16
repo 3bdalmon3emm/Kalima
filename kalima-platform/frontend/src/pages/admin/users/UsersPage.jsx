@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
-import { Users } from 'lucide-react';
+import { Link, useNavigate } from 'react-router-dom';
+import { UserCog, Users } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
 import { useAdminUsers } from '@/hooks/admin/useAdminUsers';
@@ -17,7 +18,7 @@ export default function UsersPage() {
     const { t } = useTranslation('userManagement');
     const navigate = useNavigate();
     const { user: currentUser } = useAuth();
-    const { isSubAdmin, isAdmin } = useRole();
+    const { isAdmin } = useRole();
 
     const {
         users,
@@ -107,6 +108,11 @@ export default function UsersPage() {
                             {t('totalUsers', { count: pagination.total })}
                         </p>
                     )}
+                    {isAdmin && (
+                        <Button variant="outline" asChild>
+                            <Link to="/admin/impersonation-log"><UserCog className="h-4 w-4 me-2" />{t('impersonationLog.title')}</Link>
+                        </Button>
+                    )}
                     <CreateUserDialog onSuccess={loadUsers} />
                 </div>
             </div>
@@ -134,8 +140,6 @@ export default function UsersPage() {
                 onImpersonate={handleImpersonate}
                 onResetPassword={handleResetPassword}
                 currentUserId={currentUser?.id}
-                actorIsSubAdmin={isSubAdmin && !isAdmin}
-                actorIsAdmin={isAdmin}
                 impersonatingUserId={impersonatingUserId}
             />
         </div>

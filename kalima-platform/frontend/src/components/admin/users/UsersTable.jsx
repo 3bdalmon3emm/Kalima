@@ -38,6 +38,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
+import { outranks } from '@/lib/roleRank';
 import { useRole } from '@/hooks/useRole';
 import AppreciationQrButton from './AppreciationQrButton';
 
@@ -53,16 +54,12 @@ export default function UsersTable({
     onImpersonate,
     onResetPassword,
     currentUserId,
-    actorIsSubAdmin,
-    actorIsAdmin,
     impersonatingUserId,
 }) {
     const { t, i18n } = useTranslation('userManagement');
     const isRtl = i18n.dir() === 'rtl';
 
-    const { isAdmin: isRoleAdmin, isSubAdmin: isRoleSubAdmin } = useRole();
-    const isAdmin = actorIsAdmin ?? isRoleAdmin;
-    const isSubAdmin = actorIsSubAdmin ?? isRoleSubAdmin;
+    const { storeRoles } = useRole();
 
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
     const [selectedUserForPassword, setSelectedUserForPassword] = useState(null);
@@ -166,12 +163,10 @@ export default function UsersTable({
                                 user.role,
                                 ...(user.user_roles?.map(({ role }) => role) ?? []),
                             ].filter(Boolean);
-                            const isTargetAdmin = targetRoles.some(r => String(r).toLowerCase() === 'admin');
-                            const canEditPassword = !user.is_deleted && (isAdmin || (isSubAdmin && !isTargetAdmin));
-                            const canImpersonate = canImpersonateUser({
-                                actorIsSubAdmin,
-                                targetRoles,
-                            });
+                            // Staff act only on accounts below their own rank.
+                            const canManage = !isCurrentUser && outranks(storeRoles, targetRoles);
+                            const canEditPassword = !user.is_deleted && canManage;
+                            const canImpersonate = canImpersonateUser({ actorRoles: storeRoles, targetRoles });
                             const displayEmail = user.email?.includes('_deleted_')
                                 ? user.email.split('_deleted_')[0]
                                 : user.email;
@@ -297,7 +292,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Approve */}
-                                            {!user.is_deleted && !user.confirmed && (
+                                            {!user.is_deleted && !user.confirmed && canManage && (
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -312,7 +307,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Reject */}
-                                            {!user.is_deleted && user.confirmed && (
+                                            {!user.is_deleted && user.confirmed && canManage && (
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -327,7 +322,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Delete */}
-                                            {!user.is_deleted && (
+                                            {!user.is_deleted && canManage && (
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
                                                         <Button

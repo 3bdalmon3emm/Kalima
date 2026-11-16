@@ -149,7 +149,8 @@ export const ModelName = {
   ex_attempts: 'ex_attempts',
   ex_attempt_answers: 'ex_attempt_answers',
   ex_answer_files: 'ex_answer_files',
-  ex_celebration_sounds: 'ex_celebration_sounds'
+  ex_celebration_sounds: 'ex_celebration_sounds',
+  impersonation_logs: 'impersonation_logs'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1722,6 +1723,17 @@ export const Ex_celebration_soundsScalarFieldEnum = {
 } as const
 
 export type Ex_celebration_soundsScalarFieldEnum = (typeof Ex_celebration_soundsScalarFieldEnum)[keyof typeof Ex_celebration_soundsScalarFieldEnum]
+
+
+export const Impersonation_logsScalarFieldEnum = {
+  id: 'id',
+  actor_user_id: 'actor_user_id',
+  target_user_id: 'target_user_id',
+  started_at: 'started_at',
+  ended_at: 'ended_at'
+} as const
+
+export type Impersonation_logsScalarFieldEnum = (typeof Impersonation_logsScalarFieldEnum)[keyof typeof Impersonation_logsScalarFieldEnum]
 
 
 export const SortOrder = {

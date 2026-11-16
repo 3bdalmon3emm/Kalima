@@ -1,7 +1,7 @@
-const PRIVILEGED_ROLES = new Set(["Admin", "SubAdmin", "Moderator"]);
+import { outranks } from '@/lib/roleRank';
 
-export function canImpersonateUser({ actorIsSubAdmin, targetRoles = [] }) {
-  if (!actorIsSubAdmin) return true;
-
-  return !targetRoles.some((role) => PRIVILEGED_ROLES.has(role));
+// Admin, SubAdmin and Moderator impersonate only accounts below their own
+// rank; nobody else impersonates.
+export function canImpersonateUser({ actorRoles = [], targetRoles = [] }) {
+    return outranks(actorRoles, targetRoles);
 }

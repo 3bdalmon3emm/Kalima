@@ -2337,3 +2337,15 @@ model ex_celebration_sounds {
 
   @@index([band], map: "ix_ex_celebration_sounds_band")
 }
+
+// Every impersonation: who, as whom, when it started and stopped.
+model impersonation_logs {
+  id             Int       @id @default(autoincrement())
+  actor_user_id  Int
+  target_user_id Int
+  started_at     DateTime  @default(now()) @db.Timestamptz(6)
+  ended_at       DateTime? @db.Timestamptz(6)
+
+  @@index([started_at(sort: Desc)], map: "ix_impersonation_logs_started")
+  @@index([actor_user_id, target_user_id], map: "ix_impersonation_logs_actor")
+}

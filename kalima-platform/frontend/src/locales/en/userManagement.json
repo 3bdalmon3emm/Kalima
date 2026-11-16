@@ -126,9 +126,6 @@
     "lecturerId": "Lecturer ID",
     "level": "Level",
     "graduate": "Graduate",
-    "government": "Government",
-    "zone": "Zone",
-    "subject": "Subject",
     "selectSubject": "Select subject...",
     "selectGovernment": "Select government...",
     "selectZone": "Select zone...",
@@ -147,7 +144,6 @@
     "roles": "Roles",
     "noRoles": "No roles assigned",
     "secondaryPhone": "Secondary Phone",
-    "phone": "Phone",
     "assignRolePrompt": "Assign a role to get started",
     "noAvailablePortals": "This user already has roles in every available portal.",
     "oneRolePerPortalMessage": "A user cannot hold more than one active role in the same portal.",
@@ -212,5 +208,18 @@
     "page": "Page",
     "of": "of",
     "showing": "Showing {{from}}-{{to}} of {{total}}"
+  },
+  "impersonationLog": {
+    "title": "Impersonation log",
+    "subtitle": "Who entered whose account, when they started and when they left. Admin only.",
+    "error": "Could not load the log",
+    "empty": "No impersonations yet.",
+    "actor": "Impersonated by",
+    "target": "Account",
+    "started": "Started",
+    "ended": "Left",
+    "noEnd": "Session ended without leaving",
+    "prev": "Previous",
+    "next": "Next"
   }
 }

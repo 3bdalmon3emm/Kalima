@@ -18,7 +18,7 @@ export function useRole() {
             if (!stored) return true; // unauthenticated — no restriction
             const user = JSON.parse(stored);
             // Admins / SubAdmins bypass confirmation requirements
-            if (roles?.includes('Admin') || roles?.includes('SubAdmin')) return true;
+            if (roles?.includes('Admin') || roles?.includes('SubAdmin') || roles?.includes('Moderator')) return true;
             // confirmed defaults to true if the field is absent (older sessions)
             return user.confirmed !== false;
         } catch {
@@ -36,10 +36,13 @@ export function useRole() {
 
     const isAdmin = storeRoles.includes("Admin");
     const isSubAdmin = storeRoles.includes("SubAdmin");
+    const isModerator = storeRoles.includes("Moderator");
+    // Any staff role opens the admin dashboard.
+    const isStaff = isAdmin || isSubAdmin || isModerator;
     const isTeacher = storeRoles.includes("Teacher");
     const isStudent = storeRoles.includes("Student") || academyRoles.includes("Student");
     const isParent = storeRoles.includes("Parent") || academyRoles.includes("Parent");
-    const hasAdminAccess = isAdmin || isSubAdmin;
+    const hasAdminAccess = isStaff;
     const hasStoreAccess = portalAccess ? storeAccess.hasAccess : true;
     const hasAcademyAccess = portalAccess ? academyAccess.hasAccess : true;
 
@@ -53,6 +56,8 @@ export function useRole() {
     return {
         isAdmin,
         isSubAdmin,
+        isModerator,
+        isStaff,
         isTeacher,
         isStudent,
         isParent,

@@ -7,6 +7,8 @@ import { ShoppingBag, BookOpen } from 'lucide-react';
 
 import { useAdminUsers } from '@/hooks/admin/useAdminUsers';
 import { useRole } from '@/hooks/useRole';
+import useAuth from '@/hooks/auth/useAuth';
+import { outranks } from '@/lib/roleRank';
 import useLookups from '@/hooks/useLookups';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { Button } from '@/components/ui/button';
@@ -27,7 +29,8 @@ export default function UserDetailPage() {
     const { id } = useParams();
     const { t, i18n } = useTranslation('userManagement');
     const isRtl = i18n.dir() === 'rtl';
-    const { hasAdminAccess, isAdmin, isSubAdmin } = useRole();
+    const { isAdmin, storeRoles } = useRole();
+    const { user: currentUser } = useAuth();
     const { governments, zones, getZonesByGovernment, subjects, levels, zonesLoading } = useLookups();
 
     const {
@@ -220,9 +223,12 @@ export default function UserDetailPage() {
     const displayPhone = selectedUser.phone?.includes('_deleted_') ? selectedUser.phone.split('_deleted_')[0] : selectedUser.phone;
     const displaySecondaryPhone = selectedUser.secondary_phone?.includes('_deleted_') ? selectedUser.secondary_phone.split('_deleted_')[0] : selectedUser.secondary_phone;
 
-    const targetRoles = selectedUser?.user_roles?.map(r => r.role) || (selectedUser?.role ? [selectedUser.role] : []);
-    const isTargetAdmin = targetRoles.some(r => String(r).toLowerCase() === 'admin');
-    const canResetPassword = !selectedUser.is_deleted && (isAdmin || (isSubAdmin && !isTargetAdmin));
+    const targetRoles = [selectedUser?.role, ...(selectedUser?.user_roles?.map(r => r.role) || [])].filter(Boolean);
+    // Staff act only on accounts below their own rank; the Admin may also edit
+    // any profile.
+    const isSelf = Number(selectedUser.id) === Number(currentUser?.id);
+    const canManage = !isSelf && outranks(storeRoles, targetRoles);
+    const canResetPassword = !selectedUser.is_deleted && canManage;
 
     return (
         <div className="space-y-6 pb-12 animate-in fade-in slide-in-from-bottom-4 duration-500" dir={isRtl ? 'rtl' : 'ltr'}>
@@ -241,6 +247,8 @@ export default function UserDetailPage() {
                 onResetPassword={handleResetPassword}
                 actionLoading={actionLoading}
                 canResetPassword={canResetPassword}
+                canManage={canManage}
+                canEdit={isAdmin || canManage}
                 isRtl={isRtl}
                 t={t}
             />
@@ -255,7 +263,7 @@ export default function UserDetailPage() {
                         roles={roles}
                         onRevoke={handleRevokeRole}
                         onAssign={handleAssignRole}
-                        hasAdminAccess={hasAdminAccess}
+                        hasAdminAccess={canManage}
                         t={t}
                     />
 

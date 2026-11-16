@@ -6,6 +6,7 @@ import { authenticateToken } from "../../../../libs/auth/middleware";
 import { requireRole } from "../../middleware/requireRole.middleware";
 import { role_enum } from "../../generated/prisma/client";
 import { makeExportHandler } from "../../export";
+import { impersonationLogService } from "../../services/impersonation-log.service";
 
 const router = Router();
 
@@ -99,7 +100,7 @@ router.patch(
 );
 router.patch(
   "/users/:userId/password",
-  ...adminSubAdminAuth,
+  ...adminAuth,
   adminController.resetUserPassword,
 );
 
@@ -125,6 +126,17 @@ router.delete("/users/:userId/roles", ...adminAuth, adminController.revokeRole);
 
 // Delete a user
 router.delete("/users/:userId", ...adminAuth, adminController.deleteUser);
+
+// Impersonation log: Admin only.
+router.get("/impersonation-logs", ...adminOnlyAuth, async (req, res, next) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 50;
+    res.json({ success: true, data: await impersonationLogService.list(page, limit) });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // ============================================
 // REVIEWS MANAGEMENT
