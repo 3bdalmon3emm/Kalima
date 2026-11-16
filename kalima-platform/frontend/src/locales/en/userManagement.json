@@ -61,7 +61,8 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "save": "Save",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "downloadPhoto": "Download photo (largest size)"
   },
   "messages": {
     "approveSuccess": "User approved successfully",

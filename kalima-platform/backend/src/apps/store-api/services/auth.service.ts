@@ -48,6 +48,7 @@ import { getEmailService } from "../emails/email.service";
 import fs from "fs";
 import { userManagementService } from "./user-management.service";
 import { isStaff, outranks } from "../../../libs/auth/roleRank";
+import { largeGooglePhoto } from "../../../libs/auth/googlePhoto";
 import { prisma } from "../../../libs/db/prisma";
 import {
   UnauthorizedError,
@@ -885,7 +886,7 @@ class AuthService {
       email: decoded.email.toLowerCase(),
       name: decoded.name ?? decoded.email.split("@")[0],
       emailVerified: decoded.email_verified ?? false,
-      photoUrl: decoded.picture,
+      photoUrl: largeGooglePhoto(decoded.picture),
       provider,
     };
   }

@@ -84,3 +84,11 @@ CREATE TRIGGER "trg_e_booklet_purchases_customer_flag" BEFORE INSERT ON "e_bookl
 -- orders; only its personal data is wiped.
 ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "deleted_by" INTEGER;
 ALTER TABLE "users" ADD COLUMN IF NOT EXISTS "delete_reason" TEXT;
+
+-- Google profile photos were saved at 96 px; ask Google for 800 px instead.
+-- Only googleusercontent links change, and running this again changes nothing.
+UPDATE "users"
+SET "profile_pic_url" = regexp_replace("profile_pic_url", '=s[0-9]+(-c)?$', '=s800-c')
+WHERE "profile_pic_url" ILIKE '%googleusercontent.com%'
+  AND "profile_pic_url" ~ '=s[0-9]+(-c)?$'
+  AND "profile_pic_url" !~ '=s800-c$';

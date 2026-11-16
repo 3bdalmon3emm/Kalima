@@ -61,7 +61,8 @@
     "cancel": "إلغاء",
     "edit": "تعديل",
     "save": "حفظ",
-    "changePassword": "تغيير كلمة المرور"
+    "changePassword": "تغيير كلمة المرور",
+    "downloadPhoto": "تحميل الصورة بأكبر حجم"
   },
   "messages": {
     "approveSuccess": "تم اعتماد المستخدم بنجاح",

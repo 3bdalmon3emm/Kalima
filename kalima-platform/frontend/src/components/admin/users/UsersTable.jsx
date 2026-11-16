@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { arSA } from 'date-fns/locale';
-import { Eye, CheckCircle2, XCircle, Trash2, ChevronLeft, ChevronRight, HeartHandshake, UserCog, KeyRound } from 'lucide-react';
+import { Eye, CheckCircle2, XCircle, Trash2, ChevronLeft, ChevronRight, HeartHandshake, UserCog, KeyRound, ImageDown } from 'lucide-react';
 
 import {
     Table,
@@ -40,6 +40,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
 import { outranks } from '@/lib/roleRank';
 import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
+import { largestPhotoUrl } from '@/lib/profilePhoto';
 import { useRole } from '@/hooks/useRole';
 import AppreciationQrButton from './AppreciationQrButton';
 
@@ -264,6 +265,15 @@ export default function UsersTable({
 
                                             {isTeacher && !user.is_deleted && (
                                                 <AppreciationQrButton userId={user.id} />
+                                            )}
+
+                                            {/* The profile photo at its largest size */}
+                                            {user.profile_pic_url && (
+                                                <Button variant="ghost" size="icon" className="h-8 w-8" asChild title={t('actions.downloadPhoto', 'Download photo')}>
+                                                    <a href={largestPhotoUrl(user.profile_pic_url)} target="_blank" rel="noopener noreferrer" download>
+                                                        <ImageDown className="h-4 w-4" />
+                                                    </a>
+                                                </Button>
                                             )}
 
                                              {!user.is_deleted && onImpersonate && canImpersonate && (
