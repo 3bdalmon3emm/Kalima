@@ -133,7 +133,8 @@
       "cancelled": "ملغي",
       "refunded": "مسترد",
       "returned": "مرتجع",
-      "created": "تم الإنشاء"
+      "created": "تم الإنشاء",
+      "delivered": "تم التوصيل"
     },
     "total": "الإجمالي",
     "subtotal": "المجموع الفرعي",
@@ -244,7 +245,8 @@
       "statusAll": "كل الحالات",
       "clearFilters": "مسح التصفية",
       "filterByDate": "تصفية حسب التاريخ",
-      "searchPlaceholder": "ابحث في الطلبات..."
+      "searchPlaceholder": "ابحث في الطلبات...",
+      "deliver": "تأكيد التوصيل"
     },
     "messages": {
       "receiveSuccess": "تم تحديث الطلب إلى مستلم",
@@ -290,7 +292,8 @@
       "noteLimitReached": "تم الوصول للحد الأقصى للملاحظات",
       "notFound": "الطلب غير موجود",
       "viewImage": "عرض الصورة"
-    }
+    },
+    "statusDelivered": "تم التوصيل"
   },
   "products": {
     "title": "إدارة المنتجات",

@@ -27,11 +27,11 @@ router.get(
   paymentMethodController.getPaymentMethod
 );
 
-// Admin-only routes
+// Managing methods: all staff
 router.post(
   "/",
   authenticateToken,
-  requireRole([role_enum.Admin]),
+  requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
   uploadSingleImage("image"),
   paymentMethodController.createPaymentMethod
 );
@@ -39,7 +39,7 @@ router.post(
 router.patch(
   "/:id",
   authenticateToken,
-  requireRole([role_enum.Admin]),
+  requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
   uploadSingleImage("image"),
   paymentMethodController.updatePaymentMethod
 );
@@ -47,7 +47,7 @@ router.patch(
 router.delete(
   "/:id",
   authenticateToken,
-  requireRole([role_enum.Admin]),
+  requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
   paymentMethodController.deletePaymentMethod
 );
 

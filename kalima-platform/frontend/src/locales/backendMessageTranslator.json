@@ -302,5 +302,8 @@
   "You cannot give or remove the SubAdmin role": "لا يمكنك إعطاء أو سحب دور سب أدمن",
   "You cannot create a SubAdmin account": "لا يمكنك إنشاء حساب سب أدمن",
   "You cannot give or remove the Moderator role": "لا يمكنك إعطاء أو سحب دور مودريتور",
-  "You cannot create a Moderator account": "لا يمكنك إنشاء حساب مودريتور"
+  "You cannot create a Moderator account": "لا يمكنك إنشاء حساب مودريتور",
+  "This payment method is not available; choose another one": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
+  "Invalid or inactive payment method": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
+  "Selected payment method is inactive or invalid.": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى"
 }

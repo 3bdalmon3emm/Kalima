@@ -133,7 +133,8 @@
       "cancelled": "Cancelled",
       "refunded": "Refunded",
       "returned": "Returned",
-      "created": "Created"
+      "created": "Created",
+      "delivered": "Delivered"
     },
     "total": "Total",
     "subtotal": "Subtotal",
@@ -244,7 +245,8 @@
       "whatsappItems": "Order items:",
       "whatsappTotal": "Total: {{total}} {{currency}}",
       "whatsappSupport": "If you have any questions, feel free to contact us.",
-      "whatsappClosing": "Thank you for choosing Kalima Platform!"
+      "whatsappClosing": "Thank you for choosing Kalima Platform!",
+      "deliver": "Mark delivered"
     },
     "messages": {
       "receiveSuccess": "Order marked as received",
@@ -290,7 +292,8 @@
       "noteLimitReached": "Note limit reached",
       "notFound": "Order not found",
       "viewImage": "View Image"
-    }
+    },
+    "statusDelivered": "Delivered"
   },
   "products": {
     "title": "Products Management",

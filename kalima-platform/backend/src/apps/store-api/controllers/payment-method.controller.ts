@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { isStaff } from "../../../libs/auth/roleRank";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
 import { paymentMethodService } from "../services/payment-method.service";
@@ -32,8 +33,11 @@ export const paymentMethodController = {
     next: NextFunction,
   ): Promise<void> {
     try {
-      const status =
-        req.query.status !== undefined
+      // Customers see only open methods; staff see all, to turn them back on.
+      const staff = isStaff((req as any).user?.roles);
+      const status = !staff
+        ? true
+        : req.query.status !== undefined
           ? req.query.status === "true"
           : undefined;
       const search = req.query.search as string | undefined;
@@ -66,6 +70,9 @@ export const paymentMethodController = {
       if (isNaN(id)) throw new BadRequestError("Invalid payment method ID");
 
       const result = await paymentMethodService.getPaymentMethodById(id);
+      if (!isStaff((req as any).user?.roles) && (result as any)?.status !== true) {
+        throw new BadRequestError("This payment method is not available; choose another one");
+      }
       res.status(200).json({ success: true, data: result });
     } catch (error) {
       next(error);
