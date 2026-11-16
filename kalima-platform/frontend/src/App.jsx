@@ -309,8 +309,8 @@ const router = createBrowserRouter(
           <Route path="/admin/e-booklet-terms-milestones" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/milestones/:achievementId" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/access-codes" element={<LegacyEBookletRedirect type="accessCodes" />} />
-          {/* Question bank and exams: Admin and SubAdmin only */}
-          <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin"]} />}>
+          {/* Question bank and exams: all staff */}
+          <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin", "Moderator"]} />}>
             <Route path="/admin/question-bank" element={<QuestionBankPage />} />
             <Route path="/admin/exams" element={<ExamsPage />} />
             <Route path="/admin/exams/archive" element={<ExamArchivePage />} />
@@ -361,8 +361,8 @@ const router = createBrowserRouter(
         </Route>
       </Route>
 
-      {/* Exam links: students take exams; Admin and SubAdmin may try the test link */}
-      <Route element={<RoleRoute requiredRole={["Student", "Admin", "SubAdmin"]} />}>
+      {/* Exam links: students take exams; staff may try the test link */}
+      <Route element={<RoleRoute requiredRole={["Student", "Admin", "SubAdmin", "Moderator"]} />}>
         <Route path="/e/:code" element={<ExamStartPage />} />
         <Route path="/e/:code/attempt/:attemptId" element={<ExamAttemptPage />} />
         <Route path="/e/:code/result/:attemptId" element={<ExamResultPage />} />

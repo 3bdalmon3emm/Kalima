@@ -11,7 +11,7 @@ import { uploadAnswerPhoto } from "../services/media.service";
 // device that opened the attempt last sends its token in X-Attempt-Token.
 
 const router = Router();
-router.use(authenticateToken, requireRole([role_enum.Student, role_enum.Admin, role_enum.SubAdmin]));
+router.use(authenticateToken, requireRole([role_enum.Student, role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]));
 
 const ok = (data?: unknown, message?: string) => ({ success: true, ...(message && { message }), ...(data !== undefined && { data }) });
 const token = (req: Request) => {
