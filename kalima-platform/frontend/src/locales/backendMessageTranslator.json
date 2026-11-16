@@ -287,5 +287,11 @@
   "Only archived items can be deleted permanently": "لا يمكن الحذف النهائي إلا لعنصر في الأرشيف",
   "An exam draws questions from this folder, so it stays archived": "يوجد امتحان يسحب أسئلة من هذا المجلد، لذلك يبقى في الأرشيف",
   "Some of these questions are used in exams, so they stay archived": "بعض هذه الأسئلة مستخدمة في امتحانات، لذلك تبقى في الأرشيف",
-  "Invalid show answers choice": "اختيار غير صالح لإظهار الإجابات"
+  "Invalid show answers choice": "اختيار غير صالح لإظهار الإجابات",
+  "Marks saved": "تم حفظ الدرجات",
+  "Marks go in halves": "الدرجات تكون بالأنصاص",
+  "Mark is out of range": "الدرجة خارج الحدود المسموحة",
+  "Only essay questions are graded by hand": "التصحيح اليدوي للأسئلة المقالية فقط",
+  "This attempt is still running": "هذه المحاولة ما زالت جارية",
+  "grades must be a non-empty list": "لا توجد درجات للحفظ"
 }

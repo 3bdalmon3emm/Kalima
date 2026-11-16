@@ -94,7 +94,7 @@ export default function ExamsPage() {
                 </Button>
             </div>
 
-            <Tabs value={tab} onValueChange={(v) => setParams(v === 'exams' ? {} : { tab: v })}>
+            <Tabs value={tab} onValueChange={(v) => setParams(v === 'exams' ? {} : { tab: v }, { replace: true })}>
                 <TabsList>
                     <TabsTrigger value="exams">{t('tabs.exams')}</TabsTrigger>
                     <TabsTrigger value="celebrations">{t('tabs.celebrations')}</TabsTrigger>

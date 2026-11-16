@@ -585,7 +585,7 @@ class AttemptsService {
 
   // Each question with the student's answer, the right answer, the marks and
   // the explanation, for after the result shows.
-  private async review(attempt: { id: number; questions: unknown }, shown: boolean) {
+  async review(attempt: { id: number; questions: unknown }, shown: boolean) {
     const list = attempt.questions as unknown as AttemptQuestion[];
     const [rows, answers, files] = await Promise.all([
       questionsService.loadFull({ id: { in: list.map((q) => q.question_id) } }),
@@ -610,6 +610,7 @@ class AttemptsService {
         section_id: item.section_id,
         mark: item.mark,
         earned: a?.mark === null || a?.mark === undefined ? null : num(a.mark),
+        graded_by: a?.graded_by ?? null,
         answer: answer.file_ids ? { ...answer, files: answer.file_ids.map((fid: number) => ({ id: fid, url: fileUrls.get(fid) })) } : answer,
         question: q && {
           id: q.id, serial: q.serial, type: q.type, passage_id: q.passage_id, font: q.font,

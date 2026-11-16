@@ -26,8 +26,10 @@ function Tag({ tone, children }) {
 
 // One question after the result: what the student answered and, when the
 // exam shows them, the right answer, the explanation or model answer.
-function ReviewItem({ item, label, passage, passageN, shown }) {
+export function ReviewItem({ item, label, passage, passageN, shown, extra, grader = false }) {
     const { t, i18n } = useTranslation('exams');
+    // The grader reads "the student's answer" where the student reads "your answer".
+    const mine = (key) => t(grader ? `grading.${key}` : `result.${key}`);
     const q = item.question;
     const look = useQuestionFont(q?.font, savedScale());
     const passageLook = useQuestionFont(passage?.font, savedScale());
@@ -99,7 +101,7 @@ function ReviewItem({ item, label, passage, passageN, shown }) {
                                             {o.explanation_text && q.explanation_mode === 'per_option' && <p className="text-xs text-muted-foreground"><MathText text={o.explanation_text} /></p>}
                                         </div>
                                         <div className="flex shrink-0 flex-col items-end gap-1">
-                                            {picked && <Tag tone={wrongPick ? 'wrong' : correct ? 'right' : 'muted'}>{t('result.yourChoice')}</Tag>}
+                                            {picked && <Tag tone={wrongPick ? 'wrong' : correct ? 'right' : 'muted'}>{mine('yourChoice')}</Tag>}
                                             {correct && !picked && <Tag tone="right">{t('result.rightAnswer')}</Tag>}
                                         </div>
                                     </li>
@@ -114,14 +116,14 @@ function ReviewItem({ item, label, passage, passageN, shown }) {
                                 <thead className="bg-muted/50 text-xs text-muted-foreground">
                                     <tr>
                                         <th className="p-2 text-start font-medium">{t('result.item')}</th>
-                                        <th className="p-2 text-start font-medium">{t('result.yourPair')}</th>
+                                        <th className="p-2 text-start font-medium">{mine('yourPair')}</th>
                                         {shown && <th className="p-2 text-start font-medium">{t('result.rightPair')}</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {left.map((l) => {
-                                        const mine = studentPair.get(l.id);
-                                        const ok = shown && mine !== undefined && mine === l.match_item_id;
+                                        const paired = studentPair.get(l.id);
+                                        const ok = shown && paired !== undefined && paired === l.match_item_id;
                                         const bad = shown && !ok;
                                         return (
                                             <tr key={l.id} className={`border-t ${ok ? 'bg-green-50 dark:bg-green-950/30' : bad ? 'bg-red-50 dark:bg-red-950/30' : ''}`}>
@@ -129,7 +131,7 @@ function ReviewItem({ item, label, passage, passageN, shown }) {
                                                 <td className={`p-2 align-top ${ok ? 'text-green-700 dark:text-green-400' : bad ? 'text-red-700 dark:text-red-400' : ''}`}>
                                                     <span className="inline-flex items-center gap-1.5">
                                                         {ok ? <CheckCircle2 className="h-4 w-4 shrink-0 no-flip" /> : bad ? <XCircle className="h-4 w-4 shrink-0" /> : null}
-                                                        {mine === undefined ? t('result.notConnected') : pairText(right.find((r) => r.id === mine))}
+                                                        {paired === undefined ? t('result.notConnected') : pairText(right.find((r) => r.id === paired))}
                                                     </span>
                                                 </td>
                                                 {shown && <td className="p-2 align-top text-green-700 dark:text-green-400">{ok ? '' : pairText(right.find((r) => r.id === l.match_item_id))}</td>}
@@ -144,7 +146,7 @@ function ReviewItem({ item, label, passage, passageN, shown }) {
                     {q.type === 'essay' && (
                         <div className="space-y-2 text-sm">
                             <div className="rounded-lg border bg-muted/40 p-3">
-                                <p className="mb-1 font-medium">{t('result.yourAnswer')}</p>
+                                <p className="mb-1 font-medium">{mine('yourAnswer')}</p>
                                 <p className="whitespace-pre-wrap">{item.answer.text || t('result.notAnswered')}</p>
                                 <div className="mt-2 flex flex-wrap gap-2">{(item.answer.files || []).map((f) => f.url && <Media key={f.id} image={{ url: f.url }} className="max-h-40" />)}</div>
                             </div>
@@ -165,6 +167,7 @@ function ReviewItem({ item, label, passage, passageN, shown }) {
                         <div className="rounded-lg border border-sky-200 bg-sky-50 p-3 text-sm dark:border-sky-900 dark:bg-sky-950/30"><p className="mb-1 font-medium">{t('result.explanation')}</p><Media image={q.explanation_image} /></div>
                     )}
                 </QuestionFontContext.Provider>
+                {extra}
             </div>
         </div>
     );

@@ -7,6 +7,7 @@ import { handle, idList, idParam, optionalId, requiredName, userId } from "../ht
 import { examFoldersService } from "../services/examFolders.service";
 import { examsService } from "../services/exams.service";
 import { soundsService } from "../services/sounds.service";
+import { resultsService } from "../services/results.service";
 import { uploadSound } from "../services/media.service";
 import { parseExamSettings, parseMark, parseRules } from "../services/examInput";
 
@@ -176,6 +177,30 @@ router.patch("/exam-questions/:id", handle(async (req, res) => {
 router.post("/exams/:id/questions/remove", handle(async (req, res) => {
   await examsService.removeQuestions(idParam(req), idList(req.body?.ids));
   res.json(ok(undefined, "Questions removed"));
+}));
+
+// ---------- Results and essay grading ----------
+
+router.get("/exams/:id/attempts", handle(async (req, res) => {
+  res.json(ok(await resultsService.list(idParam(req), { status: typeof req.query.status === "string" ? req.query.status : undefined })));
+}));
+
+router.get("/attempts/:id", handle(async (req, res) => {
+  res.json(ok(await resultsService.detail(idParam(req))));
+}));
+
+// Essay marks go in halves: 0, 0.5, 1, 1.5...
+router.put("/attempts/:id/grades", handle(async (req, res) => {
+  const raw = req.body?.grades;
+  if (!Array.isArray(raw) || !raw.length) throw new BadRequestError("grades must be a non-empty list");
+  const grades = raw.map((g: any) => {
+    const questionId = Number(g?.question_id);
+    const mark = Number(g?.mark);
+    if (!Number.isInteger(questionId) || questionId <= 0) throw new BadRequestError("Invalid question_id");
+    if (!Number.isFinite(mark) || !Number.isInteger(mark * 2)) throw new BadRequestError("Marks go in halves");
+    return { question_id: questionId, mark };
+  });
+  res.json(ok(await resultsService.grade(idParam(req), grades, userId(req)), "Marks saved"));
 }));
 
 // ---------- Celebration sounds ----------

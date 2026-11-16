@@ -6,7 +6,8 @@
     "celebrations": "Sounds and celebrations",
     "questions": "Questions",
     "settings": "Settings",
-    "testLink": "Test link"
+    "testLink": "Test link",
+    "results": "Results"
   },
   "common": {
     "create": "Create",
@@ -335,5 +336,46 @@
     "notConnected": "Not matched",
     "answersHiddenRedo": "The right answers show once your attempts are over. For now you can see which questions you missed, then redo the exam.",
     "answersHiddenLater": "The right answers are not shown yet; your teacher decides when."
+  },
+  "results": {
+    "filter": {
+      "all": "All",
+      "pending": "Needs grading",
+      "done": "Graded",
+      "in_progress": "Taking it now"
+    },
+    "empty": "No attempts yet.",
+    "student": "Student",
+    "attempt": "Attempt",
+    "status": "Status",
+    "score": "Score",
+    "submitted": "Submitted",
+    "behaviour": "Leaving and copying",
+    "state": {
+      "in_progress": "Taking it now",
+      "pending": "Needs grading",
+      "done": "Graded"
+    },
+    "autoSubmitted": "Submitted automatically",
+    "tabLeaves": "Times the page was left",
+    "fullscreenExits": "Times full screen was left",
+    "copyAttempts": "Copy and paste attempts",
+    "grade": "Grade",
+    "open": "View"
+  },
+  "grading": {
+    "mark": "Mark",
+    "halves": "In halves: 0, 0.5, 1, 1.5...",
+    "save": "Save marks",
+    "saved": "Marks saved",
+    "done": "Grading complete; the student can see the result",
+    "invalid": "Check the marks: each is from 0 to the question mark, in halves",
+    "left_one": "One essay still has no mark",
+    "left_other": "{{count}} essays still have no mark",
+    "allMarked": "Every essay has a mark",
+    "running": "The student is still taking the exam; grading opens after they submit.",
+    "yourChoice": "Student's choice",
+    "yourPair": "Student's match",
+    "yourAnswer": "Student's answer"
   }
 }

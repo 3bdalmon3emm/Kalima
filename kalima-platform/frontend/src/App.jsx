@@ -124,6 +124,7 @@ const ExamsPage = lazy(() => import("./pages/admin/exams/ExamsPage"));
 const ExamFolderPage = lazy(() => import("./pages/admin/exams/ExamFolderPage"));
 const ExamEditorPage = lazy(() => import("./pages/admin/exams/ExamEditorPage"));
 const ExamArchivePage = lazy(() => import("./pages/admin/exams/ExamArchivePage"));
+const ExamAttemptReviewPage = lazy(() => import("./pages/admin/exams/ExamAttemptReviewPage"));
 const ExamStartPage = lazy(() => import("./pages/exams/ExamStartPage"));
 const ExamAttemptPage = lazy(() => import("./pages/exams/ExamAttemptPage"));
 const ExamResultPage = lazy(() => import("./pages/exams/ExamResultPage"));
@@ -307,6 +308,7 @@ const router = createBrowserRouter(
           <Route path="/admin/exams" element={<ExamsPage />} />
           <Route path="/admin/exams/archive" element={<ExamArchivePage />} />
           <Route path="/admin/exams/folders/:id" element={<ExamFolderPage />} />
+          <Route path="/admin/exams/attempts/:id" element={<ExamAttemptReviewPage />} />
           <Route path="/admin/exams/:examId" element={<ExamEditorPage />} />
           <Route path="/admin/question-bank/archive" element={<QuestionBankArchivePage />} />
           <Route path="/admin/question-bank/folders/:id" element={<BankFolderPage />} />
