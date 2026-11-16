@@ -136,8 +136,11 @@ export default function NotificationsPage() {
                                                     "text-base leading-relaxed",
                                                     notification.is_read ? "text-foreground/80" : "text-foreground font-semibold"
                                                 )}>
-                                                    {t(`keys.${notification.message_key}`, notification.message_key)}
+                                                    {notification.title || t(`keys.${notification.message_key}`, notification.message_key)}
                                                 </p>
+                                                {notification.title && notification.body && (
+                                                    <p className="mt-1 whitespace-pre-line text-sm text-muted-foreground">{notification.body}</p>
+                                                )}
                                             </div>
                                             <div className="text-right shrink-0">
                                                 <div className="flex items-center gap-1.5 text-muted-foreground font-medium text-xs">

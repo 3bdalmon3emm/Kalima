@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { UserCog, Users } from 'lucide-react';
+import { Bell, UserCog, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -12,6 +12,7 @@ import UserStatsCards from '@/components/admin/users/UserStatsCards';
 import UserFilters from '@/components/admin/users/UserFilters';
 import UsersTable from '@/components/admin/users/UsersTable';
 import CreateUserDialog from '@/components/admin/users/CreateUserDialog';
+import SendNotificationModal from '@/components/admin/notifications/SendNotificationModal';
 import { startImpersonation } from '@/services/impersonationService';
 
 export default function UsersPage() {
@@ -19,6 +20,9 @@ export default function UsersPage() {
     const navigate = useNavigate();
     const { user: currentUser } = useAuth();
     const { isAdmin } = useRole();
+    // Users picked to receive one notification together.
+    const [selected, setSelected] = useState([]);
+    const [notifyOpen, setNotifyOpen] = useState(false);
 
     const {
         users,
@@ -115,6 +119,11 @@ export default function UsersPage() {
                             <Link to="/admin/impersonation-log"><UserCog className="h-4 w-4 me-2" />{t('impersonationLog.title')}</Link>
                         </Button>
                     )}
+                    {selected.length > 0 && (
+                        <Button onClick={() => setNotifyOpen(true)}>
+                            <Bell className="h-4 w-4 me-2" />{t('notifySelected', { count: selected.length, defaultValue: 'Notify {{count}} selected' })}
+                        </Button>
+                    )}
                     <CreateUserDialog onSuccess={loadUsers} />
                 </div>
             </div>
@@ -143,7 +152,14 @@ export default function UsersPage() {
                 onResetPassword={handleResetPassword}
                 currentUserId={currentUser?.id}
                 impersonatingUserId={impersonatingUserId}
+                selectedIds={selected}
+                onToggleSelect={(id, on) => setSelected((s) => (on ? [...new Set([...s, id])] : s.filter((x) => x !== id)))}
+                onToggleAll={(on) => {
+                    const ids = users.filter((u) => !u.is_deleted).map((u) => u.id);
+                    setSelected((s) => (on ? [...new Set([...s, ...ids])] : s.filter((x) => !ids.includes(x))));
+                }}
             />
+            <SendNotificationModal open={notifyOpen} onOpenChange={setNotifyOpen} userIds={selected} onSent={() => setSelected([])} />
         </div>
     );
 }

@@ -943,10 +943,22 @@ export const adminController = {
         );
       }
 
+      // A written notification goes to chosen users only, with its own title
+      // and text.
+      const title = dto.title?.trim() || null;
+      const body = dto.body?.trim() || null;
+      if ((title || body) && !hasUserIds) {
+        throw new BadRequestError("Choose the users to send this notification to");
+      }
+      if ((title || body) && !(title && body)) {
+        throw new BadRequestError("Write both a title and a message");
+      }
       const opts = {
         entityType: dto.entity_type,
         entityId: dto.entity_id,
         createdBy: adminId,
+        title,
+        body,
       };
 
       let targetCount: number;

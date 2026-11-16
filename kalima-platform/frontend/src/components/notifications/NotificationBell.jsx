@@ -152,17 +152,24 @@ export default function NotificationBell() {
                                         <div
                                             key={notification.id}
                                             onClick={() => handleNotificationClick(notification)}
-                                            className="p-4 hover:bg-primary/5 transition-colors cursor-pointer relative group"
+                                            className={`p-4 transition-colors cursor-pointer relative group ${notification.is_read ? 'bg-background hover:bg-muted/50' : 'bg-primary/10 hover:bg-primary/15'}`}
                                         >
                                             <div className="flex gap-3">
                                                 <div
-                                                    className="w-2 h-2 rounded-full mt-1.5 shrink-0"
+                                                    className={`w-2 h-2 rounded-full mt-1.5 shrink-0 ${notification.is_read ? 'opacity-0' : ''}`}
                                                     style={{ backgroundColor: CATEGORY_COLORS[notification.category] || CATEGORY_COLORS[10] }}
                                                 />
                                                 <div className="flex-1 min-w-0">
-                                                    <p className="text-xs font-semibold text-foreground line-clamp-2 leading-relaxed">
-                                                        {t(`keys.${notification.message_key}`, notification.message_key)}
-                                                    </p>
+                                                    {notification.title ? (
+                                                        <>
+                                                            <p className={`text-xs text-foreground line-clamp-1 ${notification.is_read ? 'font-medium' : 'font-bold'}`}>{notification.title}</p>
+                                                            {notification.body && <p className="mt-0.5 text-xs text-muted-foreground line-clamp-2 leading-relaxed whitespace-pre-line">{notification.body}</p>}
+                                                        </>
+                                                    ) : (
+                                                        <p className={`text-xs text-foreground line-clamp-2 leading-relaxed ${notification.is_read ? 'font-medium' : 'font-semibold'}`}>
+                                                            {t(`keys.${notification.message_key}`, notification.message_key)}
+                                                        </p>
+                                                    )}
                                                     <div className="flex items-center justify-between mt-2">
                                                         <span className="text-[10px] text-muted-foreground font-medium">
                                                             {notification.created_at ? formatDistanceToNow(new Date(notification.created_at), { addSuffix: true, locale: dateLocale }) : ''}

@@ -308,5 +308,7 @@
   "Selected payment method is inactive or invalid.": "طريقة الدفع هذه غير متاحة، اختر طريقة أخرى",
   "A reason is required to delete an order": "اكتب سبب حذف الطلب",
   "This order is already deleted": "هذا الطلب محذوف بالفعل",
-  "This account is already deleted": "هذا الحساب محذوف بالفعل"
+  "This account is already deleted": "هذا الحساب محذوف بالفعل",
+  "Choose the users to send this notification to": "اختر المستخدمين الذين سيصلهم الإشعار",
+  "Write both a title and a message": "اكتب العنوان ونص الإشعار"
 }

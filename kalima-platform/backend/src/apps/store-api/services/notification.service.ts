@@ -106,6 +106,8 @@ class NotificationService {
       entityId?: number;
       targetLink?: string;
       createdBy?: number;
+      title?: string | null;
+      body?: string | null;
     },
   ): Promise<number> {
     if (userIds.length === 0) return 0;
@@ -119,6 +121,8 @@ class NotificationService {
         entity_id: options?.entityId ?? null,
         target_link: options?.targetLink ?? null,
         created_by: options?.createdBy ?? null,
+        title: options?.title ?? null,
+        body: options?.body ?? null,
       })),
     });
 
@@ -156,6 +160,8 @@ class NotificationService {
             entity_type: options?.entityType ?? null,
             entity_id: options?.entityId ?? null,
             target_link: options?.targetLink ?? null,
+            title: options?.title ?? null,
+            body: options?.body ?? null,
             created_at: r?.created_at ?? null,
           },
         };

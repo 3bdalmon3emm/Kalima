@@ -92,3 +92,7 @@ SET "profile_pic_url" = regexp_replace("profile_pic_url", '=s[0-9]+(-c)?$', '=s8
 WHERE "profile_pic_url" ILIKE '%googleusercontent.com%'
   AND "profile_pic_url" ~ '=s[0-9]+(-c)?$'
   AND "profile_pic_url" !~ '=s800-c$';
+
+-- Notifications an admin writes: their own title and text.
+ALTER TABLE "notifications" ADD COLUMN IF NOT EXISTS "title" VARCHAR(200);
+ALTER TABLE "notifications" ADD COLUMN IF NOT EXISTS "body" TEXT;

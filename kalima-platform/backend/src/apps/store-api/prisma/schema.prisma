@@ -1860,6 +1860,10 @@ model notifications {
   /// Deep-link for the frontend to navigate to (e.g. /orders/7, /users/42)
   target_link String? @db.VarChar(255)
 
+  /// A notification written by an admin: its own title and text.
+  title String? @db.VarChar(200)
+  body  String?
+
   /// Read tracking
   is_read Boolean @default(false)
 

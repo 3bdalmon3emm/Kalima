@@ -177,11 +177,11 @@ router.post(
 // NOTIFICATIONS
 // ============================================
 
-// Send notification to user(s) or role (Admin, SubAdmin only)
+// Send notification to user(s) or role (all staff)
 router.post(
   "/notifications",
   authenticateToken,
-  requireRole([role_enum.Admin, role_enum.SubAdmin]),
+  requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
   adminController.sendNotification,
 );
 

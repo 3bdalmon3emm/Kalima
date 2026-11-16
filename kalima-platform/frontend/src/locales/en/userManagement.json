@@ -226,5 +226,7 @@
     "noEnd": "Session ended without leaving",
     "prev": "Previous",
     "next": "Next"
-  }
+  },
+  "notifySelected": "Notify selected ({{count}})",
+  "selectAll": "Select all"
 }

@@ -74,6 +74,12 @@
       "Teacher": "Teacher",
       "Parent": "Parent",
       "Moderator": "Moderator"
-    }
+    },
+    "send_to_one": "To 1 user, inside the platform only.",
+    "send_to_other": "To {{count}} users, inside the platform only.",
+    "title_label": "Title",
+    "title_placeholder": "For example: Your order is ready",
+    "body_label": "Message",
+    "body_placeholder": "Write what the user should read"
   }
 }

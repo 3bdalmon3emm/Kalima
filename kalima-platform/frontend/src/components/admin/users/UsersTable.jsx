@@ -40,6 +40,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
 import { outranks } from '@/lib/roleRank';
 import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
+import { Checkbox } from '@/components/ui/checkbox';
 import { largestPhotoUrl } from '@/lib/profilePhoto';
 import { useRole } from '@/hooks/useRole';
 import AppreciationQrButton from './AppreciationQrButton';
@@ -57,6 +58,9 @@ export default function UsersTable({
     onResetPassword,
     currentUserId,
     impersonatingUserId,
+    selectedIds,
+    onToggleSelect,
+    onToggleAll,
 }) {
     const { t, i18n } = useTranslation('userManagement');
     const isRtl = i18n.dir() === 'rtl';
@@ -148,6 +152,15 @@ export default function UsersTable({
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            {onToggleSelect && (
+                                <TableHead className="w-10">
+                                    <Checkbox
+                                        checked={users.length > 0 && users.filter((u) => !u.is_deleted).every((u) => selectedIds?.includes(u.id))}
+                                        onCheckedChange={(v) => onToggleAll?.(!!v)}
+                                        aria-label={t('selectAll', 'Select all')}
+                                    />
+                                </TableHead>
+                            )}
                             <TableHead>{t('table.user')}</TableHead>
                             <TableHead>{t('table.email')}</TableHead>
                             <TableHead>{t('table.phone')}</TableHead>
@@ -178,6 +191,15 @@ export default function UsersTable({
 
                             return (
                                 <TableRow key={user.id} data-testid={`users-table-row-${user.id}`}>
+                                    {onToggleSelect && (
+                                        <TableCell className="w-10">
+                                            <Checkbox
+                                                checked={!!selectedIds?.includes(user.id)}
+                                                disabled={user.is_deleted}
+                                                onCheckedChange={(v) => onToggleSelect(user.id, !!v)}
+                                            />
+                                        </TableCell>
+                                    )}
                                     {/* User */}
                                     <TableCell truncate title={user.name || undefined}>
                                         <div className="flex items-center gap-3">

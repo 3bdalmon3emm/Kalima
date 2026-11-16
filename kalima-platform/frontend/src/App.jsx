@@ -248,9 +248,12 @@ const router = createBrowserRouter(
               />
             </Route>
             <Route path="/orders" element={<MyOrdersPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
+        </Route>
+        {/* Every signed-in user's notifications, whatever the role */}
+        <Route element={<ProtectedRoute requireAuth={true} />}>
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
         <Route path="/e-booklet-invite/:token" element={<AcceptEBookletInvitePage />} />
         <Route path="/e-booklet-code" element={<AcceptEBookletInvitePage mode="code" />} />
