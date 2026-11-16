@@ -53,8 +53,71 @@ export function uploadQuestionMedia(req: Request, res: Response, next: NextFunct
   });
 }
 
+// Photos of handwritten essay answers and celebration sounds: one file per
+// request, smaller limits than the bank.
+const STUDENT_PHOTO_MAX_MB = 20;
+const SOUND_MAX_MB = 10;
+
+function singleFile(filter: (mime: string) => boolean, maxMb: number, wrongType: string) {
+  const receive = multer({
+    storage: multer.memoryStorage(),
+    fileFilter: (_req, file, cb) => (filter(file.mimetype) ? cb(null, true) : cb(new BadRequestError(wrongType) as any)),
+    limits: { fileSize: maxMb * 1024 * 1024 },
+  }).single("file");
+  return (req: Request, res: Response, next: NextFunction) => {
+    receive(req, res, (err: any) => {
+      if (err?.code === "LIMIT_FILE_SIZE") return next(new BadRequestError(`Files must be ${maxMb} MB or smaller`));
+      next(err);
+    });
+  };
+}
+
+export const uploadAnswerPhoto = singleFile(
+  (mime) => IMAGE_TYPES.has(mime) && mime !== "image/svg+xml", STUDENT_PHOTO_MAX_MB, "Only images can be uploaded",
+);
+export const uploadSound = singleFile((mime) => AUDIO_TYPES.has(mime), SOUND_MAX_MB, "Only audio files can be uploaded");
+
 class MediaService {
   constructor(private db: PrismaClient = prisma) {}
+
+  // Writes a file to R2, or to the local uploads folder in development.
+  async put(key: string, body: Buffer, mime: string) {
+    if (isR2Enabled()) {
+      await putObject({ key, body, contentType: mime });
+    } else {
+      const target = resolveUploadPath(key);
+      await fs.mkdir(path.dirname(target), { recursive: true });
+      await fs.writeFile(target, body);
+    }
+  }
+
+  private async compress(body: Buffer, mime: string) {
+    try {
+      const optimized = await optimizeImage(body, mime, { maxWidth: IMAGE_MAX_WIDTH });
+      return optimized.changed
+        ? { body: optimized.buffer, mime: optimized.mimeType, ext: optimized.extension || ".webp" }
+        : { body, mime, ext: IMAGE_EXT[mime] };
+    } catch {
+      throw new BadRequestError("The image is damaged or incomplete. Please choose another image.");
+    }
+  }
+
+  // A photo of a handwritten essay answer, compressed like bank images.
+  async storeAnswerPhoto(attemptId: number, file: Express.Multer.File) {
+    const image = await this.compress(file.buffer, file.mimetype);
+    const key = `exam-answers/${attemptId}/${crypto.randomUUID()}${image.ext}`;
+    await this.put(key, image.body, image.mime);
+    const row = await this.db.ex_answer_files.create({
+      data: { attempt_id: attemptId, storage_key: key, mime_type: image.mime, size_bytes: image.body.length },
+    });
+    return { id: row.id, url: await this.url(key) };
+  }
+
+  async storeSound(file: Express.Multer.File, folder: string) {
+    const key = `exam-sounds/${folder}/${crypto.randomUUID()}${AUDIO_EXT[file.mimetype] ?? ""}`;
+    await this.put(key, file.buffer, file.mimetype);
+    return key;
+  }
 
   async upload(file: Express.Multer.File | undefined, bankId: number, userId: number) {
     if (!file) throw new BadRequestError("File is required");
@@ -69,29 +132,12 @@ class MediaService {
     if (!isImage && file.size > AUDIO_MAX_MB * 1024 * 1024) {
       throw new BadRequestError(`Audio files must be ${AUDIO_MAX_MB} MB or smaller`);
     }
-    if (isImage) {
-      try {
-        const optimized = await optimizeImage(body, mime, { maxWidth: IMAGE_MAX_WIDTH });
-        if (optimized.changed) {
-          body = optimized.buffer;
-          mime = optimized.mimeType;
-          ext = optimized.extension || ".webp";
-        }
-      } catch {
-        throw new BadRequestError("The image is damaged or incomplete. Please choose another image.");
-      }
-    }
+    if (isImage) ({ body, mime, ext } = await this.compress(body, mime));
 
     const kind = isImage ? "image" : "audio";
     const key = `question-bank/${bankId}/${isImage ? "images" : "audio"}/${crypto.randomUUID()}${ext}`;
 
-    if (isR2Enabled()) {
-      await putObject({ key, body, contentType: mime });
-    } else {
-      const target = resolveUploadPath(key);
-      await fs.mkdir(path.dirname(target), { recursive: true });
-      await fs.writeFile(target, body);
-    }
+    await this.put(key, body, mime);
 
     const media = await this.db.qb_media.create({
       data: {

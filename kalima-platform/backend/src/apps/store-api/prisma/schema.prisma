@@ -263,7 +263,8 @@ model students {
   government_id       Int?
   zone_id             Int?
   parent_phone_number String?           @db.VarChar(255)
-  sequenced_id        Int?
+  // Student serial, numbered by students_sequenced_id_seq.
+  sequenced_id        Int?              @default(dbgenerated("nextval('students_sequenced_id_seq'::regclass)"))
   faction             String?           @db.VarChar(255)
   graduated           Boolean           @default(false)
   promotion_notice    Boolean           @default(false)
@@ -280,6 +281,7 @@ model subjects {
   active   Boolean?   @default(true)
   teachers teachers[]
   qb_folders qb_folders[]
+  ex_exams   ex_exams[]
 }
 
 model teachers {
@@ -2032,6 +2034,7 @@ model qb_questions {
   model_answer_image qb_media?             @relation("QbQuestionModelAnswerImage", fields: [model_answer_image_id], references: [id], onUpdate: NoAction)
   options            qb_question_options[]
   matching_items     qb_matching_items[]
+  exam_questions     ex_exam_questions[]
 
   @@index([folder_id, passage_id, sort_order], map: "ix_qb_questions_folder")
   @@index([passage_id, sort_order], map: "ix_qb_questions_passage")
@@ -2080,4 +2083,257 @@ model qb_matching_items {
   matched_by qb_matching_items[] @relation("QbMatchingPair")
 
   @@index([question_id, side, sort_order], map: "ix_qb_matching_items_question")
+}
+
+// ---------------------------------------------------------------------------
+// Exams (phase 3 of the exam system). Exams sit in their own folder tree and
+// point at bank questions; marks, order and sections live on the exam.
+// Students reach an exam through a link; a link without a teacher is the
+// admin's test link (teacher links come in the next phase).
+// ---------------------------------------------------------------------------
+
+enum ex_exam_type_enum {
+  exam
+  homework
+}
+
+enum ex_exam_mode_enum {
+  manual
+  random
+}
+
+enum ex_attempt_status_enum {
+  in_progress
+  // Submitted, waiting for essay grading.
+  pending
+  done
+}
+
+model ex_folders {
+  id          Int       @id @default(autoincrement())
+  parent_id   Int?
+  // Ids from the root folder down to this folder, e.g. "/3/8/21/".
+  path        String    @default("") @db.VarChar(1000)
+  name        String    @db.VarChar(255)
+  sort_order  Int       @default(0)
+  archived_at DateTime? @db.Timestamptz(6)
+  archived_by Int?
+  created_by  Int?
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+  updated_at  DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  parent   ex_folders?  @relation("ExFolderParent", fields: [parent_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+  children ex_folders[] @relation("ExFolderParent")
+  exams    ex_exams[]
+
+  @@index([parent_id, sort_order], map: "ix_ex_folders_parent")
+  @@index([path], map: "ix_ex_folders_path")
+}
+
+model ex_exams {
+  id                 Int               @id @default(autoincrement())
+  folder_id          Int
+  name               String            @db.VarChar(255)
+  description        String?
+  // Typed by the admin, for search and filtering; not unique.
+  serial             String?           @db.VarChar(50)
+  subject_id         Int?
+  type               ex_exam_type_enum
+  mode               ex_exam_mode_enum
+  target_total       Decimal?          @db.Decimal(7, 2)
+  duration_minutes   Int?
+  pass_percent       Int               @default(50)
+  // Below this score a redo opens (while redos are left).
+  redo_percent       Int?
+  max_redos          Int               @default(0)
+  redo_required      Boolean           @default(false)
+  // Random exams only: a redo draws new questions with the same rules.
+  redo_new_questions Boolean           @default(false)
+  shuffle            Boolean           @default(false)
+  // When the student sees the right answers: after_last, immediately,
+  // after_end or never.
+  show_answers       String            @default("after_last") @db.VarChar(20)
+  sort_order         Int               @default(0)
+  published_at       DateTime?         @db.Timestamptz(6)
+  archived_at        DateTime?         @db.Timestamptz(6)
+  archived_by        Int?
+  created_by         Int?
+  updated_by         Int?
+  created_at         DateTime          @default(now()) @db.Timestamptz(6)
+  updated_at         DateTime          @default(now()) @updatedAt @db.Timestamptz(6)
+
+  folder    ex_folders          @relation(fields: [folder_id], references: [id], onUpdate: NoAction)
+  subjects  subjects?           @relation(fields: [subject_id], references: [id], onDelete: SetNull, onUpdate: NoAction)
+  sections  ex_sections[]
+  questions ex_exam_questions[]
+  links     ex_links[]
+  attempts  ex_attempts[]
+
+  @@index([folder_id, sort_order], map: "ix_ex_exams_folder")
+  @@index([serial], map: "ix_ex_exams_serial")
+}
+
+// Every exam has at least one section; an exam "without sections" has one
+// section with no name.
+model ex_sections {
+  id         Int     @id @default(autoincrement())
+  exam_id    Int
+  name       String? @db.VarChar(255)
+  sort_order Int     @default(0)
+
+  exam      ex_exams            @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  questions ex_exam_questions[]
+  rules     ex_draw_rules[]
+
+  @@index([exam_id, sort_order], map: "ix_ex_sections_exam")
+}
+
+// Questions of an exam: picked by hand, or drawn by the rules of a random
+// exam. Passage children are listed on their own and shown under their
+// passage.
+model ex_exam_questions {
+  id          Int     @id @default(autoincrement())
+  exam_id     Int
+  section_id  Int
+  question_id Int
+  mark        Decimal @db.Decimal(7, 2)
+  sort_order  Int     @default(0)
+  // The rule that drew it (random exams).
+  rule_id     Int?
+
+  exam     ex_exams     @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  section  ex_sections  @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  question qb_questions @relation(fields: [question_id], references: [id], onDelete: Restrict, onUpdate: NoAction)
+
+  @@unique([exam_id, question_id], map: "ux_ex_exam_questions_exam_question")
+  @@index([section_id, sort_order], map: "ix_ex_exam_questions_section")
+  @@index([question_id], map: "ix_ex_exam_questions_question")
+}
+
+// A draw rule of a random exam section: from these bank folders (and all
+// their subfolders), optionally one category or subcategory, so many
+// questions per difficulty, each worth the given mark.
+model ex_draw_rules {
+  id              Int     @id @default(autoincrement())
+  section_id      Int
+  folder_ids      Int[]
+  category_id     Int?
+  subcategory_id  Int?
+  easy_count      Int     @default(0)
+  medium_count    Int     @default(0)
+  hard_count      Int     @default(0)
+  very_hard_count Int     @default(0)
+  easy_mark       Decimal @default(1) @db.Decimal(7, 2)
+  medium_mark     Decimal @default(1) @db.Decimal(7, 2)
+  hard_mark       Decimal @default(1) @db.Decimal(7, 2)
+  very_hard_mark  Decimal @default(1) @db.Decimal(7, 2)
+  sort_order      Int     @default(0)
+
+  section ex_sections @relation(fields: [section_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([section_id, sort_order], map: "ix_ex_draw_rules_section")
+}
+
+// The way into an exam. teacher_user_id null = the admin's test link.
+model ex_links {
+  id              Int       @id @default(autoincrement())
+  exam_id         Int
+  teacher_user_id Int?
+  code            String    @unique @db.VarChar(16)
+  starts_at       DateTime  @db.Timestamptz(6)
+  ends_at         DateTime  @db.Timestamptz(6)
+  closed_at       DateTime? @db.Timestamptz(6)
+  created_by      Int?
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+
+  exam     ex_exams      @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  attempts ex_attempts[]
+
+  @@index([exam_id], map: "ix_ex_links_exam")
+}
+
+model ex_attempts {
+  id               Int                    @id @default(autoincrement())
+  exam_id          Int
+  link_id          Int
+  student_user_id  Int
+  attempt_no       Int
+  status           ex_attempt_status_enum @default(in_progress)
+  started_at       DateTime               @default(now()) @db.Timestamptz(6)
+  // When it is submitted on its own: the duration or the link's end date,
+  // whichever comes first.
+  deadline_at      DateTime               @db.Timestamptz(6)
+  submitted_at     DateTime?              @db.Timestamptz(6)
+  auto_submitted   Boolean                @default(false)
+  // [{ section_id, question_id, mark }] in the order this student sees them.
+  questions        Json
+  // The questions as they were when the attempt started (no answer keys), so
+  // an edit to the bank does not change a running attempt.
+  content          Json
+  score            Decimal?               @db.Decimal(7, 2)
+  total            Decimal                @db.Decimal(7, 2)
+  // Only the latest opened tab or device may save.
+  session_token    String?                @db.VarChar(64)
+  fullscreen_exits Int                    @default(0)
+  tab_leaves       Int                    @default(0)
+  copy_attempts    Int                    @default(0)
+  created_at       DateTime               @default(now()) @db.Timestamptz(6)
+  updated_at       DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
+
+  exam    ex_exams             @relation(fields: [exam_id], references: [id], onUpdate: NoAction)
+  link    ex_links             @relation(fields: [link_id], references: [id], onUpdate: NoAction)
+  answers ex_attempt_answers[]
+  files   ex_answer_files[]
+
+  @@unique([link_id, student_user_id, attempt_no], map: "ux_ex_attempts_no")
+  @@index([student_user_id, exam_id], map: "ix_ex_attempts_student")
+  @@index([status, deadline_at], map: "ix_ex_attempts_status_deadline")
+}
+
+// One answer per question of an attempt. "answer" keeps exactly what the
+// student chose, so any later re-grade works from it:
+// { option_ids: [] } | { pairs: [[left_id, right_id]] } | { text, file_ids: [] }
+model ex_attempt_answers {
+  attempt_id  Int
+  question_id Int
+  answer      Json
+  flagged     Boolean   @default(false)
+  // Null until graded (essays wait for a grader).
+  mark        Decimal?  @db.Decimal(7, 2)
+  graded_at   DateTime? @db.Timestamptz(6)
+  graded_by   Int?
+  updated_at  DateTime  @default(now()) @updatedAt @db.Timestamptz(6)
+
+  attempt ex_attempts @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([attempt_id, question_id])
+}
+
+// Photos a student uploads for an essay answer.
+model ex_answer_files {
+  id          Int      @id @default(autoincrement())
+  attempt_id  Int
+  storage_key String   @unique @db.VarChar(500)
+  mime_type   String   @db.VarChar(150)
+  size_bytes  Int
+  created_at  DateTime @default(now()) @db.Timestamptz(6)
+
+  attempt ex_attempts @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([attempt_id], map: "ix_ex_answer_files_attempt")
+}
+
+// Sounds played with the result celebration. Bands are fixed: pass (pass
+// mark to 69%), good (70-79%), great (80-99%), perfect (100%).
+model ex_celebration_sounds {
+  id                Int      @id @default(autoincrement())
+  band              String   @db.VarChar(20)
+  storage_key       String   @unique @db.VarChar(500)
+  mime_type         String   @db.VarChar(150)
+  size_bytes        Int
+  original_filename String?  @db.VarChar(255)
+  created_by        Int?
+  created_at        DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([band], map: "ix_ex_celebration_sounds_band")
 }

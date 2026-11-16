@@ -5,7 +5,8 @@ import { foldersService, pathIds } from "./folders.service";
 import { mediaService } from "./media.service";
 
 // Permanent delete from the archive page (Admin only). Only archived items can
-// go.
+// go, and never anything an exam uses: those stay archived so exam results
+// keep their questions.
 
 class BankPurgeService {
   constructor(private db: PrismaClient = prisma) {}
@@ -20,6 +21,9 @@ class BankPurgeService {
       select: { id: true, path: true },
     });
     const folderIds = subtree.map((f) => f.id);
+
+    const usedByRule = await this.db.ex_draw_rules.count({ where: { folder_ids: { hasSome: folderIds } } });
+    if (usedByRule) throw new BadRequestError("An exam draws questions from this folder, so it stays archived");
 
     const questions = await this.db.qb_questions.findMany({ where: { folder_id: { in: folderIds } }, select: { id: true } });
     const mediaIds = await this.removeQuestions(questions.map((q) => q.id), async (tx) => {
@@ -48,6 +52,8 @@ class BankPurgeService {
     after?: (tx: Parameters<Parameters<PrismaClient["$transaction"]>[0]>[0]) => Promise<void>,
   ) {
     const unique = [...new Set(ids)];
+    const used = await this.db.ex_exam_questions.count({ where: { question_id: { in: unique } } });
+    if (used) throw new BadRequestError("Some of these questions are used in exams, so they stay archived");
 
     const rows = unique.length ? await this.db.qb_questions.findMany({
       where: { id: { in: unique } },

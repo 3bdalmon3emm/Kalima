@@ -1000,6 +1000,57 @@ export type Enumqb_matching_side_enumWithAggregatesFilter<$PrismaModel = never> 
   _max?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
 }
 
+export type Enumex_exam_type_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_type_enum | Prisma.Enumex_exam_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel> | $Enums.ex_exam_type_enum
+}
+
+export type Enumex_exam_mode_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_mode_enum | Prisma.Enumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel> | $Enums.ex_exam_mode_enum
+}
+
+export type Enumex_exam_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_type_enum | Prisma.Enumex_exam_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_exam_type_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel>
+}
+
+export type Enumex_exam_mode_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_mode_enum | Prisma.Enumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_mode_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_exam_mode_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel>
+}
+
+export type Enumex_attempt_status_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_attempt_status_enum | Prisma.Enumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel> | $Enums.ex_attempt_status_enum
+}
+
+export type Enumex_attempt_status_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_attempt_status_enum | Prisma.Enumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_attempt_status_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_attempt_status_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel>
+}
+
 export type NestedIntFilter<$PrismaModel = never> = {
   equals?: number | Prisma.IntFieldRefInput<$PrismaModel>
   in?: number[] | Prisma.ListIntFieldRefInput<$PrismaModel>
@@ -1943,6 +1994,57 @@ export type NestedEnumqb_matching_side_enumWithAggregatesFilter<$PrismaModel = n
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
   _max?: Prisma.NestedEnumqb_matching_side_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumex_exam_type_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_type_enum | Prisma.Enumex_exam_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel> | $Enums.ex_exam_type_enum
+}
+
+export type NestedEnumex_exam_mode_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_mode_enum | Prisma.Enumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel> | $Enums.ex_exam_mode_enum
+}
+
+export type NestedEnumex_exam_type_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_type_enum | Prisma.Enumex_exam_type_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_type_enum[] | Prisma.ListEnumex_exam_type_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_type_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_exam_type_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_exam_type_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumex_exam_mode_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_exam_mode_enum | Prisma.Enumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_exam_mode_enum[] | Prisma.ListEnumex_exam_mode_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_exam_mode_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_exam_mode_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_exam_mode_enumFilter<$PrismaModel>
+}
+
+export type NestedEnumex_attempt_status_enumFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_attempt_status_enum | Prisma.Enumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel> | $Enums.ex_attempt_status_enum
+}
+
+export type NestedEnumex_attempt_status_enumWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.ex_attempt_status_enum | Prisma.Enumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  in?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  notIn?: $Enums.ex_attempt_status_enum[] | Prisma.ListEnumex_attempt_status_enumFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumex_attempt_status_enumWithAggregatesFilter<$PrismaModel> | $Enums.ex_attempt_status_enum
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumex_attempt_status_enumFilter<$PrismaModel>
 }
 
 

@@ -120,6 +120,13 @@ const QuestionBankPage = lazy(() => import("./pages/admin/question-bank/Question
 const BankFolderPage = lazy(() => import("./pages/admin/question-bank/BankFolderPage"));
 const QuestionEditorPage = lazy(() => import("./pages/admin/question-bank/QuestionEditorPage"));
 const QuestionBankArchivePage = lazy(() => import("./pages/admin/question-bank/QuestionBankArchivePage"));
+const ExamsPage = lazy(() => import("./pages/admin/exams/ExamsPage"));
+const ExamFolderPage = lazy(() => import("./pages/admin/exams/ExamFolderPage"));
+const ExamEditorPage = lazy(() => import("./pages/admin/exams/ExamEditorPage"));
+const ExamArchivePage = lazy(() => import("./pages/admin/exams/ExamArchivePage"));
+const ExamStartPage = lazy(() => import("./pages/exams/ExamStartPage"));
+const ExamAttemptPage = lazy(() => import("./pages/exams/ExamAttemptPage"));
+const ExamResultPage = lazy(() => import("./pages/exams/ExamResultPage"));
 
 // Teacher lazy-loaded pages
 const TeacherLayout = lazy(() => import("./layouts/TeacherLayout"));
@@ -297,6 +304,10 @@ const router = createBrowserRouter(
           <Route path="/admin/e-booklets/milestones/:achievementId" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/access-codes" element={<LegacyEBookletRedirect type="accessCodes" />} />
           <Route path="/admin/question-bank" element={<QuestionBankPage />} />
+          <Route path="/admin/exams" element={<ExamsPage />} />
+          <Route path="/admin/exams/archive" element={<ExamArchivePage />} />
+          <Route path="/admin/exams/folders/:id" element={<ExamFolderPage />} />
+          <Route path="/admin/exams/:examId" element={<ExamEditorPage />} />
           <Route path="/admin/question-bank/archive" element={<QuestionBankArchivePage />} />
           <Route path="/admin/question-bank/folders/:id" element={<BankFolderPage />} />
           <Route path="/admin/question-bank/folders/:folderId/questions/new" element={<QuestionEditorPage />} />
@@ -334,6 +345,13 @@ const router = createBrowserRouter(
           <Route path="/teacher/e-booklets/:instanceId" element={<EBookletViewerPage />} />
           <Route path="/teacher/e-booklets/:instanceId/invites" element={<TeacherInviteManagementPage />} />
         </Route>
+      </Route>
+
+      {/* Exam links: students take exams; Admin and SubAdmin may try the test link */}
+      <Route element={<RoleRoute requiredRole={["Student", "Admin", "SubAdmin"]} />}>
+        <Route path="/e/:code" element={<ExamStartPage />} />
+        <Route path="/e/:code/attempt/:attemptId" element={<ExamAttemptPage />} />
+        <Route path="/e/:code/result/:attemptId" element={<ExamResultPage />} />
       </Route>
 
       {/* Student Routes */}

@@ -139,7 +139,17 @@ export const ModelName = {
   qb_categories: 'qb_categories',
   qb_questions: 'qb_questions',
   qb_question_options: 'qb_question_options',
-  qb_matching_items: 'qb_matching_items'
+  qb_matching_items: 'qb_matching_items',
+  ex_folders: 'ex_folders',
+  ex_exams: 'ex_exams',
+  ex_sections: 'ex_sections',
+  ex_exam_questions: 'ex_exam_questions',
+  ex_draw_rules: 'ex_draw_rules',
+  ex_links: 'ex_links',
+  ex_attempts: 'ex_attempts',
+  ex_attempt_answers: 'ex_attempt_answers',
+  ex_answer_files: 'ex_answer_files',
+  ex_celebration_sounds: 'ex_celebration_sounds'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1541,6 +1551,177 @@ export const Qb_matching_itemsScalarFieldEnum = {
 } as const
 
 export type Qb_matching_itemsScalarFieldEnum = (typeof Qb_matching_itemsScalarFieldEnum)[keyof typeof Qb_matching_itemsScalarFieldEnum]
+
+
+export const Ex_foldersScalarFieldEnum = {
+  id: 'id',
+  parent_id: 'parent_id',
+  path: 'path',
+  name: 'name',
+  sort_order: 'sort_order',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_foldersScalarFieldEnum = (typeof Ex_foldersScalarFieldEnum)[keyof typeof Ex_foldersScalarFieldEnum]
+
+
+export const Ex_examsScalarFieldEnum = {
+  id: 'id',
+  folder_id: 'folder_id',
+  name: 'name',
+  description: 'description',
+  serial: 'serial',
+  subject_id: 'subject_id',
+  type: 'type',
+  mode: 'mode',
+  target_total: 'target_total',
+  duration_minutes: 'duration_minutes',
+  pass_percent: 'pass_percent',
+  redo_percent: 'redo_percent',
+  max_redos: 'max_redos',
+  redo_required: 'redo_required',
+  redo_new_questions: 'redo_new_questions',
+  shuffle: 'shuffle',
+  show_answers: 'show_answers',
+  sort_order: 'sort_order',
+  published_at: 'published_at',
+  archived_at: 'archived_at',
+  archived_by: 'archived_by',
+  created_by: 'created_by',
+  updated_by: 'updated_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_examsScalarFieldEnum = (typeof Ex_examsScalarFieldEnum)[keyof typeof Ex_examsScalarFieldEnum]
+
+
+export const Ex_sectionsScalarFieldEnum = {
+  id: 'id',
+  exam_id: 'exam_id',
+  name: 'name',
+  sort_order: 'sort_order'
+} as const
+
+export type Ex_sectionsScalarFieldEnum = (typeof Ex_sectionsScalarFieldEnum)[keyof typeof Ex_sectionsScalarFieldEnum]
+
+
+export const Ex_exam_questionsScalarFieldEnum = {
+  id: 'id',
+  exam_id: 'exam_id',
+  section_id: 'section_id',
+  question_id: 'question_id',
+  mark: 'mark',
+  sort_order: 'sort_order',
+  rule_id: 'rule_id'
+} as const
+
+export type Ex_exam_questionsScalarFieldEnum = (typeof Ex_exam_questionsScalarFieldEnum)[keyof typeof Ex_exam_questionsScalarFieldEnum]
+
+
+export const Ex_draw_rulesScalarFieldEnum = {
+  id: 'id',
+  section_id: 'section_id',
+  folder_ids: 'folder_ids',
+  category_id: 'category_id',
+  subcategory_id: 'subcategory_id',
+  easy_count: 'easy_count',
+  medium_count: 'medium_count',
+  hard_count: 'hard_count',
+  very_hard_count: 'very_hard_count',
+  easy_mark: 'easy_mark',
+  medium_mark: 'medium_mark',
+  hard_mark: 'hard_mark',
+  very_hard_mark: 'very_hard_mark',
+  sort_order: 'sort_order'
+} as const
+
+export type Ex_draw_rulesScalarFieldEnum = (typeof Ex_draw_rulesScalarFieldEnum)[keyof typeof Ex_draw_rulesScalarFieldEnum]
+
+
+export const Ex_linksScalarFieldEnum = {
+  id: 'id',
+  exam_id: 'exam_id',
+  teacher_user_id: 'teacher_user_id',
+  code: 'code',
+  starts_at: 'starts_at',
+  ends_at: 'ends_at',
+  closed_at: 'closed_at',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Ex_linksScalarFieldEnum = (typeof Ex_linksScalarFieldEnum)[keyof typeof Ex_linksScalarFieldEnum]
+
+
+export const Ex_attemptsScalarFieldEnum = {
+  id: 'id',
+  exam_id: 'exam_id',
+  link_id: 'link_id',
+  student_user_id: 'student_user_id',
+  attempt_no: 'attempt_no',
+  status: 'status',
+  started_at: 'started_at',
+  deadline_at: 'deadline_at',
+  submitted_at: 'submitted_at',
+  auto_submitted: 'auto_submitted',
+  questions: 'questions',
+  content: 'content',
+  score: 'score',
+  total: 'total',
+  session_token: 'session_token',
+  fullscreen_exits: 'fullscreen_exits',
+  tab_leaves: 'tab_leaves',
+  copy_attempts: 'copy_attempts',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_attemptsScalarFieldEnum = (typeof Ex_attemptsScalarFieldEnum)[keyof typeof Ex_attemptsScalarFieldEnum]
+
+
+export const Ex_attempt_answersScalarFieldEnum = {
+  attempt_id: 'attempt_id',
+  question_id: 'question_id',
+  answer: 'answer',
+  flagged: 'flagged',
+  mark: 'mark',
+  graded_at: 'graded_at',
+  graded_by: 'graded_by',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_attempt_answersScalarFieldEnum = (typeof Ex_attempt_answersScalarFieldEnum)[keyof typeof Ex_attempt_answersScalarFieldEnum]
+
+
+export const Ex_answer_filesScalarFieldEnum = {
+  id: 'id',
+  attempt_id: 'attempt_id',
+  storage_key: 'storage_key',
+  mime_type: 'mime_type',
+  size_bytes: 'size_bytes',
+  created_at: 'created_at'
+} as const
+
+export type Ex_answer_filesScalarFieldEnum = (typeof Ex_answer_filesScalarFieldEnum)[keyof typeof Ex_answer_filesScalarFieldEnum]
+
+
+export const Ex_celebration_soundsScalarFieldEnum = {
+  id: 'id',
+  band: 'band',
+  storage_key: 'storage_key',
+  mime_type: 'mime_type',
+  size_bytes: 'size_bytes',
+  original_filename: 'original_filename',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Ex_celebration_soundsScalarFieldEnum = (typeof Ex_celebration_soundsScalarFieldEnum)[keyof typeof Ex_celebration_soundsScalarFieldEnum]
 
 
 export const SortOrder = {

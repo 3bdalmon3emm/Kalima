@@ -462,3 +462,53 @@ export type qb_question_options = Prisma.qb_question_optionsModel
  * 
  */
 export type qb_matching_items = Prisma.qb_matching_itemsModel
+/**
+ * Model ex_folders
+ * 
+ */
+export type ex_folders = Prisma.ex_foldersModel
+/**
+ * Model ex_exams
+ * 
+ */
+export type ex_exams = Prisma.ex_examsModel
+/**
+ * Model ex_sections
+ * 
+ */
+export type ex_sections = Prisma.ex_sectionsModel
+/**
+ * Model ex_exam_questions
+ * 
+ */
+export type ex_exam_questions = Prisma.ex_exam_questionsModel
+/**
+ * Model ex_draw_rules
+ * 
+ */
+export type ex_draw_rules = Prisma.ex_draw_rulesModel
+/**
+ * Model ex_links
+ * 
+ */
+export type ex_links = Prisma.ex_linksModel
+/**
+ * Model ex_attempts
+ * 
+ */
+export type ex_attempts = Prisma.ex_attemptsModel
+/**
+ * Model ex_attempt_answers
+ * 
+ */
+export type ex_attempt_answers = Prisma.ex_attempt_answersModel
+/**
+ * Model ex_answer_files
+ * 
+ */
+export type ex_answer_files = Prisma.ex_answer_filesModel
+/**
+ * Model ex_celebration_sounds
+ * 
+ */
+export type ex_celebration_sounds = Prisma.ex_celebration_soundsModel

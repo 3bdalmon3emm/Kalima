@@ -447,6 +447,7 @@ export type qb_questionsWhereInput = {
   model_answer_image?: Prisma.XOR<Prisma.Qb_mediaNullableScalarRelationFilter, Prisma.qb_mediaWhereInput> | null
   options?: Prisma.Qb_question_optionsListRelationFilter
   matching_items?: Prisma.Qb_matching_itemsListRelationFilter
+  exam_questions?: Prisma.Ex_exam_questionsListRelationFilter
 }
 
 export type qb_questionsOrderByWithRelationInput = {
@@ -487,6 +488,7 @@ export type qb_questionsOrderByWithRelationInput = {
   model_answer_image?: Prisma.qb_mediaOrderByWithRelationInput
   options?: Prisma.qb_question_optionsOrderByRelationAggregateInput
   matching_items?: Prisma.qb_matching_itemsOrderByRelationAggregateInput
+  exam_questions?: Prisma.ex_exam_questionsOrderByRelationAggregateInput
 }
 
 export type qb_questionsWhereUniqueInput = Prisma.AtLeast<{
@@ -530,6 +532,7 @@ export type qb_questionsWhereUniqueInput = Prisma.AtLeast<{
   model_answer_image?: Prisma.XOR<Prisma.Qb_mediaNullableScalarRelationFilter, Prisma.qb_mediaWhereInput> | null
   options?: Prisma.Qb_question_optionsListRelationFilter
   matching_items?: Prisma.Qb_matching_itemsListRelationFilter
+  exam_questions?: Prisma.Ex_exam_questionsListRelationFilter
 }, "id" | "serial">
 
 export type qb_questionsOrderByWithAggregationInput = {
@@ -627,6 +630,7 @@ export type qb_questionsCreateInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateInput = {
@@ -659,6 +663,7 @@ export type qb_questionsUncheckedCreateInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUpdateInput = {
@@ -690,6 +695,7 @@ export type qb_questionsUpdateInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateInput = {
@@ -722,6 +728,7 @@ export type qb_questionsUncheckedUpdateInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsCreateManyInput = {
@@ -1335,6 +1342,20 @@ export type qb_questionsUpdateOneRequiredWithoutMatching_itemsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.qb_questionsUpdateToOneWithWhereWithoutMatching_itemsInput, Prisma.qb_questionsUpdateWithoutMatching_itemsInput>, Prisma.qb_questionsUncheckedUpdateWithoutMatching_itemsInput>
 }
 
+export type qb_questionsCreateNestedOneWithoutExam_questionsInput = {
+  create?: Prisma.XOR<Prisma.qb_questionsCreateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedCreateWithoutExam_questionsInput>
+  connectOrCreate?: Prisma.qb_questionsCreateOrConnectWithoutExam_questionsInput
+  connect?: Prisma.qb_questionsWhereUniqueInput
+}
+
+export type qb_questionsUpdateOneRequiredWithoutExam_questionsNestedInput = {
+  create?: Prisma.XOR<Prisma.qb_questionsCreateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedCreateWithoutExam_questionsInput>
+  connectOrCreate?: Prisma.qb_questionsCreateOrConnectWithoutExam_questionsInput
+  upsert?: Prisma.qb_questionsUpsertWithoutExam_questionsInput
+  connect?: Prisma.qb_questionsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.qb_questionsUpdateToOneWithWhereWithoutExam_questionsInput, Prisma.qb_questionsUpdateWithoutExam_questionsInput>, Prisma.qb_questionsUncheckedUpdateWithoutExam_questionsInput>
+}
+
 export type qb_questionsCreateWithoutStem_imageInput = {
   serial: string
   reference_no?: string | null
@@ -1363,6 +1384,7 @@ export type qb_questionsCreateWithoutStem_imageInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutStem_imageInput = {
@@ -1394,6 +1416,7 @@ export type qb_questionsUncheckedCreateWithoutStem_imageInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutStem_imageInput = {
@@ -1434,6 +1457,7 @@ export type qb_questionsCreateWithoutStem_audioInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutStem_audioInput = {
@@ -1465,6 +1489,7 @@ export type qb_questionsUncheckedCreateWithoutStem_audioInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutStem_audioInput = {
@@ -1505,6 +1530,7 @@ export type qb_questionsCreateWithoutExplanation_imageInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutExplanation_imageInput = {
@@ -1536,6 +1562,7 @@ export type qb_questionsUncheckedCreateWithoutExplanation_imageInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutExplanation_imageInput = {
@@ -1576,6 +1603,7 @@ export type qb_questionsCreateWithoutModel_answer_imageInput = {
   explanation_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_explanation_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutModel_answer_imageInput = {
@@ -1607,6 +1635,7 @@ export type qb_questionsUncheckedCreateWithoutModel_answer_imageInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutModel_answer_imageInput = {
@@ -1743,6 +1772,7 @@ export type qb_questionsCreateWithoutFolderInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutFolderInput = {
@@ -1774,6 +1804,7 @@ export type qb_questionsUncheckedCreateWithoutFolderInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutFolderInput = {
@@ -1830,6 +1861,7 @@ export type qb_questionsCreateWithoutCategoryInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutCategoryInput = {
@@ -1861,6 +1893,7 @@ export type qb_questionsUncheckedCreateWithoutCategoryInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutCategoryInput = {
@@ -1901,6 +1934,7 @@ export type qb_questionsCreateWithoutSubcategoryInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutSubcategoryInput = {
@@ -1932,6 +1966,7 @@ export type qb_questionsUncheckedCreateWithoutSubcategoryInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutSubcategoryInput = {
@@ -2004,6 +2039,7 @@ export type qb_questionsCreateWithoutChildrenInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutChildrenInput = {
@@ -2035,6 +2071,7 @@ export type qb_questionsUncheckedCreateWithoutChildrenInput = {
   updated_at?: Date | string
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutChildrenInput = {
@@ -2070,6 +2107,7 @@ export type qb_questionsCreateWithoutPassageInput = {
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutPassageInput = {
@@ -2101,6 +2139,7 @@ export type qb_questionsUncheckedCreateWithoutPassageInput = {
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutPassageInput = {
@@ -2152,6 +2191,7 @@ export type qb_questionsUpdateWithoutChildrenInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutChildrenInput = {
@@ -2183,6 +2223,7 @@ export type qb_questionsUncheckedUpdateWithoutChildrenInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUpsertWithWhereUniqueWithoutPassageInput = {
@@ -2229,6 +2270,7 @@ export type qb_questionsCreateWithoutOptionsInput = {
   explanation_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_explanation_imgsInput
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutOptionsInput = {
@@ -2260,6 +2302,7 @@ export type qb_questionsUncheckedCreateWithoutOptionsInput = {
   updated_at?: Date | string
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutOptionsInput = {
@@ -2306,6 +2349,7 @@ export type qb_questionsUpdateWithoutOptionsInput = {
   explanation_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_explanation_imgsNestedInput
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutOptionsInput = {
@@ -2337,6 +2381,7 @@ export type qb_questionsUncheckedUpdateWithoutOptionsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsCreateWithoutMatching_itemsInput = {
@@ -2367,6 +2412,7 @@ export type qb_questionsCreateWithoutMatching_itemsInput = {
   explanation_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_explanation_imgsInput
   model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
   options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsUncheckedCreateWithoutMatching_itemsInput = {
@@ -2398,6 +2444,7 @@ export type qb_questionsUncheckedCreateWithoutMatching_itemsInput = {
   updated_at?: Date | string
   children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
   options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutQuestionInput
 }
 
 export type qb_questionsCreateOrConnectWithoutMatching_itemsInput = {
@@ -2444,6 +2491,7 @@ export type qb_questionsUpdateWithoutMatching_itemsInput = {
   explanation_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_explanation_imgsNestedInput
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutMatching_itemsInput = {
@@ -2475,6 +2523,149 @@ export type qb_questionsUncheckedUpdateWithoutMatching_itemsInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
+}
+
+export type qb_questionsCreateWithoutExam_questionsInput = {
+  serial: string
+  reference_no?: string | null
+  type: $Enums.qb_question_type_enum
+  difficulty?: $Enums.qb_difficulty_enum | null
+  sort_order?: number
+  version?: number
+  stem_text?: string | null
+  explanation_mode?: $Enums.qb_explanation_mode_enum
+  explanation_text?: string | null
+  model_answer_text?: string | null
+  font?: string
+  archived_at?: Date | string | null
+  archived_by?: number | null
+  created_by?: number | null
+  updated_by?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  folder: Prisma.qb_foldersCreateNestedOneWithoutQuestionsInput
+  passage?: Prisma.qb_questionsCreateNestedOneWithoutChildrenInput
+  children?: Prisma.qb_questionsCreateNestedManyWithoutPassageInput
+  category?: Prisma.qb_categoriesCreateNestedOneWithoutQuestionsInput
+  subcategory?: Prisma.qb_categoriesCreateNestedOneWithoutSub_questionsInput
+  stem_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_stem_imagesInput
+  stem_audio?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_stem_audiosInput
+  explanation_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_explanation_imgsInput
+  model_answer_image?: Prisma.qb_mediaCreateNestedOneWithoutQuestion_model_answer_imgsInput
+  options?: Prisma.qb_question_optionsCreateNestedManyWithoutQuestionInput
+  matching_items?: Prisma.qb_matching_itemsCreateNestedManyWithoutQuestionInput
+}
+
+export type qb_questionsUncheckedCreateWithoutExam_questionsInput = {
+  id?: number
+  serial: string
+  reference_no?: string | null
+  folder_id: number
+  passage_id?: number | null
+  type: $Enums.qb_question_type_enum
+  difficulty?: $Enums.qb_difficulty_enum | null
+  category_id?: number | null
+  subcategory_id?: number | null
+  sort_order?: number
+  version?: number
+  stem_text?: string | null
+  stem_image_id?: number | null
+  stem_audio_id?: number | null
+  explanation_mode?: $Enums.qb_explanation_mode_enum
+  explanation_text?: string | null
+  explanation_image_id?: number | null
+  model_answer_text?: string | null
+  model_answer_image_id?: number | null
+  font?: string
+  archived_at?: Date | string | null
+  archived_by?: number | null
+  created_by?: number | null
+  updated_by?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  children?: Prisma.qb_questionsUncheckedCreateNestedManyWithoutPassageInput
+  options?: Prisma.qb_question_optionsUncheckedCreateNestedManyWithoutQuestionInput
+  matching_items?: Prisma.qb_matching_itemsUncheckedCreateNestedManyWithoutQuestionInput
+}
+
+export type qb_questionsCreateOrConnectWithoutExam_questionsInput = {
+  where: Prisma.qb_questionsWhereUniqueInput
+  create: Prisma.XOR<Prisma.qb_questionsCreateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedCreateWithoutExam_questionsInput>
+}
+
+export type qb_questionsUpsertWithoutExam_questionsInput = {
+  update: Prisma.XOR<Prisma.qb_questionsUpdateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedUpdateWithoutExam_questionsInput>
+  create: Prisma.XOR<Prisma.qb_questionsCreateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedCreateWithoutExam_questionsInput>
+  where?: Prisma.qb_questionsWhereInput
+}
+
+export type qb_questionsUpdateToOneWithWhereWithoutExam_questionsInput = {
+  where?: Prisma.qb_questionsWhereInput
+  data: Prisma.XOR<Prisma.qb_questionsUpdateWithoutExam_questionsInput, Prisma.qb_questionsUncheckedUpdateWithoutExam_questionsInput>
+}
+
+export type qb_questionsUpdateWithoutExam_questionsInput = {
+  serial?: Prisma.StringFieldUpdateOperationsInput | string
+  reference_no?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.Enumqb_question_type_enumFieldUpdateOperationsInput | $Enums.qb_question_type_enum
+  difficulty?: Prisma.NullableEnumqb_difficulty_enumFieldUpdateOperationsInput | $Enums.qb_difficulty_enum | null
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  stem_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  explanation_mode?: Prisma.Enumqb_explanation_mode_enumFieldUpdateOperationsInput | $Enums.qb_explanation_mode_enum
+  explanation_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model_answer_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  font?: Prisma.StringFieldUpdateOperationsInput | string
+  archived_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updated_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  folder?: Prisma.qb_foldersUpdateOneRequiredWithoutQuestionsNestedInput
+  passage?: Prisma.qb_questionsUpdateOneWithoutChildrenNestedInput
+  children?: Prisma.qb_questionsUpdateManyWithoutPassageNestedInput
+  category?: Prisma.qb_categoriesUpdateOneWithoutQuestionsNestedInput
+  subcategory?: Prisma.qb_categoriesUpdateOneWithoutSub_questionsNestedInput
+  stem_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_stem_imagesNestedInput
+  stem_audio?: Prisma.qb_mediaUpdateOneWithoutQuestion_stem_audiosNestedInput
+  explanation_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_explanation_imgsNestedInput
+  model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
+  options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
+  matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+}
+
+export type qb_questionsUncheckedUpdateWithoutExam_questionsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  serial?: Prisma.StringFieldUpdateOperationsInput | string
+  reference_no?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  folder_id?: Prisma.IntFieldUpdateOperationsInput | number
+  passage_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  type?: Prisma.Enumqb_question_type_enumFieldUpdateOperationsInput | $Enums.qb_question_type_enum
+  difficulty?: Prisma.NullableEnumqb_difficulty_enumFieldUpdateOperationsInput | $Enums.qb_difficulty_enum | null
+  category_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  subcategory_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  version?: Prisma.IntFieldUpdateOperationsInput | number
+  stem_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  stem_image_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  stem_audio_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  explanation_mode?: Prisma.Enumqb_explanation_mode_enumFieldUpdateOperationsInput | $Enums.qb_explanation_mode_enum
+  explanation_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  explanation_image_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  model_answer_text?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  model_answer_image_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  font?: Prisma.StringFieldUpdateOperationsInput | string
+  archived_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updated_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
+  options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
+  matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsCreateManyStem_imageInput = {
@@ -2617,6 +2808,7 @@ export type qb_questionsUpdateWithoutStem_imageInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutStem_imageInput = {
@@ -2648,6 +2840,7 @@ export type qb_questionsUncheckedUpdateWithoutStem_imageInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutStem_imageInput = {
@@ -2706,6 +2899,7 @@ export type qb_questionsUpdateWithoutStem_audioInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutStem_audioInput = {
@@ -2737,6 +2931,7 @@ export type qb_questionsUncheckedUpdateWithoutStem_audioInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutStem_audioInput = {
@@ -2795,6 +2990,7 @@ export type qb_questionsUpdateWithoutExplanation_imageInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutExplanation_imageInput = {
@@ -2826,6 +3022,7 @@ export type qb_questionsUncheckedUpdateWithoutExplanation_imageInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutExplanation_imageInput = {
@@ -2884,6 +3081,7 @@ export type qb_questionsUpdateWithoutModel_answer_imageInput = {
   explanation_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_explanation_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutModel_answer_imageInput = {
@@ -2915,6 +3113,7 @@ export type qb_questionsUncheckedUpdateWithoutModel_answer_imageInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutModel_answer_imageInput = {
@@ -3001,6 +3200,7 @@ export type qb_questionsUpdateWithoutFolderInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutFolderInput = {
@@ -3032,6 +3232,7 @@ export type qb_questionsUncheckedUpdateWithoutFolderInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutFolderInput = {
@@ -3146,6 +3347,7 @@ export type qb_questionsUpdateWithoutCategoryInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutCategoryInput = {
@@ -3177,6 +3379,7 @@ export type qb_questionsUncheckedUpdateWithoutCategoryInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutCategoryInput = {
@@ -3235,6 +3438,7 @@ export type qb_questionsUpdateWithoutSubcategoryInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutSubcategoryInput = {
@@ -3266,6 +3470,7 @@ export type qb_questionsUncheckedUpdateWithoutSubcategoryInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutSubcategoryInput = {
@@ -3352,6 +3557,7 @@ export type qb_questionsUpdateWithoutPassageInput = {
   model_answer_image?: Prisma.qb_mediaUpdateOneWithoutQuestion_model_answer_imgsNestedInput
   options?: Prisma.qb_question_optionsUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateWithoutPassageInput = {
@@ -3383,6 +3589,7 @@ export type qb_questionsUncheckedUpdateWithoutPassageInput = {
   children?: Prisma.qb_questionsUncheckedUpdateManyWithoutPassageNestedInput
   options?: Prisma.qb_question_optionsUncheckedUpdateManyWithoutQuestionNestedInput
   matching_items?: Prisma.qb_matching_itemsUncheckedUpdateManyWithoutQuestionNestedInput
+  exam_questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutQuestionNestedInput
 }
 
 export type qb_questionsUncheckedUpdateManyWithoutPassageInput = {
@@ -3422,12 +3629,14 @@ export type Qb_questionsCountOutputType = {
   children: number
   options: number
   matching_items: number
+  exam_questions: number
 }
 
 export type Qb_questionsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   children?: boolean | Qb_questionsCountOutputTypeCountChildrenArgs
   options?: boolean | Qb_questionsCountOutputTypeCountOptionsArgs
   matching_items?: boolean | Qb_questionsCountOutputTypeCountMatching_itemsArgs
+  exam_questions?: boolean | Qb_questionsCountOutputTypeCountExam_questionsArgs
 }
 
 /**
@@ -3459,6 +3668,13 @@ export type Qb_questionsCountOutputTypeCountOptionsArgs<ExtArgs extends runtime.
  */
 export type Qb_questionsCountOutputTypeCountMatching_itemsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.qb_matching_itemsWhereInput
+}
+
+/**
+ * Qb_questionsCountOutputType without action
+ */
+export type Qb_questionsCountOutputTypeCountExam_questionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ex_exam_questionsWhereInput
 }
 
 
@@ -3500,6 +3716,7 @@ export type qb_questionsSelect<ExtArgs extends runtime.Types.Extensions.Internal
   model_answer_image?: boolean | Prisma.qb_questions$model_answer_imageArgs<ExtArgs>
   options?: boolean | Prisma.qb_questions$optionsArgs<ExtArgs>
   matching_items?: boolean | Prisma.qb_questions$matching_itemsArgs<ExtArgs>
+  exam_questions?: boolean | Prisma.qb_questions$exam_questionsArgs<ExtArgs>
   _count?: boolean | Prisma.Qb_questionsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["qb_questions"]>
 
@@ -3619,6 +3836,7 @@ export type qb_questionsInclude<ExtArgs extends runtime.Types.Extensions.Interna
   model_answer_image?: boolean | Prisma.qb_questions$model_answer_imageArgs<ExtArgs>
   options?: boolean | Prisma.qb_questions$optionsArgs<ExtArgs>
   matching_items?: boolean | Prisma.qb_questions$matching_itemsArgs<ExtArgs>
+  exam_questions?: boolean | Prisma.qb_questions$exam_questionsArgs<ExtArgs>
   _count?: boolean | Prisma.Qb_questionsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type qb_questionsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -3656,6 +3874,7 @@ export type $qb_questionsPayload<ExtArgs extends runtime.Types.Extensions.Intern
     model_answer_image: Prisma.$qb_mediaPayload<ExtArgs> | null
     options: Prisma.$qb_question_optionsPayload<ExtArgs>[]
     matching_items: Prisma.$qb_matching_itemsPayload<ExtArgs>[]
+    exam_questions: Prisma.$ex_exam_questionsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -4089,6 +4308,7 @@ export interface Prisma__qb_questionsClient<T, Null = never, ExtArgs extends run
   model_answer_image<T extends Prisma.qb_questions$model_answer_imageArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.qb_questions$model_answer_imageArgs<ExtArgs>>): Prisma.Prisma__qb_mediaClient<runtime.Types.Result.GetResult<Prisma.$qb_mediaPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   options<T extends Prisma.qb_questions$optionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.qb_questions$optionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$qb_question_optionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   matching_items<T extends Prisma.qb_questions$matching_itemsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.qb_questions$matching_itemsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$qb_matching_itemsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  exam_questions<T extends Prisma.qb_questions$exam_questionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.qb_questions$exam_questionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_exam_questionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -4751,6 +4971,30 @@ export type qb_questions$matching_itemsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.Qb_matching_itemsScalarFieldEnum | Prisma.Qb_matching_itemsScalarFieldEnum[]
+}
+
+/**
+ * qb_questions.exam_questions
+ */
+export type qb_questions$exam_questionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ex_exam_questions
+   */
+  select?: Prisma.ex_exam_questionsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ex_exam_questions
+   */
+  omit?: Prisma.ex_exam_questionsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ex_exam_questionsInclude<ExtArgs> | null
+  where?: Prisma.ex_exam_questionsWhereInput
+  orderBy?: Prisma.ex_exam_questionsOrderByWithRelationInput | Prisma.ex_exam_questionsOrderByWithRelationInput[]
+  cursor?: Prisma.ex_exam_questionsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Ex_exam_questionsScalarFieldEnum | Prisma.Ex_exam_questionsScalarFieldEnum[]
 }
 
 /**

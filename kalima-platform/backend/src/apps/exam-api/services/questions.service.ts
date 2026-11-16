@@ -111,7 +111,16 @@ class QuestionsService {
 
   // Attaches media links and nests passage children.
   private async present(top: FullQuestion[], children: FullQuestion[]) {
-    const all = [...top, ...children];
+    const shaped = await this.presentFlat([...top, ...children]);
+    const byId = new Map(shaped.map((q) => [q.id, q]));
+    return top.map((q) => ({
+      ...byId.get(q.id)!,
+      children: q.type === "passage" ? children.filter((c) => c.passage_id === q.id).map((c) => byId.get(c.id)!) : undefined,
+    }));
+  }
+
+  // Attaches media links, keeping the list flat.
+  async presentFlat(all: FullQuestion[]) {
     const media = await mediaService.resolve(all.flatMap((q) => [
       q.stem_image_id, q.stem_audio_id, q.explanation_image_id, q.model_answer_image_id,
       ...q.options.map((o) => o.image_id),
@@ -127,10 +136,7 @@ class QuestionsService {
       options: q.options.map((o) => ({ ...o, image: m(o.image_id) })),
       matching_items: q.matching_items.map((i) => ({ ...i, image: m(i.image_id), audio: m(i.audio_id) })),
     });
-    return top.map((q) => ({
-      ...shape(q),
-      children: q.type === "passage" ? children.filter((c) => c.passage_id === q.id).map(shape) : undefined,
-    }));
+    return all.map(shape);
   }
 
   // ---------- Writing ----------

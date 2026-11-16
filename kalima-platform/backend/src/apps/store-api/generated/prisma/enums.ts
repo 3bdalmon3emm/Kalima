@@ -375,3 +375,28 @@ export const qb_matching_side_enum = {
 } as const
 
 export type qb_matching_side_enum = (typeof qb_matching_side_enum)[keyof typeof qb_matching_side_enum]
+
+
+export const ex_exam_type_enum = {
+  exam: 'exam',
+  homework: 'homework'
+} as const
+
+export type ex_exam_type_enum = (typeof ex_exam_type_enum)[keyof typeof ex_exam_type_enum]
+
+
+export const ex_exam_mode_enum = {
+  manual: 'manual',
+  random: 'random'
+} as const
+
+export type ex_exam_mode_enum = (typeof ex_exam_mode_enum)[keyof typeof ex_exam_mode_enum]
+
+
+export const ex_attempt_status_enum = {
+  in_progress: 'in_progress',
+  pending: 'pending',
+  done: 'done'
+} as const
+
+export type ex_attempt_status_enum = (typeof ex_attempt_status_enum)[keyof typeof ex_attempt_status_enum]
