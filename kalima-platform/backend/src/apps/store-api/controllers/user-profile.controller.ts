@@ -168,6 +168,26 @@ export const userProfileController = {
     }
   },
 
+  async uploadCover(req: Request, res: Response, next: NextFunction) {
+    try {
+      const userId = resolveTargetUserId(req);
+      const file = req.file as Express.Multer.File | undefined;
+      if (!file) throw new BadRequestError("No image file provided");
+      res.status(200).json({ success: true, message: "Cover photo updated", data: await userProfileService.uploadCover(userId, file) });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  async deleteCover(req: Request, res: Response, next: NextFunction) {
+    try {
+      await userProfileService.deleteCover(resolveTargetUserId(req));
+      res.status(200).json({ success: true, message: "Cover photo deleted" });
+    } catch (err) {
+      next(err);
+    }
+  },
+
   async resolvePromotionNotice(req: Request, res: Response, next: NextFunction) {
     try {
       const { id } = getAuth(req);

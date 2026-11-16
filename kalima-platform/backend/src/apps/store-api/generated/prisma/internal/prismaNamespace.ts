@@ -482,7 +482,10 @@ export const ModelName = {
   ex_attempts: 'ex_attempts',
   ex_attempt_answers: 'ex_attempt_answers',
   ex_answer_files: 'ex_answer_files',
-  ex_celebration_sounds: 'ex_celebration_sounds'
+  ex_celebration_sounds: 'ex_celebration_sounds',
+  ex_teacher_assignments: 'ex_teacher_assignments',
+  ex_student_overrides: 'ex_student_overrides',
+  teacher_assistants: 'teacher_assistants'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -498,7 +501,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_celebration_sounds"
+    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_celebration_sounds" | "ex_teacher_assignments" | "ex_student_overrides" | "teacher_assistants"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -7828,6 +7831,228 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ex_teacher_assignments: {
+      payload: Prisma.$ex_teacher_assignmentsPayload<ExtArgs>
+      fields: Prisma.ex_teacher_assignmentsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ex_teacher_assignmentsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ex_teacher_assignmentsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        findFirst: {
+          args: Prisma.ex_teacher_assignmentsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ex_teacher_assignmentsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        findMany: {
+          args: Prisma.ex_teacher_assignmentsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>[]
+        }
+        create: {
+          args: Prisma.ex_teacher_assignmentsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        createMany: {
+          args: Prisma.ex_teacher_assignmentsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ex_teacher_assignmentsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>[]
+        }
+        delete: {
+          args: Prisma.ex_teacher_assignmentsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        update: {
+          args: Prisma.ex_teacher_assignmentsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        deleteMany: {
+          args: Prisma.ex_teacher_assignmentsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ex_teacher_assignmentsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ex_teacher_assignmentsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>[]
+        }
+        upsert: {
+          args: Prisma.ex_teacher_assignmentsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_teacher_assignmentsPayload>
+        }
+        aggregate: {
+          args: Prisma.Ex_teacher_assignmentsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEx_teacher_assignments>
+        }
+        groupBy: {
+          args: Prisma.ex_teacher_assignmentsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_teacher_assignmentsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ex_teacher_assignmentsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_teacher_assignmentsCountAggregateOutputType> | number
+        }
+      }
+    }
+    ex_student_overrides: {
+      payload: Prisma.$ex_student_overridesPayload<ExtArgs>
+      fields: Prisma.ex_student_overridesFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ex_student_overridesFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ex_student_overridesFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        findFirst: {
+          args: Prisma.ex_student_overridesFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ex_student_overridesFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        findMany: {
+          args: Prisma.ex_student_overridesFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>[]
+        }
+        create: {
+          args: Prisma.ex_student_overridesCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        createMany: {
+          args: Prisma.ex_student_overridesCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ex_student_overridesCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>[]
+        }
+        delete: {
+          args: Prisma.ex_student_overridesDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        update: {
+          args: Prisma.ex_student_overridesUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        deleteMany: {
+          args: Prisma.ex_student_overridesDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ex_student_overridesUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ex_student_overridesUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>[]
+        }
+        upsert: {
+          args: Prisma.ex_student_overridesUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_student_overridesPayload>
+        }
+        aggregate: {
+          args: Prisma.Ex_student_overridesAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEx_student_overrides>
+        }
+        groupBy: {
+          args: Prisma.ex_student_overridesGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_student_overridesGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ex_student_overridesCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_student_overridesCountAggregateOutputType> | number
+        }
+      }
+    }
+    teacher_assistants: {
+      payload: Prisma.$teacher_assistantsPayload<ExtArgs>
+      fields: Prisma.teacher_assistantsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.teacher_assistantsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.teacher_assistantsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        findFirst: {
+          args: Prisma.teacher_assistantsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.teacher_assistantsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        findMany: {
+          args: Prisma.teacher_assistantsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>[]
+        }
+        create: {
+          args: Prisma.teacher_assistantsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        createMany: {
+          args: Prisma.teacher_assistantsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.teacher_assistantsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>[]
+        }
+        delete: {
+          args: Prisma.teacher_assistantsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        update: {
+          args: Prisma.teacher_assistantsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        deleteMany: {
+          args: Prisma.teacher_assistantsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.teacher_assistantsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.teacher_assistantsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>[]
+        }
+        upsert: {
+          args: Prisma.teacher_assistantsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$teacher_assistantsPayload>
+        }
+        aggregate: {
+          args: Prisma.Teacher_assistantsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTeacher_assistants>
+        }
+        groupBy: {
+          args: Prisma.teacher_assistantsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Teacher_assistantsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.teacher_assistantsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Teacher_assistantsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -7921,6 +8146,7 @@ export const UsersScalarFieldEnum = {
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
+  cover_url: 'cover_url',
   secondary_phone: 'secondary_phone',
   profile_pic_url: 'profile_pic_url',
   password_changed_at: 'password_changed_at',
@@ -9350,6 +9576,7 @@ export const Ex_linksScalarFieldEnum = {
   starts_at: 'starts_at',
   ends_at: 'ends_at',
   closed_at: 'closed_at',
+  dates_custom: 'dates_custom',
   created_by: 'created_by',
   created_at: 'created_at'
 } as const
@@ -9421,6 +9648,47 @@ export const Ex_celebration_soundsScalarFieldEnum = {
 } as const
 
 export type Ex_celebration_soundsScalarFieldEnum = (typeof Ex_celebration_soundsScalarFieldEnum)[keyof typeof Ex_celebration_soundsScalarFieldEnum]
+
+
+export const Ex_teacher_assignmentsScalarFieldEnum = {
+  id: 'id',
+  teacher_user_id: 'teacher_user_id',
+  folder_id: 'folder_id',
+  exam_id: 'exam_id',
+  starts_at: 'starts_at',
+  ends_at: 'ends_at',
+  removed_at: 'removed_at',
+  created_by: 'created_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_teacher_assignmentsScalarFieldEnum = (typeof Ex_teacher_assignmentsScalarFieldEnum)[keyof typeof Ex_teacher_assignmentsScalarFieldEnum]
+
+
+export const Ex_student_overridesScalarFieldEnum = {
+  id: 'id',
+  link_id: 'link_id',
+  student_user_id: 'student_user_id',
+  extra_attempts: 'extra_attempts',
+  extra_minutes: 'extra_minutes',
+  ends_at: 'ends_at',
+  updated_by: 'updated_by',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_student_overridesScalarFieldEnum = (typeof Ex_student_overridesScalarFieldEnum)[keyof typeof Ex_student_overridesScalarFieldEnum]
+
+
+export const Teacher_assistantsScalarFieldEnum = {
+  id: 'id',
+  teacher_user_id: 'teacher_user_id',
+  assistant_user_id: 'assistant_user_id',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Teacher_assistantsScalarFieldEnum = (typeof Teacher_assistantsScalarFieldEnum)[keyof typeof Teacher_assistantsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -10307,6 +10575,9 @@ export type GlobalOmitConfig = {
   ex_attempt_answers?: Prisma.ex_attempt_answersOmit
   ex_answer_files?: Prisma.ex_answer_filesOmit
   ex_celebration_sounds?: Prisma.ex_celebration_soundsOmit
+  ex_teacher_assignments?: Prisma.ex_teacher_assignmentsOmit
+  ex_student_overrides?: Prisma.ex_student_overridesOmit
+  teacher_assistants?: Prisma.teacher_assistantsOmit
 }
 
 /* Types for Logging */

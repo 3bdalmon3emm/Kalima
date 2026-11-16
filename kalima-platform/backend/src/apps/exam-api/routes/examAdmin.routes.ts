@@ -7,7 +7,13 @@ import { handle, idList, idParam, optionalId, requiredName, userId } from "../ht
 import { examFoldersService } from "../services/examFolders.service";
 import { examsService } from "../services/exams.service";
 import { soundsService } from "../services/sounds.service";
-import { resultsService } from "../services/results.service";
+import { reopenForStudent, resultsService } from "../services/results.service";
+import { teacherLinksService } from "../services/teacherLinks.service";
+import { qrPng, uniqueFileNames, examUrl } from "../services/examLinkUrl";
+import { makeZip } from "../../../libs/zip";
+import { prisma } from "../../../libs/db/prisma";
+import { makeExportHandler } from "../../store-api/export";
+import "../services/examResultsExport";
 import { uploadSound } from "../services/media.service";
 import { parseExamSettings, parseMark, parseRules } from "../services/examInput";
 
@@ -181,8 +187,42 @@ router.post("/exams/:id/questions/remove", handle(async (req, res) => {
 
 // ---------- Results and essay grading ----------
 
+// ?teacher_ids=3,5 (0 = the admin test link)
+const teacherIdsParam = (raw: unknown): number[] | undefined => {
+  if (typeof raw !== "string" || raw === "") return undefined;
+  return raw.split(",").map((x) => Number(x.trim())).filter((n) => Number.isInteger(n) && n >= 0);
+};
+
 router.get("/exams/:id/attempts", handle(async (req, res) => {
-  res.json(ok(await resultsService.list(idParam(req), { status: typeof req.query.status === "string" ? req.query.status : undefined })));
+  res.json(ok(await resultsService.list(idParam(req), {
+    status: typeof req.query.status === "string" ? req.query.status : undefined,
+    teacherIds: teacherIdsParam(req.query.teacher_ids),
+  })));
+}));
+
+// Excel/CSV of results: ?exam_id=&teacher_ids=&status=&format=xlsx
+router.get("/results/export", makeExportHandler("exam-results"));
+
+// { extra_attempts, extra_minutes, ends_at } for one student.
+export function reopenBody(body: any) {
+  const count = (raw: unknown, name: string, max: number) => {
+    if (raw === undefined || raw === null || raw === "") return 0;
+    const n = Number(raw);
+    if (!Number.isInteger(n) || n < 0 || n > max) throw new BadRequestError(`${name} must be 0 to ${max}`);
+    return n;
+  };
+  const endsAt = body?.ends_at === undefined ? undefined : body.ends_at === null || body.ends_at === "" ? null : date(body.ends_at, "ends_at");
+  const change = { extraAttempts: count(body?.extra_attempts, "extra_attempts", 10), extraMinutes: count(body?.extra_minutes, "extra_minutes", 600), endsAt };
+  if (!change.extraAttempts && !change.extraMinutes && endsAt === undefined) throw new BadRequestError("Nothing to reopen");
+  return change;
+}
+
+// Reopening an exam for the student of this attempt: extra attempts, extra
+// minutes, or a later end date.
+router.post("/attempts/:id/reopen", handle(async (req, res) => {
+  const attempt = await prisma.ex_attempts.findUnique({ where: { id: idParam(req) }, select: { link_id: true, student_user_id: true } });
+  if (!attempt) throw new BadRequestError("Attempt not found");
+  res.json(ok(await reopenForStudent(attempt.link_id, attempt.student_user_id, reopenBody(req.body), userId(req)), "Reopened for this student"));
 }));
 
 router.get("/attempts/:id", handle(async (req, res) => {
@@ -201,6 +241,109 @@ router.put("/attempts/:id/grades", handle(async (req, res) => {
     return { question_id: questionId, mark };
   });
   res.json(ok(await resultsService.grade(idParam(req), grades, userId(req)), "Marks saved"));
+}));
+
+// ---------- Teachers and their links ----------
+
+const datePair = (body: any) => ({ startsAt: date(body?.starts_at, "starts_at"), endsAt: date(body?.ends_at, "ends_at") });
+
+router.get("/teachers/search", handle(async (req, res) => {
+  res.json(ok(await teacherLinksService.searchTeachers(typeof req.query.q === "string" ? req.query.q : "")));
+}));
+
+router.get("/folders/:id/teachers", handle(async (req, res) => {
+  res.json(ok(await teacherLinksService.folderTeachers(idParam(req))));
+}));
+
+router.post("/folders/:id/teachers", handle(async (req, res) => {
+  const { startsAt, endsAt } = datePair(req.body);
+  const teacherId = optionalId(req.body?.teacher_id, "teacher_id");
+  if (!teacherId) throw new BadRequestError("teacher_id is required");
+  res.status(201).json(ok(await teacherLinksService.assign({ folderId: idParam(req) }, teacherId, startsAt, endsAt, userId(req)), "Teacher added"));
+}));
+
+router.get("/exams/:id/teachers", handle(async (req, res) => {
+  res.json(ok(await teacherLinksService.examTeachers(idParam(req))));
+}));
+
+router.post("/exams/:id/teachers", handle(async (req, res) => {
+  const { startsAt, endsAt } = datePair(req.body);
+  const teacherId = optionalId(req.body?.teacher_id, "teacher_id");
+  if (!teacherId) throw new BadRequestError("teacher_id is required");
+  res.status(201).json(ok(await teacherLinksService.assign({ examId: idParam(req) }, teacherId, startsAt, endsAt, userId(req)), "Teacher added"));
+}));
+
+router.patch("/teacher-assignments/:id", handle(async (req, res) => {
+  const { startsAt, endsAt } = datePair(req.body);
+  res.json(ok(await teacherLinksService.setAssignmentDates(idParam(req), startsAt, endsAt), "Dates saved"));
+}));
+
+router.delete("/teacher-assignments/:id", handle(async (req, res) => {
+  await teacherLinksService.remove(idParam(req));
+  res.json(ok(undefined, "Teacher removed"));
+}));
+
+// One teacher link: { closed: true|false } or dates { starts_at, ends_at }
+// or { reset_dates: true } to follow the folder/exam dates again.
+router.patch("/links/:id", handle(async (req, res) => {
+  const id = idParam(req);
+  if (typeof req.body?.closed === "boolean") {
+    res.json(ok(await teacherLinksService.setLinkClosed(id, req.body.closed), req.body.closed ? "Link closed" : "Link opened"));
+    return;
+  }
+  const dates = req.body?.reset_dates === true ? null : datePair(req.body);
+  res.json(ok(await teacherLinksService.setLinkDates(id, dates), "Dates saved"));
+}));
+
+// Every QR of a teacher's exams in a folder, one PNG per exam, in a ZIP.
+router.get("/folders/:id/teachers/:teacherId/qr.zip", handle(async (req, res) => {
+  const links = await teacherLinksService.folderLinksOf(idParam(req), idParam(req, "teacherId"));
+  if (!links.length) throw new BadRequestError("This teacher has no exams in this folder");
+  const names = uniqueFileNames(links.map((l) => l.exam.name), "png");
+  const files = await Promise.all(links.map(async (l, i) => ({ name: names[i], data: await qrPng(l.code) })));
+  res.setHeader("Content-Type", "application/zip");
+  res.setHeader("Content-Disposition", `attachment; filename="qr-codes.zip"`);
+  res.send(makeZip(files));
+}));
+
+// One link's QR as a PNG.
+router.get("/links/:id/qr.png", handle(async (req, res) => {
+  const link = await prisma.ex_links.findUnique({ where: { id: idParam(req) }, select: { code: true } });
+  if (!link) throw new BadRequestError("Link not found");
+  res.setHeader("Content-Type", "image/png");
+  res.setHeader("X-Exam-Url", examUrl(link.code));
+  res.send(await qrPng(link.code));
+}));
+
+// ---------- Assistants and the teachers they work for ----------
+
+const assertRole = async (id: number, role: "Assistant" | "Teacher") => {
+  const user = await prisma.users.findFirst({ where: { id, user_roles: { some: { role } } }, select: { id: true } });
+  if (!user) throw new BadRequestError(role === "Assistant" ? "This account is not an assistant" : "This account is not a teacher");
+};
+
+router.get("/assistants/:id/teachers", handle(async (req, res) => {
+  const rows = await prisma.teacher_assistants.findMany({ where: { assistant_user_id: idParam(req) }, select: { teacher_user_id: true } });
+  res.json(ok([...(await teacherLinksService.teacherCards(rows.map((r) => r.teacher_user_id))).values()]));
+}));
+
+router.post("/assistants/:id/teachers", handle(async (req, res) => {
+  const assistantId = idParam(req);
+  const teacherId = optionalId(req.body?.teacher_id, "teacher_id");
+  if (!teacherId) throw new BadRequestError("teacher_id is required");
+  await assertRole(assistantId, "Assistant");
+  await assertRole(teacherId, "Teacher");
+  await prisma.teacher_assistants.upsert({
+    where: { teacher_user_id_assistant_user_id: { teacher_user_id: teacherId, assistant_user_id: assistantId } },
+    create: { teacher_user_id: teacherId, assistant_user_id: assistantId, created_by: userId(req) },
+    update: {},
+  });
+  res.status(201).json(ok(undefined, "Teacher linked"));
+}));
+
+router.delete("/assistants/:id/teachers/:teacherId", handle(async (req, res) => {
+  await prisma.teacher_assistants.deleteMany({ where: { assistant_user_id: idParam(req), teacher_user_id: idParam(req, "teacherId") } });
+  res.json(ok(undefined, "Teacher unlinked"));
 }));
 
 // ---------- Celebration sounds ----------

@@ -22,6 +22,9 @@ meRouter.post(
   userProfileController.uploadAvatar,
 );
 meRouter.delete("/avatar", userProfileController.deleteAvatar);
+// Cover photo (teachers; shown on their exam start pages)
+meRouter.post("/cover", uploadSingleImage("cover"), userProfileController.uploadCover);
+meRouter.delete("/cover", userProfileController.deleteCover);
 meRouter.post("/promotion-notice", userProfileController.resolvePromotionNotice);
 
 // Teaches-at (Teacher)

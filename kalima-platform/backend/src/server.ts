@@ -12,6 +12,7 @@ import adminRoutes from "./apps/store-api/routes/v2/admin.routes";
 import questionBankRoutes from "./apps/exam-api/routes/questionBank.routes";
 import examAdminRoutes from "./apps/exam-api/routes/examAdmin.routes";
 import examStudentRoutes from "./apps/exam-api/routes/examStudent.routes";
+import examTeacherRoutes from "./apps/exam-api/routes/examTeacher.routes";
 import { attemptsService } from "./apps/exam-api/services/attempts.service";
 import { errorHandler } from "./libs/errors";
 import { setupStoreSocket } from "./libs/socket/setupStoreSocket";
@@ -140,6 +141,7 @@ app.use("/api/v2/admin", adminRoutes);
 app.use("/api/v2/question-bank", questionBankRoutes);
 app.use("/api/v2/exam-admin", examAdminRoutes);
 app.use("/api/v2/exams", examStudentRoutes);
+app.use("/api/v2/exam-teacher", examTeacherRoutes);
 
 if (sentryDsn) {
   Sentry.setupExpressErrorHandler(app);

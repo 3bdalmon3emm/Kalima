@@ -149,7 +149,10 @@ export const ModelName = {
   ex_attempts: 'ex_attempts',
   ex_attempt_answers: 'ex_attempt_answers',
   ex_answer_files: 'ex_answer_files',
-  ex_celebration_sounds: 'ex_celebration_sounds'
+  ex_celebration_sounds: 'ex_celebration_sounds',
+  ex_teacher_assignments: 'ex_teacher_assignments',
+  ex_student_overrides: 'ex_student_overrides',
+  teacher_assistants: 'teacher_assistants'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -222,6 +225,7 @@ export const UsersScalarFieldEnum = {
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
+  cover_url: 'cover_url',
   secondary_phone: 'secondary_phone',
   profile_pic_url: 'profile_pic_url',
   password_changed_at: 'password_changed_at',
@@ -1651,6 +1655,7 @@ export const Ex_linksScalarFieldEnum = {
   starts_at: 'starts_at',
   ends_at: 'ends_at',
   closed_at: 'closed_at',
+  dates_custom: 'dates_custom',
   created_by: 'created_by',
   created_at: 'created_at'
 } as const
@@ -1722,6 +1727,47 @@ export const Ex_celebration_soundsScalarFieldEnum = {
 } as const
 
 export type Ex_celebration_soundsScalarFieldEnum = (typeof Ex_celebration_soundsScalarFieldEnum)[keyof typeof Ex_celebration_soundsScalarFieldEnum]
+
+
+export const Ex_teacher_assignmentsScalarFieldEnum = {
+  id: 'id',
+  teacher_user_id: 'teacher_user_id',
+  folder_id: 'folder_id',
+  exam_id: 'exam_id',
+  starts_at: 'starts_at',
+  ends_at: 'ends_at',
+  removed_at: 'removed_at',
+  created_by: 'created_by',
+  created_at: 'created_at',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_teacher_assignmentsScalarFieldEnum = (typeof Ex_teacher_assignmentsScalarFieldEnum)[keyof typeof Ex_teacher_assignmentsScalarFieldEnum]
+
+
+export const Ex_student_overridesScalarFieldEnum = {
+  id: 'id',
+  link_id: 'link_id',
+  student_user_id: 'student_user_id',
+  extra_attempts: 'extra_attempts',
+  extra_minutes: 'extra_minutes',
+  ends_at: 'ends_at',
+  updated_by: 'updated_by',
+  updated_at: 'updated_at'
+} as const
+
+export type Ex_student_overridesScalarFieldEnum = (typeof Ex_student_overridesScalarFieldEnum)[keyof typeof Ex_student_overridesScalarFieldEnum]
+
+
+export const Teacher_assistantsScalarFieldEnum = {
+  id: 'id',
+  teacher_user_id: 'teacher_user_id',
+  assistant_user_id: 'assistant_user_id',
+  created_by: 'created_by',
+  created_at: 'created_at'
+} as const
+
+export type Teacher_assistantsScalarFieldEnum = (typeof Teacher_assistantsScalarFieldEnum)[keyof typeof Teacher_assistantsScalarFieldEnum]
 
 
 export const SortOrder = {

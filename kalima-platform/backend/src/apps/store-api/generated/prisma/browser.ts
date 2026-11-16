@@ -512,3 +512,18 @@ export type ex_answer_files = Prisma.ex_answer_filesModel
  * 
  */
 export type ex_celebration_sounds = Prisma.ex_celebration_soundsModel
+/**
+ * Model ex_teacher_assignments
+ * 
+ */
+export type ex_teacher_assignments = Prisma.ex_teacher_assignmentsModel
+/**
+ * Model ex_student_overrides
+ * 
+ */
+export type ex_student_overrides = Prisma.ex_student_overridesModel
+/**
+ * Model teacher_assistants
+ * 
+ */
+export type teacher_assistants = Prisma.teacher_assistantsModel

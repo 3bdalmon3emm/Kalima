@@ -48,6 +48,7 @@ export type Ex_linksMinAggregateOutputType = {
   starts_at: Date | null
   ends_at: Date | null
   closed_at: Date | null
+  dates_custom: boolean | null
   created_by: number | null
   created_at: Date | null
 }
@@ -60,6 +61,7 @@ export type Ex_linksMaxAggregateOutputType = {
   starts_at: Date | null
   ends_at: Date | null
   closed_at: Date | null
+  dates_custom: boolean | null
   created_by: number | null
   created_at: Date | null
 }
@@ -72,6 +74,7 @@ export type Ex_linksCountAggregateOutputType = {
   starts_at: number
   ends_at: number
   closed_at: number
+  dates_custom: number
   created_by: number
   created_at: number
   _all: number
@@ -100,6 +103,7 @@ export type Ex_linksMinAggregateInputType = {
   starts_at?: true
   ends_at?: true
   closed_at?: true
+  dates_custom?: true
   created_by?: true
   created_at?: true
 }
@@ -112,6 +116,7 @@ export type Ex_linksMaxAggregateInputType = {
   starts_at?: true
   ends_at?: true
   closed_at?: true
+  dates_custom?: true
   created_by?: true
   created_at?: true
 }
@@ -124,6 +129,7 @@ export type Ex_linksCountAggregateInputType = {
   starts_at?: true
   ends_at?: true
   closed_at?: true
+  dates_custom?: true
   created_by?: true
   created_at?: true
   _all?: true
@@ -223,6 +229,7 @@ export type Ex_linksGroupByOutputType = {
   starts_at: Date
   ends_at: Date
   closed_at: Date | null
+  dates_custom: boolean
   created_by: number | null
   created_at: Date
   _count: Ex_linksCountAggregateOutputType | null
@@ -258,6 +265,7 @@ export type ex_linksWhereInput = {
   starts_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   ends_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   closed_at?: Prisma.DateTimeNullableFilter<"ex_links"> | Date | string | null
+  dates_custom?: Prisma.BoolFilter<"ex_links"> | boolean
   created_by?: Prisma.IntNullableFilter<"ex_links"> | number | null
   created_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
@@ -272,6 +280,7 @@ export type ex_linksOrderByWithRelationInput = {
   starts_at?: Prisma.SortOrder
   ends_at?: Prisma.SortOrder
   closed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  dates_custom?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   exam?: Prisma.ex_examsOrderByWithRelationInput
@@ -289,6 +298,7 @@ export type ex_linksWhereUniqueInput = Prisma.AtLeast<{
   starts_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   ends_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   closed_at?: Prisma.DateTimeNullableFilter<"ex_links"> | Date | string | null
+  dates_custom?: Prisma.BoolFilter<"ex_links"> | boolean
   created_by?: Prisma.IntNullableFilter<"ex_links"> | number | null
   created_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
@@ -303,6 +313,7 @@ export type ex_linksOrderByWithAggregationInput = {
   starts_at?: Prisma.SortOrder
   ends_at?: Prisma.SortOrder
   closed_at?: Prisma.SortOrderInput | Prisma.SortOrder
+  dates_custom?: Prisma.SortOrder
   created_by?: Prisma.SortOrderInput | Prisma.SortOrder
   created_at?: Prisma.SortOrder
   _count?: Prisma.ex_linksCountOrderByAggregateInput
@@ -323,6 +334,7 @@ export type ex_linksScalarWhereWithAggregatesInput = {
   starts_at?: Prisma.DateTimeWithAggregatesFilter<"ex_links"> | Date | string
   ends_at?: Prisma.DateTimeWithAggregatesFilter<"ex_links"> | Date | string
   closed_at?: Prisma.DateTimeNullableWithAggregatesFilter<"ex_links"> | Date | string | null
+  dates_custom?: Prisma.BoolWithAggregatesFilter<"ex_links"> | boolean
   created_by?: Prisma.IntNullableWithAggregatesFilter<"ex_links"> | number | null
   created_at?: Prisma.DateTimeWithAggregatesFilter<"ex_links"> | Date | string
 }
@@ -333,6 +345,7 @@ export type ex_linksCreateInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutLinksInput
@@ -347,6 +360,7 @@ export type ex_linksUncheckedCreateInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutLinkInput
@@ -358,6 +372,7 @@ export type ex_linksUpdateInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutLinksNestedInput
@@ -372,6 +387,7 @@ export type ex_linksUncheckedUpdateInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutLinkNestedInput
@@ -385,6 +401,7 @@ export type ex_linksCreateManyInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
 }
@@ -395,6 +412,7 @@ export type ex_linksUpdateManyMutationInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -407,6 +425,7 @@ export type ex_linksUncheckedUpdateManyInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -429,6 +448,7 @@ export type ex_linksCountOrderByAggregateInput = {
   starts_at?: Prisma.SortOrder
   ends_at?: Prisma.SortOrder
   closed_at?: Prisma.SortOrder
+  dates_custom?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
@@ -448,6 +468,7 @@ export type ex_linksMaxOrderByAggregateInput = {
   starts_at?: Prisma.SortOrder
   ends_at?: Prisma.SortOrder
   closed_at?: Prisma.SortOrder
+  dates_custom?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
@@ -460,6 +481,7 @@ export type ex_linksMinOrderByAggregateInput = {
   starts_at?: Prisma.SortOrder
   ends_at?: Prisma.SortOrder
   closed_at?: Prisma.SortOrder
+  dates_custom?: Prisma.SortOrder
   created_by?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
 }
@@ -538,6 +560,7 @@ export type ex_linksCreateWithoutExamInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutLinkInput
@@ -550,6 +573,7 @@ export type ex_linksUncheckedCreateWithoutExamInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutLinkInput
@@ -592,6 +616,7 @@ export type ex_linksScalarWhereInput = {
   starts_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   ends_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   closed_at?: Prisma.DateTimeNullableFilter<"ex_links"> | Date | string | null
+  dates_custom?: Prisma.BoolFilter<"ex_links"> | boolean
   created_by?: Prisma.IntNullableFilter<"ex_links"> | number | null
   created_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
 }
@@ -602,6 +627,7 @@ export type ex_linksCreateWithoutAttemptsInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutLinksInput
@@ -615,6 +641,7 @@ export type ex_linksUncheckedCreateWithoutAttemptsInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
 }
@@ -641,6 +668,7 @@ export type ex_linksUpdateWithoutAttemptsInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutLinksNestedInput
@@ -654,6 +682,7 @@ export type ex_linksUncheckedUpdateWithoutAttemptsInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -665,6 +694,7 @@ export type ex_linksCreateManyExamInput = {
   starts_at: Date | string
   ends_at: Date | string
   closed_at?: Date | string | null
+  dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
 }
@@ -675,6 +705,7 @@ export type ex_linksUpdateWithoutExamInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUpdateManyWithoutLinkNestedInput
@@ -687,6 +718,7 @@ export type ex_linksUncheckedUpdateWithoutExamInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutLinkNestedInput
@@ -699,6 +731,7 @@ export type ex_linksUncheckedUpdateManyWithoutExamInput = {
   starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -742,6 +775,7 @@ export type ex_linksSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   starts_at?: boolean
   ends_at?: boolean
   closed_at?: boolean
+  dates_custom?: boolean
   created_by?: boolean
   created_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -757,6 +791,7 @@ export type ex_linksSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Exte
   starts_at?: boolean
   ends_at?: boolean
   closed_at?: boolean
+  dates_custom?: boolean
   created_by?: boolean
   created_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -770,6 +805,7 @@ export type ex_linksSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Exte
   starts_at?: boolean
   ends_at?: boolean
   closed_at?: boolean
+  dates_custom?: boolean
   created_by?: boolean
   created_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -783,11 +819,12 @@ export type ex_linksSelectScalar = {
   starts_at?: boolean
   ends_at?: boolean
   closed_at?: boolean
+  dates_custom?: boolean
   created_by?: boolean
   created_at?: boolean
 }
 
-export type ex_linksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exam_id" | "teacher_user_id" | "code" | "starts_at" | "ends_at" | "closed_at" | "created_by" | "created_at", ExtArgs["result"]["ex_links"]>
+export type ex_linksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exam_id" | "teacher_user_id" | "code" | "starts_at" | "ends_at" | "closed_at" | "dates_custom" | "created_by" | "created_at", ExtArgs["result"]["ex_links"]>
 export type ex_linksInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.ex_links$attemptsArgs<ExtArgs>
@@ -814,6 +851,7 @@ export type $ex_linksPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     starts_at: Date
     ends_at: Date
     closed_at: Date | null
+    dates_custom: boolean
     created_by: number | null
     created_at: Date
   }, ExtArgs["result"]["ex_links"]>
@@ -1248,6 +1286,7 @@ export interface ex_linksFieldRefs {
   readonly starts_at: Prisma.FieldRef<"ex_links", 'DateTime'>
   readonly ends_at: Prisma.FieldRef<"ex_links", 'DateTime'>
   readonly closed_at: Prisma.FieldRef<"ex_links", 'DateTime'>
+  readonly dates_custom: Prisma.FieldRef<"ex_links", 'Boolean'>
   readonly created_by: Prisma.FieldRef<"ex_links", 'Int'>
   readonly created_at: Prisma.FieldRef<"ex_links", 'DateTime'>
 }

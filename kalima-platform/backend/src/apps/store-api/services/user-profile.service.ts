@@ -81,6 +81,7 @@ class UserProfileService {
         secondary_phone: true,
         gender: true,
         profile_pic_url: true,
+        cover_url: true,
         is_email_verified: true,
         created_at: true,
         ...PROFILE_INCLUDE,
@@ -316,6 +317,23 @@ class UserProfileService {
     });
 
     return { profile_pic_url: image.url };
+  }
+
+  // ==========================================
+  // COVER PHOTO (teachers; shown on the exam start page)
+  // ==========================================
+
+  async uploadCover(userId: number, file: Express.Multer.File) {
+    const user = await this.db.users.findUnique({ where: { id: userId } });
+    if (!user) throw new NotFoundError("User not found");
+    const image = await imageService.uploadImage(file, { compress: true, quality: 80 });
+    await this.db.users.update({ where: { id: userId }, data: { cover_url: image.url, updated_at: new Date() } });
+    return { cover_url: image.url };
+  }
+
+  async deleteCover(userId: number) {
+    await this.db.users.update({ where: { id: userId }, data: { cover_url: null, updated_at: new Date() } });
+    return { success: true };
   }
 
   // ==========================================

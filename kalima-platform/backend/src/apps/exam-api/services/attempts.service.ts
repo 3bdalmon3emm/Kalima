@@ -7,6 +7,7 @@ import { examsService, groupPassages, pairCount, shuffled } from "./exams.servic
 import { questionsService } from "./questions.service";
 import { mediaService } from "./media.service";
 import { soundsService } from "./sounds.service";
+import { teacherLinksService } from "./teacherLinks.service";
 
 // A student's attempts at an exam, reached through a link. An attempt keeps
 // its own list of questions and a copy of their content from the moment it
@@ -49,13 +50,31 @@ class AttemptsService {
     return link;
   }
 
-  // Whether the link lets students in right now, and why not.
-  private async linkState(link: Awaited<ReturnType<AttemptsService["openLink"]>>, now = new Date()) {
+  // What the admin or teacher reopened for this student on this link.
+  private async overrideFor(linkId: number, studentId: number) {
+    return this.db.ex_student_overrides.findUnique({
+      where: { link_id_student_user_id: { link_id: linkId, student_user_id: studentId } },
+    });
+  }
+
+  // The link's end, or the later end given to this student.
+  private endFor(link: { ends_at: Date }, override: { ends_at: Date | null } | null) {
+    return override?.ends_at && override.ends_at > link.ends_at ? override.ends_at : link.ends_at;
+  }
+
+  // Whether the link lets students in right now, and why not. A teacher's
+  // link works only while the teacher still has the exam.
+  private async linkState(
+    link: Awaited<ReturnType<AttemptsService["openLink"]>>,
+    now = new Date(),
+    override: { ends_at: Date | null } | null = null,
+  ) {
     const exam = link.exam;
     if (link.closed_at || exam.archived_at || (await examFoldersService.isHidden(exam.folder.path))) return "closed";
+    if (!(await teacherLinksService.linkCovered(link))) return "closed";
     if (!exam.published_at) return "not_published";
     if (now < link.starts_at) return "not_started";
-    if (now > link.ends_at) return "ended";
+    if (now > this.endFor(link, override)) return "ended";
     return "open";
   }
 
@@ -64,7 +83,8 @@ class AttemptsService {
     const link = await this.openLink(code);
     await this.finishExpired({ link_id: link.id, student_user_id: studentId });
     const exam = link.exam;
-    const state = await this.linkState(link);
+    const override = await this.overrideFor(link.id, studentId);
+    const state = await this.linkState(link, new Date(), override);
 
     const [questions, attempts, teacher, student] = await Promise.all([
       this.db.ex_exam_questions.findMany({ where: { exam_id: exam.id }, select: { mark: true } }),
@@ -74,17 +94,17 @@ class AttemptsService {
         select: { id: true, attempt_no: true, status: true, started_at: true, submitted_at: true, score: true, total: true },
       }),
       link.teacher_user_id
-        ? this.db.users.findUnique({ where: { id: link.teacher_user_id }, select: { id: true, name: true, profile_pic_url: true } })
+        ? this.db.users.findUnique({ where: { id: link.teacher_user_id }, select: { id: true, name: true, profile_pic_url: true, cover_url: true } })
         : null,
       this.studentCard(studentId),
     ]);
 
-    const next = this.nextStep(exam, attempts);
+    const next = this.nextStep(exam, attempts, override?.extra_attempts ?? 0);
     return {
       code: link.code,
       state,
       starts_at: link.starts_at,
-      ends_at: link.ends_at,
+      ends_at: this.endFor(link, override),
       teacher,
       student,
       exam: {
@@ -104,16 +124,21 @@ class AttemptsService {
 
   // What the student may do next: resume, start the first attempt, redo,
   // wait for grading, or nothing.
+  // Extra attempts given to one student open a new attempt whatever the
+  // score, after the normal redos.
   private nextStep(
     exam: { pass_percent: number; redo_percent: number | null; max_redos: number; redo_required: boolean },
     attempts: { id: number; status: string; score: unknown; total: unknown }[],
+    extraAttempts = 0,
   ) {
     if (!attempts.length) return { action: "start" as const };
     const last = attempts[attempts.length - 1];
     if (last.status === "in_progress") return { action: "resume" as const, attempt_id: last.id };
     if (last.status === "pending") return { action: "wait" as const };
     const redos = this.redoState(exam, attempts);
-    return redos.available ? { action: "redo" as const, required: exam.redo_required } : { action: "none" as const };
+    if (redos.available) return { action: "redo" as const, required: exam.redo_required };
+    if (extraAttempts > 0) return { action: "redo" as const, required: false, extra: true };
+    return { action: "none" as const };
   }
 
   // A redo opens while the last score is under the redo mark and redos are
@@ -143,14 +168,15 @@ class AttemptsService {
   async start(code: string, studentId: number) {
     const link = await this.openLink(code);
     await this.finishExpired({ link_id: link.id, student_user_id: studentId });
-    if ((await this.linkState(link)) !== "open") throw new BadRequestError("This exam is not open now");
+    const override = await this.overrideFor(link.id, studentId);
+    if ((await this.linkState(link, new Date(), override)) !== "open") throw new BadRequestError("This exam is not open now");
     const exam = link.exam;
 
     const attempts = await this.db.ex_attempts.findMany({
       where: { link_id: link.id, student_user_id: studentId },
       orderBy: { attempt_no: "asc" },
     });
-    const next = this.nextStep(exam, attempts);
+    const next = this.nextStep(exam, attempts, override?.extra_attempts ?? 0);
     if (next.action === "resume") return this.resume(next.attempt_id, studentId);
     if (next.action !== "start" && next.action !== "redo") throw new BadRequestError("You cannot start this exam again");
 
@@ -159,8 +185,21 @@ class AttemptsService {
     if (!picked.length) throw new BadRequestError("This exam has no questions");
     const content = await this.snapshot(exam.id, picked);
     const now = new Date();
-    const byDuration = exam.duration_minutes ? new Date(now.getTime() + exam.duration_minutes * 60_000) : link.ends_at;
-    const deadline = byDuration < link.ends_at ? byDuration : link.ends_at;
+    // The student's own end date and extra minutes count; extra minutes and
+    // an extra attempt are used up by this attempt.
+    const linkEnd = this.endFor(link, override);
+    const extraMinutes = override?.extra_minutes ?? 0;
+    const byDuration = exam.duration_minutes ? new Date(now.getTime() + (exam.duration_minutes + extraMinutes) * 60_000) : linkEnd;
+    const deadline = byDuration < linkEnd ? byDuration : linkEnd;
+    if (override && (extraMinutes || ("extra" in next && next.extra))) {
+      await this.db.ex_student_overrides.update({
+        where: { id: override.id },
+        data: {
+          extra_minutes: 0,
+          ...("extra" in next && next.extra && { extra_attempts: { decrement: 1 } }),
+        },
+      });
+    }
     const token = crypto.randomBytes(24).toString("hex");
 
     const attempt = await this.db.ex_attempts.create({

@@ -3,6 +3,7 @@ import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { pathIds } from "./folders.service";
+import { teacherLinksService } from "./teacherLinks.service";
 import { examFoldersService } from "./examFolders.service";
 import { questionsService } from "./questions.service";
 import { ExamSettings, DIFFICULTY_KEYS, RuleInput } from "./examInput";
@@ -67,7 +68,7 @@ class ExamsService {
     const folder = await examFoldersService.getFolder(folderId);
     await examFoldersService.assertUsable(folder);
     if (settings.subject_id) await this.assertSubject(settings.subject_id);
-    return this.db.$transaction(async (tx) => {
+    const created = await this.db.$transaction(async (tx) => {
       const last = await tx.ex_exams.aggregate({ where: { folder_id: folderId }, _max: { sort_order: true } });
       const exam = await tx.ex_exams.create({
         data: {
@@ -84,6 +85,9 @@ class ExamsService {
       await tx.ex_sections.create({ data: { exam_id: exam.id, sort_order: 1 } });
       return exam;
     });
+    // Teachers on the folders above get their link to the new exam.
+    await teacherLinksService.onExamCreated(created.id);
+    return created;
   }
 
   async update(id: number, settings: ExamSettings, userId: number) {

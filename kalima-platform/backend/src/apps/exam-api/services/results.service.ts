@@ -21,9 +21,12 @@ class ResultsService {
   private async students(ids: number[]) {
     const users = await this.db.users.findMany({
       where: { id: { in: [...new Set(ids)] } },
-      select: { id: true, name: true, profile_pic_url: true, students: { select: { sequenced_id: true } } },
+      select: { id: true, name: true, phone: true, profile_pic_url: true, students: { select: { sequenced_id: true, levels: { select: { title: true, title_ar: true } } } } },
     });
-    return new Map(users.map((u) => [u.id, { id: u.id, name: u.name, profile_pic_url: u.profile_pic_url, serial: u.students?.sequenced_id ?? null }]));
+    return new Map(users.map((u) => [u.id, {
+      id: u.id, name: u.name, phone: u.phone, profile_pic_url: u.profile_pic_url,
+      serial: u.students?.sequenced_id ?? null, level: u.students?.levels?.title_ar || u.students?.levels?.title || null,
+    }]));
   }
 
   private row(a: {
@@ -52,12 +55,26 @@ class ResultsService {
 
   // Every attempt at an exam, newest first; `pending` keeps only those
   // waiting for essay marks.
-  async list(examId: number, filter: { status?: string } = {}) {
+  // `teacherIds` limits to those teachers' links (0 = the admin test link).
+  linkWhere(teacherIds?: number[]) {
+    if (!teacherIds) return {};
+    const real = teacherIds.filter((t) => t > 0);
+    return {
+      link: {
+        OR: [
+          ...(real.length ? [{ teacher_user_id: { in: real } }] : []),
+          ...(teacherIds.includes(0) ? [{ teacher_user_id: null }] : []),
+        ],
+      },
+    };
+  }
+
+  async list(examId: number, filter: { status?: string; teacherIds?: number[] } = {}) {
     const exam = await this.db.ex_exams.findUnique({ where: { id: examId }, select: { id: true, pass_percent: true } });
     if (!exam) throw new NotFoundError("Exam not found");
     const status = ["in_progress", "pending", "done"].includes(filter.status ?? "") ? (filter.status as any) : undefined;
     const attempts = await this.db.ex_attempts.findMany({
-      where: { exam_id: examId, ...(status && { status }) },
+      where: { exam_id: examId, ...(status && { status }), ...this.linkWhere(filter.teacherIds) },
       orderBy: [{ started_at: "desc" }, { id: "desc" }],
       include: { link: { select: { code: true, teacher_user_id: true } } },
       take: 1000,
@@ -66,7 +83,7 @@ class ResultsService {
       ...attempts.map((a) => a.student_user_id),
       ...attempts.map((a) => a.link.teacher_user_id).filter((id): id is number => id !== null),
     ]);
-    const counts = await this.db.ex_attempts.groupBy({ by: ["status"], where: { exam_id: examId }, _count: { _all: true } });
+    const counts = await this.db.ex_attempts.groupBy({ by: ["status"], where: { exam_id: examId, ...this.linkWhere(filter.teacherIds) }, _count: { _all: true } });
     return {
       counts: Object.fromEntries(counts.map((c) => [c.status, c._count._all])),
       attempts: attempts.map((a) => ({
@@ -129,6 +146,42 @@ class ResultsService {
     await this.db.ex_attempts.update({ where: { id }, data: { score, status: waiting ? "pending" : "done" } });
     return this.detail(id);
   }
+}
+
+// ---------- Reopening for one student ----------
+
+export type Reopen = { extraAttempts?: number; extraMinutes?: number; endsAt?: Date | null };
+
+export async function reopenForStudent(linkId: number, studentId: number, change: Reopen, userId: number, db: PrismaClient = prisma) {
+  const link = await db.ex_links.findUnique({ where: { id: linkId } });
+  if (!link) throw new NotFoundError("Link not found");
+  const current = await db.ex_student_overrides.findUnique({
+    where: { link_id_student_user_id: { link_id: linkId, student_user_id: studentId } },
+  });
+  let extraMinutes = Math.max(change.extraMinutes ?? 0, 0);
+  // Extra minutes go to the running attempt if there is one; otherwise to
+  // the next attempt.
+  if (extraMinutes) {
+    const running = await db.ex_attempts.findFirst({ where: { link_id: linkId, student_user_id: studentId, status: "in_progress" } });
+    if (running) {
+      await db.ex_attempts.update({
+        where: { id: running.id },
+        data: { deadline_at: new Date(running.deadline_at.getTime() + extraMinutes * 60_000) },
+      });
+      extraMinutes = 0;
+    }
+  }
+  const data = {
+    extra_attempts: (current?.extra_attempts ?? 0) + Math.max(change.extraAttempts ?? 0, 0),
+    extra_minutes: (current?.extra_minutes ?? 0) + extraMinutes,
+    ends_at: change.endsAt === undefined ? current?.ends_at ?? null : change.endsAt,
+    updated_by: userId,
+  };
+  return db.ex_student_overrides.upsert({
+    where: { link_id_student_user_id: { link_id: linkId, student_user_id: studentId } },
+    create: { link_id: linkId, student_user_id: studentId, ...data },
+    update: data,
+  });
 }
 
 export const resultsService = new ResultsService();
