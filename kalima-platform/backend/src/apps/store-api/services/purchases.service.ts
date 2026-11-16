@@ -1,3 +1,4 @@
+import type { DayRange } from "../utils/dayRange";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
@@ -362,6 +363,7 @@ export class PurchasesService {
     limit: number,
     month?: number,
     year?: number,
+    range?: DayRange | "all" | null,
   ) {
     const skip = (page - 1) * limit;
 
@@ -369,8 +371,10 @@ export class PurchasesService {
     const targetMonth = month || now.getMonth() + 1;
     const targetYear = year || now.getFullYear();
 
-    const startDate = new Date(targetYear, targetMonth - 1, 1);
-    const endDate = new Date(targetYear, targetMonth, 1);
+    // A day range (or "all") wins over the month.
+    const when: DayRange = range === "all" ? {} : range
+      ? range
+      : { gte: new Date(targetYear, targetMonth - 1, 1), lt: new Date(targetYear, targetMonth, 1) };
 
     // 1. Get all eligible users (Admin, SubAdmin, Moderator)
     const eligibleRoles: role_enum[] = ["Admin", "SubAdmin", "Moderator"];
@@ -422,10 +426,8 @@ export class PurchasesService {
         confirmed_by: { in: adminIds },
         status: "confirmed",
         deleted_at: null,
-        confirmed_at: {
-          gte: startDate,
-          lt: endDate,
-        },
+        is_deleted: { not: true },
+        confirmed_at: when,
       },
     });
 
@@ -438,10 +440,8 @@ export class PurchasesService {
         confirmed_by: { in: adminIds },
         status: "confirmed",
         deleted_at: null,
-        confirmed_at: {
-          gte: startDate,
-          lt: endDate,
-        },
+        is_deleted: { not: true },
+        confirmed_at: when,
       },
       select: {
         confirmed_by: true,
@@ -475,7 +475,7 @@ export class PurchasesService {
       where: {
         action: "booklet_delivered",
         actor_user_id: { in: adminIds },
-        created_at: { gte: startDate, lt: endDate },
+        created_at: when,
       },
     });
     const eBookletsMap = new Map<number, number>(
@@ -511,6 +511,7 @@ export class PurchasesService {
       limit?: number;
       month?: number;
       year?: number;
+      range?: DayRange | null;
       type?: "all" | "normal" | "ebooklet";
       search?: string;
     } = {},
@@ -535,7 +536,9 @@ export class PurchasesService {
     }
 
     let dateFilter: { gte?: Date; lt?: Date } | undefined;
-    if (options.month && options.year) {
+    if (options.range) {
+      dateFilter = options.range;
+    } else if (options.month && options.year) {
       dateFilter = {
         gte: new Date(options.year, options.month - 1, 1),
         lt: new Date(options.year, options.month, 1),

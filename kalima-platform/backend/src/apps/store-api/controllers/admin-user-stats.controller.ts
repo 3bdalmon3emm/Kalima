@@ -1,3 +1,4 @@
+import { dayRange } from "../utils/dayRange";
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../../libs/db/prisma";
 import { role_enum } from "../generated/prisma/client";
@@ -14,20 +15,31 @@ export const adminUserStatsController = {
     _next: NextFunction,
   ): Promise<void> {
     try {
-      // Find all users who have created other accounts
-      // To replicate legacy, we just count the 'created_users' grouped by 'created_by' and 'role'
-      
-      const stats = await prisma.users.groupBy({
-        by: ['created_by', 'role'],
-        _count: {
-          id: true,
-        },
+      // Accounts each staff member created, by their real roles (user_roles),
+      // live accounts only, optionally between ?from and ?to (days, inclusive).
+      const range = dayRange(req.query as Record<string, unknown>);
+      const created = await prisma.users.findMany({
         where: {
-          created_by: {
-            not: null,
-          }
+          created_by: { not: null },
+          OR: [{ is_deleted: false }, { is_deleted: null }],
+          ...(range && { created_at: range }),
         },
+        select: { id: true, created_by: true, role: true, user_roles: { select: { role: true } } },
       });
+      // One row per creator and role; an account counts once in the total.
+      const stats: Array<{ created_by: number; role: string; _count: { id: number } }> = [];
+      const totals = new Map<number, number>();
+      const counts = new Map<string, number>();
+      for (const u of created) {
+        const roles = new Set<string>(u.user_roles.map((r) => r.role));
+        if (!roles.size && u.role) roles.add(u.role);
+        for (const r of roles) counts.set(`${u.created_by}:${r}`, (counts.get(`${u.created_by}:${r}`) || 0) + 1);
+        totals.set(u.created_by as number, (totals.get(u.created_by as number) || 0) + 1);
+      }
+      for (const [key, n] of counts) {
+        const [creator, role] = key.split(":");
+        stats.push({ created_by: Number(creator), role, _count: { id: n } });
+      }
 
       // Fetch the details of the creator users
       const creatorIds = Array.from(new Set(stats.map(s => s.created_by).filter(id => id !== null))) as number[];
@@ -76,7 +88,7 @@ export const adminUserStatsController = {
 
         const creatorData = statsByCreator.get(creatorId);
         creatorData.byRole[stat.role] = stat._count.id;
-        creatorData.totalAccounts += stat._count.id;
+        creatorData.totalAccounts = totals.get(creatorId) || 0;
       });
 
       // Filter out roles with 0 value or format as requested

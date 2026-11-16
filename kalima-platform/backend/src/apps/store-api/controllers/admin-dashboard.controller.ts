@@ -1,3 +1,4 @@
+import { dayRange } from "../utils/dayRange";
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../../libs/db/prisma";
 
@@ -70,6 +71,7 @@ export const adminDashboardController = {
     _next: NextFunction,
   ): Promise<void> {
     try {
+      const range = dayRange(req.query as Record<string, unknown>);
       const stats = await prisma.purchases.groupBy({
         by: ["confirmed_by", "status"],
         _count: {
@@ -79,6 +81,8 @@ export const adminDashboardController = {
           confirmed_by: {
             not: null,
           },
+          is_deleted: { not: true },
+          ...(range && { confirmed_at: range }),
         },
       });
 
@@ -349,20 +353,26 @@ export const adminDashboardController = {
     _next: NextFunction,
   ): Promise<void> {
     try {
+      // Live accounts only, counted by their real roles (user_roles), not
+      // the old users.role column: an account with two roles counts in both.
+      const live = { OR: [{ is_deleted: false }, { is_deleted: null }] };
       const [totalUsers, totalVerifiedUsers, countsByRole] = await Promise.all([
-        prisma.users.count(),
-        prisma.users.count({ where: { is_email_verified: true } }),
-        prisma.users.groupBy({
-          by: ["role"],
-          _count: {
-            _all: true, // Count all records in each group
-          },
+        prisma.users.count({ where: live }),
+        prisma.users.count({ where: { ...live, is_email_verified: true } }),
+        prisma.user_roles.findMany({
+          where: { users: live },
+          select: { user_id: true, role: true },
         }),
       ]);
 
+      // One count per account and role, even with the role on both portals.
+      const seen = new Set<string>();
       const byRole: Record<string, number> = {};
       countsByRole.forEach((row) => {
-        byRole[row.role] = row._count._all;
+        const key = `${row.role}:${row.user_id}`;
+        if (seen.has(key)) return;
+        seen.add(key);
+        byRole[row.role] = (byRole[row.role] || 0) + 1;
       });
 
       res.status(200).json({

@@ -1,3 +1,4 @@
+import { dayRange } from "../utils/dayRange";
 import { Request, Response, NextFunction } from "express";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
@@ -99,6 +100,7 @@ export const purchaseController = {
         limit,
         month,
         year,
+        req.query.all === "1" ? "all" : dayRange(req.query as Record<string, unknown>),
       );
 
       res.status(200).json({
@@ -139,6 +141,7 @@ export const purchaseController = {
           limit,
           month,
           year,
+          range: dayRange(req.query as Record<string, unknown>),
           type,
           search,
         },

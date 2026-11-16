@@ -1,25 +1,20 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import {
-    Activity, CheckCircle, Users, BarChart3, Filter, Calendar as CalendarIcon, X, ChevronLeft, ChevronRight, ShoppingBag
-} from 'lucide-react';
-import { format } from 'date-fns';
+import { Activity, CheckCircle, Users, BarChart3, ShoppingBag } from 'lucide-react';
 import { useEmployeePerformance } from '@/hooks/admin/useEmployeePerformance';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
+import DayRangeFilter, { RANGE_PRESETS } from '@/components/admin/DayRangeFilter';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 
+// Roles shown as columns in the created-accounts table.
+const CREATED_ROLES = ['Teacher', 'Student', 'Parent', 'Assistant', 'Lecturer', 'Moderator', 'SubAdmin'];
+
 export default function EmployeePerformancePage() {
     const navigate = useNavigate();
-    const { t, i18n } = useTranslation('admin');
+    const { t } = useTranslation('admin');
     const {
         loading,
         confirmerStats,
@@ -30,47 +25,15 @@ export default function EmployeePerformancePage() {
         fetchCreatedAccounts
     } = useEmployeePerformance();
 
-    const [date, setDate] = useState(null);
-    const [activeYear, setActiveYear] = useState(new Date().getFullYear());
-    const [isOpen, setIsOpen] = useState(false);
-
-    const getMonthName = (monthIndex, type = 'long') => {
-        try {
-            return new Intl.DateTimeFormat(i18n.language, { month: type }).format(new Date(2025, monthIndex, 1));
-        } catch (e) {
-            return format(new Date(2025, monthIndex, 1), type === 'long' ? "MMMM" : "MMM");
-        }
-    };
-
-    const months = Array.from({ length: 12 }, (_, i) => ({
-        name: getMonthName(i, 'long'),
-        short: getMonthName(i, 'short'),
-        index: i
-    }));
+    // One day range for every section; this month by default.
+    const [range, setRange] = useState(RANGE_PRESETS.month);
 
     useEffect(() => {
-        if (date) {
-            setActiveYear(date.getFullYear());
-        }
-    }, [date]);
-
-
-    useEffect(() => {
-        fetchConfirmerStats();
-        fetchCreatedAccounts();
+        fetchConfirmerStats(range);
+        fetchConfirmedCount(range);
+        fetchCreatedAccounts(range);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
-
-    useEffect(() => {
-        if (date) {
-            const m = date.getMonth() + 1;
-            const y = date.getFullYear();
-            fetchConfirmedCount(m, y);
-        } else {
-            fetchConfirmedCount();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [date]);
+    }, [range?.from, range?.to, !range]);
 
     if (loading && !confirmerStats && !confirmedCount && !createdAccounts) {
         return (
@@ -93,6 +56,9 @@ export default function EmployeePerformancePage() {
                         {t('dashboard.employeePerformanceDesc', 'Track admins and sub-admins efficiency')}
                     </p>
                 </div>
+            </div>
+            <div className="sticky top-0 z-10 -mx-1 rounded-lg border bg-background/95 p-3 backdrop-blur">
+                <DayRangeFilter value={range} onChange={setRange} />
             </div>
 
             {/* Confirmer Stats (Who handled how many) */}
@@ -136,86 +102,6 @@ export default function EmployeePerformancePage() {
             <section data-testid="ep-confirmed-count-section">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
                     <SectionTitle icon={BarChart3}>{t('dashboard.confirmedPurchasesByAdmin', 'Confirmed Purchases by Admin')}</SectionTitle>
-                    {/* Month/Year Filters */}
-                    <div className="flex items-center gap-2">
-                        <Filter className="h-4 w-4 text-muted-foreground" />
-                        <Popover open={isOpen} onOpenChange={setIsOpen}>
-                            <PopoverTrigger asChild>
-                                <Button
-                                    variant={"outline"}
-                                    size="sm"
-                                    className={cn(
-                                        "w-[240px] justify-start text-left font-normal",
-                                        !date && "text-muted-foreground"
-                                    )}
-                                    data-testid="month-year-picker-trigger"
-                                >
-                                    <CalendarIcon className="mr-2 h-4 w-4" />
-                                    {date ? `${getMonthName(date.getMonth(), 'long')} ${date.getFullYear()}` : <span>{t('dashboard.pickMonth', 'Pick a month')}</span>}
-                                </Button>
-                            </PopoverTrigger>
-                            <PopoverContent className="w-64 p-3" align="end">
-                                <div className="flex items-center justify-between mb-4 px-1">
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-7 w-7"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveYear(activeYear - 1);
-                                        }}
-                                        aria-label={t('dashboard.prevYear', 'Previous year')}
-                                    >
-                                        <ChevronLeft className="h-4 w-4" />
-                                    </Button>
-                                    <div className="font-semibold text-sm select-none tabular-nums">
-                                        {activeYear}
-                                    </div>
-                                    <Button
-                                        variant="outline"
-                                        size="icon"
-                                        className="h-7 w-7"
-                                        onClick={(e) => {
-                                            e.stopPropagation();
-                                            setActiveYear(activeYear + 1);
-                                        }}
-                                        aria-label={t('dashboard.nextYear', 'Next year')}
-                                    >
-                                        <ChevronRight className="h-4 w-4" />
-                                    </Button>
-                                </div>
-                                <div className="grid grid-cols-3 gap-2">
-                                    {months.map((m) => {
-                                        const isSelected = date && date.getMonth() === m.index && date.getFullYear() === activeYear;
-                                        return (
-                                            <Button
-                                                key={m.index}
-                                                variant={isSelected ? "default" : "ghost"}
-                                                className="h-9 text-xs font-medium"
-                                                onClick={() => {
-                                                    setDate(new Date(activeYear, m.index, 1));
-                                                    setIsOpen(false);
-                                                }}
-                                            >
-                                                {m.short}
-                                            </Button>
-                                        );
-                                    })}
-                                </div>
-                            </PopoverContent>
-                        </Popover>
-                        {date && (
-                            <Button
-                                variant="ghost"
-                                size="sm"
-                                onClick={() => setDate(null)}
-                                className="h-8 px-2 lg:px-3"
-                                data-testid="clear-date-filter"
-                            >
-                                <X className="h-4 w-4" />
-                            </Button>
-                        )}
-                    </div>
                 </div>
                 {loading && !confirmedCount && <LoadingSpinner className="h-6 w-6 text-primary mb-4" />}
                 <Card className="shadow-sm">
@@ -253,7 +139,7 @@ export default function EmployeePerformancePage() {
                                                         size="sm"
                                                         className="h-8 gap-1.5 text-xs font-medium"
                                                         onClick={() => {
-                                                            const query = date ? `?month=${date.getMonth() + 1}&year=${date.getFullYear()}` : '';
+                                                            const query = range ? `?from=${range.from || ''}&to=${range.to || ''}` : '';
                                                             navigate(`/admin/employee-performance/${item.id}${query}`);
                                                         }}
                                                     >
@@ -287,6 +173,7 @@ export default function EmployeePerformancePage() {
                                 <tr>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.adminName', 'Admin Name')}</th>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.email', 'Email')}</th>
+                                    {CREATED_ROLES.map((r) => <th key={r} className="kalima-number px-4 py-3 font-medium">{t(`roles.${r}`, r)}</th>)}
                                     <th className="kalima-number px-6 py-3 font-medium">{t('table.createdAccounts', 'Accounts Created')}</th>
                                 </tr>
                             </thead>
@@ -296,12 +183,13 @@ export default function EmployeePerformancePage() {
                                         <tr key={item.user?.id || idx}>
                                             <td className="kalima-truncate px-6 py-4 font-medium" title={item.user?.name || 'Unknown'}>{item.user?.name || 'Unknown'}</td>
                                             <td className="kalima-truncate px-6 py-4" title={item.user?.email}>{item.user?.email}</td>
-                                            <td className="kalima-number px-6 py-4 text-blue-600">{item.totalAccounts || 0}</td>
+                                            {CREATED_ROLES.map((r) => <td key={r} className="kalima-number px-4 py-4">{item.byRole?.[r] || 0}</td>)}
+                                            <td className="kalima-number px-6 py-4 font-semibold text-blue-600">{item.totalAccounts || 0}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="3" className="px-6 py-8 text-center text-muted-foreground">
+                                        <td colSpan={CREATED_ROLES.length + 3} className="px-6 py-8 text-center text-muted-foreground">
                                             {t('table.noData', 'No data available')}
                                         </td>
                                     </tr>
