@@ -52,6 +52,7 @@ export const purchaseController = {
         minTotal: dto.minTotal,
         maxTotal: dto.maxTotal,
         productId: dto.productId,
+        flag: dto.flag,
         page: dto.page || 1,
         limit: dto.limit || 10,
       });

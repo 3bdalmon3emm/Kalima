@@ -88,6 +88,7 @@ export type PurchasesMinAggregateOutputType = {
   is_deleted: boolean | null
   deleted_by: number | null
   delete_reason: string | null
+  customer_flag: string | null
 }
 
 export type PurchasesMaxAggregateOutputType = {
@@ -120,6 +121,7 @@ export type PurchasesMaxAggregateOutputType = {
   is_deleted: boolean | null
   deleted_by: number | null
   delete_reason: string | null
+  customer_flag: string | null
 }
 
 export type PurchasesCountAggregateOutputType = {
@@ -152,6 +154,7 @@ export type PurchasesCountAggregateOutputType = {
   is_deleted: number
   deleted_by: number
   delete_reason: number
+  customer_flag: number
   _all: number
 }
 
@@ -218,6 +221,7 @@ export type PurchasesMinAggregateInputType = {
   is_deleted?: true
   deleted_by?: true
   delete_reason?: true
+  customer_flag?: true
 }
 
 export type PurchasesMaxAggregateInputType = {
@@ -250,6 +254,7 @@ export type PurchasesMaxAggregateInputType = {
   is_deleted?: true
   deleted_by?: true
   delete_reason?: true
+  customer_flag?: true
 }
 
 export type PurchasesCountAggregateInputType = {
@@ -282,6 +287,7 @@ export type PurchasesCountAggregateInputType = {
   is_deleted?: true
   deleted_by?: true
   delete_reason?: true
+  customer_flag?: true
   _all?: true
 }
 
@@ -401,6 +407,7 @@ export type PurchasesGroupByOutputType = {
   is_deleted: boolean | null
   deleted_by: number | null
   delete_reason: string | null
+  customer_flag: string | null
   _count: PurchasesCountAggregateOutputType | null
   _avg: PurchasesAvgAggregateOutputType | null
   _sum: PurchasesSumAggregateOutputType | null
@@ -456,6 +463,7 @@ export type purchasesWhereInput = {
   is_deleted?: Prisma.BoolNullableFilter<"purchases"> | boolean | null
   deleted_by?: Prisma.IntNullableFilter<"purchases"> | number | null
   delete_reason?: Prisma.StringNullableFilter<"purchases"> | string | null
+  customer_flag?: Prisma.StringNullableFilter<"purchases"> | string | null
   purchase_items?: Prisma.Purchase_itemsListRelationFilter
   coupon_usages?: Prisma.Coupon_usagesListRelationFilter
   e_booklet_access_code_redemptions?: Prisma.E_booklet_access_code_redemptionsListRelationFilter
@@ -500,6 +508,7 @@ export type purchasesOrderByWithRelationInput = {
   is_deleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deleted_by?: Prisma.SortOrderInput | Prisma.SortOrder
   delete_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  customer_flag?: Prisma.SortOrderInput | Prisma.SortOrder
   purchase_items?: Prisma.purchase_itemsOrderByRelationAggregateInput
   coupon_usages?: Prisma.coupon_usagesOrderByRelationAggregateInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsOrderByRelationAggregateInput
@@ -547,6 +556,7 @@ export type purchasesWhereUniqueInput = Prisma.AtLeast<{
   is_deleted?: Prisma.BoolNullableFilter<"purchases"> | boolean | null
   deleted_by?: Prisma.IntNullableFilter<"purchases"> | number | null
   delete_reason?: Prisma.StringNullableFilter<"purchases"> | string | null
+  customer_flag?: Prisma.StringNullableFilter<"purchases"> | string | null
   purchase_items?: Prisma.Purchase_itemsListRelationFilter
   coupon_usages?: Prisma.Coupon_usagesListRelationFilter
   e_booklet_access_code_redemptions?: Prisma.E_booklet_access_code_redemptionsListRelationFilter
@@ -591,6 +601,7 @@ export type purchasesOrderByWithAggregationInput = {
   is_deleted?: Prisma.SortOrderInput | Prisma.SortOrder
   deleted_by?: Prisma.SortOrderInput | Prisma.SortOrder
   delete_reason?: Prisma.SortOrderInput | Prisma.SortOrder
+  customer_flag?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.purchasesCountOrderByAggregateInput
   _avg?: Prisma.purchasesAvgOrderByAggregateInput
   _max?: Prisma.purchasesMaxOrderByAggregateInput
@@ -631,6 +642,7 @@ export type purchasesScalarWhereWithAggregatesInput = {
   is_deleted?: Prisma.BoolNullableWithAggregatesFilter<"purchases"> | boolean | null
   deleted_by?: Prisma.IntNullableWithAggregatesFilter<"purchases"> | number | null
   delete_reason?: Prisma.StringNullableWithAggregatesFilter<"purchases"> | string | null
+  customer_flag?: Prisma.StringNullableWithAggregatesFilter<"purchases"> | string | null
 }
 
 export type purchasesCreateInput = {
@@ -655,6 +667,7 @@ export type purchasesCreateInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -699,6 +712,7 @@ export type purchasesUncheckedCreateInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -728,6 +742,7 @@ export type purchasesUpdateInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -772,6 +787,7 @@ export type purchasesUncheckedUpdateInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -809,6 +825,7 @@ export type purchasesCreateManyInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesUpdateManyMutationInput = {
@@ -833,6 +850,7 @@ export type purchasesUpdateManyMutationInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesUncheckedUpdateManyInput = {
@@ -865,6 +883,7 @@ export type purchasesUncheckedUpdateManyInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type PurchasesListRelationFilter = {
@@ -912,6 +931,7 @@ export type purchasesCountOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   deleted_by?: Prisma.SortOrder
   delete_reason?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
 }
 
 export type purchasesAvgOrderByAggregateInput = {
@@ -960,6 +980,7 @@ export type purchasesMaxOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   deleted_by?: Prisma.SortOrder
   delete_reason?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
 }
 
 export type purchasesMinOrderByAggregateInput = {
@@ -992,6 +1013,7 @@ export type purchasesMinOrderByAggregateInput = {
   is_deleted?: Prisma.SortOrder
   deleted_by?: Prisma.SortOrder
   delete_reason?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
 }
 
 export type purchasesSumOrderByAggregateInput = {
@@ -1407,6 +1429,7 @@ export type purchasesCreateWithoutUsersInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -1449,6 +1472,7 @@ export type purchasesUncheckedCreateWithoutUsersInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -1488,6 +1512,7 @@ export type purchasesCreateWithoutReceived_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -1530,6 +1555,7 @@ export type purchasesUncheckedCreateWithoutReceived_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -1569,6 +1595,7 @@ export type purchasesCreateWithoutConfirmed_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -1611,6 +1638,7 @@ export type purchasesUncheckedCreateWithoutConfirmed_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -1650,6 +1678,7 @@ export type purchasesCreateWithoutReturned_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -1692,6 +1721,7 @@ export type purchasesUncheckedCreateWithoutReturned_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -1758,6 +1788,7 @@ export type purchasesScalarWhereInput = {
   is_deleted?: Prisma.BoolNullableFilter<"purchases"> | boolean | null
   deleted_by?: Prisma.IntNullableFilter<"purchases"> | number | null
   delete_reason?: Prisma.StringNullableFilter<"purchases"> | string | null
+  customer_flag?: Prisma.StringNullableFilter<"purchases"> | string | null
 }
 
 export type purchasesUpsertWithWhereUniqueWithoutReceived_by_userInput = {
@@ -1830,6 +1861,7 @@ export type purchasesCreateWithoutCoupon_usagesInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerCreateNestedManyWithoutPurchaseInput
@@ -1873,6 +1905,7 @@ export type purchasesUncheckedCreateWithoutCoupon_usagesInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -1917,6 +1950,7 @@ export type purchasesUpdateWithoutCoupon_usagesInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUpdateManyWithoutPurchaseNestedInput
@@ -1960,6 +1994,7 @@ export type purchasesUncheckedUpdateWithoutCoupon_usagesInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -1988,6 +2023,7 @@ export type purchasesCreateWithoutPurchase_itemsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerCreateNestedManyWithoutPurchaseInput
@@ -2031,6 +2067,7 @@ export type purchasesUncheckedCreateWithoutPurchase_itemsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2075,6 +2112,7 @@ export type purchasesUpdateWithoutPurchase_itemsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUpdateManyWithoutPurchaseNestedInput
@@ -2118,6 +2156,7 @@ export type purchasesUncheckedUpdateWithoutPurchase_itemsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -2146,6 +2185,7 @@ export type purchasesCreateWithoutPayment_methodsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -2188,6 +2228,7 @@ export type purchasesUncheckedCreateWithoutPayment_methodsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2243,6 +2284,7 @@ export type purchasesCreateWithoutWatermarkInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -2285,6 +2327,7 @@ export type purchasesUncheckedCreateWithoutWatermarkInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2324,6 +2367,7 @@ export type purchasesCreateWithoutPayment_screenshotInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -2366,6 +2410,7 @@ export type purchasesUncheckedCreateWithoutPayment_screenshotInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2437,6 +2482,7 @@ export type purchasesCreateWithoutTeacher_wallet_ledgerInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -2480,6 +2526,7 @@ export type purchasesUncheckedCreateWithoutTeacher_wallet_ledgerInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2524,6 +2571,7 @@ export type purchasesUpdateWithoutTeacher_wallet_ledgerInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -2567,6 +2615,7 @@ export type purchasesUncheckedUpdateWithoutTeacher_wallet_ledgerInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -2595,6 +2644,7 @@ export type purchasesCreateWithoutE_booklet_access_code_redemptionsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerCreateNestedManyWithoutPurchaseInput
@@ -2638,6 +2688,7 @@ export type purchasesUncheckedCreateWithoutE_booklet_access_code_redemptionsInpu
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2682,6 +2733,7 @@ export type purchasesUpdateWithoutE_booklet_access_code_redemptionsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUpdateManyWithoutPurchaseNestedInput
@@ -2725,6 +2777,7 @@ export type purchasesUncheckedUpdateWithoutE_booklet_access_code_redemptionsInpu
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   teacher_wallet_ledger?: Prisma.teacher_wallet_ledgerUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -2753,6 +2806,7 @@ export type purchasesCreateWithoutE_booklet_student_purchase_linkInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsCreateNestedManyWithoutPurchaseInput
@@ -2796,6 +2850,7 @@ export type purchasesUncheckedCreateWithoutE_booklet_student_purchase_linkInput 
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
   purchase_items?: Prisma.purchase_itemsUncheckedCreateNestedManyWithoutPurchasesInput
   coupon_usages?: Prisma.coupon_usagesUncheckedCreateNestedManyWithoutPurchasesInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedCreateNestedManyWithoutPurchaseInput
@@ -2840,6 +2895,7 @@ export type purchasesUpdateWithoutE_booklet_student_purchase_linkInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -2883,6 +2939,7 @@ export type purchasesUncheckedUpdateWithoutE_booklet_student_purchase_linkInput 
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -2918,6 +2975,7 @@ export type purchasesCreateManyUsersInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesCreateManyReceived_by_userInput = {
@@ -2949,6 +3007,7 @@ export type purchasesCreateManyReceived_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesCreateManyConfirmed_by_userInput = {
@@ -2980,6 +3039,7 @@ export type purchasesCreateManyConfirmed_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesCreateManyReturned_by_userInput = {
@@ -3011,6 +3071,7 @@ export type purchasesCreateManyReturned_by_userInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesUpdateWithoutUsersInput = {
@@ -3035,6 +3096,7 @@ export type purchasesUpdateWithoutUsersInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3077,6 +3139,7 @@ export type purchasesUncheckedUpdateWithoutUsersInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3113,6 +3176,7 @@ export type purchasesUncheckedUpdateManyWithoutUsersInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesUpdateWithoutReceived_by_userInput = {
@@ -3137,6 +3201,7 @@ export type purchasesUpdateWithoutReceived_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3179,6 +3244,7 @@ export type purchasesUncheckedUpdateWithoutReceived_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3215,6 +3281,7 @@ export type purchasesUncheckedUpdateManyWithoutReceived_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesUpdateWithoutConfirmed_by_userInput = {
@@ -3239,6 +3306,7 @@ export type purchasesUpdateWithoutConfirmed_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3281,6 +3349,7 @@ export type purchasesUncheckedUpdateWithoutConfirmed_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3317,6 +3386,7 @@ export type purchasesUncheckedUpdateManyWithoutConfirmed_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesUpdateWithoutReturned_by_userInput = {
@@ -3341,6 +3411,7 @@ export type purchasesUpdateWithoutReturned_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3383,6 +3454,7 @@ export type purchasesUncheckedUpdateWithoutReturned_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3419,6 +3491,7 @@ export type purchasesUncheckedUpdateManyWithoutReturned_by_userInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesCreateManyPayment_methodsInput = {
@@ -3450,6 +3523,7 @@ export type purchasesCreateManyPayment_methodsInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesUpdateWithoutPayment_methodsInput = {
@@ -3474,6 +3548,7 @@ export type purchasesUpdateWithoutPayment_methodsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3516,6 +3591,7 @@ export type purchasesUncheckedUpdateWithoutPayment_methodsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3552,6 +3628,7 @@ export type purchasesUncheckedUpdateManyWithoutPayment_methodsInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesCreateManyWatermarkInput = {
@@ -3583,6 +3660,7 @@ export type purchasesCreateManyWatermarkInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesCreateManyPayment_screenshotInput = {
@@ -3614,6 +3692,7 @@ export type purchasesCreateManyPayment_screenshotInput = {
   is_deleted?: boolean | null
   deleted_by?: number | null
   delete_reason?: string | null
+  customer_flag?: string | null
 }
 
 export type purchasesUpdateWithoutWatermarkInput = {
@@ -3638,6 +3717,7 @@ export type purchasesUpdateWithoutWatermarkInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3680,6 +3760,7 @@ export type purchasesUncheckedUpdateWithoutWatermarkInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3716,6 +3797,7 @@ export type purchasesUncheckedUpdateManyWithoutWatermarkInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type purchasesUpdateWithoutPayment_screenshotInput = {
@@ -3740,6 +3822,7 @@ export type purchasesUpdateWithoutPayment_screenshotInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUpdateManyWithoutPurchaseNestedInput
@@ -3782,6 +3865,7 @@ export type purchasesUncheckedUpdateWithoutPayment_screenshotInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   purchase_items?: Prisma.purchase_itemsUncheckedUpdateManyWithoutPurchasesNestedInput
   coupon_usages?: Prisma.coupon_usagesUncheckedUpdateManyWithoutPurchasesNestedInput
   e_booklet_access_code_redemptions?: Prisma.e_booklet_access_code_redemptionsUncheckedUpdateManyWithoutPurchaseNestedInput
@@ -3818,6 +3902,7 @@ export type purchasesUncheckedUpdateManyWithoutPayment_screenshotInput = {
   is_deleted?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
   deleted_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   delete_reason?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 
@@ -3908,6 +3993,7 @@ export type purchasesSelect<ExtArgs extends runtime.Types.Extensions.InternalArg
   is_deleted?: boolean
   deleted_by?: boolean
   delete_reason?: boolean
+  customer_flag?: boolean
   purchase_items?: boolean | Prisma.purchases$purchase_itemsArgs<ExtArgs>
   coupon_usages?: boolean | Prisma.purchases$coupon_usagesArgs<ExtArgs>
   e_booklet_access_code_redemptions?: boolean | Prisma.purchases$e_booklet_access_code_redemptionsArgs<ExtArgs>
@@ -3953,6 +4039,7 @@ export type purchasesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Ext
   is_deleted?: boolean
   deleted_by?: boolean
   delete_reason?: boolean
+  customer_flag?: boolean
   users?: boolean | Prisma.usersDefaultArgs<ExtArgs>
   received_by_user?: boolean | Prisma.purchases$received_by_userArgs<ExtArgs>
   confirmed_by_user?: boolean | Prisma.purchases$confirmed_by_userArgs<ExtArgs>
@@ -3992,6 +4079,7 @@ export type purchasesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Ext
   is_deleted?: boolean
   deleted_by?: boolean
   delete_reason?: boolean
+  customer_flag?: boolean
   users?: boolean | Prisma.usersDefaultArgs<ExtArgs>
   received_by_user?: boolean | Prisma.purchases$received_by_userArgs<ExtArgs>
   confirmed_by_user?: boolean | Prisma.purchases$confirmed_by_userArgs<ExtArgs>
@@ -4031,9 +4119,10 @@ export type purchasesSelectScalar = {
   is_deleted?: boolean
   deleted_by?: boolean
   delete_reason?: boolean
+  customer_flag?: boolean
 }
 
-export type purchasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "status" | "subtotal" | "discount" | "total" | "payment_method_id" | "payment_screenshot_id" | "watermark_id" | "purchase_serial" | "number_transferred_from" | "payment_number" | "notes" | "admin_notes" | "admin_note_by" | "has_admin_edits" | "received_at" | "received_by" | "confirmed_at" | "confirmed_by" | "delivered_at" | "returned_at" | "returned_by" | "created_at" | "updated_at" | "deleted_at" | "is_deleted" | "deleted_by" | "delete_reason", ExtArgs["result"]["purchases"]>
+export type purchasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "user_id" | "status" | "subtotal" | "discount" | "total" | "payment_method_id" | "payment_screenshot_id" | "watermark_id" | "purchase_serial" | "number_transferred_from" | "payment_number" | "notes" | "admin_notes" | "admin_note_by" | "has_admin_edits" | "received_at" | "received_by" | "confirmed_at" | "confirmed_by" | "delivered_at" | "returned_at" | "returned_by" | "created_at" | "updated_at" | "deleted_at" | "is_deleted" | "deleted_by" | "delete_reason" | "customer_flag", ExtArgs["result"]["purchases"]>
 export type purchasesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   purchase_items?: boolean | Prisma.purchases$purchase_itemsArgs<ExtArgs>
   coupon_usages?: boolean | Prisma.purchases$coupon_usagesArgs<ExtArgs>
@@ -4114,6 +4203,7 @@ export type $purchasesPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     is_deleted: boolean | null
     deleted_by: number | null
     delete_reason: string | null
+    customer_flag: string | null
   }, ExtArgs["result"]["purchases"]>
   composites: {}
 }
@@ -4578,6 +4668,7 @@ export interface purchasesFieldRefs {
   readonly is_deleted: Prisma.FieldRef<"purchases", 'Boolean'>
   readonly deleted_by: Prisma.FieldRef<"purchases", 'Int'>
   readonly delete_reason: Prisma.FieldRef<"purchases", 'String'>
+  readonly customer_flag: Prisma.FieldRef<"purchases", 'String'>
 }
     
 

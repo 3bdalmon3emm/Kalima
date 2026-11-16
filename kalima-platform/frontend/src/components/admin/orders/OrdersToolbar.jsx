@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
+import { ACCOUNT_LEVELS } from '@/lib/accountLevels';
 import { Calendar as CalendarIcon, Search, X } from 'lucide-react';
 import { format } from 'date-fns';
 import { arSA } from "react-day-picker/locale"
@@ -16,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ORDER_STATUSES } from '@/lib/storeUtils';
 
-export default function OrdersToolbar({ filters, onSearchChange, onStatusChange, onDateRangeChange }) {
+export default function OrdersToolbar({ filters, onSearchChange, onStatusChange, onDateRangeChange, onFlagChange }) {
     const { t, i18n } = useTranslation('admin');
     const isRtl = i18n.language?.startsWith('ar');
     const [searchValue, setSearchValue] = useState(filters.search || '');
@@ -39,6 +41,7 @@ export default function OrdersToolbar({ filters, onSearchChange, onStatusChange,
         setSearchValue('');
         onSearchChange('');
         onStatusChange('all');
+        if (onFlagChange) onFlagChange('all');
         if (onDateRangeChange) {
             onDateRangeChange({ from: null, to: null });
         }
@@ -123,6 +126,22 @@ export default function OrdersToolbar({ filters, onSearchChange, onStatusChange,
                         ))}
                     </DropdownMenuContent>
                 </DropdownMenu>
+
+                {onFlagChange && (
+                    <DropdownMenu dir={i18n.dir()}>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="outline" className="flex-1 sm:w-[170px] justify-start w-full">
+                                {filters.flag ? <AccountLevelBadge level={filters.flag} /> : <span className="text-muted-foreground">{t('orders.levelAll', 'All levels')}</span>}
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => onFlagChange('all')}>{t('orders.levelAll', 'All levels')}</DropdownMenuItem>
+                            {ACCOUNT_LEVELS.map(({ value }) => (
+                                <DropdownMenuItem key={value} onClick={() => onFlagChange(value)}><AccountLevelBadge level={value} /></DropdownMenuItem>
+                            ))}
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )}
 
                 <Button
                     variant="outline"

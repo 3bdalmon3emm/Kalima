@@ -47,3 +47,35 @@ ALTER TABLE "payment_methods" ADD COLUMN IF NOT EXISTS "is_deleted" BOOLEAN DEFA
 -- Who deleted an order and why (the reason is required from now on).
 ALTER TABLE "purchases" ADD COLUMN IF NOT EXISTS "deleted_by" INTEGER;
 ALTER TABLE "purchases" ADD COLUMN IF NOT EXISTS "delete_reason" TEXT;
+
+-- The customer's account level when the order was placed, filled by a
+-- trigger on every new order (store and e-booklet), so it stays even if the
+-- level changes later. Older orders keep it empty and show the current level.
+ALTER TABLE "purchases" ADD COLUMN IF NOT EXISTS "customer_flag" VARCHAR(20);
+ALTER TABLE "e_booklet_purchases" ADD COLUMN IF NOT EXISTS "customer_flag" VARCHAR(20);
+
+CREATE OR REPLACE FUNCTION "set_purchase_customer_flag"() RETURNS trigger AS $$
+BEGIN
+  IF NEW."customer_flag" IS NULL THEN
+    SELECT u."flag"::text INTO NEW."customer_flag" FROM "users" u WHERE u."id" = NEW."user_id";
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION "set_e_booklet_purchase_customer_flag"() RETURNS trigger AS $$
+BEGIN
+  IF NEW."customer_flag" IS NULL THEN
+    SELECT u."flag"::text INTO NEW."customer_flag" FROM "users" u WHERE u."id" = NEW."teacher_id";
+  END IF;
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS "trg_purchases_customer_flag" ON "purchases";
+CREATE TRIGGER "trg_purchases_customer_flag" BEFORE INSERT ON "purchases"
+  FOR EACH ROW EXECUTE FUNCTION "set_purchase_customer_flag"();
+
+DROP TRIGGER IF EXISTS "trg_e_booklet_purchases_customer_flag" ON "e_booklet_purchases";
+CREATE TRIGGER "trg_e_booklet_purchases_customer_flag" BEFORE INSERT ON "e_booklet_purchases"
+  FOR EACH ROW EXECUTE FUNCTION "set_e_booklet_purchase_customer_flag"();

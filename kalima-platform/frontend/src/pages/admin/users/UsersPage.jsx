@@ -35,19 +35,21 @@ export default function UsersPage() {
     const [page, setPage]       = useState(1);
     const [search, setSearch]   = useState('');
     const [role, setRole]       = useState('');
+    const [flag, setFlag] = useState('');
     const [impersonatingUserId, setImpersonatingUserId] = useState(null);
 
     // ── Fetch whenever filters / page change ──────────────────────────────
     const loadUsers = useCallback(() => {
-        fetchUsers({ page, search, role });
-    }, [fetchUsers, page, search, role]);
+        fetchUsers({ page, search, role, flag });
+    }, [fetchUsers, page, search, role, flag]);
 
     useEffect(() => {
         loadUsers();
     }, [loadUsers]);
 
     // ── Filter changes reset to page 1 ────────────────────────────────────
-    const handleFiltersChange = useCallback(({ search: s, role: r }) => {
+    const handleFiltersChange = useCallback(({ search: s, role: r, flag: f = '' }) => {
+        setFlag(f);
         setSearch(s);
         setRole(r);
         setPage(1);

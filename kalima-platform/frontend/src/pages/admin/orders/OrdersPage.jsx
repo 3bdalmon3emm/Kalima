@@ -37,6 +37,7 @@ export default function OrdersPage() {
         loading,
         setSearch,
         setStatus,
+        setFlag,
         setDateRange,
         setPage,
         fetchOrders
@@ -135,6 +136,7 @@ export default function OrdersPage() {
                 onSearchChange={handleSearch}
                 onStatusChange={handleStatus}
                 onDateRangeChange={handleDateRangeChange}
+                onFlagChange={setFlag}
             />
 
             <OrdersTable

@@ -36,6 +36,7 @@ import { formatCurrency, formatOrderDate } from "@/lib/storeUtils";
 import { E_BOOKLET_ORDER_FILTER_STATUSES } from "@/pages/e-booklets/eBookletOrdersContract.mjs";
 import AdminEBookletPurchaseActions from "./components/AdminEBookletPurchaseActions";
 import AdminEBookletPurchasesToolbar from "./components/AdminEBookletPurchasesToolbar";
+import AccountLevelBadge from "@/components/admin/AccountLevelBadge";
 
 const purchaseStatuses = ["all", ...E_BOOKLET_ORDER_FILTER_STATUSES];
 
@@ -231,6 +232,7 @@ export default function AdminEBookletPurchasesPage() {
                      </TableCell>
                      <TableCell truncate title={purchase.teacher?.email || purchase.teacher?.name || undefined}>
                       <div className="font-medium">{purchase.teacher?.name || t("common.teacher", { defaultValue: "Teacher" })}</div>
+                      {purchase.teacher?.flag && purchase.teacher.flag !== "NORMAL" && <AccountLevelBadge level={purchase.teacher.flag} />}
                       <div className="text-xs text-muted-foreground">{purchase.teacher?.email}</div>
                       {purchase.teacher?.phone && <div className="text-xs text-muted-foreground">{purchase.teacher.phone}</div>}
                     </TableCell>

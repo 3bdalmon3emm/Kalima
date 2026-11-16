@@ -675,7 +675,8 @@ export const PurchasesScalarFieldEnum = {
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
   deleted_by: 'deleted_by',
-  delete_reason: 'delete_reason'
+  delete_reason: 'delete_reason',
+  customer_flag: 'customer_flag'
 } as const
 
 export type PurchasesScalarFieldEnum = (typeof PurchasesScalarFieldEnum)[keyof typeof PurchasesScalarFieldEnum]
@@ -867,6 +868,7 @@ export type E_booklet_hotspot_preset_usagesScalarFieldEnum = (typeof E_booklet_h
 
 export const E_booklet_purchasesScalarFieldEnum = {
   id: 'id',
+  customer_flag: 'customer_flag',
   teacher_id: 'teacher_id',
   template_id: 'template_id',
   template_version_id: 'template_version_id',

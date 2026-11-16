@@ -456,6 +456,7 @@ export const adminController = {
         confirmed,
         isDeleted,
         includeFlag: isStaff(callerRoles(req)),
+        flag: typeof req.query.flag === "string" && req.query.flag ? req.query.flag : undefined,
       });
 
       res.status(200).json({ success: true, data: result });

@@ -6,7 +6,7 @@ import { CreatePurchaseDto, CreatePurchaseItemDto } from "../dtos/purchase.dto";
 import { userManagementService } from "./user-management.service";
 import { imageService } from "./image.service";
 import type { Prisma } from "../generated/prisma/client";
-import { role_enum } from "../generated/prisma/client";
+import { role_enum, user_flag_enum } from "../generated/prisma/client";
 import type { CheckoutDto } from "../dtos/cart.dto";
 import { couponService } from "./coupon.service";
 import { validatePaymentForCheckout } from "./checkout-validation.service";
@@ -45,6 +45,7 @@ const PURCHASE_INCLUDE = {
       email: true,
       phone: true,
       role: true,
+      flag: true,
       user_roles: { select: { role: true } },
     },
   },
@@ -236,6 +237,7 @@ export class PurchasesService {
     minTotal?: number;
     maxTotal?: number;
     productId?: number;
+    flag?: string;
     page: number;
     limit: number;
   }) {
@@ -255,6 +257,10 @@ export class PurchasesService {
 
     if (filters.status) {
       where.status = filters.status;
+    }
+
+    if (filters.flag && (Object.values(user_flag_enum) as string[]).includes(filters.flag)) {
+      where.users = { flag: filters.flag as user_flag_enum };
     }
 
     if (filters.startDate || filters.endDate) {

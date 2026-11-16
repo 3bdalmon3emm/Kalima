@@ -1,4 +1,5 @@
 import { useTranslation } from 'react-i18next';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { formatCurrency, formatOrderDate, getStatusColor, formatPhone } from '@/lib/storeUtils';
 import { Badge } from '@/components/ui/badge';
@@ -77,6 +78,14 @@ export default function OrdersTable({
                                 </TableCell>
                                 <TableCell truncate title={order.users?.email || order.users?.name || undefined}>
                                     <div className="font-medium">{order.users?.name || t('common.na', 'N/A')}</div>
+                                    {(order.users?.flag && order.users.flag !== 'NORMAL') || (order.customer_flag && order.customer_flag !== order.users?.flag) ? (
+                                        <div className="mt-1 flex flex-wrap items-center gap-1">
+                                            {order.users?.flag && <AccountLevelBadge level={order.users.flag} />}
+                                            {order.customer_flag && order.customer_flag !== order.users?.flag && (
+                                                <span className="text-[11px] text-muted-foreground">{t('orders.levelAtOrder', 'At ordering')}: <AccountLevelBadge level={order.customer_flag} /></span>
+                                            )}
+                                        </div>
+                                    ) : null}
                                     <div className="text-xs text-muted-foreground">{order.users?.email}</div>
                                     {order.users?.phone && (
                                         <div className="text-xs text-muted-foreground mt-0.5">{formatPhone(order.users.phone)}</div>

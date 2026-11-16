@@ -156,4 +156,9 @@ export class PurchaseFilterDto {
   @IsPositive()
   @Type(() => Number)
   productId?: number;
+
+  // The customer's current account level.
+  @IsOptional()
+  @IsString()
+  flag?: string;
 }

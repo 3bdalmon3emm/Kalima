@@ -16,7 +16,8 @@
   "filters": {
     "allRoles": "جميع الأدوار",
     "role": "الدور",
-    "clearFilters": "مسح الفلاتر"
+    "clearFilters": "مسح الفلاتر",
+    "allLevels": "كل المستويات"
   },
   "table": {
     "user": "المستخدم",
@@ -150,7 +151,9 @@
       "PRO": "احترافي",
       "NORMAL": "عادي",
       "OBSERVER": "مراقب",
-      "Warned": "منذر"
+      "Warned": "منذر",
+      "SUSPICIOUS": "مشبوه",
+      "BANNED": "محظور"
     },
     "noAvailablePortals": "تم تعيين أدوار لهذا المستخدم في جميع البوابات المتاحة.",
     "oneRolePerPortalMessage": "لا يمكن للمستخدم أن يحمل أكثر من دور نشط واحد في نفس البوابة.",

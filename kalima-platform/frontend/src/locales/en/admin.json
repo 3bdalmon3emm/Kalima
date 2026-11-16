@@ -324,7 +324,9 @@
       "reason": "Reason for deleting",
       "reasonPlaceholder": "For example: duplicate order, test order...",
       "reasonHint": "Required. A deleted order is kept for the record but counts nowhere."
-    }
+    },
+    "levelAll": "All levels",
+    "levelAtOrder": "At ordering"
   },
   "products": {
     "title": "Products Management",

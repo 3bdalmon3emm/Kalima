@@ -1117,6 +1117,7 @@ class UserManagementService {
       confirmed?: boolean;
       isDeleted?: boolean;
       includeFlag?: boolean;
+      flag?: string;
     } = {},
   ) {
     const page = Math.max(1, options.page ?? 1);
@@ -1131,6 +1132,11 @@ class UserManagementService {
 
     if (options.confirmed !== undefined) {
       where.confirmed = options.confirmed;
+    }
+
+    // Account level (staff only).
+    if (options.flag && options.includeFlag && (Object.values(user_flag_enum) as string[]).includes(options.flag)) {
+      where.flag = options.flag as user_flag_enum;
     }
 
     // Text search on name, email, phone

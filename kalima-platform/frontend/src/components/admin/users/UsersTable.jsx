@@ -39,6 +39,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
 import { outranks } from '@/lib/roleRank';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
 import { useRole } from '@/hooks/useRole';
 import AppreciationQrButton from './AppreciationQrButton';
 
@@ -210,11 +211,14 @@ export default function UsersTable({
 
                                     {/* Role */}
                                     <TableCell status>
-                                        {primaryRole ? (
-                                            <Badge variant="secondary">{t(`roles.${primaryRole}`, primaryRole)}</Badge>
-                                        ) : (
-                                            <span className="text-muted-foreground text-sm">—</span>
-                                        )}
+                                        <div className="flex flex-wrap items-center gap-1">
+                                            {primaryRole ? (
+                                                <Badge variant="secondary">{t(`roles.${primaryRole}`, primaryRole)}</Badge>
+                                            ) : (
+                                                <span className="text-muted-foreground text-sm">—</span>
+                                            )}
+                                            {user.flag && user.flag !== 'NORMAL' && <AccountLevelBadge level={user.flag} />}
+                                        </div>
                                     </TableCell>
 
                                     {/* Verification status */}

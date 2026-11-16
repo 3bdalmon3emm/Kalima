@@ -16,7 +16,8 @@
   "filters": {
     "allRoles": "All Roles",
     "role": "Role",
-    "clearFilters": "Clear Filters"
+    "clearFilters": "Clear Filters",
+    "allLevels": "All levels"
   },
   "table": {
     "user": "User",
@@ -152,7 +153,9 @@
       "PRO": "Pro",
       "NORMAL": "Normal",
       "OBSERVER": "Observer",
-      "Warned": "Warned"
+      "Warned": "Warned",
+      "SUSPICIOUS": "Suspicious",
+      "BANNED": "Banned"
     },
     "changePasswordTitle": "Change password",
     "changePasswordDescription": "Set a new password for {{name}}. Their active sessions will be signed out.",

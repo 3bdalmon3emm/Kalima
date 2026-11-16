@@ -16,10 +16,11 @@ export const useAdminUsers = () => {
     const fetchUsers = useCallback(async (params = {}) => {
         setLoading(true);
         try {
-            const { page = 1, limit = 20, search, role, portal, confirmed } = params;
+            const { page = 1, limit = 20, search, role, portal, confirmed, flag } = params;
             const query = new URLSearchParams({ page, limit });
             if (search) query.set('search', search);
             if (role) query.set('role', role);
+            if (flag) query.set('flag', flag);
             if (portal) query.set('portal', portal);
             if (confirmed !== undefined) query.set('confirmed', confirmed);
 

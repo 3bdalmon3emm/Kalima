@@ -175,6 +175,12 @@ export const useOrders = (optionsOrId = null) => {
         setPagination((prev) => ({ ...prev, page: 1 }));
     }, []);
 
+    // The customer's current account level.
+    const setFlag = useCallback((flag) => {
+        setFilters((prev) => ({ ...prev, flag: flag === 'all' ? '' : flag }));
+        setPagination((prev) => ({ ...prev, page: 1 }));
+    }, []);
+
     const setDateRange = useCallback((startDate, endDate) => {
         setFilters((prev) => ({ ...prev, startDate, endDate }));
         setPagination((prev) => ({ ...prev, page: 1 }));
@@ -208,6 +214,7 @@ export const useOrders = (optionsOrId = null) => {
         // Setters
         setSearch,
         setStatus,
+        setFlag,
         setDateRange,
         setPage
     };

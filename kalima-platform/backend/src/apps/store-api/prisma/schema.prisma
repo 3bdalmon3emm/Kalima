@@ -590,6 +590,8 @@ model purchases {
   // Who deleted the order and why (required when deleting).
   deleted_by                        Int?
   delete_reason                     String?
+  // The customer's account level when ordering (set by a database trigger).
+  customer_flag                     String?                             @db.VarChar(20)
   purchase_items                    purchase_items[]
   coupon_usages                     coupon_usages[]
   e_booklet_access_code_redemptions e_booklet_access_code_redemptions[]
@@ -1065,6 +1067,8 @@ model e_booklet_hotspot_preset_usages {
 
 model e_booklet_purchases {
   id                    Int                            @id @default(autoincrement())
+  // The teacher's account level when ordering (set by a database trigger).
+  customer_flag         String?                              @db.VarChar(20)
   teacher_id            Int
   template_id           Int
   template_version_id   Int

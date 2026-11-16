@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
 import { ChevronLeft, Package, CheckCircle, RotateCcw, Trash2, ArrowLeft, MessageCircle, ExternalLink, Copy, Truck } from 'lucide-react';
 import { toast } from 'sonner';
 import useOrders from '@/hooks/useOrders';
@@ -432,6 +433,12 @@ export default function OrderDetailPage() {
                         </div>
                         <div className="space-y-1 text-sm overflow-hidden">
                             <div className="font-medium truncate" title={order.users?.name || 'N/A'}>{order.users?.name || 'N/A'}</div>
+                            <div className="mt-1 flex flex-wrap items-center gap-2">
+                                <AccountLevelBadge level={order.users?.flag} />
+                                {order.customer_flag && order.customer_flag !== order.users?.flag && (
+                                    <span className="text-xs text-muted-foreground">{t('orders.levelAtOrder', 'At ordering')}: <AccountLevelBadge level={order.customer_flag} /></span>
+                                )}
+                            </div>
                             <div className="text-muted-foreground truncate" title={order.users?.email}>{order.users?.email}</div>
                             {order.users?.phone && (
                                 <div className="flex items-center gap-3 mt-2">
