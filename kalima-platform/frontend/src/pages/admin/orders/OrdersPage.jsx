@@ -120,7 +120,7 @@ export default function OrdersPage() {
                 </div>
             )}
 
-            <StoreStatsCards />
+            <StoreStatsCards startDate={filters.startDate} endDate={filters.endDate} />
 
             <OrdersToolbar
                 filters={filters}

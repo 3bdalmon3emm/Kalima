@@ -115,12 +115,14 @@
       "pendingPurchases": "Pending Purchases"
     },
     "statsToday": {
-      "totalPurchases": "Total Purchases Today",
+      "totalPurchases": "Total purchases",
       "totalRevenue": "Total Revenue Today",
       "averagePrice": "Average price Today",
-      "confirmedPurchases": "Confirmed Purchases Today",
-      "confirmedRevenue": "Confirmed Revenue Today",
-      "pendingPurchases": "Pending Purchases Today"
+      "confirmedPurchases": "Confirmed purchases",
+      "confirmedRevenue": "Confirmed revenue",
+      "pendingPurchases": "Pending purchases",
+      "ordersValue": "Orders value",
+      "averageConfirmed": "Average confirmed order"
     },
     "status": {
       "label": "Status",
@@ -293,7 +295,14 @@
       "notFound": "Order not found",
       "viewImage": "View Image"
     },
-    "statusDelivered": "Delivered"
+    "statusDelivered": "Delivered",
+    "statsPeriod": {
+      "label": "Period",
+      "today": "Today",
+      "range": "{{from}} – {{to}}",
+      "since": "Since {{from}}",
+      "until": "Until {{to}}"
+    }
   },
   "products": {
     "title": "Products Management",

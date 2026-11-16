@@ -6,13 +6,23 @@ import { formatCurrency } from '@/lib/storeUtils';
 import { ShoppingCart, DollarSign, Activity, CheckCircle, Clock } from 'lucide-react';
 import { Skeleton } from '@/components/ui/skeleton';
 
-export default function StoreStatsCards() {
+// The cards follow the orders table's date filter; with none they show today.
+// Deleted orders never count, and revenue and the average come from confirmed
+// orders only.
+export default function StoreStatsCards({ startDate = null, endDate = null }) {
     const { t, i18n } = useTranslation('admin');
     const { dailyStoreStats, loading, fetchDailyStoreStats } = useAnalytics();
+    const hasRange = !!(startDate || endDate);
 
     useEffect(() => {
-        fetchDailyStoreStats();
-    }, [fetchDailyStoreStats]);
+        fetchDailyStoreStats(startDate, endDate);
+    }, [fetchDailyStoreStats, startDate, endDate]);
+
+    const day = (d) => new Date(d).toLocaleDateString(i18n.language === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+    const period = !hasRange ? t('orders.statsPeriod.today', 'Today')
+        : startDate && endDate ? t('orders.statsPeriod.range', { from: day(startDate), to: day(endDate), defaultValue: '{{from}} – {{to}}' })
+            : startDate ? t('orders.statsPeriod.since', { from: day(startDate), defaultValue: 'Since {{from}}' })
+                : t('orders.statsPeriod.until', { to: day(endDate), defaultValue: 'Until {{to}}' });
 
     if (loading) {
         return (
@@ -42,13 +52,13 @@ export default function StoreStatsCards() {
             color: "text-primary"
         },
         {
-            title: t('orders.statsToday.totalRevenue', 'Total Revenue'),
+            title: t('orders.statsToday.ordersValue', 'Orders value'),
             value: formatCurrency(dailyStoreStats.totalRevenue || 0, t),
             icon: DollarSign,
             color: "text-success"
         },
         {
-            title: t('orders.statsToday.averagePrice', 'Average Price'),
+            title: t('orders.statsToday.averageConfirmed', 'Average confirmed order'),
             value: formatCurrency(dailyStoreStats.averagePrice || 0, t),
             icon: Activity,
             color: "text-chart-2"
@@ -74,7 +84,9 @@ export default function StoreStatsCards() {
     ];
 
     return (
-        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-6 mb-6">
+        <div className="mb-6 space-y-2">
+        <p className="text-sm font-medium text-muted-foreground">{t('orders.statsPeriod.label', 'Period')}: <span className="text-foreground">{period}</span></p>
+        <div className="grid gap-4 grid-cols-2 md:grid-cols-3 xl:grid-cols-6">
             {stats.map((stat, i) => (
                 <Card key={i} className="shadow-sm">
                     <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -90,6 +102,7 @@ export default function StoreStatsCards() {
                     </CardContent>
                 </Card>
             ))}
+        </div>
         </div>
     );
 }

@@ -16,11 +16,13 @@ export const adminDashboardController = {
     try {
       const { startDate, endDate } = req.query;
 
-      const whereClause: any = {};
-      if (startDate && endDate) {
+      // Live orders only (deleted orders never count), in the same date
+      // window the orders table uses; either end may be open.
+      const whereClause: any = { deleted_at: null, is_deleted: { not: true } };
+      if (startDate || endDate) {
         whereClause.created_at = {
-          gte: new Date(startDate as string),
-          lte: new Date(endDate as string),
+          ...(startDate && { gte: new Date(startDate as string) }),
+          ...(endDate && { lte: new Date(endDate as string) }),
         };
       }
 
@@ -29,12 +31,13 @@ export const adminDashboardController = {
           prisma.purchases.aggregate({
             _count: { id: true },
             _sum: { total: true },
-            _avg: { total: true },
             where: whereClause,
           }),
+          // Revenue and the average price come from confirmed orders only.
           prisma.purchases.aggregate({
             _count: { id: true },
             _sum: { total: true },
+            _avg: { total: true },
             where: { ...whereClause, status: "confirmed" },
           }),
           prisma.purchases.count({
@@ -49,7 +52,7 @@ export const adminDashboardController = {
           overview: {
             totalPurchases: aggregates._count.id,
             totalRevenue: aggregates._sum.total || 0,
-            averagePrice: aggregates._avg.total || 0,
+            averagePrice: confirmedAggregates._avg.total || 0,
             confirmedPurchases: confirmedAggregates._count.id,
             confirmedRevenue: confirmedAggregates._sum.total || 0,
             pendingPurchases: pendingCount,

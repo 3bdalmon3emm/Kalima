@@ -115,12 +115,14 @@
       "pendingPurchases": "مشتريات قيد الانتظار"
     },
     "statsToday": {
-      "totalPurchases": "إجمالي المشتريات اليوم",
+      "totalPurchases": "إجمالي المشتريات",
       "totalRevenue": "إجمالي الإيرادات اليوم",
       "averagePrice": "متوسط السعر اليوم",
-      "confirmedPurchases": "المشتريات المؤكدة اليوم",
-      "confirmedRevenue": "الإيرادات المؤكدة اليوم",
-      "pendingPurchases": "مشتريات قيد الانتظار اليوم"
+      "confirmedPurchases": "المشتريات المؤكدة",
+      "confirmedRevenue": "الإيرادات المؤكدة",
+      "pendingPurchases": "مشتريات قيد الانتظار",
+      "ordersValue": "قيمة الطلبات",
+      "averageConfirmed": "متوسط الطلب المؤكد"
     },
     "status": {
       "label": "الحالة",
@@ -293,7 +295,14 @@
       "notFound": "الطلب غير موجود",
       "viewImage": "عرض الصورة"
     },
-    "statusDelivered": "تم التوصيل"
+    "statusDelivered": "تم التوصيل",
+    "statsPeriod": {
+      "label": "الفترة",
+      "today": "اليوم",
+      "range": "من {{from}} إلى {{to}}",
+      "since": "من {{from}}",
+      "until": "حتى {{to}}"
+    }
   },
   "products": {
     "title": "إدارة المنتجات",

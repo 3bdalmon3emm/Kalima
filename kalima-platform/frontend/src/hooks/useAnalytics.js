@@ -43,7 +43,7 @@ export const useAnalytics = () => {
             let finalStartDate = startDate;
             let finalEndDate = endDate;
 
-            if (!startDate || !endDate) {
+            if (!startDate && !endDate) {
                 const cairoDayRange = getCairoDayRange();
                 finalStartDate = cairoDayRange.startDate;
                 finalEndDate = cairoDayRange.endDate;
