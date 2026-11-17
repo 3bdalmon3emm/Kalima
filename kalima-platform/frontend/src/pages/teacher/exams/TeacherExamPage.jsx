@@ -1,0 +1,211 @@
+import { useEffect, useMemo, useState } from 'react';
+import { Link, useParams, useSearchParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
+import { ChevronLeft, Copy, FileSpreadsheet, QrCode, RotateCcw, UserRound } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import LoadingSpinner from '@/components/ui/loading-spinner';
+import { showError } from '@/components/admin/question-bank/BankDialogs';
+import QuestionPreview from '@/components/admin/question-bank/QuestionPreview';
+import LinkQrDialog from '@/components/exams/LinkQrDialog';
+import ReopenDialog from '@/components/exams/ReopenDialog';
+import { formatDate } from '@/components/admin/exams/FolderTeachersPanel';
+import { examLink, formatMark, teacherApi } from '@/components/admin/exams/api';
+import { useExport } from '@/hooks/useExport';
+
+const STATUS_STYLE = {
+    pending: 'border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200',
+    done: 'border-green-400 bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300',
+};
+
+// One exam for its teacher: the link and QR, the students who came through
+// it (open a paper, grade it, reopen for one student), and the exam itself
+// read-only with the right answers.
+export default function TeacherExamPage() {
+    const { id } = useParams();
+    const { t, i18n } = useTranslation('exams');
+    const [params, setParams] = useSearchParams();
+    const tab = params.get('tab') || 'students';
+    const [data, setData] = useState(null);
+    const [qr, setQr] = useState(null);
+    const [reopen, setReopen] = useState(null);
+    const [search, setSearch] = useState('');
+    const { exportData, loading: exporting } = useExport();
+
+    const load = () => teacherApi.get(`/exams/${id}`).then(setData).catch((err) => showError(err, t('errors.load')));
+    useEffect(() => { setData(null); load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    const students = useMemo(() => {
+        const q = search.trim().toLowerCase();
+        if (!data || !q) return data?.students || [];
+        return data.students.filter((s) => [s.student.name, s.student.phone, s.student.serial].some((v) => v && String(v).toLowerCase().includes(q)));
+    }, [data, search]);
+
+    if (!data) return <div className="flex justify-center py-16"><LoadingSpinner /></div>;
+    const { exam } = data;
+    const passages = new Map((exam.passages || []).map((p) => [p.id, p]));
+    const when = (d) => (d ? new Date(d).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '—');
+
+    const exportExcel = () => exportData({
+        resource: 'exam-teacher/results',
+        format: 'xlsx',
+        lang: i18n.language === 'ar' ? 'ar' : 'en',
+        serializedFilters: true,
+        filters: { exam_id: exam.id },
+    });
+
+    let n = 0;
+    return (
+        <div className="mx-auto max-w-5xl space-y-5">
+            <nav className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+                <Link to="/teacher/exams" className="hover:text-foreground">{t('teacher.title')}</Link>
+                <ChevronLeft className="h-4 w-4" />
+                <span className="text-foreground">{exam.name}</span>
+            </nav>
+
+            <div className="space-y-2">
+                <h1 className="text-2xl font-bold">{exam.name}</h1>
+                <div className="flex flex-wrap gap-1.5 text-xs">
+                    <Badge variant="secondary">{t(`types.${exam.type}`)}</Badge>
+                    {exam.serial && <Badge variant="outline" dir="ltr">{exam.serial}</Badge>}
+                    {exam.duration_minutes && <Badge variant="outline">{t('teacher.minutes', { count: exam.duration_minutes })}</Badge>}
+                    <Badge variant="outline">{t('teacher.totalMarks', { total: formatMark(exam.total) })}</Badge>
+                    <Badge variant="outline">{t('teacher.passAt', { percent: exam.pass_percent })}</Badge>
+                </div>
+            </div>
+
+            {data.links.map((l) => (
+                <div key={l.id} className="flex flex-wrap items-center gap-3 rounded-lg border bg-card p-4">
+                    <div className="min-w-0 flex-1 space-y-1">
+                        <code className="block truncate text-sm" dir="ltr">{examLink(l.code)}</code>
+                        <p className="text-xs text-muted-foreground">{formatDate(l.starts_at)} ← {formatDate(l.ends_at)}{l.closed_at && <> · <span className="text-destructive">{t('teachers.states.closed')}</span></>}</p>
+                    </div>
+                    <Button variant="outline" size="sm" onClick={() => { navigator.clipboard.writeText(examLink(l.code)); toast.success(t('testLink.copied')); }}><Copy className="h-4 w-4" />{t('testLink.copy')}</Button>
+                    <Button variant="outline" size="sm" onClick={() => setQr(l)}><QrCode className="h-4 w-4" />QR</Button>
+                </div>
+            ))}
+
+            <Tabs value={tab} onValueChange={(v) => setParams({ tab: v }, { replace: true })}>
+                <TabsList>
+                    <TabsTrigger value="students">{t('teacher.students', { count: data.students.length })}</TabsTrigger>
+                    <TabsTrigger value="preview">{t('teacher.preview')}</TabsTrigger>
+                </TabsList>
+
+                <TabsContent value="students" className="space-y-3 pt-2">
+                    <div className="flex flex-wrap items-center gap-2">
+                        <Input className="max-w-xs" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('teacher.searchStudents')} />
+                        <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting || !data.students.length}>
+                            {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
+                        </Button>
+                    </div>
+                    {!students.length ? (
+                        <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t('results.empty')}</p>
+                    ) : (
+                        <div className="overflow-x-auto rounded-lg border">
+                            <table className="w-full text-sm">
+                                <thead className="bg-muted/50 text-xs text-muted-foreground">
+                                    <tr>
+                                        <th className="p-2 text-start font-medium">{t('results.student')}</th>
+                                        <th className="p-2 text-start font-medium">{t('teacher.level')}</th>
+                                        <th className="p-2 text-start font-medium">{t('teacher.attempts')}</th>
+                                        <th className="p-2 text-start font-medium">{t('teacher.best')}</th>
+                                        <th className="p-2 text-start font-medium">{t('results.status')}</th>
+                                        <th className="p-2" />
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {students.map((s) => {
+                                        const last = s.attempts[s.attempts.length - 1];
+                                        return (
+                                            <tr key={s.student.id} className="border-t align-middle">
+                                                <td className="p-2">
+                                                    <div className="flex items-center gap-2">
+                                                        <div className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
+                                                            {s.student.profile_pic_url ? <img src={s.student.profile_pic_url} alt="" className="h-full w-full object-cover" /> : <UserRound className="h-4 w-4 text-muted-foreground" />}
+                                                        </div>
+                                                        <div className="min-w-0 leading-tight">
+                                                            <p className="truncate font-medium">{s.student.name || '—'}</p>
+                                                            <p className="text-xs text-muted-foreground" dir="ltr">{[s.student.serial && `#${s.student.serial}`, s.student.phone].filter(Boolean).join(' · ')}</p>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="p-2 text-xs">{s.student.level || '—'}</td>
+                                                <td className="p-2">
+                                                    <div className="flex flex-wrap gap-1">
+                                                        {s.attempts.map((a) => (
+                                                            <Link key={a.id} to={`/teacher/exams/attempts/${a.id}`} title={when(a.submitted_at)}
+                                                                className={`rounded border px-1.5 py-0.5 text-xs tabular-nums hover:bg-muted ${STATUS_STYLE[a.status] || ''}`}>
+                                                                {a.attempt_no}: {a.score === null ? t(`results.state.${a.status}`) : `${formatMark(a.score)}/${formatMark(a.total)}`}
+                                                            </Link>
+                                                        ))}
+                                                    </div>
+                                                </td>
+                                                <td className="p-2 tabular-nums">
+                                                    {s.best === null ? '—' : <span className={s.band === 'fail' ? 'font-semibold text-destructive' : 'font-semibold'}>{formatMark(s.best)} / {formatMark(s.total)} <span className="text-xs text-muted-foreground">({s.percent}%)</span></span>}
+                                                </td>
+                                                <td className="p-2"><Badge variant="outline" className={STATUS_STYLE[s.last_status] || ''}>{t(`results.state.${s.last_status}`)}</Badge></td>
+                                                <td className="p-2">
+                                                    <div className="flex justify-end gap-1">
+                                                        <Button size="sm" variant={last.status === 'pending' ? 'default' : 'outline'} asChild>
+                                                            <Link to={`/teacher/exams/attempts/${last.id}`}>{last.status === 'pending' ? t('results.grade') : t('results.open')}</Link>
+                                                        </Button>
+                                                        <Button size="icon" variant="ghost" title={t('reopen.button')} onClick={() => setReopen({ attemptId: last.id, name: s.student.name })}><RotateCcw className="h-4 w-4" /></Button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+                    )}
+                </TabsContent>
+
+                <TabsContent value="preview" className="space-y-4 pt-2">
+                    {exam.mode === 'random' && <p className="rounded-md bg-muted p-3 text-sm text-muted-foreground">{t('teacher.randomHint')}</p>}
+                    {exam.sections.map((section) => (
+                        <div key={section.id} className="space-y-3">
+                            {section.name && <h2 className="text-lg font-semibold">{section.name}</h2>}
+                            {section.questions.map((row, i) => {
+                                const pid = row.question?.passage_id;
+                                const first = pid && section.questions[i - 1]?.question?.passage_id !== pid;
+                                n += 1;
+                                return (
+                                    <div key={row.id ?? row.question_id} className="space-y-2">
+                                        {first && passages.get(pid) && (
+                                            <div className="rounded-lg border-2 border-dashed bg-muted/30 p-4"><QuestionPreview q={passages.get(pid)} /></div>
+                                        )}
+                                        <div className="rounded-lg border bg-card p-4">
+                                            <div className="mb-2 flex items-center justify-between text-sm">
+                                                <span className="font-bold">{t('teacher.questionN', { n })}</span>
+                                                <Badge variant="outline">{t('teacher.marks', { count: row.mark })}</Badge>
+                                            </div>
+                                            {row.question ? <QuestionPreview q={row.question} /> : <p className="text-sm text-muted-foreground">—</p>}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    ))}
+                </TabsContent>
+            </Tabs>
+
+            <LinkQrDialog
+                open={!!qr}
+                onOpenChange={(o) => !o && setQr(null)}
+                code={qr?.code}
+                pngPath={qr && teacherApi.url(`/links/${qr.id}/qr.png`)}
+                fileName={exam.name}
+            />
+            <ReopenDialog
+                open={!!reopen}
+                onOpenChange={(o) => !o && setReopen(null)}
+                studentName={reopen?.name}
+                send={async (body) => { await teacherApi.send('post', `/attempts/${reopen.attemptId}/reopen`, body); load(); }}
+            />
+        </div>
+    );
+}

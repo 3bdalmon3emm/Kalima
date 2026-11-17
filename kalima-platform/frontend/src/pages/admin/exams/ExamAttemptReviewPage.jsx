@@ -2,22 +2,26 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ChevronLeft, Copy, LogOut, Minimize, Save, UserRound } from 'lucide-react';
+import { ChevronLeft, Copy, LogOut, Minimize, RotateCcw, Save, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
-import { exGet, exSend, formatMark } from '@/components/admin/exams/api';
+import { adminApi, formatMark, teacherApi } from '@/components/admin/exams/api';
+import ReopenDialog from '@/components/exams/ReopenDialog';
 import { passageNumbers } from '@/components/exams/api';
 import { ReviewItem } from '@/pages/exams/ExamResultPage';
 
 // One attempt for the grader: the student's answers next to the right ones,
-// and a mark box (in halves) under every essay.
-export default function ExamAttemptReviewPage() {
+// and a mark box (in halves) under every essay. The teacher (or assistant)
+// sees the same page for the students of their own links.
+export default function ExamAttemptReviewPage({ teacher = false }) {
     const { id } = useParams();
     const { t } = useTranslation('exams');
+    const api = teacher ? teacherApi : adminApi;
     const [data, setData] = useState(null);
+    const [reopen, setReopen] = useState(false);
     const [marks, setMarks] = useState({});
     const [saving, setSaving] = useState(false);
 
@@ -25,7 +29,7 @@ export default function ExamAttemptReviewPage() {
         setData(d);
         setMarks(Object.fromEntries(d.review.filter((r) => r.question?.type === 'essay').map((r) => [r.question_id, r.earned === null ? '' : String(r.earned)])));
     };
-    useEffect(() => { exGet(`/attempts/${id}`).then(take).catch((err) => showError(err, t('errors.load'))); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
+    useEffect(() => { api.get(`/attempts/${id}`).then(take).catch((err) => showError(err, t('errors.load'))); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
 
     const passages = useMemo(() => new Map((data?.passages || []).map((p) => [p.id, p])), [data]);
     const passageInfo = useMemo(() => {
@@ -49,7 +53,7 @@ export default function ExamAttemptReviewPage() {
         if (essays.some(invalid)) { toast.error(t('grading.invalid')); return; }
         setSaving(true);
         try {
-            const res = await exSend('put', `/attempts/${id}/grades`, { grades: changed.map((r) => ({ question_id: r.question_id, mark: Number(marks[r.question_id]) })) });
+            const res = await api.send('put', `/attempts/${id}/grades`, { grades: changed.map((r) => ({ question_id: r.question_id, mark: Number(marks[r.question_id]) })) });
             take(res.data);
             toast.success(res.data.status === 'done' ? t('grading.done') : t('grading.saved'));
         } catch (err) {
@@ -86,9 +90,9 @@ export default function ExamAttemptReviewPage() {
     return (
         <div className="space-y-5 pb-24">
             <nav className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-                <Link to="/admin/exams" className="hover:text-foreground">{t('title')}</Link>
+                <Link to={teacher ? '/teacher/exams' : '/admin/exams'} className="hover:text-foreground">{teacher ? t('teacher.title') : t('title')}</Link>
                 <ChevronLeft className="h-4 w-4" />
-                <Link to={`/admin/exams/${data.exam.id}?tab=results`} className="hover:text-foreground">{data.exam.name}</Link>
+                <Link to={teacher ? `/teacher/exams/${data.exam.id}` : `/admin/exams/${data.exam.id}?tab=results`} className="hover:text-foreground">{data.exam.name}</Link>
             </nav>
 
             <div className="flex flex-wrap items-center gap-4 rounded-xl border bg-card p-4">
@@ -109,6 +113,7 @@ export default function ExamAttemptReviewPage() {
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground" title={t('results.tabLeaves')}><LogOut className="h-3.5 w-3.5" />{data.tab_leaves}</span>
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground" title={t('results.fullscreenExits')}><Minimize className="h-3.5 w-3.5" />{data.fullscreen_exits}</span>
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground" title={t('results.copyAttempts')}><Copy className="h-3.5 w-3.5" />{data.copy_attempts}</span>
+                    <Button size="sm" variant="outline" onClick={() => setReopen(true)}><RotateCcw className="h-4 w-4" />{t('reopen.button')}</Button>
                 </div>
             </div>
 
@@ -132,6 +137,8 @@ export default function ExamAttemptReviewPage() {
                     );
                 })}
             </div>
+
+            <ReopenDialog open={reopen} onOpenChange={setReopen} studentName={data.student?.name} send={(body) => api.send('post', `/attempts/${id}/reopen`, body)} />
 
             {essays.length > 0 && data.status !== 'in_progress' && (
                 <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 backdrop-blur">

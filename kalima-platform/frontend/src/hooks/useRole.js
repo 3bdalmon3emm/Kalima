@@ -37,6 +37,7 @@ export function useRole() {
     const isAdmin = storeRoles.includes("Admin");
     const isSubAdmin = storeRoles.includes("SubAdmin");
     const isTeacher = storeRoles.includes("Teacher");
+    const isAssistant = storeRoles.includes("Assistant");
     const isStudent = storeRoles.includes("Student") || academyRoles.includes("Student");
     const isParent = storeRoles.includes("Parent") || academyRoles.includes("Parent");
     const hasAdminAccess = isAdmin || isSubAdmin;
@@ -54,6 +55,7 @@ export function useRole() {
         isAdmin,
         isSubAdmin,
         isTeacher,
+        isAssistant,
         isStudent,
         isParent,
         hasAdminAccess,

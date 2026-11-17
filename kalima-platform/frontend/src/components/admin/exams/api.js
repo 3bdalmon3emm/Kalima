@@ -14,10 +14,20 @@ export async function exSend(method, path, body) {
     return res.data;
 }
 
+// The same helpers for the teacher's side (/api/v2/exam-teacher).
+export const teacherApi = {
+    url: (path) => `/exam-teacher${path}`,
+    get: async (path, params) => (await axios.get(`/exam-teacher${path}`, { params })).data.data,
+    send: async (method, path, body) => (await axios({ method, url: `/exam-teacher${path}`, data: body })).data,
+};
+export const adminApi = { url: ex, get: exGet, send: exSend };
+
 export const DIFFICULTIES = ['easy', 'medium', 'hard', 'very_hard'];
 
-// The link students open; the code is the last part.
-export const examLink = (code) => `${window.location.origin}/e/${code}`;
+// The public address students open (printed QR codes point here), never
+// the address this page happens to run on.
+export const PUBLIC_APP_URL = (import.meta.env.VITE_PUBLIC_APP_URL || 'https://kalima-edu.com').replace(/\/+$/, '');
+export const examLink = (code) => `${PUBLIC_APP_URL}/e/${code}`;
 
 // "2026-11-11T20:30" for <input type="datetime-local"> in local time.
 export function toLocalInput(value) {

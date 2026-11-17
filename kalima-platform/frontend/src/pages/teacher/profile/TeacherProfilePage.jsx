@@ -8,6 +8,7 @@ import SocialMedia from '@/components/teacher/profile/SocialMedia';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import TeacherProfileForm from '@/components/teacher/profile/TeacherProfileForm';
 import TeacherAvatarCard from '@/components/teacher/profile/TeacherAvatarCard';
+import TeacherCoverCard from '@/components/teacher/profile/TeacherCoverCard';
 
 export default function TeacherProfilePage() {
     const { t } = useTranslation('teacher');
@@ -66,6 +67,8 @@ export default function TeacherProfilePage() {
                 uploadAvatar={uploadAvatar}
                 fetchProfile={fetchProfile}
             />
+
+            <TeacherCoverCard profile={profile} onChanged={fetchProfile} />
 
             {/* Read-only Profile Details */}
             {formReady && (

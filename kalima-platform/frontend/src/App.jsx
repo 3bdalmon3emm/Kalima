@@ -136,6 +136,8 @@ const TeacherSettingsPage = lazy(() => import("./pages/teacher/settings/TeacherS
 const TeacherEBookletsPage = lazy(() => import("./pages/teacher/e-booklets/TeacherEBookletsPage"));
 const TeacherInviteManagementPage = lazy(() => import("./pages/teacher/e-booklets/TeacherInviteManagementPage"));
 const TeacherEBookletAnalyticsPage = lazy(() => import("./pages/teacher/e-booklets/TeacherEBookletAnalyticsPage"));
+const TeacherExamsPage = lazy(() => import("./pages/teacher/exams/TeacherExamsPage"));
+const TeacherExamPage = lazy(() => import("./pages/teacher/exams/TeacherExamPage"));
 const EBookletViewerPage = lazy(() => import("./pages/e-booklets/EBookletViewerPage"));
 
 // Student lazy-loaded pages
@@ -346,6 +348,15 @@ const router = createBrowserRouter(
           <Route path="/teacher/orders" element={<MyOrdersPage />} />
           <Route path="/teacher/e-booklets/:instanceId" element={<EBookletViewerPage />} />
           <Route path="/teacher/e-booklets/:instanceId/invites" element={<TeacherInviteManagementPage />} />
+        </Route>
+      </Route>
+
+      {/* Exams of a teacher's links; an assistant sees their teachers' */}
+      <Route element={<RoleRoute requiredRole={["Teacher", "Assistant"]} />}>
+        <Route element={<TeacherLayout />}>
+          <Route path="/teacher/exams" element={<TeacherExamsPage />} />
+          <Route path="/teacher/exams/:id" element={<TeacherExamPage />} />
+          <Route path="/teacher/exams/attempts/:id" element={<ExamAttemptReviewPage teacher />} />
         </Route>
       </Route>
 

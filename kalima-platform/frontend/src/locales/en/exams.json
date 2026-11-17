@@ -7,7 +7,8 @@
     "questions": "Questions",
     "settings": "Settings",
     "testLink": "Test link",
-    "results": "Results"
+    "results": "Results",
+    "teachers": "Teachers & links"
   },
   "common": {
     "create": "Create",
@@ -172,7 +173,7 @@
     "add_other": "Add {{count}} questions"
   },
   "testLink": {
-    "intro": "A link for the admin to try the exam as a student, with start and end dates. Teacher links come in the next phase.",
+    "intro": "An admin test link to try the exam as a student, with a start and end date. Teacher links are in the \"Teachers & links\" tab.",
     "publishFirst": "The exam isn't published, so the link won't open until you publish it.",
     "starts": "Start date",
     "ends": "End date",
@@ -361,7 +362,11 @@
     "fullscreenExits": "Times full screen was left",
     "copyAttempts": "Copy and paste attempts",
     "grade": "Grade",
-    "open": "View"
+    "open": "View",
+    "teacher": "Teacher",
+    "allTeachers": "All teachers",
+    "adminLink": "Admin test link",
+    "export": "Export Excel"
   },
   "grading": {
     "mark": "Mark",
@@ -377,5 +382,101 @@
     "yourChoice": "Student's choice",
     "yourPair": "Student's match",
     "yourAnswer": "Student's answer"
+  },
+  "teachers": {
+    "add": "Add teacher",
+    "addOnExam": "Add a teacher on this exam only",
+    "search": "Search by name, email or phone",
+    "noResults": "No teachers",
+    "starts": "Links start",
+    "ends": "Links end",
+    "datesHint": "These dates apply to all of this teacher's links here; one link can be changed on its own later.",
+    "folderTitle": "Folder teachers",
+    "folderHint": "Each teacher here has a permanent link on every exam in this folder, now and later.",
+    "none": "No teachers yet.",
+    "zip": "All QR codes (ZIP)",
+    "zipEmpty": "This teacher has no exams in this folder",
+    "downloadQr": "Download QR",
+    "editDates": "Edit dates",
+    "remove": "Remove",
+    "removeConfirm": "Remove {{name}}? Their links close; results are kept.",
+    "removed": "Teacher removed",
+    "added": "Teacher added",
+    "saved": "Saved",
+    "examHint": "Teachers who have this exam (added on it or on a folder above it), each with their own link.",
+    "notPublishedHint": "The exam is not published, so links will not open for students until you publish it.",
+    "sourceExam": "Added on this exam",
+    "sourceFolder": "From folder",
+    "customDates": "Custom dates",
+    "linkDates": "This link's dates",
+    "resetDates": "Back to folder dates",
+    "open": "Open link",
+    "opened": "Link opened",
+    "close": "Close link",
+    "closed": "Link closed",
+    "states": {
+      "open": "Open",
+      "not_started": "Not started",
+      "ended": "Ended",
+      "closed": "Closed",
+      "not_published": "Not published",
+      "archived": "Archived",
+      "missing": "No link"
+    }
+  },
+  "reopen": {
+    "button": "Reopen for student",
+    "title": "Reopen the exam for {{name}}",
+    "attempts": "Extra attempts",
+    "minutes": "Extra minutes",
+    "endsAt": "Last date for this student (optional)",
+    "hint": "Minutes go to the running attempt if there is one, otherwise to the next attempt.",
+    "submit": "Reopen",
+    "done": "Reopened for this student"
+  },
+  "teacher": {
+    "title": "My exams",
+    "subtitle": "Exams the admin gave you, each with your own link and QR.",
+    "empty": "No exams have been added for you yet.",
+    "attemptsCount_zero": "No attempts",
+    "attemptsCount_one": "1 attempt",
+    "attemptsCount_other": "{{count}} attempts",
+    "pendingCount_one": "1 to grade",
+    "pendingCount_other": "{{count}} to grade",
+    "minutes_one": "1 minute",
+    "minutes_other": "{{count}} minutes",
+    "totalMarks": "Total {{total}}",
+    "passAt": "Pass at {{percent}}%",
+    "students_zero": "Students",
+    "students_one": "Students (1)",
+    "students_other": "Students ({{count}})",
+    "preview": "Exam with answers",
+    "searchStudents": "Search by name, phone or serial",
+    "level": "Level",
+    "attempts": "Attempts",
+    "best": "Best score",
+    "randomHint": "A random exam: each student draws questions by the same rules; this is a sample.",
+    "questionN": "Question {{n}}",
+    "marks_one": "1 mark",
+    "marks_other": "{{count}} marks"
+  },
+  "assistant": {
+    "title": "Teachers they assist",
+    "hint": "The assistant sees these teachers' exams, students and results exactly as they do.",
+    "none": "Not linked to any teacher.",
+    "search": "Search for a teacher to link",
+    "link": "Link",
+    "linked": "Teacher linked",
+    "unlink": "Unlink",
+    "unlinked": "Unlinked"
+  },
+  "cover": {
+    "title": "Cover photo",
+    "hint": "Students see it at the top of the exam start page, with your photo and name.",
+    "upload": "Upload cover",
+    "change": "Change photo",
+    "remove": "Remove",
+    "saved": "Cover photo saved",
+    "removed": "Cover photo removed"
   }
 }

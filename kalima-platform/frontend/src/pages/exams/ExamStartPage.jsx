@@ -1,13 +1,14 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, Clock, FileQuestion, Hourglass, Maximize, Trophy, UserRound } from 'lucide-react';
+import { AlertTriangle, Clock, FileQuestion, Hourglass, Maximize, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { translateBackendMessage } from '@/lib/utils';
 import { examGet, examSend, requestFullscreen, setAttemptToken } from '@/components/exams/api';
 import { formatMark } from '@/components/admin/exams/api';
+import ExamCover from '@/components/exams/ExamCover';
 
 // The start page of an exam link: who gives it, what it is, the student's
 // past attempts, and the button to start, resume or redo.
@@ -50,19 +51,9 @@ export default function ExamStartPage() {
     return (
         <div className="min-h-screen bg-muted/30" dir={i18n.dir()}>
             <div className="mx-auto max-w-3xl pb-12">
-                <div className="relative">
-                    <div className="h-40 sm:h-56 bg-gradient-to-l from-primary/80 via-primary/60 to-primary/30 sm:rounded-b-2xl" />
-                    <div className="absolute -bottom-12 start-6 flex items-end gap-4">
-                        <div className="h-24 w-24 rounded-full border-4 border-background bg-muted overflow-hidden flex items-center justify-center shadow">
-                            {teacher?.profile_pic_url
-                                ? <img src={teacher.profile_pic_url} alt="" className="h-full w-full object-cover" />
-                                : <UserRound className="h-12 w-12 text-muted-foreground" />}
-                        </div>
-                        <p className="mb-2 font-semibold text-lg">{teacher?.name || t('start.testLink')}</p>
-                    </div>
-                </div>
+                <ExamCover teacher={teacher} />
 
-                <div className="mt-16 px-4 sm:px-6 space-y-6">
+                <div className="mt-4 px-4 sm:px-6 space-y-6">
                     <div className="space-y-2">
                         <div className="flex flex-wrap items-center gap-2">
                             <h1 className="text-2xl font-bold">{exam.name}</h1>

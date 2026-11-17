@@ -19,6 +19,7 @@ import { showError } from '@/components/admin/question-bank/BankDialogs';
 import BankPicker from '@/components/admin/exams/BankPicker';
 import RulesEditor from '@/components/admin/exams/RulesEditor';
 import ResultsTab from '@/components/admin/exams/ResultsTab';
+import ExamTeachersTab from '@/components/admin/exams/ExamTeachersTab';
 import { examLink, exGet, exSend, formatMark, toLocalInput } from '@/components/admin/exams/api';
 
 const SETTING_FIELDS = ['name', 'description', 'serial', 'subject_id', 'type', 'target_total', 'duration_minutes', 'pass_percent', 'redo_percent', 'max_redos', 'redo_required', 'redo_new_questions', 'shuffle', 'show_answers'];
@@ -466,11 +467,13 @@ export default function ExamEditorPage() {
                     <TabsTrigger value="settings">{t('tabs.settings')}</TabsTrigger>
                     <TabsTrigger value="questions">{t('tabs.questions')}</TabsTrigger>
                     <TabsTrigger value="test">{t('tabs.testLink')}</TabsTrigger>
+                    <TabsTrigger value="teachers">{t('tabs.teachers')}</TabsTrigger>
                     <TabsTrigger value="results">{t('tabs.results')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="questions" className="pt-2"><QuestionsTab exam={exam} passages={exam.passages} reload={load} /></TabsContent>
                 <TabsContent value="settings" className="pt-2"><SettingsTab exam={exam} onSaved={load} /></TabsContent>
                 <TabsContent value="test" className="pt-2"><TestLinkTab exam={exam} reload={load} /></TabsContent>
+                <TabsContent value="teachers" className="pt-2">{tab === 'teachers' && <ExamTeachersTab exam={exam} />}</TabsContent>
                 <TabsContent value="results" className="pt-2">{tab === 'results' && <ResultsTab exam={exam} />}</TabsContent>
             </Tabs>
         </div>

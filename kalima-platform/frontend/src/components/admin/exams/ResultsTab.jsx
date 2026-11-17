@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Copy, LogOut, Minimize, UserRound } from 'lucide-react';
+import { Copy, FileSpreadsheet, LogOut, Minimize, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useExport } from '@/hooks/useExport';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { exGet, formatMark } from './api';
 
@@ -25,21 +27,52 @@ function Counter({ icon: Icon, value, title }) {
 export default function ResultsTab({ exam }) {
     const { t, i18n } = useTranslation('exams');
     const [filter, setFilter] = useState('all');
+    const [teacher, setTeacher] = useState('all');
+    const [teachers, setTeachers] = useState([]);
     const [data, setData] = useState(null);
+    const { exportData, loading: exporting } = useExport();
+    const key = `${filter}|${teacher}`;
+
+    useEffect(() => {
+        exGet(`/exams/${exam.id}/teachers`).then((rows) => setTeachers(rows.map((r) => r.teacher))).catch(() => {});
+    }, [exam.id]);
 
     useEffect(() => {
         let cancelled = false;
-        exGet(`/exams/${exam.id}/attempts`, filter === 'all' ? {} : { status: filter })
-            .then((d) => !cancelled && setData({ ...d, filter }))
-            .catch((err) => { if (!cancelled) { setData({ attempts: [], counts: {}, filter }); showError(err, t('errors.load')); } });
+        const params = { ...(filter !== 'all' && { status: filter }), ...(teacher !== 'all' && { teacher_ids: teacher }) };
+        exGet(`/exams/${exam.id}/attempts`, params)
+            .then((d) => !cancelled && setData({ ...d, key }))
+            .catch((err) => { if (!cancelled) { setData({ attempts: [], counts: {}, key }); showError(err, t('errors.load')); } });
         return () => { cancelled = true; };
-    }, [exam.id, filter]); // eslint-disable-line react-hooks/exhaustive-deps
+    }, [exam.id, key]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    // The sheet follows what is on screen: the same status and teacher.
+    const exportExcel = () => exportData({
+        resource: 'exam-admin/results',
+        format: 'xlsx',
+        lang: i18n.language === 'ar' ? 'ar' : 'en',
+        serializedFilters: true,
+        filters: { exam_id: exam.id, ...(filter !== 'all' && { status: filter }), ...(teacher !== 'all' && { teacher_ids: teacher }) },
+    });
 
     const when = (d) => (d ? new Date(d).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '—');
     const total = Object.values(data?.counts || {}).reduce((s, n) => s + n, 0);
 
     return (
         <div className="space-y-3">
+            <div className="flex flex-wrap items-center gap-2">
+                <Select value={teacher} onValueChange={setTeacher}>
+                    <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="all">{t('results.allTeachers')}</SelectItem>
+                        <SelectItem value="0">{t('results.adminLink')}</SelectItem>
+                        {teachers.map((u) => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
+                    </SelectContent>
+                </Select>
+                <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting}>
+                    {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
+                </Button>
+            </div>
             <div className="flex flex-wrap gap-2">
                 {FILTERS.map((f) => (
                     <Button key={f} size="sm" variant={filter === f ? 'default' : 'outline'} onClick={() => setFilter(f)}>
@@ -49,7 +82,7 @@ export default function ResultsTab({ exam }) {
                 ))}
             </div>
 
-            {data?.filter !== filter ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !data.attempts.length ? (
+            {data?.key !== key ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !data.attempts.length ? (
                 <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t('results.empty')}</p>
             ) : (
                 <div className="overflow-x-auto rounded-lg border">
@@ -57,6 +90,7 @@ export default function ResultsTab({ exam }) {
                         <thead className="bg-muted/50 text-xs text-muted-foreground">
                             <tr>
                                 <th className="p-2 text-start font-medium">{t('results.student')}</th>
+                                <th className="p-2 text-start font-medium">{t('results.teacher')}</th>
                                 <th className="p-2 text-start font-medium">{t('results.attempt')}</th>
                                 <th className="p-2 text-start font-medium">{t('results.status')}</th>
                                 <th className="p-2 text-start font-medium">{t('results.score')}</th>
@@ -79,6 +113,7 @@ export default function ResultsTab({ exam }) {
                                             </div>
                                         </div>
                                     </td>
+                                    <td className="p-2 text-xs">{a.link?.teacher || <span className="text-muted-foreground">{t('results.adminLink')}</span>}</td>
                                     <td className="p-2 tabular-nums">{a.attempt_no}</td>
                                     <td className="p-2">
                                         <Badge variant="outline" className={a.status === 'pending' ? 'border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : a.status === 'done' ? 'border-green-400 bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300' : ''}>

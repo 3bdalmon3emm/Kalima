@@ -23,7 +23,7 @@ export default function Navbar() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const { isAuthenticated, logout } = useAuth();
-  const { hasAdminAccess, isTeacher, isStudent, isParent, hasStoreAccess, isConfirmed } = useRole();
+  const { hasAdminAccess, isTeacher, isAssistant, isStudent, isParent, hasStoreAccess, isConfirmed } = useRole();
   // Cart is only relevant for regular store users
   const { cart, loading } = useCart();
   const navigate = useNavigate();
@@ -286,17 +286,22 @@ export default function Navbar() {
                         <Link to="/teacher/profile">{t("navbar.teacherPortal")}</Link>
                       </Button>
                     )}
-                    {!hasAdminAccess && !isTeacher && isStudent && (
+                    {!hasAdminAccess && !isTeacher && isAssistant && (
+                      <Button variant="default" size="sm" className="font-bold whitespace-nowrap" asChild>
+                        <Link to="/teacher/exams">{t("navbar.teacherPortal")}</Link>
+                      </Button>
+                    )}
+                    {!hasAdminAccess && !isTeacher && !isAssistant && isStudent && (
                       <Button variant="default" size="sm" className="font-bold whitespace-nowrap" asChild>
                         <Link to="/student/profile">{t("navbar.studentPortal")}</Link>
                       </Button>
                     )}
-                    {!hasAdminAccess && !isTeacher && !isStudent && isParent && (
+                    {!hasAdminAccess && !isTeacher && !isAssistant && !isStudent && isParent && (
                       <Button variant="default" size="sm" className="font-bold whitespace-nowrap" asChild>
                         <Link to="/parent/profile">{t("navbar.parentPortal")}</Link>
                       </Button>
                     )}
-                    {!hasAdminAccess && !isTeacher && !isStudent && !isParent && (
+                    {!hasAdminAccess && !isTeacher && !isAssistant && !isStudent && !isParent && (
                       <Button variant="ghost" size="sm" className="font-bold whitespace-nowrap" asChild>
                         <Link to="/orders">{t("navbar.myOrders")}</Link>
                       </Button>
@@ -495,6 +500,7 @@ export default function Navbar() {
                   to={
                     hasAdminAccess ? "/admin" :
                       isTeacher ? "/teacher/profile" :
+                        isAssistant ? "/teacher/exams" :
                         isStudent ? "/student/profile" :
                           isParent ? "/parent/profile" : "/orders"
                   }
