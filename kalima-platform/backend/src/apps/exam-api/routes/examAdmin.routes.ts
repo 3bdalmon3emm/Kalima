@@ -10,6 +10,7 @@ import { soundsService } from "../services/sounds.service";
 import { reopenForStudent, resultsService } from "../services/results.service";
 import { appealsService, type Decision } from "../services/appeals.service";
 import { attemptsService } from "../services/attempts.service";
+import { regradeService } from "../services/regrade.service";
 import { teacherLinksService } from "../services/teacherLinks.service";
 import { qrPng, uniqueFileNames, examUrl } from "../services/examLinkUrl";
 import { makeZip } from "../../../libs/zip";
@@ -129,6 +130,16 @@ router.post("/exams/:id/unpublish", handle(async (req, res) => {
 
 router.post("/exams/:id/draw", handle(async (req, res) => {
   res.json(ok(await examsService.draw(idParam(req)), "Questions drawn"));
+}));
+
+// Cancelling a question: everyone who has it gets its full mark; restoring
+// gives back the marks the answers had.
+router.post("/exams/:id/questions/:questionId/cancel", handle(async (req, res) => {
+  res.json(ok(await regradeService.cancel(idParam(req), Number(req.params.questionId), userId(req)), "Question cancelled"));
+}));
+
+router.delete("/exams/:id/questions/:questionId/cancel", handle(async (req, res) => {
+  res.json(ok(await regradeService.restore(idParam(req), Number(req.params.questionId)), "Question restored"));
 }));
 
 // The exam as a student sees it, with the right and model answers.

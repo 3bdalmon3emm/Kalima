@@ -2,6 +2,8 @@ import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { attemptsService, bandFor } from "./attempts.service";
+import { rescore } from "./scoring";
+import { examNotify } from "./examNotify";
 
 // The results side of an exam: every attempt with its score and how often
 // the student left the page, full screen or tried to copy, and grading the
@@ -131,21 +133,10 @@ class ResultsService {
       update: { mark: g.mark, graded_by: graderId, graded_at: now },
     })));
 
-    await rescore(id, this.db);
+    const { before, after } = await rescore(id, this.db);
+    if (before.status === "pending" && after.status === "done") examNotify.resultReady(id, true);
     return this.detail(id);
   }
-}
-
-// The attempt's score from its answers' marks; done once no answer waits
-// for a mark.
-export async function rescore(attemptId: number, db: PrismaClient = prisma) {
-  const attempt = await db.ex_attempts.findUniqueOrThrow({ where: { id: attemptId }, select: { questions: true } });
-  const list = attempt.questions as unknown as AttemptQuestion[];
-  const answers = await db.ex_attempt_answers.findMany({ where: { attempt_id: attemptId }, select: { question_id: true, mark: true } });
-  const markById = new Map(answers.map((a) => [a.question_id, a.mark]));
-  const waiting = list.some((q) => markById.get(q.question_id) === null || markById.get(q.question_id) === undefined);
-  const score = round2(list.reduce((s, q) => s + num(markById.get(q.question_id)), 0));
-  await db.ex_attempts.update({ where: { id: attemptId }, data: { score, status: waiting ? "pending" : "done" } });
 }
 
 // ---------- Reopening for one student ----------

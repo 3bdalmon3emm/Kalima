@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AlertTriangle, Archive, ChevronLeft, Dices, Plus, Save, Trash2, Undo2, Upload } from 'lucide-react';
+import { AlertTriangle, Archive, Ban, ChevronLeft, Dices, Plus, RotateCcw, Save, Trash2, Undo2, Upload } from 'lucide-react';
 import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -127,8 +127,10 @@ function SettingsTab({ exam, onSaved }) {
     );
 }
 
-// A question row: serial, type, a short look at the text and its mark.
-function QuestionRow({ row, handle, manual, onMark, onRemove }) {
+// A question row: serial, type, a short look at the text and its mark. Once
+// students took the exam, a question can be cancelled (everyone gets its
+// mark) and restored.
+function QuestionRow({ row, handle, manual, onMark, onRemove, cancelled, onCancel }) {
     const { t } = useTranslation('exams');
     const tq = useTranslation('questionBank').t;
     const [mark, setMark] = useState(String(row.mark));
@@ -145,6 +147,7 @@ function QuestionRow({ row, handle, manual, onMark, onRemove }) {
                         <Badge variant="secondary">{tq(`types.${q.type}`)}</Badge>
                         {q.difficulty && <Badge variant="outline">{tq(`difficulty.${q.difficulty}`)}</Badge>}
                         {q.archived_at && <Badge variant="destructive">{t('common.archived')}</Badge>}
+                        {cancelled && <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200">{t('cancel.badge')}</Badge>}
                     </div>
                 )}
             </div>
@@ -160,6 +163,11 @@ function QuestionRow({ row, handle, manual, onMark, onRemove }) {
                     onBlur={() => Number(mark) !== row.mark && onMark(Number(mark))}
                 />
                 <span className="text-xs text-muted-foreground">{t('questions.marks')}</span>
+                {onCancel && (
+                    <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onCancel} title={cancelled ? t('cancel.restore') : t('cancel.button')}>
+                        {cancelled ? <RotateCcw className="h-4 w-4" /> : <Ban className="h-4 w-4 text-orange-600" />}
+                    </Button>
+                )}
                 {manual && <Button variant="ghost" size="icon" className="h-8 w-8" onClick={onRemove} title={t('questions.remove')}><Trash2 className="h-4 w-4 text-destructive" /></Button>}
             </div>
         </div>
@@ -213,6 +221,18 @@ function QuestionsTab({ exam, passages, reload }) {
     };
 
     const sectionName = (s, i) => s.name || (exam.sections.length > 1 ? t('sections.unnamed', { n: i + 1 }) : null);
+
+    // Cancelling re-grades every attempt that has the question.
+    const cancelledIds = new Set(exam.cancelled_question_ids || []);
+    const cancelProps = (row) => (exam.attempt_count > 0 ? {
+        cancelled: cancelledIds.has(row.question_id),
+        onCancel: async () => {
+            const undo = cancelledIds.has(row.question_id);
+            if (!window.confirm(t(undo ? 'cancel.restoreConfirm' : 'cancel.confirm'))) return;
+            const res = await act(() => exSend(undo ? 'delete' : 'post', `/exams/${exam.id}/questions/${row.question_id}/cancel`));
+            if (res) toast.success(t(undo ? 'cancel.restored' : 'cancel.done', { count: res.data.attempts }));
+        },
+    } : {});
 
     return (
         <div className="space-y-4">
@@ -316,13 +336,13 @@ function QuestionsTab({ exam, passages, reload }) {
                                             </div>
                                         </div>
                                         {block.rows.map((row) => (
-                                            <QuestionRow key={row.id} row={row} manual={manual}
+                                            <QuestionRow key={row.id} row={row} manual={manual} {...cancelProps(row)}
                                                 onMark={(m) => act(() => exSend('patch', `/exam-questions/${row.id}`, { mark: m }))}
                                                 onRemove={() => act(() => exSend('post', `/exams/${exam.id}/questions/remove`, { ids: [row.id] }))} />
                                         ))}
                                     </div>
                                 ) : (
-                                    <QuestionRow row={block.rows[0]} handle={handle} manual={manual}
+                                    <QuestionRow row={block.rows[0]} handle={handle} manual={manual} {...cancelProps(block.rows[0])}
                                         onMark={(m) => act(() => exSend('patch', `/exam-questions/${block.rows[0].id}`, { mark: m }))}
                                         onRemove={() => act(() => exSend('post', `/exams/${exam.id}/questions/remove`, { ids: [block.rows[0].id] }))} />
                                 )

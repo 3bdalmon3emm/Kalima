@@ -508,6 +508,11 @@ export type ex_attempt_answers = Prisma.ex_attempt_answersModel
  */
 export type ex_answer_files = Prisma.ex_answer_filesModel
 /**
+ * Model ex_cancelled_questions
+ * 
+ */
+export type ex_cancelled_questions = Prisma.ex_cancelled_questionsModel
+/**
  * Model ex_appeals
  * 
  */

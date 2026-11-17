@@ -149,6 +149,7 @@ export const ModelName = {
   ex_attempts: 'ex_attempts',
   ex_attempt_answers: 'ex_attempt_answers',
   ex_answer_files: 'ex_answer_files',
+  ex_cancelled_questions: 'ex_cancelled_questions',
   ex_appeals: 'ex_appeals',
   ex_celebration_sounds: 'ex_celebration_sounds',
   ex_teacher_assignments: 'ex_teacher_assignments',
@@ -1714,6 +1715,16 @@ export const Ex_answer_filesScalarFieldEnum = {
 } as const
 
 export type Ex_answer_filesScalarFieldEnum = (typeof Ex_answer_filesScalarFieldEnum)[keyof typeof Ex_answer_filesScalarFieldEnum]
+
+
+export const Ex_cancelled_questionsScalarFieldEnum = {
+  exam_id: 'exam_id',
+  question_id: 'question_id',
+  cancelled_by: 'cancelled_by',
+  created_at: 'created_at'
+} as const
+
+export type Ex_cancelled_questionsScalarFieldEnum = (typeof Ex_cancelled_questionsScalarFieldEnum)[keyof typeof Ex_cancelled_questionsScalarFieldEnum]
 
 
 export const Ex_appealsScalarFieldEnum = {

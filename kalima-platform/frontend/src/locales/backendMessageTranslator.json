@@ -327,5 +327,8 @@
   "This appeal was already answered": "التظلم ده اتردّ عليه قبل كده",
   "Write the reason for rejecting": "اكتب سبب الرفض",
   "accept must be true or false": "اختار قبول أو رفض",
-  "Too many photos": "أقصى عدد 3 صور"
+  "Too many photos": "أقصى عدد 3 صور",
+  "Question cancelled": "تم إلغاء السؤال",
+  "Question restored": "تم رجوع السؤال",
+  "Question is not in this exam": "السؤال مش في الامتحان ده"
 }

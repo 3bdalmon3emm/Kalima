@@ -112,6 +112,7 @@ class ExamsService {
         folder: { select: { id: true, name: true, path: true } },
         sections: { orderBy: [{ sort_order: "asc" }, { id: "asc" }], include: { rules: { orderBy: [{ sort_order: "asc" }, { id: "asc" }] } } },
         questions: { orderBy: [{ sort_order: "asc" }, { id: "asc" }] },
+        cancelled: { select: { question_id: true } },
       },
     });
     if (!exam) throw new NotFoundError("Exam not found");
@@ -131,12 +132,13 @@ class ExamsService {
 
     const total = exam.questions.reduce((sum, q) => sum + num(q.mark), 0);
     const attempts = await this.db.ex_attempts.count({ where: { exam_id: id } });
-    const { questions, folder, ...rest } = exam;
+    const { questions, folder, cancelled, ...rest } = exam;
     return {
       ...rest,
       breadcrumb: crumbs,
       total,
       attempt_count: attempts,
+      cancelled_question_ids: cancelled.map((c) => c.question_id),
       sections: exam.sections.map((s) => ({
         ...s,
         questions: questions

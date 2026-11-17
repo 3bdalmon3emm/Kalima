@@ -35,7 +35,11 @@
     "CUSTOM": "إشعار مخصص",
     "EXAM_APPEAL_NEW": "تظلم جديد من طالب على امتحان",
     "EXAM_APPEAL_ACCEPTED": "تم قبول تظلمك وتعديل درجتك",
-    "EXAM_APPEAL_REJECTED": "تم الرد على تظلمك"
+    "EXAM_APPEAL_REJECTED": "تم الرد على تظلمك",
+    "EXAM_RESULT_READY": "نتيجة امتحان ظهرت",
+    "EXAM_SCORE_RAISED": "درجتك في امتحان زادت بعد إعادة التصحيح",
+    "EXAM_ESSAY_TO_GRADE": "طالب سلّم امتحان فيه مقالي محتاج تصحيح",
+    "EXAM_ESSAY_EDITED": "سؤال مقالي صححته اتعدل، راجع الدرجات لو محتاج"
   },
   "categories": {
     "1": "حالة الطلب",

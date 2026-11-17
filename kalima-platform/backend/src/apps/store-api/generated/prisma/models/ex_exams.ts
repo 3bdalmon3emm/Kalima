@@ -426,6 +426,7 @@ export type ex_examsWhereInput = {
   questions?: Prisma.Ex_exam_questionsListRelationFilter
   links?: Prisma.Ex_linksListRelationFilter
   attempts?: Prisma.Ex_attemptsListRelationFilter
+  cancelled?: Prisma.Ex_cancelled_questionsListRelationFilter
 }
 
 export type ex_examsOrderByWithRelationInput = {
@@ -460,6 +461,7 @@ export type ex_examsOrderByWithRelationInput = {
   questions?: Prisma.ex_exam_questionsOrderByRelationAggregateInput
   links?: Prisma.ex_linksOrderByRelationAggregateInput
   attempts?: Prisma.ex_attemptsOrderByRelationAggregateInput
+  cancelled?: Prisma.ex_cancelled_questionsOrderByRelationAggregateInput
 }
 
 export type ex_examsWhereUniqueInput = Prisma.AtLeast<{
@@ -497,6 +499,7 @@ export type ex_examsWhereUniqueInput = Prisma.AtLeast<{
   questions?: Prisma.Ex_exam_questionsListRelationFilter
   links?: Prisma.Ex_linksListRelationFilter
   attempts?: Prisma.Ex_attemptsListRelationFilter
+  cancelled?: Prisma.Ex_cancelled_questionsListRelationFilter
 }, "id">
 
 export type ex_examsOrderByWithAggregationInput = {
@@ -592,6 +595,7 @@ export type ex_examsCreateInput = {
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateInput = {
@@ -624,6 +628,7 @@ export type ex_examsUncheckedCreateInput = {
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUpdateInput = {
@@ -655,6 +660,7 @@ export type ex_examsUpdateInput = {
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateInput = {
@@ -687,6 +693,7 @@ export type ex_examsUncheckedUpdateInput = {
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsCreateManyInput = {
@@ -1047,6 +1054,20 @@ export type ex_examsUpdateOneRequiredWithoutAttemptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ex_examsUpdateToOneWithWhereWithoutAttemptsInput, Prisma.ex_examsUpdateWithoutAttemptsInput>, Prisma.ex_examsUncheckedUpdateWithoutAttemptsInput>
 }
 
+export type ex_examsCreateNestedOneWithoutCancelledInput = {
+  create?: Prisma.XOR<Prisma.ex_examsCreateWithoutCancelledInput, Prisma.ex_examsUncheckedCreateWithoutCancelledInput>
+  connectOrCreate?: Prisma.ex_examsCreateOrConnectWithoutCancelledInput
+  connect?: Prisma.ex_examsWhereUniqueInput
+}
+
+export type ex_examsUpdateOneRequiredWithoutCancelledNestedInput = {
+  create?: Prisma.XOR<Prisma.ex_examsCreateWithoutCancelledInput, Prisma.ex_examsUncheckedCreateWithoutCancelledInput>
+  connectOrCreate?: Prisma.ex_examsCreateOrConnectWithoutCancelledInput
+  upsert?: Prisma.ex_examsUpsertWithoutCancelledInput
+  connect?: Prisma.ex_examsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ex_examsUpdateToOneWithWhereWithoutCancelledInput, Prisma.ex_examsUpdateWithoutCancelledInput>, Prisma.ex_examsUncheckedUpdateWithoutCancelledInput>
+}
+
 export type ex_examsCreateWithoutSubjectsInput = {
   name: string
   description?: string | null
@@ -1075,6 +1096,7 @@ export type ex_examsCreateWithoutSubjectsInput = {
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutSubjectsInput = {
@@ -1106,6 +1128,7 @@ export type ex_examsUncheckedCreateWithoutSubjectsInput = {
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutSubjectsInput = {
@@ -1193,6 +1216,7 @@ export type ex_examsCreateWithoutFolderInput = {
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutFolderInput = {
@@ -1224,6 +1248,7 @@ export type ex_examsUncheckedCreateWithoutFolderInput = {
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutFolderInput = {
@@ -1280,6 +1305,7 @@ export type ex_examsCreateWithoutSectionsInput = {
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutSectionsInput = {
@@ -1311,6 +1337,7 @@ export type ex_examsUncheckedCreateWithoutSectionsInput = {
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutSectionsInput = {
@@ -1357,6 +1384,7 @@ export type ex_examsUpdateWithoutSectionsInput = {
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutSectionsInput = {
@@ -1388,6 +1416,7 @@ export type ex_examsUncheckedUpdateWithoutSectionsInput = {
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsCreateWithoutQuestionsInput = {
@@ -1418,6 +1447,7 @@ export type ex_examsCreateWithoutQuestionsInput = {
   sections?: Prisma.ex_sectionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutQuestionsInput = {
@@ -1449,6 +1479,7 @@ export type ex_examsUncheckedCreateWithoutQuestionsInput = {
   sections?: Prisma.ex_sectionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutQuestionsInput = {
@@ -1495,6 +1526,7 @@ export type ex_examsUpdateWithoutQuestionsInput = {
   sections?: Prisma.ex_sectionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutQuestionsInput = {
@@ -1526,6 +1558,7 @@ export type ex_examsUncheckedUpdateWithoutQuestionsInput = {
   sections?: Prisma.ex_sectionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsCreateWithoutLinksInput = {
@@ -1556,6 +1589,7 @@ export type ex_examsCreateWithoutLinksInput = {
   sections?: Prisma.ex_sectionsCreateNestedManyWithoutExamInput
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutLinksInput = {
@@ -1587,6 +1621,7 @@ export type ex_examsUncheckedCreateWithoutLinksInput = {
   sections?: Prisma.ex_sectionsUncheckedCreateNestedManyWithoutExamInput
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutLinksInput = {
@@ -1633,6 +1668,7 @@ export type ex_examsUpdateWithoutLinksInput = {
   sections?: Prisma.ex_sectionsUpdateManyWithoutExamNestedInput
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutLinksInput = {
@@ -1664,6 +1700,7 @@ export type ex_examsUncheckedUpdateWithoutLinksInput = {
   sections?: Prisma.ex_sectionsUncheckedUpdateManyWithoutExamNestedInput
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsCreateWithoutAttemptsInput = {
@@ -1694,6 +1731,7 @@ export type ex_examsCreateWithoutAttemptsInput = {
   sections?: Prisma.ex_sectionsCreateNestedManyWithoutExamInput
   questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsUncheckedCreateWithoutAttemptsInput = {
@@ -1725,6 +1763,7 @@ export type ex_examsUncheckedCreateWithoutAttemptsInput = {
   sections?: Prisma.ex_sectionsUncheckedCreateNestedManyWithoutExamInput
   questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
   links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedCreateNestedManyWithoutExamInput
 }
 
 export type ex_examsCreateOrConnectWithoutAttemptsInput = {
@@ -1771,6 +1810,7 @@ export type ex_examsUpdateWithoutAttemptsInput = {
   sections?: Prisma.ex_sectionsUpdateManyWithoutExamNestedInput
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutAttemptsInput = {
@@ -1802,6 +1842,149 @@ export type ex_examsUncheckedUpdateWithoutAttemptsInput = {
   sections?: Prisma.ex_sectionsUncheckedUpdateManyWithoutExamNestedInput
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
+}
+
+export type ex_examsCreateWithoutCancelledInput = {
+  name: string
+  description?: string | null
+  serial?: string | null
+  type: $Enums.ex_exam_type_enum
+  mode: $Enums.ex_exam_mode_enum
+  target_total?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  duration_minutes?: number | null
+  pass_percent?: number
+  redo_percent?: number | null
+  max_redos?: number
+  redo_required?: boolean
+  redo_new_questions?: boolean
+  shuffle?: boolean
+  show_answers?: string
+  sort_order?: number
+  published_at?: Date | string | null
+  archived_at?: Date | string | null
+  archived_by?: number | null
+  created_by?: number | null
+  updated_by?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  folder: Prisma.ex_foldersCreateNestedOneWithoutExamsInput
+  subjects?: Prisma.subjectsCreateNestedOneWithoutEx_examsInput
+  sections?: Prisma.ex_sectionsCreateNestedManyWithoutExamInput
+  questions?: Prisma.ex_exam_questionsCreateNestedManyWithoutExamInput
+  links?: Prisma.ex_linksCreateNestedManyWithoutExamInput
+  attempts?: Prisma.ex_attemptsCreateNestedManyWithoutExamInput
+}
+
+export type ex_examsUncheckedCreateWithoutCancelledInput = {
+  id?: number
+  folder_id: number
+  name: string
+  description?: string | null
+  serial?: string | null
+  subject_id?: number | null
+  type: $Enums.ex_exam_type_enum
+  mode: $Enums.ex_exam_mode_enum
+  target_total?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  duration_minutes?: number | null
+  pass_percent?: number
+  redo_percent?: number | null
+  max_redos?: number
+  redo_required?: boolean
+  redo_new_questions?: boolean
+  shuffle?: boolean
+  show_answers?: string
+  sort_order?: number
+  published_at?: Date | string | null
+  archived_at?: Date | string | null
+  archived_by?: number | null
+  created_by?: number | null
+  updated_by?: number | null
+  created_at?: Date | string
+  updated_at?: Date | string
+  sections?: Prisma.ex_sectionsUncheckedCreateNestedManyWithoutExamInput
+  questions?: Prisma.ex_exam_questionsUncheckedCreateNestedManyWithoutExamInput
+  links?: Prisma.ex_linksUncheckedCreateNestedManyWithoutExamInput
+  attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutExamInput
+}
+
+export type ex_examsCreateOrConnectWithoutCancelledInput = {
+  where: Prisma.ex_examsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ex_examsCreateWithoutCancelledInput, Prisma.ex_examsUncheckedCreateWithoutCancelledInput>
+}
+
+export type ex_examsUpsertWithoutCancelledInput = {
+  update: Prisma.XOR<Prisma.ex_examsUpdateWithoutCancelledInput, Prisma.ex_examsUncheckedUpdateWithoutCancelledInput>
+  create: Prisma.XOR<Prisma.ex_examsCreateWithoutCancelledInput, Prisma.ex_examsUncheckedCreateWithoutCancelledInput>
+  where?: Prisma.ex_examsWhereInput
+}
+
+export type ex_examsUpdateToOneWithWhereWithoutCancelledInput = {
+  where?: Prisma.ex_examsWhereInput
+  data: Prisma.XOR<Prisma.ex_examsUpdateWithoutCancelledInput, Prisma.ex_examsUncheckedUpdateWithoutCancelledInput>
+}
+
+export type ex_examsUpdateWithoutCancelledInput = {
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serial?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  type?: Prisma.Enumex_exam_type_enumFieldUpdateOperationsInput | $Enums.ex_exam_type_enum
+  mode?: Prisma.Enumex_exam_mode_enumFieldUpdateOperationsInput | $Enums.ex_exam_mode_enum
+  target_total?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  duration_minutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pass_percent?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_percent?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  max_redos?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_required?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  redo_new_questions?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  shuffle?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  show_answers?: Prisma.StringFieldUpdateOperationsInput | string
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  published_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updated_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  folder?: Prisma.ex_foldersUpdateOneRequiredWithoutExamsNestedInput
+  subjects?: Prisma.subjectsUpdateOneWithoutEx_examsNestedInput
+  sections?: Prisma.ex_sectionsUpdateManyWithoutExamNestedInput
+  questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
+  links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
+  attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+}
+
+export type ex_examsUncheckedUpdateWithoutCancelledInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  folder_id?: Prisma.IntFieldUpdateOperationsInput | number
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  serial?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  subject_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  type?: Prisma.Enumex_exam_type_enumFieldUpdateOperationsInput | $Enums.ex_exam_type_enum
+  mode?: Prisma.Enumex_exam_mode_enumFieldUpdateOperationsInput | $Enums.ex_exam_mode_enum
+  target_total?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  duration_minutes?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  pass_percent?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_percent?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  max_redos?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_required?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  redo_new_questions?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  shuffle?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  show_answers?: Prisma.StringFieldUpdateOperationsInput | string
+  sort_order?: Prisma.IntFieldUpdateOperationsInput | number
+  published_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  archived_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  updated_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sections?: Prisma.ex_sectionsUncheckedUpdateManyWithoutExamNestedInput
+  questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
+  links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
+  attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsCreateManySubjectsInput = {
@@ -1859,6 +2042,7 @@ export type ex_examsUpdateWithoutSubjectsInput = {
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutSubjectsInput = {
@@ -1890,6 +2074,7 @@ export type ex_examsUncheckedUpdateWithoutSubjectsInput = {
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateManyWithoutSubjectsInput = {
@@ -1974,6 +2159,7 @@ export type ex_examsUpdateWithoutFolderInput = {
   questions?: Prisma.ex_exam_questionsUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateWithoutFolderInput = {
@@ -2005,6 +2191,7 @@ export type ex_examsUncheckedUpdateWithoutFolderInput = {
   questions?: Prisma.ex_exam_questionsUncheckedUpdateManyWithoutExamNestedInput
   links?: Prisma.ex_linksUncheckedUpdateManyWithoutExamNestedInput
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutExamNestedInput
+  cancelled?: Prisma.ex_cancelled_questionsUncheckedUpdateManyWithoutExamNestedInput
 }
 
 export type ex_examsUncheckedUpdateManyWithoutFolderInput = {
@@ -2044,6 +2231,7 @@ export type Ex_examsCountOutputType = {
   questions: number
   links: number
   attempts: number
+  cancelled: number
 }
 
 export type Ex_examsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2051,6 +2239,7 @@ export type Ex_examsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensio
   questions?: boolean | Ex_examsCountOutputTypeCountQuestionsArgs
   links?: boolean | Ex_examsCountOutputTypeCountLinksArgs
   attempts?: boolean | Ex_examsCountOutputTypeCountAttemptsArgs
+  cancelled?: boolean | Ex_examsCountOutputTypeCountCancelledArgs
 }
 
 /**
@@ -2091,6 +2280,13 @@ export type Ex_examsCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ex_attemptsWhereInput
 }
 
+/**
+ * Ex_examsCountOutputType without action
+ */
+export type Ex_examsCountOutputTypeCountCancelledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ex_cancelled_questionsWhereInput
+}
+
 
 export type ex_examsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2124,6 +2320,7 @@ export type ex_examsSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   questions?: boolean | Prisma.ex_exams$questionsArgs<ExtArgs>
   links?: boolean | Prisma.ex_exams$linksArgs<ExtArgs>
   attempts?: boolean | Prisma.ex_exams$attemptsArgs<ExtArgs>
+  cancelled?: boolean | Prisma.ex_exams$cancelledArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_examsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ex_exams"]>
 
@@ -2223,6 +2420,7 @@ export type ex_examsInclude<ExtArgs extends runtime.Types.Extensions.InternalArg
   questions?: boolean | Prisma.ex_exams$questionsArgs<ExtArgs>
   links?: boolean | Prisma.ex_exams$linksArgs<ExtArgs>
   attempts?: boolean | Prisma.ex_exams$attemptsArgs<ExtArgs>
+  cancelled?: boolean | Prisma.ex_exams$cancelledArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_examsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ex_examsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2243,6 +2441,7 @@ export type $ex_examsPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
     questions: Prisma.$ex_exam_questionsPayload<ExtArgs>[]
     links: Prisma.$ex_linksPayload<ExtArgs>[]
     attempts: Prisma.$ex_attemptsPayload<ExtArgs>[]
+    cancelled: Prisma.$ex_cancelled_questionsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2670,6 +2869,7 @@ export interface Prisma__ex_examsClient<T, Null = never, ExtArgs extends runtime
   questions<T extends Prisma.ex_exams$questionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_exams$questionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_exam_questionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   links<T extends Prisma.ex_exams$linksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_exams$linksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_linksPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   attempts<T extends Prisma.ex_exams$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_exams$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_attemptsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  cancelled<T extends Prisma.ex_exams$cancelledArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_exams$cancelledArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_cancelled_questionsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3241,6 +3441,30 @@ export type ex_exams$attemptsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.Ex_attemptsScalarFieldEnum | Prisma.Ex_attemptsScalarFieldEnum[]
+}
+
+/**
+ * ex_exams.cancelled
+ */
+export type ex_exams$cancelledArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ex_cancelled_questions
+   */
+  select?: Prisma.ex_cancelled_questionsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ex_cancelled_questions
+   */
+  omit?: Prisma.ex_cancelled_questionsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ex_cancelled_questionsInclude<ExtArgs> | null
+  where?: Prisma.ex_cancelled_questionsWhereInput
+  orderBy?: Prisma.ex_cancelled_questionsOrderByWithRelationInput | Prisma.ex_cancelled_questionsOrderByWithRelationInput[]
+  cursor?: Prisma.ex_cancelled_questionsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Ex_cancelled_questionsScalarFieldEnum | Prisma.Ex_cancelled_questionsScalarFieldEnum[]
 }
 
 /**

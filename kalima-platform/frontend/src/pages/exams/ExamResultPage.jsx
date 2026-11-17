@@ -55,7 +55,7 @@ export function ReviewItem({ item, label, passage, passageN, shown, extra, grade
         <div className={`overflow-hidden rounded-xl border-2 bg-card ${preview || pending ? 'border-border' : full ? 'border-green-500' : partial ? 'border-amber-400' : 'border-red-400'}`}>
             <div className={`flex flex-wrap items-center gap-2 px-4 py-2.5 ${preview || pending ? 'bg-muted/50' : full ? 'bg-green-50 dark:bg-green-950/40' : partial ? 'bg-amber-50 dark:bg-amber-950/30' : 'bg-red-50 dark:bg-red-950/30'}`}>
                 <span className="rounded-md bg-primary px-2 py-0.5 text-sm font-bold text-primary-foreground">{label}</span>
-                {preview ? null : pending ? <Tag tone="muted">{t('result.waiting')}</Tag>
+                {preview ? null : item.cancelled ? <Tag tone="right">{t('cancel.tag')}</Tag> : pending ? <Tag tone="muted">{t('result.waiting')}</Tag>
                     : full ? <Tag tone="right">{t('result.correct')}</Tag>
                         : !answered ? <Tag tone="wrong">{t('result.notAnswered')}</Tag>
                             : partial ? <Tag tone="muted">{t('result.partial')}</Tag>

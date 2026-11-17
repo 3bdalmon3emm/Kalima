@@ -35,7 +35,11 @@
     "CUSTOM": "Custom notification",
     "EXAM_APPEAL_NEW": "A student sent a new exam appeal",
     "EXAM_APPEAL_ACCEPTED": "Your appeal was accepted and your mark updated",
-    "EXAM_APPEAL_REJECTED": "Your appeal was answered"
+    "EXAM_APPEAL_REJECTED": "Your appeal was answered",
+    "EXAM_RESULT_READY": "An exam result is out",
+    "EXAM_SCORE_RAISED": "Your exam score went up after a re-grade",
+    "EXAM_ESSAY_TO_GRADE": "A student submitted an exam with an essay to grade",
+    "EXAM_ESSAY_EDITED": "An essay question you graded was edited; review the marks if needed"
   },
   "categories": {
     "1": "Order Status",

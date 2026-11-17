@@ -1830,6 +1830,10 @@ enum notification_key_enum {
   EXAM_APPEAL_NEW
   EXAM_APPEAL_ACCEPTED
   EXAM_APPEAL_REJECTED
+  EXAM_RESULT_READY
+  EXAM_SCORE_RAISED
+  EXAM_ESSAY_TO_GRADE
+  EXAM_ESSAY_EDITED
   SYSTEM_ANNOUNCEMENT
   ACCOUNT_UPDATE
   CUSTOM
@@ -2173,6 +2177,7 @@ model ex_exams {
   questions ex_exam_questions[]
   links     ex_links[]
   attempts  ex_attempts[]
+  cancelled ex_cancelled_questions[]
 
   @@index([folder_id, sort_order], map: "ix_ex_exams_folder")
   @@index([serial], map: "ix_ex_exams_serial")
@@ -2297,6 +2302,7 @@ model ex_attempts {
   @@unique([link_id, student_user_id, attempt_no], map: "ux_ex_attempts_no")
   @@index([student_user_id, exam_id], map: "ix_ex_attempts_student")
   @@index([status, deadline_at], map: "ix_ex_attempts_status_deadline")
+  @@index([questions(ops: JsonbPathOps)], type: Gin, map: "ix_ex_attempts_questions")
 }
 
 // One answer per question of an attempt. "answer" keeps exactly what the
@@ -2330,6 +2336,19 @@ model ex_answer_files {
   attempt ex_attempts @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([attempt_id], map: "ix_ex_answer_files_attempt")
+}
+
+// A question cancelled in an exam: every attempt that has it gets its full
+// mark, and it never keeps a result waiting.
+model ex_cancelled_questions {
+  exam_id      Int
+  question_id  Int
+  cancelled_by Int?
+  created_at   DateTime @default(now()) @db.Timestamptz(6)
+
+  exam ex_exams @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@id([exam_id, question_id])
 }
 
 // A student's appeal on one question of an attempt: one request and one

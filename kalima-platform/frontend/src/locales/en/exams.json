@@ -535,5 +535,17 @@
     "questions_other": "{{count}} questions",
     "noDuration": "No time limit",
     "empty": "This exam has no questions yet."
+  },
+  "cancel": {
+    "button": "Cancel the question (everyone gets its mark)",
+    "restore": "Restore the question",
+    "badge": "Cancelled",
+    "tag": "Cancelled question: mark counted",
+    "confirm": "Cancel this question? Every student who took it gets its full mark, and those whose score goes up are notified.",
+    "restoreConfirm": "Restore the question? Students go back to the mark they had on it before.",
+    "done_one": "Question cancelled; 1 attempt updated",
+    "done_other": "Question cancelled; {{count}} attempts updated",
+    "restored_one": "Question restored; 1 attempt updated",
+    "restored_other": "Question restored; {{count}} attempts updated"
   }
 }

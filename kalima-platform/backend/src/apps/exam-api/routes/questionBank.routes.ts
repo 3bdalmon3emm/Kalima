@@ -6,6 +6,7 @@ import { BadRequestError } from "../../../libs/errors";
 import { handle, idList, idParam, optionalId, requiredName, userId } from "../http";
 import { foldersService } from "../services/folders.service";
 import { categoriesService } from "../services/categories.service";
+import { regradeService } from "../services/regrade.service";
 import { questionsService } from "../services/questions.service";
 import { bankCopyService } from "../services/bankCopy.service";
 import { bankPurgeService } from "../services/bankPurge.service";
@@ -188,8 +189,12 @@ router.get("/questions/:id", handle(async (req, res) => {
   res.json(ok(await questionsService.getOne(idParam(req))));
 }));
 
+// Saving re-grades every submitted attempt that has the question (in the
+// background).
 router.put("/questions/:id", handle(async (req, res) => {
-  res.json(ok(await questionsService.update(idParam(req), parseQuestionInput(req.body), userId(req)), "Question saved"));
+  const saved = await questionsService.update(idParam(req), parseQuestionInput(req.body), userId(req));
+  regradeService.afterQuestionEdit(idParam(req));
+  res.json(ok(saved, "Question saved"));
 }));
 
 router.post("/questions/:id/duplicate", handle(async (req, res) => {

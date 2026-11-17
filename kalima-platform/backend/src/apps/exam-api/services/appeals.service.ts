@@ -5,7 +5,7 @@ import { BadRequestError, ConflictError, NotFoundError } from "../../../libs/err
 import { NOTIFICATION_CATEGORY, notification_key_enum, notificationService } from "../../store-api/services/notification.service";
 import { attemptsService } from "./attempts.service";
 import { mediaService } from "./media.service";
-import { rescore } from "./results.service";
+import { rescore } from "./scoring";
 
 // Appeals: on a question the student lost marks on, they write why and may
 // add photos. The teacher (or assistant, or the admin) accepts with a new

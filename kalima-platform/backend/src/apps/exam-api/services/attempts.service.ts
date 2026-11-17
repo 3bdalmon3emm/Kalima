@@ -8,6 +8,8 @@ import { questionsService } from "./questions.service";
 import { mediaService } from "./media.service";
 import { soundsService } from "./sounds.service";
 import { teacherLinksService } from "./teacherLinks.service";
+import { cancelledIn, rescore } from "./scoring";
+import { examNotify } from "./examNotify";
 
 // A student's attempts at an exam, reached through a link. An attempt keeps
 // its own list of questions and a copy of their content from the moment it
@@ -471,14 +473,20 @@ class AttemptsService {
       data: { status: "pending", submitted_at: new Date(), auto_submitted: auto, session_token: null },
     });
     if (!claimed.count) return this.result(id, studentId);
-    await this.grade(id);
+    const graded = await this.grade(id);
+    // Essays wait for the teacher; otherwise the student sees the result now
+    // and their parents hear about it.
+    if (graded?.after.status === "pending") examNotify.essayToGrade(id);
+    else examNotify.resultReady(id, false);
     return this.result(id, studentId);
   }
 
-  // Marks every question from the bank's current answer key. Essays with an
-  // answer wait for a grader; an empty essay gets zero.
+  // Marks every question from the bank's current answer key, then the score
+  // from a fresh read (see scoring.ts). Essays with an answer wait for a
+  // grader; an empty essay gets zero. A running attempt is left alone.
   async grade(id: number) {
     const attempt = await this.db.ex_attempts.findUniqueOrThrow({ where: { id }, include: { answers: true } });
+    if (attempt.status === "in_progress") return null;
     const list = attempt.questions as unknown as AttemptQuestion[];
     const keys = await this.db.qb_questions.findMany({
       where: { id: { in: list.map((q) => q.question_id) } },
@@ -488,16 +496,11 @@ class AttemptsService {
     const answerById = new Map(attempt.answers.map((a) => [a.question_id, a]));
 
     const writes = [];
-    let waiting = false;
-    let score = 0;
     for (const item of list) {
       const key = keyById.get(item.question_id);
       const saved = answerById.get(item.question_id);
       const answer = (saved?.answer ?? {}) as any;
-      if (saved?.graded_by) {
-        score += num(saved.mark);
-        continue; // marked by a person; the automatic grade leaves it alone
-      }
+      if (saved?.graded_by) continue; // marked by a person; the automatic grade leaves it alone
       let mark: number | null = 0;
       if (key && key.type === "essay") {
         const answered = (answer.text ?? "").trim() || (answer.file_ids ?? []).length;
@@ -505,18 +508,14 @@ class AttemptsService {
       } else if (key) {
         mark = round2(item.mark * this.fraction(key, answer));
       }
-      if (mark === null) waiting = true;
-      else score += mark;
       writes.push(this.db.ex_attempt_answers.upsert({
         where: { attempt_id_question_id: { attempt_id: id, question_id: item.question_id } },
         create: { attempt_id: id, question_id: item.question_id, answer: {}, mark, graded_at: mark === null ? null : new Date() },
         update: { mark, graded_at: mark === null ? null : new Date() },
       }));
     }
-    await this.db.$transaction([
-      ...writes,
-      this.db.ex_attempts.update({ where: { id }, data: { score: round2(score), status: waiting ? "pending" : "done" } }),
-    ]);
+    await this.db.$transaction(writes);
+    return rescore(id, this.db);
   }
 
   // Share of the mark earned: all or nothing for choice questions (multiple
@@ -638,13 +637,14 @@ class AttemptsService {
 
   // Each question with the student's answer, the right answer, the marks and
   // the explanation, for after the result shows.
-  async review(attempt: { id: number; questions: unknown }, shown: boolean) {
+  async review(attempt: { id: number; questions: unknown; exam_id?: number }, shown: boolean) {
     const list = attempt.questions as unknown as AttemptQuestion[];
-    const [rows, answers, files, appeals] = await Promise.all([
+    const [rows, answers, files, appeals, cancelled] = await Promise.all([
       questionsService.loadFull({ id: { in: list.map((q) => q.question_id) } }),
       this.db.ex_attempt_answers.findMany({ where: { attempt_id: attempt.id } }),
       this.db.ex_answer_files.findMany({ where: { attempt_id: attempt.id } }),
       this.db.ex_appeals.findMany({ where: { attempt_id: attempt.id }, orderBy: { id: "asc" } }),
+      attempt.exam_id ? cancelledIn(attempt.exam_id, this.db) : Promise.resolve(new Set<number>()),
     ]);
     const appealsOf = new Map<number, any[]>();
     for (const ap of appeals) {
@@ -672,7 +672,9 @@ class AttemptsService {
         question_id: item.question_id,
         section_id: item.section_id,
         mark: item.mark,
-        earned: a?.mark === null || a?.mark === undefined ? null : num(a.mark),
+        // A cancelled question counts its full mark for everyone.
+        earned: cancelled.has(item.question_id) ? item.mark : a?.mark === null || a?.mark === undefined ? null : num(a.mark),
+        cancelled: cancelled.has(item.question_id),
         graded_by: a?.graded_by ?? null,
         appeals: appealsOf.get(item.question_id) ?? [],
         answer: answer.file_ids ? { ...answer, files: answer.file_ids.map((fid: number) => ({ id: fid, url: fileUrls.get(fid) })) } : answer,

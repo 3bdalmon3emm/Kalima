@@ -14,6 +14,7 @@ import examAdminRoutes from "./apps/exam-api/routes/examAdmin.routes";
 import examStudentRoutes from "./apps/exam-api/routes/examStudent.routes";
 import examTeacherRoutes from "./apps/exam-api/routes/examTeacher.routes";
 import { attemptsService } from "./apps/exam-api/services/attempts.service";
+import { setExamIo } from "./apps/exam-api/services/examNotify";
 import { errorHandler } from "./libs/errors";
 import { setupStoreSocket } from "./libs/socket/setupStoreSocket";
 import { startPurchaseNotificationConsumer } from "./apps/store-api/services/notificationStream.service";
@@ -154,6 +155,7 @@ const httpServer = createServer(app);
 
 const io = setupStoreSocket(httpServer);
 app.set("io", io);
+setExamIo(io);
 
 async function start() {
   try {
