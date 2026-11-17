@@ -53,9 +53,10 @@ class TeacherLinksService {
     });
   }
 
-  // True when the link's teacher still has its exam (test links always do).
+  // True when the link's teacher still has its exam. Every link belongs to a
+  // teacher; one without (an old admin test link) never opens.
   async linkCovered(link: { exam_id: number; teacher_user_id: number | null }): Promise<boolean> {
-    if (link.teacher_user_id === null) return true;
+    if (link.teacher_user_id === null) return false;
     const exam = await this.db.ex_exams.findUnique({ where: { id: link.exam_id }, select: { id: true, folder: { select: { path: true } } } });
     if (!exam) return false;
     return !!this.coveringAssignment(exam.id, exam.folder.path, await this.activeAssignments([link.teacher_user_id]));

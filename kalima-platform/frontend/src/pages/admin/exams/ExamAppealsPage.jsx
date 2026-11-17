@@ -13,7 +13,7 @@ import { ReviewItem } from '@/pages/exams/ExamResultPage';
 
 // Every appeal in one place: waiting ones first (oldest first), answered
 // ones in their own tab. The teacher and assistant see their own links'
-// appeals; the admin sees all of them, the test link's too.
+// appeals; the admin sees all of them.
 export default function ExamAppealsPage({ teacher = false }) {
     const { t } = useTranslation('exams');
     const api = teacher ? teacherApi : adminApi;
@@ -83,7 +83,7 @@ export default function ExamAppealsPage({ teacher = false }) {
                                                 <p className="text-xs text-muted-foreground">
                                                     {a.student?.serial && <span dir="ltr">#{a.student.serial} · </span>}
                                                     {a.exam.name} · {t('appeals.questionN', { n: a.question.n })} · {t('results.attempt')} {a.attempt.attempt_no}
-                                                    {!teacher && <> · {a.teacher || t('results.adminLink')}</>}
+                                                    {!teacher && a.teacher && <> · {a.teacher}</>}
                                                 </p>
                                             </div>
                                             <Badge variant="outline" dir="ltr">{t('appeals.score')} {formatMark(a.attempt.score)} / {formatMark(a.attempt.total)}</Badge>

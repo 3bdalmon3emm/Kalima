@@ -7,12 +7,13 @@ import { attemptsService } from "../services/attempts.service";
 import { uploadAnswerPhoto, uploadAppealPhotos } from "../services/media.service";
 import { appealsService } from "../services/appeals.service";
 
-// Taking exams, mounted at /api/v2/exams. Students reach an exam by its link
-// code; Admin and SubAdmin may take it too, to try the test link. The tab or
-// device that opened the attempt last sends its token in X-Attempt-Token.
+// Taking exams, mounted at /api/v2/exams. Students reach an exam by a
+// teacher's link code; staff and teachers see exams through the preview
+// instead. The tab or device that opened the attempt last sends its token in
+// X-Attempt-Token.
 
 const router = Router();
-router.use(authenticateToken, requireRole([role_enum.Student, role_enum.Admin, role_enum.SubAdmin]));
+router.use(authenticateToken, requireRole([role_enum.Student]));
 
 const ok = (data?: unknown, message?: string) => ({ success: true, ...(message && { message }), ...(data !== undefined && { data }) });
 const token = (req: Request) => {

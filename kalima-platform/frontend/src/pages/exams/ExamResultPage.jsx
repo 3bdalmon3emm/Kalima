@@ -26,8 +26,9 @@ function Tag({ tone, children }) {
 }
 
 // One question after the result: what the student answered and, when the
-// exam shows them, the right answer, the explanation or model answer.
-export function ReviewItem({ item, label, passage, passageN, shown, extra, grader = false }) {
+// exam shows them, the right answer, the explanation or model answer. In
+// preview there is no student: only the question, its marks and the key.
+export function ReviewItem({ item, label, passage, passageN, shown, extra, grader = false, preview = false }) {
     const { t, i18n } = useTranslation('exams');
     // The grader reads "the student's answer" where the student reads "your answer".
     const mine = (key) => t(grader ? `grading.${key}` : `result.${key}`);
@@ -51,10 +52,10 @@ export function ReviewItem({ item, label, passage, passageN, shown, extra, grade
         : '—');
 
     return (
-        <div className={`overflow-hidden rounded-xl border-2 bg-card ${pending ? 'border-border' : full ? 'border-green-500' : partial ? 'border-amber-400' : 'border-red-400'}`}>
-            <div className={`flex flex-wrap items-center gap-2 px-4 py-2.5 ${pending ? 'bg-muted/50' : full ? 'bg-green-50 dark:bg-green-950/40' : partial ? 'bg-amber-50 dark:bg-amber-950/30' : 'bg-red-50 dark:bg-red-950/30'}`}>
+        <div className={`overflow-hidden rounded-xl border-2 bg-card ${preview || pending ? 'border-border' : full ? 'border-green-500' : partial ? 'border-amber-400' : 'border-red-400'}`}>
+            <div className={`flex flex-wrap items-center gap-2 px-4 py-2.5 ${preview || pending ? 'bg-muted/50' : full ? 'bg-green-50 dark:bg-green-950/40' : partial ? 'bg-amber-50 dark:bg-amber-950/30' : 'bg-red-50 dark:bg-red-950/30'}`}>
                 <span className="rounded-md bg-primary px-2 py-0.5 text-sm font-bold text-primary-foreground">{label}</span>
-                {pending ? <Tag tone="muted">{t('result.waiting')}</Tag>
+                {preview ? null : pending ? <Tag tone="muted">{t('result.waiting')}</Tag>
                     : full ? <Tag tone="right">{t('result.correct')}</Tag>
                         : !answered ? <Tag tone="wrong">{t('result.notAnswered')}</Tag>
                             : partial ? <Tag tone="muted">{t('result.partial')}</Tag>
@@ -63,7 +64,9 @@ export function ReviewItem({ item, label, passage, passageN, shown, extra, grade
                     <span className="text-muted-foreground">{t('take.serial')}</span>
                     <span className="font-mono font-bold tracking-wider" dir="ltr">{q.serial}</span>
                 </span>
-                <span className="text-sm font-semibold tabular-nums" dir="ltr">{pending ? '—' : formatMark(item.earned)} / {formatMark(item.mark)}</span>
+                {preview
+                    ? <span className="text-sm font-semibold">{t('teacher.marks', { count: item.mark })}</span>
+                    : <span className="text-sm font-semibold tabular-nums" dir="ltr">{pending ? '—' : formatMark(item.earned)} / {formatMark(item.mark)}</span>}
             </div>
 
             <div className="space-y-4 p-4">
@@ -117,24 +120,26 @@ export function ReviewItem({ item, label, passage, passageN, shown, extra, grade
                                 <thead className="bg-muted/50 text-xs text-muted-foreground">
                                     <tr>
                                         <th className="p-2 text-start font-medium">{t('result.item')}</th>
-                                        <th className="p-2 text-start font-medium">{mine('yourPair')}</th>
+                                        {!preview && <th className="p-2 text-start font-medium">{mine('yourPair')}</th>}
                                         {shown && <th className="p-2 text-start font-medium">{t('result.rightPair')}</th>}
                                     </tr>
                                 </thead>
                                 <tbody>
                                     {left.map((l) => {
                                         const paired = studentPair.get(l.id);
-                                        const ok = shown && paired !== undefined && paired === l.match_item_id;
-                                        const bad = shown && !ok;
+                                        const ok = !preview && shown && paired !== undefined && paired === l.match_item_id;
+                                        const bad = !preview && shown && !ok;
                                         return (
                                             <tr key={l.id} className={`border-t ${ok ? 'bg-green-50 dark:bg-green-950/30' : bad ? 'bg-red-50 dark:bg-red-950/30' : ''}`}>
                                                 <td className="p-2 align-top font-medium">{pairText(l)}</td>
-                                                <td className={`p-2 align-top ${ok ? 'text-green-700 dark:text-green-400' : bad ? 'text-red-700 dark:text-red-400' : ''}`}>
-                                                    <span className="inline-flex items-center gap-1.5">
-                                                        {ok ? <CheckCircle2 className="h-4 w-4 shrink-0 no-flip" /> : bad ? <XCircle className="h-4 w-4 shrink-0" /> : null}
-                                                        {paired === undefined ? t('result.notConnected') : pairText(right.find((r) => r.id === paired))}
-                                                    </span>
-                                                </td>
+                                                {!preview && (
+                                                    <td className={`p-2 align-top ${ok ? 'text-green-700 dark:text-green-400' : bad ? 'text-red-700 dark:text-red-400' : ''}`}>
+                                                        <span className="inline-flex items-center gap-1.5">
+                                                            {ok ? <CheckCircle2 className="h-4 w-4 shrink-0 no-flip" /> : bad ? <XCircle className="h-4 w-4 shrink-0" /> : null}
+                                                            {paired === undefined ? t('result.notConnected') : pairText(right.find((r) => r.id === paired))}
+                                                        </span>
+                                                    </td>
+                                                )}
                                                 {shown && <td className="p-2 align-top text-green-700 dark:text-green-400">{ok ? '' : pairText(right.find((r) => r.id === l.match_item_id))}</td>}
                                             </tr>
                                         );
@@ -146,11 +151,11 @@ export function ReviewItem({ item, label, passage, passageN, shown, extra, grade
 
                     {q.type === 'essay' && (
                         <div className="space-y-2 text-sm">
-                            <div className="rounded-lg border bg-muted/40 p-3">
+                            {!preview && <div className="rounded-lg border bg-muted/40 p-3">
                                 <p className="mb-1 font-medium">{mine('yourAnswer')}</p>
                                 <p className="whitespace-pre-wrap">{item.answer.text || t('result.notAnswered')}</p>
                                 <div className="mt-2 flex flex-wrap gap-2">{(item.answer.files || []).map((f) => f.url && <Media key={f.id} image={{ url: f.url }} className="max-h-40" />)}</div>
-                            </div>
+                            </div>}
                             {(q.model_answer_text || q.model_answer_image) && (
                                 <div className="rounded-lg border border-green-300 bg-green-50 p-3 dark:border-green-800 dark:bg-green-950/30">
                                     <p className="mb-1 font-medium text-green-800 dark:text-green-300">{t('result.modelAnswer')}</p>

@@ -11,6 +11,7 @@ import { makeExportHandler } from "../../store-api/export";
 import { decisionBody, reopenBody } from "./examAdmin.routes";
 import "../services/examResultsExport";
 import { appealsService } from "../services/appeals.service";
+import { attemptsService } from "../services/attempts.service";
 
 // The teacher's (and assistant's) side of exams, mounted at
 // /api/v2/exam-teacher. Every request is limited to the links of the
@@ -29,6 +30,13 @@ router.get("/exams", handle(async (req, res) => {
 
 router.get("/exams/:id", handle(async (req, res) => {
   res.json(ok(await teacherPortalService.exam(idParam(req), await teachersOf(req))));
+}));
+
+// The exam as a student sees it, with the right and model answers; nothing
+// goes through the teacher's link.
+router.get("/exams/:id/preview", handle(async (req, res) => {
+  await teacherPortalService.linksTo(idParam(req), await teachersOf(req));
+  res.json(ok(await attemptsService.preview(idParam(req))));
 }));
 
 router.get("/attempts/:id", handle(async (req, res) => {

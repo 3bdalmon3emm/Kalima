@@ -8,7 +8,8 @@
     "settings": "Settings",
     "testLink": "Test link",
     "results": "Results",
-    "teachers": "Teachers & links"
+    "teachers": "Teachers & links",
+    "preview": "Preview"
   },
   "common": {
     "create": "Create",
@@ -403,7 +404,7 @@
     "removed": "Teacher removed",
     "added": "Teacher added",
     "saved": "Saved",
-    "examHint": "Teachers who have this exam (added on it or on a folder above it), each with their own link.",
+    "examHint": "Teachers who have this exam (added on it or on a folder above it), each with the link students take it through.",
     "notPublishedHint": "The exam is not published, so links will not open for students until you publish it.",
     "sourceExam": "Added on this exam",
     "sourceFolder": "From folder",
@@ -450,7 +451,7 @@
     "students_zero": "Students",
     "students_one": "Students (1)",
     "students_other": "Students ({{count}})",
-    "preview": "Exam with answers",
+    "preview": "Exam preview",
     "searchStudents": "Search by name, phone or serial",
     "level": "Level",
     "attempts": "Attempts",
@@ -525,5 +526,14 @@
     "reasonRequired": "Write the reason for rejecting",
     "acceptedToast": "Appeal accepted and mark updated",
     "rejectedToast": "Appeal rejected"
+  },
+  "preview": {
+    "hint": "A preview of the exam as a student sees it, with the right and model answers. Nothing is saved.",
+    "hintRandom": "A preview as a student sees it, with the answers. The exam is random: each student draws questions by the same rules; these are the questions drawn now.",
+    "questions_zero": "No questions",
+    "questions_one": "1 question",
+    "questions_other": "{{count}} questions",
+    "noDuration": "No time limit",
+    "empty": "This exam has no questions yet."
   }
 }

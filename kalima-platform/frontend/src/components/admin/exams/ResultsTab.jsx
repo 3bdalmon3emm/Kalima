@@ -65,7 +65,6 @@ export default function ResultsTab({ exam }) {
                     <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value="all">{t('results.allTeachers')}</SelectItem>
-                        <SelectItem value="0">{t('results.adminLink')}</SelectItem>
                         {teachers.map((u) => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
                     </SelectContent>
                 </Select>
@@ -113,7 +112,7 @@ export default function ResultsTab({ exam }) {
                                             </div>
                                         </div>
                                     </td>
-                                    <td className="p-2 text-xs">{a.link?.teacher || <span className="text-muted-foreground">{t('results.adminLink')}</span>}</td>
+                                    <td className="p-2 text-xs">{a.link?.teacher || '—'}</td>
                                     <td className="p-2 tabular-nums">{a.attempt_no}</td>
                                     <td className="p-2">
                                         <Badge variant="outline" className={a.status === 'pending' ? 'border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200' : a.status === 'done' ? 'border-green-400 bg-green-50 text-green-800 dark:bg-green-950/40 dark:text-green-300' : ''}>

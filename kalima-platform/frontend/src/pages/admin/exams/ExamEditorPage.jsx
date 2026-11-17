@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AlertTriangle, Archive, ChevronLeft, Copy, Dices, ExternalLink, Plus, Save, Trash2, Undo2, Upload } from 'lucide-react';
+import { AlertTriangle, Archive, ChevronLeft, Dices, Plus, Save, Trash2, Undo2, Upload } from 'lucide-react';
 import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -20,7 +20,8 @@ import BankPicker from '@/components/admin/exams/BankPicker';
 import RulesEditor from '@/components/admin/exams/RulesEditor';
 import ResultsTab from '@/components/admin/exams/ResultsTab';
 import ExamTeachersTab from '@/components/admin/exams/ExamTeachersTab';
-import { examLink, exGet, exSend, formatMark, toLocalInput } from '@/components/admin/exams/api';
+import ExamPreview from '@/components/exams/ExamPreview';
+import { adminApi, exGet, exSend, formatMark } from '@/components/admin/exams/api';
 
 const SETTING_FIELDS = ['name', 'description', 'serial', 'subject_id', 'type', 'target_total', 'duration_minutes', 'pass_percent', 'redo_percent', 'max_redos', 'redo_required', 'redo_new_questions', 'shuffle', 'show_answers'];
 
@@ -344,59 +345,6 @@ function QuestionsTab({ exam, passages, reload }) {
     );
 }
 
-function TestLinkTab({ exam, reload }) {
-    const { t } = useTranslation('exams');
-    const link = exam.test_link;
-    const [dates, setDates] = useState({ starts_at: '', ends_at: '' });
-    const [saving, setSaving] = useState(false);
-    useEffect(() => {
-        const start = link?.starts_at || new Date();
-        const end = link?.ends_at || new Date(Date.now() + 7 * 864e5);
-        setDates({ starts_at: toLocalInput(start), ends_at: toLocalInput(end) });
-    }, [link]);
-    const open = link && !link.closed_at;
-
-    const save = async () => {
-        setSaving(true);
-        try {
-            await exSend('put', `/exams/${exam.id}/test-link`, {
-                starts_at: new Date(dates.starts_at).toISOString(),
-                ends_at: new Date(dates.ends_at).toISOString(),
-            });
-            toast.success(t('testLink.saved'));
-            reload();
-        } catch (err) {
-            showError(err, t('errors.save'));
-        } finally {
-            setSaving(false);
-        }
-    };
-
-    return (
-        <div className="space-y-4 max-w-2xl">
-            <p className="text-sm text-muted-foreground">{t('testLink.intro')}</p>
-            {!exam.published_at && <p className="text-sm text-amber-600 flex items-center gap-1"><AlertTriangle className="h-4 w-4" />{t('testLink.publishFirst')}</p>}
-            <div className="grid gap-3 sm:grid-cols-2">
-                <div className="space-y-1"><Label>{t('testLink.starts')}</Label><Input type="datetime-local" value={dates.starts_at} onChange={(e) => setDates((d) => ({ ...d, starts_at: e.target.value }))} /></div>
-                <div className="space-y-1"><Label>{t('testLink.ends')}</Label><Input type="datetime-local" value={dates.ends_at} onChange={(e) => setDates((d) => ({ ...d, ends_at: e.target.value }))} /></div>
-            </div>
-            <div className="flex flex-wrap gap-2">
-                <Button onClick={save} disabled={saving || !dates.starts_at || !dates.ends_at}>
-                    {saving && <LoadingSpinner className="h-4 w-4" />}{open ? t('testLink.update') : t('testLink.create')}
-                </Button>
-                {open && <Button variant="outline" onClick={async () => { await exSend('delete', `/exams/${exam.id}/test-link`); reload(); }}>{t('testLink.close')}</Button>}
-            </div>
-            {open && (
-                <div className="flex flex-wrap items-center gap-2 rounded-md border p-3">
-                    <code className="flex-1 truncate text-sm" dir="ltr">{examLink(link.code)}</code>
-                    <Button size="sm" variant="outline" onClick={() => { navigator.clipboard.writeText(examLink(link.code)); toast.success(t('testLink.copied')); }}><Copy className="h-4 w-4" />{t('testLink.copy')}</Button>
-                    <Button size="sm" variant="outline" asChild><a href={`/e/${link.code}`} target="_blank" rel="noreferrer"><ExternalLink className="h-4 w-4" />{t('testLink.open')}</a></Button>
-                </div>
-            )}
-        </div>
-    );
-}
-
 export default function ExamEditorPage() {
     const { examId } = useParams();
     const { t } = useTranslation('exams');
@@ -466,13 +414,13 @@ export default function ExamEditorPage() {
                 <TabsList>
                     <TabsTrigger value="settings">{t('tabs.settings')}</TabsTrigger>
                     <TabsTrigger value="questions">{t('tabs.questions')}</TabsTrigger>
-                    <TabsTrigger value="test">{t('tabs.testLink')}</TabsTrigger>
+                    <TabsTrigger value="preview">{t('tabs.preview')}</TabsTrigger>
                     <TabsTrigger value="teachers">{t('tabs.teachers')}</TabsTrigger>
                     <TabsTrigger value="results">{t('tabs.results')}</TabsTrigger>
                 </TabsList>
                 <TabsContent value="questions" className="pt-2"><QuestionsTab exam={exam} passages={exam.passages} reload={load} /></TabsContent>
                 <TabsContent value="settings" className="pt-2"><SettingsTab exam={exam} onSaved={load} /></TabsContent>
-                <TabsContent value="test" className="pt-2"><TestLinkTab exam={exam} reload={load} /></TabsContent>
+                <TabsContent value="preview" className="pt-2">{tab === 'preview' && <ExamPreview api={adminApi} examId={exam.id} />}</TabsContent>
                 <TabsContent value="teachers" className="pt-2">{tab === 'teachers' && <ExamTeachersTab exam={exam} />}</TabsContent>
                 <TabsContent value="results" className="pt-2">{tab === 'results' && <ResultsTab exam={exam} />}</TabsContent>
             </Tabs>

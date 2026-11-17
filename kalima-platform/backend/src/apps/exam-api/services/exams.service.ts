@@ -112,7 +112,6 @@ class ExamsService {
         folder: { select: { id: true, name: true, path: true } },
         sections: { orderBy: [{ sort_order: "asc" }, { id: "asc" }], include: { rules: { orderBy: [{ sort_order: "asc" }, { id: "asc" }] } } },
         questions: { orderBy: [{ sort_order: "asc" }, { id: "asc" }] },
-        links: { where: { teacher_user_id: null }, take: 1 },
       },
     });
     if (!exam) throw new NotFoundError("Exam not found");
@@ -132,13 +131,12 @@ class ExamsService {
 
     const total = exam.questions.reduce((sum, q) => sum + num(q.mark), 0);
     const attempts = await this.db.ex_attempts.count({ where: { exam_id: id } });
-    const { links, questions, folder, ...rest } = exam;
+    const { questions, folder, ...rest } = exam;
     return {
       ...rest,
       breadcrumb: crumbs,
       total,
       attempt_count: attempts,
-      test_link: links[0] ?? null,
       sections: exam.sections.map((s) => ({
         ...s,
         questions: questions
@@ -466,25 +464,6 @@ class ExamsService {
         .map((f) => f.id),
     );
     return folders.filter((f) => !pathIds(f.path).some((id) => archived.has(id))).map((f) => f.id);
-  }
-
-  // ---------- Test link ----------
-
-  // The admin's own link to try the exam as a student, with its dates.
-  async saveTestLink(examId: number, startsAt: Date, endsAt: Date, userId: number) {
-    await this.assertEditable(examId);
-    if (endsAt <= startsAt) throw new BadRequestError("The end date must be after the start date");
-    const existing = await this.db.ex_links.findFirst({ where: { exam_id: examId, teacher_user_id: null } });
-    if (existing) {
-      return this.db.ex_links.update({ where: { id: existing.id }, data: { starts_at: startsAt, ends_at: endsAt, closed_at: null } });
-    }
-    return this.db.ex_links.create({
-      data: { exam_id: examId, code: await this.newLinkCode(), starts_at: startsAt, ends_at: endsAt, created_by: userId },
-    });
-  }
-
-  async closeTestLink(examId: number) {
-    await this.db.ex_links.updateMany({ where: { exam_id: examId, teacher_user_id: null }, data: { closed_at: new Date() } });
   }
 
   private async newLinkCode() {

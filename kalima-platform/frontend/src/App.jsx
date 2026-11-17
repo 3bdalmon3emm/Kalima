@@ -363,7 +363,7 @@ const router = createBrowserRouter(
         </Route>
       </Route>
 
-      {/* Exam links: students take exams; Admin and SubAdmin may try the test link */}
+      {/* Exam links: students take exams through a teacher's link */}
       <Route element={<RoleRoute requiredRole={["Student", "Admin", "SubAdmin"]} />}>
         <Route path="/e/:code" element={<ExamStartPage />} />
         <Route path="/e/:code/attempt/:attemptId" element={<ExamAttemptPage />} />

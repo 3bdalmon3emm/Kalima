@@ -9,6 +9,7 @@ import { examsService } from "../services/exams.service";
 import { soundsService } from "../services/sounds.service";
 import { reopenForStudent, resultsService } from "../services/results.service";
 import { appealsService, type Decision } from "../services/appeals.service";
+import { attemptsService } from "../services/attempts.service";
 import { teacherLinksService } from "../services/teacherLinks.service";
 import { qrPng, uniqueFileNames, examUrl } from "../services/examLinkUrl";
 import { makeZip } from "../../../libs/zip";
@@ -130,16 +131,9 @@ router.post("/exams/:id/draw", handle(async (req, res) => {
   res.json(ok(await examsService.draw(idParam(req)), "Questions drawn"));
 }));
 
-router.put("/exams/:id/test-link", handle(async (req, res) => {
-  const link = await examsService.saveTestLink(
-    idParam(req), date(req.body?.starts_at, "starts_at"), date(req.body?.ends_at, "ends_at"), userId(req),
-  );
-  res.json(ok(link, "Test link saved"));
-}));
-
-router.delete("/exams/:id/test-link", handle(async (req, res) => {
-  await examsService.closeTestLink(idParam(req));
-  res.json(ok(undefined, "Test link closed"));
+// The exam as a student sees it, with the right and model answers.
+router.get("/exams/:id/preview", handle(async (req, res) => {
+  res.json(ok(await attemptsService.preview(idParam(req))));
 }));
 
 // ---------- Sections ----------
@@ -188,7 +182,7 @@ router.post("/exams/:id/questions/remove", handle(async (req, res) => {
 
 // ---------- Results and essay grading ----------
 
-// ?teacher_ids=3,5 (0 = the admin test link)
+// ?teacher_ids=3,5
 const teacherIdsParam = (raw: unknown): number[] | undefined => {
   if (typeof raw !== "string" || raw === "") return undefined;
   return raw.split(",").map((x) => Number(x.trim())).filter((n) => Number.isInteger(n) && n >= 0);
@@ -211,7 +205,7 @@ export function decisionBody(body: any): Decision {
   return { accept: body.accept, mark: body.accept ? Number(body.mark) : undefined, reply: typeof body.reply === "string" ? body.reply : "" };
 }
 
-// ---------- Appeals (every link, the admin test link too) ----------
+// ---------- Appeals (every teacher's link) ----------
 
 router.get("/appeals", handle(async (req, res) => {
   res.json(ok(await appealsService.list(null, { status: String(req.query.status ?? ""), page: Number(req.query.page) })));

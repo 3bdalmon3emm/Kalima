@@ -93,8 +93,7 @@ class AppealsService {
       throw err;
     }
 
-    // The teacher and their assistants hear about it; the admin test link
-    // has no teacher, so its appeals wait on the paper for the admin.
+    // The teacher and their assistants hear about it.
     const teacherId = attempt.link.teacher_user_id;
     if (teacherId) {
       const assistants = await this.db.teacher_assistants.findMany({ where: { teacher_user_id: teacherId }, select: { assistant_user_id: true } });

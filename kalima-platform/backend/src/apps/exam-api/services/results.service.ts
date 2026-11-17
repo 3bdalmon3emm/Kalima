@@ -55,18 +55,10 @@ class ResultsService {
 
   // Every attempt at an exam, newest first; `pending` keeps only those
   // waiting for essay marks.
-  // `teacherIds` limits to those teachers' links (0 = the admin test link).
+  // `teacherIds` limits to those teachers' links.
   linkWhere(teacherIds?: number[]) {
     if (!teacherIds) return {};
-    const real = teacherIds.filter((t) => t > 0);
-    return {
-      link: {
-        OR: [
-          ...(real.length ? [{ teacher_user_id: { in: real } }] : []),
-          ...(teacherIds.includes(0) ? [{ teacher_user_id: null }] : []),
-        ],
-      },
-    };
+    return { link: { teacher_user_id: { in: teacherIds.filter((t) => t > 0) } } };
   }
 
   async list(examId: number, filter: { status?: string; teacherIds?: number[] } = {}) {

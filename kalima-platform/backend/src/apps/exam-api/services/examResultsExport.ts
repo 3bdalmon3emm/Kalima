@@ -4,7 +4,7 @@ import type { ExportMapper } from "../../store-api/export/mappers";
 
 // Excel/CSV of an exam's results: one row per attempt with the student, the
 // teacher whose link they used, the score and how often they left the page.
-// Filters: exam_id (required), teacher_ids ("3,5"; 0 = the admin test link),
+// Filters: exam_id (required), teacher_ids ("3,5"),
 // status.
 
 const num = (d: unknown) => Number(d ?? 0);
@@ -50,7 +50,7 @@ registerExportResource("exam-results", {
         ...(ids?.length ? { id: { in: ids } } : { exam_id: examId }),
         ...(typeof filters?.status === "string" && ["in_progress", "pending", "done"].includes(filters.status) && { status: filters.status as any }),
         ...(teacherIds && {
-          link: { OR: [...(real.length ? [{ teacher_user_id: { in: real } }] : []), ...(teacherIds.includes(0) ? [{ teacher_user_id: null }] : [])] },
+          link: { teacher_user_id: { in: real } },
         }),
       },
       include: { link: { select: { teacher_user_id: true } }, exam: { select: { pass_percent: true } } },

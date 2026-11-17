@@ -692,6 +692,43 @@ class AttemptsService {
     };
   }
 
+  // ---------- Preview ----------
+
+  // The exam as a student sees it, in its own order with passages kept
+  // together, and every right answer, model answer and explanation shown.
+  // Nothing is saved and no link is used: this is how staff and teachers
+  // look at an exam. A random exam shows the questions drawn for it.
+  async preview(examId: number) {
+    const exam = await this.db.ex_exams.findUnique({ where: { id: examId }, include: { subjects: { select: { id: true, title: true } } } });
+    if (!exam) throw new NotFoundError("Exam not found");
+    const [rows, sections] = await Promise.all([
+      this.db.ex_exam_questions.findMany({
+        where: { exam_id: examId },
+        orderBy: [{ sort_order: "asc" }, { id: "asc" }],
+        include: { question: { select: { passage_id: true } } },
+      }),
+      this.db.ex_sections.findMany({ where: { exam_id: examId }, orderBy: [{ sort_order: "asc" }, { id: "asc" }], select: { id: true, name: true } }),
+    ]);
+    const list: AttemptQuestion[] = [];
+    for (const s of sections) {
+      const inSection = groupPassages(
+        rows.filter((r) => r.section_id === s.id).map((r) => ({ section_id: r.section_id, question_id: r.question_id, mark: num(r.mark), passage_id: r.question.passage_id })),
+        (q) => q.passage_id,
+      );
+      list.push(...inSection.map(({ section_id, question_id, mark }) => ({ section_id, question_id, mark })));
+    }
+    const { review, passages } = await this.review({ id: 0, questions: list }, true);
+    return {
+      exam: {
+        id: exam.id, name: exam.name, description: exam.description, type: exam.type, mode: exam.mode, subject: exam.subjects,
+        duration_minutes: exam.duration_minutes, total: round2(list.reduce((s, q) => s + q.mark, 0)), question_count: list.length,
+      },
+      sections: sections.filter((s) => list.some((q) => q.section_id === s.id)),
+      review: review.map(({ appeals, ...item }) => item),
+      passages,
+    };
+  }
+
   // ---------- Essay photos ----------
 
   async addFile(id: number, studentId: number, token: string | null, file: Express.Multer.File | undefined) {

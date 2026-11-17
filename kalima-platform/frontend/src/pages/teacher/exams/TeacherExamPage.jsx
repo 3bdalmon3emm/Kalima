@@ -9,7 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
-import QuestionPreview from '@/components/admin/question-bank/QuestionPreview';
+import ExamPreview from '@/components/exams/ExamPreview';
 import LinkQrDialog from '@/components/exams/LinkQrDialog';
 import ReopenDialog from '@/components/exams/ReopenDialog';
 import { formatDate } from '@/components/admin/exams/FolderTeachersPanel';
@@ -46,7 +46,6 @@ export default function TeacherExamPage() {
 
     if (!data) return <div className="flex justify-center py-16"><LoadingSpinner /></div>;
     const { exam } = data;
-    const passages = new Map((exam.passages || []).map((p) => [p.id, p]));
     const when = (d) => (d ? new Date(d).toLocaleString(i18n.language === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : '—');
 
     const exportExcel = () => exportData({
@@ -57,7 +56,6 @@ export default function TeacherExamPage() {
         filters: { exam_id: exam.id },
     });
 
-    let n = 0;
     return (
         <div className="mx-auto max-w-5xl space-y-5">
             <nav className="flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
@@ -164,32 +162,8 @@ export default function TeacherExamPage() {
                     )}
                 </TabsContent>
 
-                <TabsContent value="preview" className="space-y-4 pt-2">
-                    {exam.mode === 'random' && <p className="rounded-md bg-muted p-3 text-sm text-muted-foreground">{t('teacher.randomHint')}</p>}
-                    {exam.sections.map((section) => (
-                        <div key={section.id} className="space-y-3">
-                            {section.name && <h2 className="text-lg font-semibold">{section.name}</h2>}
-                            {section.questions.map((row, i) => {
-                                const pid = row.question?.passage_id;
-                                const first = pid && section.questions[i - 1]?.question?.passage_id !== pid;
-                                n += 1;
-                                return (
-                                    <div key={row.id ?? row.question_id} className="space-y-2">
-                                        {first && passages.get(pid) && (
-                                            <div className="rounded-lg border-2 border-dashed bg-muted/30 p-4"><QuestionPreview q={passages.get(pid)} /></div>
-                                        )}
-                                        <div className="rounded-lg border bg-card p-4">
-                                            <div className="mb-2 flex items-center justify-between text-sm">
-                                                <span className="font-bold">{t('teacher.questionN', { n })}</span>
-                                                <Badge variant="outline">{t('teacher.marks', { count: row.mark })}</Badge>
-                                            </div>
-                                            {row.question ? <QuestionPreview q={row.question} /> : <p className="text-sm text-muted-foreground">—</p>}
-                                        </div>
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    ))}
+                <TabsContent value="preview" className="pt-2">
+                    {tab === 'preview' && <ExamPreview api={teacherApi} examId={exam.id} />}
                 </TabsContent>
             </Tabs>
 
