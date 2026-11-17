@@ -5,6 +5,7 @@ import { pathIds } from "./folders.service";
 import { teacherLinksService } from "./teacherLinks.service";
 import { examsService } from "./exams.service";
 import { bandFor } from "./attempts.service";
+import { appealsService } from "./appeals.service";
 
 // What a teacher (or an assistant, for the teachers they work for) sees:
 // the exams they were given, their own link to each, and the students who
@@ -34,9 +35,10 @@ class TeacherPortalService {
     if (!teacherIds.length) return { exams: [], folders: [], teachers: [] };
     const links = (await teacherLinksService.linksOf(teacherIds)).filter((l) => !l.exam.archived_at);
     const linkIds = links.map((l) => l.id);
-    const [counts, pending] = await Promise.all([
+    const [counts, pending, appeals] = await Promise.all([
       this.db.ex_attempts.groupBy({ by: ["link_id"], where: { link_id: { in: linkIds } }, _count: { _all: true } }),
       this.db.ex_attempts.groupBy({ by: ["link_id"], where: { link_id: { in: linkIds }, status: "pending" }, _count: { _all: true } }),
+      appealsService.pendingByLink(linkIds),
     ]);
     const countOf = new Map(counts.map((c) => [c.link_id, c._count._all]));
     const pendingOf = new Map(pending.map((c) => [c.link_id, c._count._all]));
@@ -58,6 +60,7 @@ class TeacherPortalService {
         state: l.closed_at ? "closed" : !l.exam.published_at ? "not_published" : now < l.starts_at.getTime() ? "not_started" : now > l.ends_at.getTime() ? "ended" : "open",
         attempts: countOf.get(l.id) ?? 0,
         pending: pendingOf.get(l.id) ?? 0,
+        appeals: appeals.get(l.id) ?? 0,
       })),
     };
   }
@@ -109,6 +112,13 @@ class TeacherPortalService {
         return { ...s, last_status: last.status, percent, band: percent === null ? null : bandFor(percent, details.pass_percent) };
       }),
     };
+  }
+
+  // Every link these teachers ever had, for their appeals.
+  async linkIdsOf(teacherIds: number[]) {
+    if (!teacherIds.length) return [];
+    const rows = await this.db.ex_links.findMany({ where: { teacher_user_id: { in: teacherIds } }, select: { id: true } });
+    return rows.map((r) => r.id);
   }
 
   // The attempt, only when it came through one of these teachers' links.

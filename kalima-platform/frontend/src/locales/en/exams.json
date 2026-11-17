@@ -458,7 +458,9 @@
     "randomHint": "A random exam: each student draws questions by the same rules; this is a sample.",
     "questionN": "Question {{n}}",
     "marks_one": "1 mark",
-    "marks_other": "{{count}} marks"
+    "marks_other": "{{count}} marks",
+    "appealsCount_one": "1 new appeal",
+    "appealsCount_other": "{{count}} new appeals"
   },
   "assistant": {
     "title": "Teachers they assist",
@@ -478,5 +480,50 @@
     "remove": "Remove",
     "saved": "Cover photo saved",
     "removed": "Cover photo removed"
+  },
+  "appeals": {
+    "title": "Appeals",
+    "subtitleTeacher": "Your students' appeals on questions: accept with a new mark, or reject with a reason.",
+    "subtitleAdmin": "Every appeal from every link, the admin test link included.",
+    "tabPending": "Waiting",
+    "tabAnswered": "Answered",
+    "noneWaiting": "No appeals are waiting.",
+    "noneAnswered": "No answered appeals yet.",
+    "questionN": "Question {{n}}",
+    "score": "Score",
+    "paper": "Student paper",
+    "showQuestion": "Show the question and answers",
+    "prev": "Previous",
+    "next": "Next",
+    "button": "Appeal",
+    "again": "Appeal again",
+    "formTitle": "Appeal this question",
+    "formHint": "Write why you think your mark should be higher; you can add up to 3 photos.",
+    "placeholder": "Write your point here…",
+    "addPhoto": "Add photo",
+    "send": "Send appeal",
+    "cancel": "Cancel",
+    "empty": "Write a reason or add a photo",
+    "sent": "Your appeal was sent to the teacher",
+    "yourAppeal": "Your appeal",
+    "studentAppeal": "Student appeal",
+    "status": {
+      "pending": "Waiting",
+      "accepted": "Accepted",
+      "rejected": "Rejected"
+    },
+    "acceptedLine": "Accepted: mark changed from {{from}} to {{to}} out of {{max}}",
+    "rejectedLine": "Rejected",
+    "accept": "Accept",
+    "reject": "Reject",
+    "newMark": "New mark",
+    "was": "was {{mark}}",
+    "noteOptional": "Note to the student (optional)",
+    "reason": "Reason for rejecting (required)",
+    "confirmAccept": "Accept and save the mark",
+    "confirmReject": "Reject the appeal",
+    "reasonRequired": "Write the reason for rejecting",
+    "acceptedToast": "Appeal accepted and mark updated",
+    "rejectedToast": "Appeal rejected"
   }
 }

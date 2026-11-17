@@ -32,7 +32,10 @@
     "NEW_ACCOUNT_CREATED": "تم إنشاء حساب مستخدم جديد",
     "SYSTEM_ANNOUNCEMENT": "إعلان من النظام",
     "ACCOUNT_UPDATE": "تم تحديث حسابك",
-    "CUSTOM": "إشعار مخصص"
+    "CUSTOM": "إشعار مخصص",
+    "EXAM_APPEAL_NEW": "تظلم جديد من طالب على امتحان",
+    "EXAM_APPEAL_ACCEPTED": "تم قبول تظلمك وتعديل درجتك",
+    "EXAM_APPEAL_REJECTED": "تم الرد على تظلمك"
   },
   "categories": {
     "1": "حالة الطلب",

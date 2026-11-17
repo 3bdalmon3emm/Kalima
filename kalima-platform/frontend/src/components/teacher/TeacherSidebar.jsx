@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, User, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Settings, BookOpenCheck, BarChart3, ClipboardList } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Settings, BookOpenCheck, BarChart3, ClipboardList, MessageSquareWarning } from 'lucide-react';
 import useAuth from '@/hooks/auth/useAuth';
 import useRole from '@/hooks/useRole';
 
@@ -40,11 +40,13 @@ export default function TeacherSidebar({ isMobileOpen, setIsMobileOpen }) {
   };
 
   const exams = { name: t('nav.exams', 'My Exams'), href: '/teacher/exams', icon: ClipboardList, id: 'exams' };
+  const appeals = { name: t('nav.appeals', 'Appeals'), href: '/teacher/appeals', icon: MessageSquareWarning, id: 'appeals' };
   // An assistant only has the exams of the teachers they work for.
-  const navigation = !isTeacher ? [{ name: t('nav.home', 'Home'), href: '/', icon: Home, id: 'home' }, exams] : [
+  const navigation = !isTeacher ? [{ name: t('nav.home', 'Home'), href: '/', icon: Home, id: 'home' }, exams, appeals] : [
     { name: t('nav.home', 'Home'), href: '/', icon: Home, id: 'home' },
     { name: t('nav.profile', 'My Profile'), href: '/teacher/profile', icon: User, id: 'profile' },
     exams,
+    appeals,
     { name: t('nav.eBooklets', 'My E-Booklets'), href: '/teacher/e-booklets', icon: BookOpenCheck, id: 'e-booklets' },
     { name: t('nav.eBookletOrders', 'E-Booklet Orders'), href: '/e-booklet-orders', icon: ShoppingBag, id: 'e-booklet-orders' },
     { name: t('nav.eBookletAnalytics', 'E-Booklet Analytics'), href: '/teacher/e-booklet-analytics', icon: BarChart3, id: 'e-booklet-analytics' },

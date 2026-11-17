@@ -606,6 +606,20 @@ class AttemptsService {
     };
   }
 
+  // answersShown for one attempt, loading what it needs.
+  async answersShownFor(attempt: { exam_id: number; link_id: number; student_user_id: number }) {
+    const [exam, attempts, link] = await Promise.all([
+      this.db.ex_exams.findUniqueOrThrow({ where: { id: attempt.exam_id } }),
+      this.db.ex_attempts.findMany({
+        where: { link_id: attempt.link_id, student_user_id: attempt.student_user_id },
+        orderBy: { attempt_no: "asc" },
+        select: { id: true, status: true, score: true, total: true },
+      }),
+      this.db.ex_links.findUniqueOrThrow({ where: { id: attempt.link_id }, select: { ends_at: true, closed_at: true } }),
+    ]);
+    return this.answersShown(exam, attempts, link);
+  }
+
   // Whether the right answers show yet. "after_last": once the student has
   // nothing left to take (no redo, nothing running) or the link has ended.
   private answersShown(
@@ -626,11 +640,21 @@ class AttemptsService {
   // the explanation, for after the result shows.
   async review(attempt: { id: number; questions: unknown }, shown: boolean) {
     const list = attempt.questions as unknown as AttemptQuestion[];
-    const [rows, answers, files] = await Promise.all([
+    const [rows, answers, files, appeals] = await Promise.all([
       questionsService.loadFull({ id: { in: list.map((q) => q.question_id) } }),
       this.db.ex_attempt_answers.findMany({ where: { attempt_id: attempt.id } }),
       this.db.ex_answer_files.findMany({ where: { attempt_id: attempt.id } }),
+      this.db.ex_appeals.findMany({ where: { attempt_id: attempt.id }, orderBy: { id: "asc" } }),
     ]);
+    const appealsOf = new Map<number, any[]>();
+    for (const ap of appeals) {
+      const shaped = {
+        id: ap.id, text: ap.text, images: await Promise.all(ap.image_keys.map((k) => mediaService.url(k))), status: ap.status,
+        old_mark: num(ap.old_mark), new_mark: ap.new_mark === null ? null : num(ap.new_mark), reply: ap.reply,
+        decided_at: ap.decided_at, created_at: ap.created_at,
+      };
+      appealsOf.set(ap.question_id, [...(appealsOf.get(ap.question_id) ?? []), shaped]);
+    }
     const shaped = await questionsService.presentFlat(rows);
     const byId = new Map(shaped.map((q) => [q.id, q]));
     const answerById = new Map(answers.map((a) => [a.question_id, a]));
@@ -650,6 +674,7 @@ class AttemptsService {
         mark: item.mark,
         earned: a?.mark === null || a?.mark === undefined ? null : num(a.mark),
         graded_by: a?.graded_by ?? null,
+        appeals: appealsOf.get(item.question_id) ?? [],
         answer: answer.file_ids ? { ...answer, files: answer.file_ids.map((fid: number) => ({ id: fid, url: fileUrls.get(fid) })) } : answer,
         question: q && {
           id: q.id, serial: q.serial, type: q.type, passage_id: q.passage_id, font: q.font,

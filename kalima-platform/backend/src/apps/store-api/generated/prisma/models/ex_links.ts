@@ -270,6 +270,7 @@ export type ex_linksWhereInput = {
   created_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
   attempts?: Prisma.Ex_attemptsListRelationFilter
+  appeals?: Prisma.Ex_appealsListRelationFilter
 }
 
 export type ex_linksOrderByWithRelationInput = {
@@ -285,6 +286,7 @@ export type ex_linksOrderByWithRelationInput = {
   created_at?: Prisma.SortOrder
   exam?: Prisma.ex_examsOrderByWithRelationInput
   attempts?: Prisma.ex_attemptsOrderByRelationAggregateInput
+  appeals?: Prisma.ex_appealsOrderByRelationAggregateInput
 }
 
 export type ex_linksWhereUniqueInput = Prisma.AtLeast<{
@@ -303,6 +305,7 @@ export type ex_linksWhereUniqueInput = Prisma.AtLeast<{
   created_at?: Prisma.DateTimeFilter<"ex_links"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
   attempts?: Prisma.Ex_attemptsListRelationFilter
+  appeals?: Prisma.Ex_appealsListRelationFilter
 }, "id" | "code">
 
 export type ex_linksOrderByWithAggregationInput = {
@@ -350,6 +353,7 @@ export type ex_linksCreateInput = {
   created_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutLinksInput
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutLinkInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksUncheckedCreateInput = {
@@ -364,6 +368,7 @@ export type ex_linksUncheckedCreateInput = {
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutLinkInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksUpdateInput = {
@@ -377,6 +382,7 @@ export type ex_linksUpdateInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutLinksNestedInput
   attempts?: Prisma.ex_attemptsUpdateManyWithoutLinkNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksUncheckedUpdateInput = {
@@ -391,6 +397,7 @@ export type ex_linksUncheckedUpdateInput = {
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutLinkNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksCreateManyInput = {
@@ -554,6 +561,20 @@ export type ex_linksUpdateOneRequiredWithoutAttemptsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ex_linksUpdateToOneWithWhereWithoutAttemptsInput, Prisma.ex_linksUpdateWithoutAttemptsInput>, Prisma.ex_linksUncheckedUpdateWithoutAttemptsInput>
 }
 
+export type ex_linksCreateNestedOneWithoutAppealsInput = {
+  create?: Prisma.XOR<Prisma.ex_linksCreateWithoutAppealsInput, Prisma.ex_linksUncheckedCreateWithoutAppealsInput>
+  connectOrCreate?: Prisma.ex_linksCreateOrConnectWithoutAppealsInput
+  connect?: Prisma.ex_linksWhereUniqueInput
+}
+
+export type ex_linksUpdateOneRequiredWithoutAppealsNestedInput = {
+  create?: Prisma.XOR<Prisma.ex_linksCreateWithoutAppealsInput, Prisma.ex_linksUncheckedCreateWithoutAppealsInput>
+  connectOrCreate?: Prisma.ex_linksCreateOrConnectWithoutAppealsInput
+  upsert?: Prisma.ex_linksUpsertWithoutAppealsInput
+  connect?: Prisma.ex_linksWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ex_linksUpdateToOneWithWhereWithoutAppealsInput, Prisma.ex_linksUpdateWithoutAppealsInput>, Prisma.ex_linksUncheckedUpdateWithoutAppealsInput>
+}
+
 export type ex_linksCreateWithoutExamInput = {
   teacher_user_id?: number | null
   code: string
@@ -564,6 +585,7 @@ export type ex_linksCreateWithoutExamInput = {
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsCreateNestedManyWithoutLinkInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksUncheckedCreateWithoutExamInput = {
@@ -577,6 +599,7 @@ export type ex_linksUncheckedCreateWithoutExamInput = {
   created_by?: number | null
   created_at?: Date | string
   attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutLinkInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksCreateOrConnectWithoutExamInput = {
@@ -631,6 +654,7 @@ export type ex_linksCreateWithoutAttemptsInput = {
   created_by?: number | null
   created_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutLinksInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksUncheckedCreateWithoutAttemptsInput = {
@@ -644,6 +668,7 @@ export type ex_linksUncheckedCreateWithoutAttemptsInput = {
   dates_custom?: boolean
   created_by?: number | null
   created_at?: Date | string
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutLinkInput
 }
 
 export type ex_linksCreateOrConnectWithoutAttemptsInput = {
@@ -672,6 +697,7 @@ export type ex_linksUpdateWithoutAttemptsInput = {
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutLinksNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksUncheckedUpdateWithoutAttemptsInput = {
@@ -685,6 +711,77 @@ export type ex_linksUncheckedUpdateWithoutAttemptsInput = {
   dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutLinkNestedInput
+}
+
+export type ex_linksCreateWithoutAppealsInput = {
+  teacher_user_id?: number | null
+  code: string
+  starts_at: Date | string
+  ends_at: Date | string
+  closed_at?: Date | string | null
+  dates_custom?: boolean
+  created_by?: number | null
+  created_at?: Date | string
+  exam: Prisma.ex_examsCreateNestedOneWithoutLinksInput
+  attempts?: Prisma.ex_attemptsCreateNestedManyWithoutLinkInput
+}
+
+export type ex_linksUncheckedCreateWithoutAppealsInput = {
+  id?: number
+  exam_id: number
+  teacher_user_id?: number | null
+  code: string
+  starts_at: Date | string
+  ends_at: Date | string
+  closed_at?: Date | string | null
+  dates_custom?: boolean
+  created_by?: number | null
+  created_at?: Date | string
+  attempts?: Prisma.ex_attemptsUncheckedCreateNestedManyWithoutLinkInput
+}
+
+export type ex_linksCreateOrConnectWithoutAppealsInput = {
+  where: Prisma.ex_linksWhereUniqueInput
+  create: Prisma.XOR<Prisma.ex_linksCreateWithoutAppealsInput, Prisma.ex_linksUncheckedCreateWithoutAppealsInput>
+}
+
+export type ex_linksUpsertWithoutAppealsInput = {
+  update: Prisma.XOR<Prisma.ex_linksUpdateWithoutAppealsInput, Prisma.ex_linksUncheckedUpdateWithoutAppealsInput>
+  create: Prisma.XOR<Prisma.ex_linksCreateWithoutAppealsInput, Prisma.ex_linksUncheckedCreateWithoutAppealsInput>
+  where?: Prisma.ex_linksWhereInput
+}
+
+export type ex_linksUpdateToOneWithWhereWithoutAppealsInput = {
+  where?: Prisma.ex_linksWhereInput
+  data: Prisma.XOR<Prisma.ex_linksUpdateWithoutAppealsInput, Prisma.ex_linksUncheckedUpdateWithoutAppealsInput>
+}
+
+export type ex_linksUpdateWithoutAppealsInput = {
+  teacher_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  exam?: Prisma.ex_examsUpdateOneRequiredWithoutLinksNestedInput
+  attempts?: Prisma.ex_attemptsUpdateManyWithoutLinkNestedInput
+}
+
+export type ex_linksUncheckedUpdateWithoutAppealsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  exam_id?: Prisma.IntFieldUpdateOperationsInput | number
+  teacher_user_id?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  code?: Prisma.StringFieldUpdateOperationsInput | string
+  starts_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  ends_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  closed_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  dates_custom?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksCreateManyExamInput = {
@@ -709,6 +806,7 @@ export type ex_linksUpdateWithoutExamInput = {
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUpdateManyWithoutLinkNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksUncheckedUpdateWithoutExamInput = {
@@ -722,6 +820,7 @@ export type ex_linksUncheckedUpdateWithoutExamInput = {
   created_by?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   attempts?: Prisma.ex_attemptsUncheckedUpdateManyWithoutLinkNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutLinkNestedInput
 }
 
 export type ex_linksUncheckedUpdateManyWithoutExamInput = {
@@ -743,10 +842,12 @@ export type ex_linksUncheckedUpdateManyWithoutExamInput = {
 
 export type Ex_linksCountOutputType = {
   attempts: number
+  appeals: number
 }
 
 export type Ex_linksCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   attempts?: boolean | Ex_linksCountOutputTypeCountAttemptsArgs
+  appeals?: boolean | Ex_linksCountOutputTypeCountAppealsArgs
 }
 
 /**
@@ -766,6 +867,13 @@ export type Ex_linksCountOutputTypeCountAttemptsArgs<ExtArgs extends runtime.Typ
   where?: Prisma.ex_attemptsWhereInput
 }
 
+/**
+ * Ex_linksCountOutputType without action
+ */
+export type Ex_linksCountOutputTypeCountAppealsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ex_appealsWhereInput
+}
+
 
 export type ex_linksSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -780,6 +888,7 @@ export type ex_linksSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs
   created_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.ex_links$attemptsArgs<ExtArgs>
+  appeals?: boolean | Prisma.ex_links$appealsArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_linksCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ex_links"]>
 
@@ -828,6 +937,7 @@ export type ex_linksOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 export type ex_linksInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
   attempts?: boolean | Prisma.ex_links$attemptsArgs<ExtArgs>
+  appeals?: boolean | Prisma.ex_links$appealsArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_linksCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ex_linksIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -842,6 +952,7 @@ export type $ex_linksPayload<ExtArgs extends runtime.Types.Extensions.InternalAr
   objects: {
     exam: Prisma.$ex_examsPayload<ExtArgs>
     attempts: Prisma.$ex_attemptsPayload<ExtArgs>[]
+    appeals: Prisma.$ex_appealsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -1250,6 +1361,7 @@ export interface Prisma__ex_linksClient<T, Null = never, ExtArgs extends runtime
   readonly [Symbol.toStringTag]: "PrismaPromise"
   exam<T extends Prisma.ex_examsDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_examsDefaultArgs<ExtArgs>>): Prisma.Prisma__ex_examsClient<runtime.Types.Result.GetResult<Prisma.$ex_examsPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   attempts<T extends Prisma.ex_links$attemptsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_links$attemptsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_attemptsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  appeals<T extends Prisma.ex_links$appealsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_links$appealsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_appealsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1715,6 +1827,30 @@ export type ex_links$attemptsArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.Ex_attemptsScalarFieldEnum | Prisma.Ex_attemptsScalarFieldEnum[]
+}
+
+/**
+ * ex_links.appeals
+ */
+export type ex_links$appealsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ex_appeals
+   */
+  select?: Prisma.ex_appealsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ex_appeals
+   */
+  omit?: Prisma.ex_appealsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ex_appealsInclude<ExtArgs> | null
+  where?: Prisma.ex_appealsWhereInput
+  orderBy?: Prisma.ex_appealsOrderByWithRelationInput | Prisma.ex_appealsOrderByWithRelationInput[]
+  cursor?: Prisma.ex_appealsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Ex_appealsScalarFieldEnum | Prisma.Ex_appealsScalarFieldEnum[]
 }
 
 /**

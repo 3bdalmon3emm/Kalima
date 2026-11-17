@@ -368,6 +368,7 @@ export type ex_attemptsWhereInput = {
   link?: Prisma.XOR<Prisma.Ex_linksScalarRelationFilter, Prisma.ex_linksWhereInput>
   answers?: Prisma.Ex_attempt_answersListRelationFilter
   files?: Prisma.Ex_answer_filesListRelationFilter
+  appeals?: Prisma.Ex_appealsListRelationFilter
 }
 
 export type ex_attemptsOrderByWithRelationInput = {
@@ -395,6 +396,7 @@ export type ex_attemptsOrderByWithRelationInput = {
   link?: Prisma.ex_linksOrderByWithRelationInput
   answers?: Prisma.ex_attempt_answersOrderByRelationAggregateInput
   files?: Prisma.ex_answer_filesOrderByRelationAggregateInput
+  appeals?: Prisma.ex_appealsOrderByRelationAggregateInput
 }
 
 export type ex_attemptsWhereUniqueInput = Prisma.AtLeast<{
@@ -426,6 +428,7 @@ export type ex_attemptsWhereUniqueInput = Prisma.AtLeast<{
   link?: Prisma.XOR<Prisma.Ex_linksScalarRelationFilter, Prisma.ex_linksWhereInput>
   answers?: Prisma.Ex_attempt_answersListRelationFilter
   files?: Prisma.Ex_answer_filesListRelationFilter
+  appeals?: Prisma.Ex_appealsListRelationFilter
 }, "id" | "link_id_student_user_id_attempt_no">
 
 export type ex_attemptsOrderByWithAggregationInput = {
@@ -504,6 +507,7 @@ export type ex_attemptsCreateInput = {
   link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
   answers?: Prisma.ex_attempt_answersCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUncheckedCreateInput = {
@@ -529,6 +533,7 @@ export type ex_attemptsUncheckedCreateInput = {
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUpdateInput = {
@@ -553,6 +558,7 @@ export type ex_attemptsUpdateInput = {
   link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
   answers?: Prisma.ex_attempt_answersUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateInput = {
@@ -578,6 +584,7 @@ export type ex_attemptsUncheckedUpdateInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsCreateManyInput = {
@@ -874,6 +881,20 @@ export type ex_attemptsUpdateOneRequiredWithoutFilesNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.ex_attemptsUpdateToOneWithWhereWithoutFilesInput, Prisma.ex_attemptsUpdateWithoutFilesInput>, Prisma.ex_attemptsUncheckedUpdateWithoutFilesInput>
 }
 
+export type ex_attemptsCreateNestedOneWithoutAppealsInput = {
+  create?: Prisma.XOR<Prisma.ex_attemptsCreateWithoutAppealsInput, Prisma.ex_attemptsUncheckedCreateWithoutAppealsInput>
+  connectOrCreate?: Prisma.ex_attemptsCreateOrConnectWithoutAppealsInput
+  connect?: Prisma.ex_attemptsWhereUniqueInput
+}
+
+export type ex_attemptsUpdateOneRequiredWithoutAppealsNestedInput = {
+  create?: Prisma.XOR<Prisma.ex_attemptsCreateWithoutAppealsInput, Prisma.ex_attemptsUncheckedCreateWithoutAppealsInput>
+  connectOrCreate?: Prisma.ex_attemptsCreateOrConnectWithoutAppealsInput
+  upsert?: Prisma.ex_attemptsUpsertWithoutAppealsInput
+  connect?: Prisma.ex_attemptsWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.ex_attemptsUpdateToOneWithWhereWithoutAppealsInput, Prisma.ex_attemptsUpdateWithoutAppealsInput>, Prisma.ex_attemptsUncheckedUpdateWithoutAppealsInput>
+}
+
 export type ex_attemptsCreateWithoutExamInput = {
   student_user_id: number
   attempt_no: number
@@ -895,6 +916,7 @@ export type ex_attemptsCreateWithoutExamInput = {
   link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
   answers?: Prisma.ex_attempt_answersCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUncheckedCreateWithoutExamInput = {
@@ -919,6 +941,7 @@ export type ex_attemptsUncheckedCreateWithoutExamInput = {
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsCreateOrConnectWithoutExamInput = {
@@ -994,6 +1017,7 @@ export type ex_attemptsCreateWithoutLinkInput = {
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
   answers?: Prisma.ex_attempt_answersCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUncheckedCreateWithoutLinkInput = {
@@ -1018,6 +1042,7 @@ export type ex_attemptsUncheckedCreateWithoutLinkInput = {
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
   files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsCreateOrConnectWithoutLinkInput = {
@@ -1067,6 +1092,7 @@ export type ex_attemptsCreateWithoutAnswersInput = {
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
   link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
   files?: Prisma.ex_answer_filesCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUncheckedCreateWithoutAnswersInput = {
@@ -1091,6 +1117,7 @@ export type ex_attemptsUncheckedCreateWithoutAnswersInput = {
   created_at?: Date | string
   updated_at?: Date | string
   files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsCreateOrConnectWithoutAnswersInput = {
@@ -1130,6 +1157,7 @@ export type ex_attemptsUpdateWithoutAnswersInput = {
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
   link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
   files?: Prisma.ex_answer_filesUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateWithoutAnswersInput = {
@@ -1154,6 +1182,7 @@ export type ex_attemptsUncheckedUpdateWithoutAnswersInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsCreateWithoutFilesInput = {
@@ -1177,6 +1206,7 @@ export type ex_attemptsCreateWithoutFilesInput = {
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
   link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
   answers?: Prisma.ex_attempt_answersCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsUncheckedCreateWithoutFilesInput = {
@@ -1201,6 +1231,7 @@ export type ex_attemptsUncheckedCreateWithoutFilesInput = {
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
+  appeals?: Prisma.ex_appealsUncheckedCreateNestedManyWithoutAttemptInput
 }
 
 export type ex_attemptsCreateOrConnectWithoutFilesInput = {
@@ -1240,6 +1271,7 @@ export type ex_attemptsUpdateWithoutFilesInput = {
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
   link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
   answers?: Prisma.ex_attempt_answersUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateWithoutFilesInput = {
@@ -1264,6 +1296,121 @@ export type ex_attemptsUncheckedUpdateWithoutFilesInput = {
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutAttemptNestedInput
+}
+
+export type ex_attemptsCreateWithoutAppealsInput = {
+  student_user_id: number
+  attempt_no: number
+  status?: $Enums.ex_attempt_status_enum
+  started_at?: Date | string
+  deadline_at: Date | string
+  submitted_at?: Date | string | null
+  auto_submitted?: boolean
+  questions: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  score?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  total: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session_token?: string | null
+  fullscreen_exits?: number
+  tab_leaves?: number
+  copy_attempts?: number
+  created_at?: Date | string
+  updated_at?: Date | string
+  exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
+  link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
+  answers?: Prisma.ex_attempt_answersCreateNestedManyWithoutAttemptInput
+  files?: Prisma.ex_answer_filesCreateNestedManyWithoutAttemptInput
+}
+
+export type ex_attemptsUncheckedCreateWithoutAppealsInput = {
+  id?: number
+  exam_id: number
+  link_id: number
+  student_user_id: number
+  attempt_no: number
+  status?: $Enums.ex_attempt_status_enum
+  started_at?: Date | string
+  deadline_at: Date | string
+  submitted_at?: Date | string | null
+  auto_submitted?: boolean
+  questions: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  content: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  score?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  total: runtime.Decimal | runtime.DecimalJsLike | number | string
+  session_token?: string | null
+  fullscreen_exits?: number
+  tab_leaves?: number
+  copy_attempts?: number
+  created_at?: Date | string
+  updated_at?: Date | string
+  answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
+  files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
+}
+
+export type ex_attemptsCreateOrConnectWithoutAppealsInput = {
+  where: Prisma.ex_attemptsWhereUniqueInput
+  create: Prisma.XOR<Prisma.ex_attemptsCreateWithoutAppealsInput, Prisma.ex_attemptsUncheckedCreateWithoutAppealsInput>
+}
+
+export type ex_attemptsUpsertWithoutAppealsInput = {
+  update: Prisma.XOR<Prisma.ex_attemptsUpdateWithoutAppealsInput, Prisma.ex_attemptsUncheckedUpdateWithoutAppealsInput>
+  create: Prisma.XOR<Prisma.ex_attemptsCreateWithoutAppealsInput, Prisma.ex_attemptsUncheckedCreateWithoutAppealsInput>
+  where?: Prisma.ex_attemptsWhereInput
+}
+
+export type ex_attemptsUpdateToOneWithWhereWithoutAppealsInput = {
+  where?: Prisma.ex_attemptsWhereInput
+  data: Prisma.XOR<Prisma.ex_attemptsUpdateWithoutAppealsInput, Prisma.ex_attemptsUncheckedUpdateWithoutAppealsInput>
+}
+
+export type ex_attemptsUpdateWithoutAppealsInput = {
+  student_user_id?: Prisma.IntFieldUpdateOperationsInput | number
+  attempt_no?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.Enumex_attempt_status_enumFieldUpdateOperationsInput | $Enums.ex_attempt_status_enum
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deadline_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  submitted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  auto_submitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  questions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  score?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
+  tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
+  copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
+  link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
+  answers?: Prisma.ex_attempt_answersUpdateManyWithoutAttemptNestedInput
+  files?: Prisma.ex_answer_filesUpdateManyWithoutAttemptNestedInput
+}
+
+export type ex_attemptsUncheckedUpdateWithoutAppealsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  exam_id?: Prisma.IntFieldUpdateOperationsInput | number
+  link_id?: Prisma.IntFieldUpdateOperationsInput | number
+  student_user_id?: Prisma.IntFieldUpdateOperationsInput | number
+  attempt_no?: Prisma.IntFieldUpdateOperationsInput | number
+  status?: Prisma.Enumex_attempt_status_enumFieldUpdateOperationsInput | $Enums.ex_attempt_status_enum
+  started_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  deadline_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  submitted_at?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
+  auto_submitted?: Prisma.BoolFieldUpdateOperationsInput | boolean
+  questions?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  content?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  score?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  total?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
+  session_token?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
+  tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
+  copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
+  files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsCreateManyExamInput = {
@@ -1309,6 +1456,7 @@ export type ex_attemptsUpdateWithoutExamInput = {
   link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
   answers?: Prisma.ex_attempt_answersUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateWithoutExamInput = {
@@ -1333,6 +1481,7 @@ export type ex_attemptsUncheckedUpdateWithoutExamInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateManyWithoutExamInput = {
@@ -1400,6 +1549,7 @@ export type ex_attemptsUpdateWithoutLinkInput = {
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
   answers?: Prisma.ex_attempt_answersUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateWithoutLinkInput = {
@@ -1424,6 +1574,7 @@ export type ex_attemptsUncheckedUpdateWithoutLinkInput = {
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
   files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
+  appeals?: Prisma.ex_appealsUncheckedUpdateManyWithoutAttemptNestedInput
 }
 
 export type ex_attemptsUncheckedUpdateManyWithoutLinkInput = {
@@ -1456,11 +1607,13 @@ export type ex_attemptsUncheckedUpdateManyWithoutLinkInput = {
 export type Ex_attemptsCountOutputType = {
   answers: number
   files: number
+  appeals: number
 }
 
 export type Ex_attemptsCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   answers?: boolean | Ex_attemptsCountOutputTypeCountAnswersArgs
   files?: boolean | Ex_attemptsCountOutputTypeCountFilesArgs
+  appeals?: boolean | Ex_attemptsCountOutputTypeCountAppealsArgs
 }
 
 /**
@@ -1485,6 +1638,13 @@ export type Ex_attemptsCountOutputTypeCountAnswersArgs<ExtArgs extends runtime.T
  */
 export type Ex_attemptsCountOutputTypeCountFilesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.ex_answer_filesWhereInput
+}
+
+/**
+ * Ex_attemptsCountOutputType without action
+ */
+export type Ex_attemptsCountOutputTypeCountAppealsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.ex_appealsWhereInput
 }
 
 
@@ -1513,6 +1673,7 @@ export type ex_attemptsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   link?: boolean | Prisma.ex_linksDefaultArgs<ExtArgs>
   answers?: boolean | Prisma.ex_attempts$answersArgs<ExtArgs>
   files?: boolean | Prisma.ex_attempts$filesArgs<ExtArgs>
+  appeals?: boolean | Prisma.ex_attempts$appealsArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_attemptsCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["ex_attempts"]>
 
@@ -1595,6 +1756,7 @@ export type ex_attemptsInclude<ExtArgs extends runtime.Types.Extensions.Internal
   link?: boolean | Prisma.ex_linksDefaultArgs<ExtArgs>
   answers?: boolean | Prisma.ex_attempts$answersArgs<ExtArgs>
   files?: boolean | Prisma.ex_attempts$filesArgs<ExtArgs>
+  appeals?: boolean | Prisma.ex_attempts$appealsArgs<ExtArgs>
   _count?: boolean | Prisma.Ex_attemptsCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type ex_attemptsIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1613,6 +1775,7 @@ export type $ex_attemptsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     link: Prisma.$ex_linksPayload<ExtArgs>
     answers: Prisma.$ex_attempt_answersPayload<ExtArgs>[]
     files: Prisma.$ex_answer_filesPayload<ExtArgs>[]
+    appeals: Prisma.$ex_appealsPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2033,6 +2196,7 @@ export interface Prisma__ex_attemptsClient<T, Null = never, ExtArgs extends runt
   link<T extends Prisma.ex_linksDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_linksDefaultArgs<ExtArgs>>): Prisma.Prisma__ex_linksClient<runtime.Types.Result.GetResult<Prisma.$ex_linksPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   answers<T extends Prisma.ex_attempts$answersArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_attempts$answersArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_attempt_answersPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   files<T extends Prisma.ex_attempts$filesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_attempts$filesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_answer_filesPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  appeals<T extends Prisma.ex_attempts$appealsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.ex_attempts$appealsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ex_appealsPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2532,6 +2696,30 @@ export type ex_attempts$filesArgs<ExtArgs extends runtime.Types.Extensions.Inter
   take?: number
   skip?: number
   distinct?: Prisma.Ex_answer_filesScalarFieldEnum | Prisma.Ex_answer_filesScalarFieldEnum[]
+}
+
+/**
+ * ex_attempts.appeals
+ */
+export type ex_attempts$appealsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the ex_appeals
+   */
+  select?: Prisma.ex_appealsSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the ex_appeals
+   */
+  omit?: Prisma.ex_appealsOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.ex_appealsInclude<ExtArgs> | null
+  where?: Prisma.ex_appealsWhereInput
+  orderBy?: Prisma.ex_appealsOrderByWithRelationInput | Prisma.ex_appealsOrderByWithRelationInput[]
+  cursor?: Prisma.ex_appealsWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.Ex_appealsScalarFieldEnum | Prisma.Ex_appealsScalarFieldEnum[]
 }
 
 /**

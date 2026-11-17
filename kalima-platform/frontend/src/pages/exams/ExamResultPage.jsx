@@ -13,6 +13,7 @@ import { formatMark } from '@/components/admin/exams/api';
 import { translateBackendMessage } from '@/lib/utils';
 import Celebration, { CelebrationBadge } from '@/components/exams/Celebration';
 import { Media } from '@/components/exams/QuestionView';
+import AppealBox from '@/components/exams/AppealBox';
 import { examGet, examSend, passageNumbers, requestFullscreen, savedScale, setAttemptToken } from '@/components/exams/api';
 
 function Tag({ tone, children }) {
@@ -182,9 +183,8 @@ export default function ExamResultPage() {
     const [replay, setReplay] = useState(0);
     const [starting, setStarting] = useState(false);
 
-    useEffect(() => {
-        examGet(`/attempts/${attemptId}/result`).then(setResult).catch((err) => setError(translateBackendMessage(err.response?.data?.message) || t('errors.load')));
-    }, [attemptId]); // eslint-disable-line react-hooks/exhaustive-deps
+    const load = () => examGet(`/attempts/${attemptId}/result`).then(setResult).catch((err) => setError(translateBackendMessage(err.response?.data?.message) || t('errors.load')));
+    useEffect(() => { load(); }, [attemptId]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Numbers as in the exam: 1, 2, 3 in order, and passages counted apart.
     const labels = useMemo(() => new Map((result?.review || []).map((item, i) => [item.question_id, String(i + 1)])), [result]);
@@ -285,6 +285,7 @@ export default function ExamResultPage() {
                                 passage={first ? passages.get(pid) : null}
                                 passageN={passageInfo.get(item.question_id)?.n}
                                 shown={result.answers_shown}
+                                extra={<AppealBox attemptId={attemptId} item={item} allowed={result.answers_shown} onSent={load} />}
                             />
                         );
                     })}

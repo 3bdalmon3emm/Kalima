@@ -8,6 +8,7 @@ import { examFoldersService } from "../services/examFolders.service";
 import { examsService } from "../services/exams.service";
 import { soundsService } from "../services/sounds.service";
 import { reopenForStudent, resultsService } from "../services/results.service";
+import { appealsService, type Decision } from "../services/appeals.service";
 import { teacherLinksService } from "../services/teacherLinks.service";
 import { qrPng, uniqueFileNames, examUrl } from "../services/examLinkUrl";
 import { makeZip } from "../../../libs/zip";
@@ -204,6 +205,26 @@ router.get("/exams/:id/attempts", handle(async (req, res) => {
 router.get("/results/export", makeExportHandler("exam-results"));
 
 // { extra_attempts, extra_minutes, ends_at } for one student.
+// Accept with a mark, or reject with a reason.
+export function decisionBody(body: any): Decision {
+  if (typeof body?.accept !== "boolean") throw new BadRequestError("accept must be true or false");
+  return { accept: body.accept, mark: body.accept ? Number(body.mark) : undefined, reply: typeof body.reply === "string" ? body.reply : "" };
+}
+
+// ---------- Appeals (every link, the admin test link too) ----------
+
+router.get("/appeals", handle(async (req, res) => {
+  res.json(ok(await appealsService.list(null, { status: String(req.query.status ?? ""), page: Number(req.query.page) })));
+}));
+
+router.get("/appeals/:id", handle(async (req, res) => {
+  res.json(ok(await appealsService.detail(idParam(req))));
+}));
+
+router.post("/appeals/:id/decision", handle(async (req, res) => {
+  res.json(ok(await appealsService.decide(req.app.get("io") ?? null, idParam(req), decisionBody(req.body), userId(req)), "Appeal answered"));
+}));
+
 export function reopenBody(body: any) {
   const count = (raw: unknown, name: string, max: number) => {
     if (raw === undefined || raw === null || raw === "") return 0;

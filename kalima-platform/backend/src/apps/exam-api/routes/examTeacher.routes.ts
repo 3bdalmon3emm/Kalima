@@ -2,14 +2,15 @@ import { NextFunction, Request, Response, Router } from "express";
 import { authenticateToken } from "../../../libs/auth/middleware";
 import { requireRole } from "../../store-api/middleware/requireRole.middleware";
 import { role_enum } from "../../store-api/generated/prisma/client";
-import { BadRequestError } from "../../../libs/errors";
+import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { handle, idParam, userId } from "../http";
 import { teacherPortalService } from "../services/teacherPortal.service";
 import { reopenForStudent, resultsService } from "../services/results.service";
 import { qrPng, examUrl } from "../services/examLinkUrl";
 import { makeExportHandler } from "../../store-api/export";
-import { reopenBody } from "./examAdmin.routes";
+import { decisionBody, reopenBody } from "./examAdmin.routes";
 import "../services/examResultsExport";
+import { appealsService } from "../services/appeals.service";
 
 // The teacher's (and assistant's) side of exams, mounted at
 // /api/v2/exam-teacher. Every request is limited to the links of the
@@ -76,5 +77,27 @@ router.get("/results/export", async (req: Request, res: Response, next: NextFunc
     next(err);
   }
 });
+
+// ---------- Appeals ----------
+
+router.get("/appeals", handle(async (req, res) => {
+  const links = await teacherPortalService.linkIdsOf(await teachersOf(req));
+  res.json(ok(await appealsService.list(links, { status: String(req.query.status ?? ""), page: Number(req.query.page) })));
+}));
+
+const ownAppeal = async (req: Request) => {
+  const linkId = await appealsService.linkOf(idParam(req));
+  if (!(await teacherPortalService.linkIdsOf(await teachersOf(req))).includes(linkId)) throw new NotFoundError("Appeal not found");
+};
+
+router.get("/appeals/:id", handle(async (req, res) => {
+  await ownAppeal(req);
+  res.json(ok(await appealsService.detail(idParam(req))));
+}));
+
+router.post("/appeals/:id/decision", handle(async (req, res) => {
+  await ownAppeal(req);
+  res.json(ok(await appealsService.decide(req.app.get("io") ?? null, idParam(req), decisionBody(req.body), userId(req)), "Appeal answered"));
+}));
 
 export default router;

@@ -19,7 +19,8 @@
     "logout": "Logout",
     "eBookletAnalytics": "E-Booklet Analytics",
     "eBookletOrders": "E-Booklet Orders",
-    "exams": "My exams"
+    "exams": "My exams",
+    "appeals": "Appeals"
   },
   "settings": {
     "title": "Account Settings",

@@ -12,6 +12,7 @@ import { adminApi, formatMark, teacherApi } from '@/components/admin/exams/api';
 import ReopenDialog from '@/components/exams/ReopenDialog';
 import { passageNumbers } from '@/components/exams/api';
 import { ReviewItem } from '@/pages/exams/ExamResultPage';
+import AppealCard from '@/components/exams/AppealCard';
 
 // One attempt for the grader: the student's answers next to the right ones,
 // and a mark box (in halves) under every essay. The teacher (or assistant)
@@ -132,7 +133,16 @@ export default function ExamAttemptReviewPage({ teacher = false }) {
                             passageN={passageInfo.get(r.question_id)?.n}
                             shown
                             grader
-                            extra={r.question?.type === 'essay' && data.status !== 'in_progress' ? gradeBox(r) : null}
+                            extra={(
+                                <>
+                                    {r.question?.type === 'essay' && data.status !== 'in_progress' && gradeBox(r)}
+                                    {(r.appeals || []).map((a) => (
+                                        <AppealCard key={a.id} appeal={a} max={r.mark} grader
+                                            decide={async (body) => (await api.send('post', `/appeals/${a.id}/decision`, body)).data}
+                                            onDecided={() => api.get(`/attempts/${id}`).then(take)} />
+                                    ))}
+                                </>
+                            )}
                         />
                     );
                 })}

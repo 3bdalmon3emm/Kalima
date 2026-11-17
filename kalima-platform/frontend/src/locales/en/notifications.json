@@ -32,7 +32,10 @@
     "NEW_ACCOUNT_CREATED": "A new user account has been created",
     "SYSTEM_ANNOUNCEMENT": "System announcement",
     "ACCOUNT_UPDATE": "Your account has been updated",
-    "CUSTOM": "Custom notification"
+    "CUSTOM": "Custom notification",
+    "EXAM_APPEAL_NEW": "A student sent a new exam appeal",
+    "EXAM_APPEAL_ACCEPTED": "Your appeal was accepted and your mark updated",
+    "EXAM_APPEAL_REJECTED": "Your appeal was answered"
   },
   "categories": {
     "1": "Order Status",

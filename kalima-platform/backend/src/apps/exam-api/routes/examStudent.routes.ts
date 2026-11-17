@@ -4,7 +4,8 @@ import { requireRole } from "../../store-api/middleware/requireRole.middleware";
 import { role_enum } from "../../store-api/generated/prisma/client";
 import { handle, idParam, userId } from "../http";
 import { attemptsService } from "../services/attempts.service";
-import { uploadAnswerPhoto } from "../services/media.service";
+import { uploadAnswerPhoto, uploadAppealPhotos } from "../services/media.service";
+import { appealsService } from "../services/appeals.service";
 
 // Taking exams, mounted at /api/v2/exams. Students reach an exam by its link
 // code; Admin and SubAdmin may take it too, to try the test link. The tab or
@@ -50,6 +51,12 @@ router.post("/attempts/:id/submit", handle(async (req, res) => {
 
 router.get("/attempts/:id/result", handle(async (req, res) => {
   res.json(ok(await attemptsService.result(idParam(req), userId(req))));
+}));
+
+// An appeal on one question: question_id, text and up to three photos.
+router.post("/attempts/:id/appeals", uploadAppealPhotos, handle(async (req, res) => {
+  const files = (req.files as Express.Multer.File[] | undefined) ?? [];
+  res.status(201).json(ok(await appealsService.create(req.app.get("io") ?? null, idParam(req), userId(req), req.body ?? {}, files), "Appeal sent"));
 }));
 
 export default router;

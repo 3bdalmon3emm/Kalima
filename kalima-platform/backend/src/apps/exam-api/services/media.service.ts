@@ -75,6 +75,21 @@ function singleFile(filter: (mime: string) => boolean, maxMb: number, wrongType:
 export const uploadAnswerPhoto = singleFile(
   (mime) => IMAGE_TYPES.has(mime) && mime !== "image/svg+xml", STUDENT_PHOTO_MAX_MB, "Only images can be uploaded",
 );
+// Photos with an appeal: up to APPEAL_MAX_PHOTOS in one request.
+export const APPEAL_MAX_PHOTOS = 3;
+const receiveAppealPhotos = multer({
+  storage: multer.memoryStorage(),
+  fileFilter: (_req, file, cb) => (IMAGE_TYPES.has(file.mimetype) && file.mimetype !== "image/svg+xml"
+    ? cb(null, true) : cb(new BadRequestError("Only images can be uploaded") as any)),
+  limits: { fileSize: STUDENT_PHOTO_MAX_MB * 1024 * 1024, files: APPEAL_MAX_PHOTOS },
+}).array("files", APPEAL_MAX_PHOTOS);
+export function uploadAppealPhotos(req: Request, res: Response, next: NextFunction) {
+  receiveAppealPhotos(req, res, (err: any) => {
+    if (err?.code === "LIMIT_FILE_SIZE") return next(new BadRequestError(`Files must be ${STUDENT_PHOTO_MAX_MB} MB or smaller`));
+    if (err?.code === "LIMIT_FILE_COUNT" || err?.code === "LIMIT_UNEXPECTED_FILE") return next(new BadRequestError("Too many photos"));
+    next(err);
+  });
+}
 export const uploadSound = singleFile((mime) => AUDIO_TYPES.has(mime), SOUND_MAX_MB, "Only audio files can be uploaded");
 
 class MediaService {
@@ -111,6 +126,14 @@ class MediaService {
       data: { attempt_id: attemptId, storage_key: key, mime_type: image.mime, size_bytes: image.body.length },
     });
     return { id: row.id, url: await this.url(key) };
+  }
+
+  // A photo sent with an appeal; returns its storage key.
+  async storeAppealPhoto(attemptId: number, file: Express.Multer.File) {
+    const image = await this.compress(file.buffer, file.mimetype);
+    const key = `exam-appeals/${attemptId}/${crypto.randomUUID()}${image.ext}`;
+    await this.put(key, image.body, image.mime);
+    return key;
   }
 
   async storeSound(file: Express.Multer.File, folder: string) {

@@ -315,5 +315,17 @@
   "Cover photo removed": "تم حذف صورة الغلاف",
   "extra_attempts must be 0 to 10": "المحاولات الزيادة من 0 لـ 10",
   "extra_minutes must be 0 to 600": "الدقائق الزيادة من 0 لـ 600",
-  "Cover photo deleted": "تم حذف صورة الغلاف"
+  "Cover photo deleted": "تم حذف صورة الغلاف",
+  "Appeal sent": "تم إرسال التظلم",
+  "Appeal answered": "تم الرد على التظلم",
+  "Appeal not found": "التظلم غير موجود",
+  "You can appeal once the result is out": "تقدر تتظلم بعد ما النتيجة تظهر",
+  "You can appeal once the answers are shown": "تقدر تتظلم بعد ما الإجابات تظهر",
+  "You can only appeal a question you lost marks on": "التظلم بيبقى على سؤال نقصت فيه درجتك بس",
+  "Write why or add a photo": "اكتب سبب التظلم أو ارفع صورة",
+  "You already have an appeal waiting on this question": "عندك تظلم على السؤال ده لسه مستني رد",
+  "This appeal was already answered": "التظلم ده اتردّ عليه قبل كده",
+  "Write the reason for rejecting": "اكتب سبب الرفض",
+  "accept must be true or false": "اختار قبول أو رفض",
+  "Too many photos": "أقصى عدد 3 صور"
 }

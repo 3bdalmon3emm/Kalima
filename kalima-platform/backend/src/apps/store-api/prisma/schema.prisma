@@ -1827,6 +1827,9 @@ enum notification_key_enum {
   NEW_ACCOUNT_CREATED
   E_BOOKLET_MILESTONE_ACHIEVED
   E_BOOKLET_MILESTONE_ADMIN_ALERT
+  EXAM_APPEAL_NEW
+  EXAM_APPEAL_ACCEPTED
+  EXAM_APPEAL_REJECTED
   SYSTEM_ANNOUNCEMENT
   ACCOUNT_UPDATE
   CUSTOM
@@ -2252,6 +2255,7 @@ model ex_links {
 
   exam     ex_exams      @relation(fields: [exam_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
   attempts ex_attempts[]
+  appeals  ex_appeals[]
 
   @@index([exam_id], map: "ix_ex_links_exam")
 }
@@ -2288,6 +2292,7 @@ model ex_attempts {
   link    ex_links             @relation(fields: [link_id], references: [id], onUpdate: NoAction)
   answers ex_attempt_answers[]
   files   ex_answer_files[]
+  appeals ex_appeals[]
 
   @@unique([link_id, student_user_id, attempt_no], map: "ux_ex_attempts_no")
   @@index([student_user_id, exam_id], map: "ix_ex_attempts_student")
@@ -2325,6 +2330,32 @@ model ex_answer_files {
   attempt ex_attempts @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([attempt_id], map: "ix_ex_answer_files_attempt")
+}
+
+// A student's appeal on one question of an attempt: one request and one
+// answer, not a chat. status: pending, accepted or rejected. A mark given by
+// accepting stays through automatic re-grades.
+model ex_appeals {
+  id              Int       @id @default(autoincrement())
+  attempt_id      Int
+  question_id     Int
+  link_id         Int
+  student_user_id Int
+  text            String    @default("")
+  image_keys      String[]  @default([])
+  status          String    @default("pending") @db.VarChar(20)
+  old_mark        Decimal   @db.Decimal(7, 2)
+  new_mark        Decimal?  @db.Decimal(7, 2)
+  reply           String?
+  decided_by      Int?
+  decided_at      DateTime? @db.Timestamptz(6)
+  created_at      DateTime  @default(now()) @db.Timestamptz(6)
+
+  attempt ex_attempts @relation(fields: [attempt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  link    ex_links    @relation(fields: [link_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+  @@index([link_id, status], map: "ix_ex_appeals_link_status")
+  @@index([attempt_id], map: "ix_ex_appeals_attempt")
 }
 
 // Sounds played with the result celebration. Bands are fixed: pass (pass

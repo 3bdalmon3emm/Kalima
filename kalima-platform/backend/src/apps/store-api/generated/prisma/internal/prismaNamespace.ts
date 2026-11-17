@@ -482,6 +482,7 @@ export const ModelName = {
   ex_attempts: 'ex_attempts',
   ex_attempt_answers: 'ex_attempt_answers',
   ex_answer_files: 'ex_answer_files',
+  ex_appeals: 'ex_appeals',
   ex_celebration_sounds: 'ex_celebration_sounds',
   ex_teacher_assignments: 'ex_teacher_assignments',
   ex_student_overrides: 'ex_student_overrides',
@@ -501,7 +502,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_celebration_sounds" | "ex_teacher_assignments" | "ex_student_overrides" | "teacher_assistants"
+    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_appeals" | "ex_celebration_sounds" | "ex_teacher_assignments" | "ex_student_overrides" | "teacher_assistants"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -7757,6 +7758,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    ex_appeals: {
+      payload: Prisma.$ex_appealsPayload<ExtArgs>
+      fields: Prisma.ex_appealsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.ex_appealsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.ex_appealsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        findFirst: {
+          args: Prisma.ex_appealsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.ex_appealsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        findMany: {
+          args: Prisma.ex_appealsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>[]
+        }
+        create: {
+          args: Prisma.ex_appealsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        createMany: {
+          args: Prisma.ex_appealsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.ex_appealsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>[]
+        }
+        delete: {
+          args: Prisma.ex_appealsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        update: {
+          args: Prisma.ex_appealsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        deleteMany: {
+          args: Prisma.ex_appealsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.ex_appealsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.ex_appealsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>[]
+        }
+        upsert: {
+          args: Prisma.ex_appealsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$ex_appealsPayload>
+        }
+        aggregate: {
+          args: Prisma.Ex_appealsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateEx_appeals>
+        }
+        groupBy: {
+          args: Prisma.ex_appealsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_appealsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.ex_appealsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Ex_appealsCountAggregateOutputType> | number
+        }
+      }
+    }
     ex_celebration_sounds: {
       payload: Prisma.$ex_celebration_soundsPayload<ExtArgs>
       fields: Prisma.ex_celebration_soundsFieldRefs
@@ -9636,6 +9711,26 @@ export const Ex_answer_filesScalarFieldEnum = {
 export type Ex_answer_filesScalarFieldEnum = (typeof Ex_answer_filesScalarFieldEnum)[keyof typeof Ex_answer_filesScalarFieldEnum]
 
 
+export const Ex_appealsScalarFieldEnum = {
+  id: 'id',
+  attempt_id: 'attempt_id',
+  question_id: 'question_id',
+  link_id: 'link_id',
+  student_user_id: 'student_user_id',
+  text: 'text',
+  image_keys: 'image_keys',
+  status: 'status',
+  old_mark: 'old_mark',
+  new_mark: 'new_mark',
+  reply: 'reply',
+  decided_by: 'decided_by',
+  decided_at: 'decided_at',
+  created_at: 'created_at'
+} as const
+
+export type Ex_appealsScalarFieldEnum = (typeof Ex_appealsScalarFieldEnum)[keyof typeof Ex_appealsScalarFieldEnum]
+
+
 export const Ex_celebration_soundsScalarFieldEnum = {
   id: 'id',
   band: 'band',
@@ -10574,6 +10669,7 @@ export type GlobalOmitConfig = {
   ex_attempts?: Prisma.ex_attemptsOmit
   ex_attempt_answers?: Prisma.ex_attempt_answersOmit
   ex_answer_files?: Prisma.ex_answer_filesOmit
+  ex_appeals?: Prisma.ex_appealsOmit
   ex_celebration_sounds?: Prisma.ex_celebration_soundsOmit
   ex_teacher_assignments?: Prisma.ex_teacher_assignmentsOmit
   ex_student_overrides?: Prisma.ex_student_overridesOmit

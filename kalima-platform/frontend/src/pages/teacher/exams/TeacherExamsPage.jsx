@@ -49,6 +49,7 @@ export default function TeacherExamsPage() {
                     {many && <Badge variant="outline">{teacherName(e.teacher_id)}</Badge>}
                     <span className="text-muted-foreground">{t('teacher.attemptsCount', { count: e.attempts })}</span>
                     {e.pending > 0 && <Badge className="bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-200">{t('teacher.pendingCount', { count: e.pending })}</Badge>}
+                    {e.appeals > 0 && <Badge className="bg-orange-100 text-orange-800 dark:bg-orange-900/40 dark:text-orange-200">{t('teacher.appealsCount', { count: e.appeals })}</Badge>}
                 </div>
             </Link>
             <Button variant="outline" size="sm" onClick={() => setQr(e)}><QrCode className="h-4 w-4" />QR</Button>
