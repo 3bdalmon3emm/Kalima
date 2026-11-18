@@ -501,7 +501,15 @@
     "appealsCount_two": "تظلمين جداد",
     "appealsCount_few": "{{count}} تظلمات جديدة",
     "appealsCount_many": "{{count}} تظلم جديد",
-    "appealsCount_other": "{{count}} تظلم جديد"
+    "appealsCount_other": "{{count}} تظلم جديد",
+    "search": "دوّر على امتحان بالاسم أو السيريال",
+    "noMatch": "مفيش امتحان بالاسم ده",
+    "examsCount_zero": "مفيش امتحانات",
+    "examsCount_one": "امتحان واحد",
+    "examsCount_two": "امتحانين",
+    "examsCount_few": "{{count}} امتحانات",
+    "examsCount_many": "{{count}} امتحان",
+    "examsCount_other": "{{count}} امتحان"
   },
   "assistant": {
     "title": "المدرسين اللي بيساعدهم",

@@ -461,7 +461,12 @@
     "marks_one": "1 mark",
     "marks_other": "{{count}} marks",
     "appealsCount_one": "1 new appeal",
-    "appealsCount_other": "{{count}} new appeals"
+    "appealsCount_other": "{{count}} new appeals",
+    "search": "Find an exam by name or serial",
+    "noMatch": "No exam matches",
+    "examsCount_zero": "No exams",
+    "examsCount_one": "1 exam",
+    "examsCount_other": "{{count}} exams"
   },
   "assistant": {
     "title": "Teachers they assist",
