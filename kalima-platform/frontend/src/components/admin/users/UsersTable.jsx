@@ -211,6 +211,9 @@ export default function UsersTable({
                                             </Avatar>
                                             <div className="min-w-0">
                                                 <p className="font-medium text-sm truncate max-w-[160px]">{user.name}</p>
+                                                {user.student_serial && (
+                                                    <p className="text-xs text-muted-foreground tabular-nums" dir="ltr">#{user.student_serial}</p>
+                                                )}
                                                 {user.created_at && (
                                                     <p className="text-xs text-muted-foreground tabular-nums">
                                                         {format(new Date(user.created_at), 'PP', { locale: isRtl ? arSA : undefined })}

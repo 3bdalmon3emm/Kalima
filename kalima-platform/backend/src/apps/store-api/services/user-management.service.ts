@@ -1149,12 +1149,15 @@ class UserManagementService {
       where.flag = options.flag as user_flag_enum;
     }
 
-    // Text search on name, email, phone
+    // Text search on name, email, phone; a whole number also finds the
+    // student with that serial.
     if (options.search) {
+      const serial = /^\d{1,9}$/.test(options.search.trim()) ? Number(options.search.trim()) : null;
       where.OR = [
         { name: { contains: options.search, mode: "insensitive" } },
         { email: { contains: options.search, mode: "insensitive" } },
         { phone: { contains: options.search } },
+        ...(serial !== null ? [{ students: { sequenced_id: serial } }] : []),
       ];
     }
 
@@ -1187,13 +1190,14 @@ class UserManagementService {
               role: true,
             },
           },
+          students: { select: { sequenced_id: true } },
         },
       }),
       this.db.users.count({ where }),
     ]);
 
     return {
-      users,
+      users: users.map(({ students, ...u }) => ({ ...u, student_serial: students?.sequenced_id ?? null })),
       pagination: {
         page,
         limit,

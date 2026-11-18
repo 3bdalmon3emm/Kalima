@@ -277,7 +277,12 @@ export default function UserDetailPage() {
                                 {selectedUser.created_at && format(new Date(selectedUser.created_at), 'PP p', { locale: isRtl ? arSA : undefined })}
                             </span>
                         </div>
-
+                        {students[0]?.sequenced_id && (
+                            <div className="flex items-center justify-between text-[10px] font-bold uppercase text-muted-foreground tracking-wider">
+                                <span>{t('details.studentSerial')}</span>
+                                <span className="font-mono tabular-nums text-sm text-foreground" dir="ltr">#{students[0].sequenced_id}</span>
+                            </div>
+                        )}
                     </div>
                 </div>
 

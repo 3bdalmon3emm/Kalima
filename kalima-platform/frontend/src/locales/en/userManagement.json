@@ -3,7 +3,7 @@
   "title": "User Management",
   "subtitle": "Manage users, roles, and account permissions",
   "totalUsers": "{{count}} users",
-  "searchPlaceholder": "Search by name, email, or phone...",
+  "searchPlaceholder": "Search by name, email, phone or student serial...",
   "noUsers": "No users found",
   "noUsersDescription": "No users match your current filters.",
   "stats": {
@@ -163,7 +163,8 @@
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
     "passwordMinLength": "Password must be at least 8 characters.",
-    "deleteReason": "Reason (optional)"
+    "deleteReason": "Reason (optional)",
+    "studentSerial": "Student serial"
   },
   "createDialog": {
     "title": "Create New User",
