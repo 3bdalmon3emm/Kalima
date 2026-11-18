@@ -69,6 +69,7 @@ export type Ex_attemptsMinAggregateOutputType = {
   fullscreen_exits: number | null
   tab_leaves: number | null
   copy_attempts: number | null
+  redo_locked: boolean | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -90,6 +91,7 @@ export type Ex_attemptsMaxAggregateOutputType = {
   fullscreen_exits: number | null
   tab_leaves: number | null
   copy_attempts: number | null
+  redo_locked: boolean | null
   created_at: Date | null
   updated_at: Date | null
 }
@@ -113,6 +115,7 @@ export type Ex_attemptsCountAggregateOutputType = {
   fullscreen_exits: number
   tab_leaves: number
   copy_attempts: number
+  redo_locked: number
   created_at: number
   updated_at: number
   _all: number
@@ -162,6 +165,7 @@ export type Ex_attemptsMinAggregateInputType = {
   fullscreen_exits?: true
   tab_leaves?: true
   copy_attempts?: true
+  redo_locked?: true
   created_at?: true
   updated_at?: true
 }
@@ -183,6 +187,7 @@ export type Ex_attemptsMaxAggregateInputType = {
   fullscreen_exits?: true
   tab_leaves?: true
   copy_attempts?: true
+  redo_locked?: true
   created_at?: true
   updated_at?: true
 }
@@ -206,6 +211,7 @@ export type Ex_attemptsCountAggregateInputType = {
   fullscreen_exits?: true
   tab_leaves?: true
   copy_attempts?: true
+  redo_locked?: true
   created_at?: true
   updated_at?: true
   _all?: true
@@ -316,6 +322,7 @@ export type Ex_attemptsGroupByOutputType = {
   fullscreen_exits: number
   tab_leaves: number
   copy_attempts: number
+  redo_locked: boolean
   created_at: Date
   updated_at: Date
   _count: Ex_attemptsCountAggregateOutputType | null
@@ -362,6 +369,7 @@ export type ex_attemptsWhereInput = {
   fullscreen_exits?: Prisma.IntFilter<"ex_attempts"> | number
   tab_leaves?: Prisma.IntFilter<"ex_attempts"> | number
   copy_attempts?: Prisma.IntFilter<"ex_attempts"> | number
+  redo_locked?: Prisma.BoolFilter<"ex_attempts"> | boolean
   created_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
@@ -390,6 +398,7 @@ export type ex_attemptsOrderByWithRelationInput = {
   fullscreen_exits?: Prisma.SortOrder
   tab_leaves?: Prisma.SortOrder
   copy_attempts?: Prisma.SortOrder
+  redo_locked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   exam?: Prisma.ex_examsOrderByWithRelationInput
@@ -422,6 +431,7 @@ export type ex_attemptsWhereUniqueInput = Prisma.AtLeast<{
   fullscreen_exits?: Prisma.IntFilter<"ex_attempts"> | number
   tab_leaves?: Prisma.IntFilter<"ex_attempts"> | number
   copy_attempts?: Prisma.IntFilter<"ex_attempts"> | number
+  redo_locked?: Prisma.BoolFilter<"ex_attempts"> | boolean
   created_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
   exam?: Prisma.XOR<Prisma.Ex_examsScalarRelationFilter, Prisma.ex_examsWhereInput>
@@ -450,6 +460,7 @@ export type ex_attemptsOrderByWithAggregationInput = {
   fullscreen_exits?: Prisma.SortOrder
   tab_leaves?: Prisma.SortOrder
   copy_attempts?: Prisma.SortOrder
+  redo_locked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
   _count?: Prisma.ex_attemptsCountOrderByAggregateInput
@@ -481,6 +492,7 @@ export type ex_attemptsScalarWhereWithAggregatesInput = {
   fullscreen_exits?: Prisma.IntWithAggregatesFilter<"ex_attempts"> | number
   tab_leaves?: Prisma.IntWithAggregatesFilter<"ex_attempts"> | number
   copy_attempts?: Prisma.IntWithAggregatesFilter<"ex_attempts"> | number
+  redo_locked?: Prisma.BoolWithAggregatesFilter<"ex_attempts"> | boolean
   created_at?: Prisma.DateTimeWithAggregatesFilter<"ex_attempts"> | Date | string
   updated_at?: Prisma.DateTimeWithAggregatesFilter<"ex_attempts"> | Date | string
 }
@@ -501,6 +513,7 @@ export type ex_attemptsCreateInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
@@ -529,6 +542,7 @@ export type ex_attemptsUncheckedCreateInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
@@ -552,6 +566,7 @@ export type ex_attemptsUpdateInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
@@ -580,6 +595,7 @@ export type ex_attemptsUncheckedUpdateInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
@@ -606,6 +622,7 @@ export type ex_attemptsCreateManyInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -626,6 +643,7 @@ export type ex_attemptsUpdateManyMutationInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -649,6 +667,7 @@ export type ex_attemptsUncheckedUpdateManyInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -688,6 +707,7 @@ export type ex_attemptsCountOrderByAggregateInput = {
   fullscreen_exits?: Prisma.SortOrder
   tab_leaves?: Prisma.SortOrder
   copy_attempts?: Prisma.SortOrder
+  redo_locked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -722,6 +742,7 @@ export type ex_attemptsMaxOrderByAggregateInput = {
   fullscreen_exits?: Prisma.SortOrder
   tab_leaves?: Prisma.SortOrder
   copy_attempts?: Prisma.SortOrder
+  redo_locked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -743,6 +764,7 @@ export type ex_attemptsMinOrderByAggregateInput = {
   fullscreen_exits?: Prisma.SortOrder
   tab_leaves?: Prisma.SortOrder
   copy_attempts?: Prisma.SortOrder
+  redo_locked?: Prisma.SortOrder
   created_at?: Prisma.SortOrder
   updated_at?: Prisma.SortOrder
 }
@@ -911,6 +933,7 @@ export type ex_attemptsCreateWithoutExamInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   link: Prisma.ex_linksCreateNestedOneWithoutAttemptsInput
@@ -937,6 +960,7 @@ export type ex_attemptsUncheckedCreateWithoutExamInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
@@ -992,6 +1016,7 @@ export type ex_attemptsScalarWhereInput = {
   fullscreen_exits?: Prisma.IntFilter<"ex_attempts"> | number
   tab_leaves?: Prisma.IntFilter<"ex_attempts"> | number
   copy_attempts?: Prisma.IntFilter<"ex_attempts"> | number
+  redo_locked?: Prisma.BoolFilter<"ex_attempts"> | boolean
   created_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
   updated_at?: Prisma.DateTimeFilter<"ex_attempts"> | Date | string
 }
@@ -1012,6 +1037,7 @@ export type ex_attemptsCreateWithoutLinkInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
@@ -1038,6 +1064,7 @@ export type ex_attemptsUncheckedCreateWithoutLinkInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
@@ -1087,6 +1114,7 @@ export type ex_attemptsCreateWithoutAnswersInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
@@ -1114,6 +1142,7 @@ export type ex_attemptsUncheckedCreateWithoutAnswersInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   files?: Prisma.ex_answer_filesUncheckedCreateNestedManyWithoutAttemptInput
@@ -1152,6 +1181,7 @@ export type ex_attemptsUpdateWithoutAnswersInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
@@ -1179,6 +1209,7 @@ export type ex_attemptsUncheckedUpdateWithoutAnswersInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   files?: Prisma.ex_answer_filesUncheckedUpdateManyWithoutAttemptNestedInput
@@ -1201,6 +1232,7 @@ export type ex_attemptsCreateWithoutFilesInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
@@ -1228,6 +1260,7 @@ export type ex_attemptsUncheckedCreateWithoutFilesInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
@@ -1266,6 +1299,7 @@ export type ex_attemptsUpdateWithoutFilesInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
@@ -1293,6 +1327,7 @@ export type ex_attemptsUncheckedUpdateWithoutFilesInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
@@ -1315,6 +1350,7 @@ export type ex_attemptsCreateWithoutAppealsInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   exam: Prisma.ex_examsCreateNestedOneWithoutAttemptsInput
@@ -1342,6 +1378,7 @@ export type ex_attemptsUncheckedCreateWithoutAppealsInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
   answers?: Prisma.ex_attempt_answersUncheckedCreateNestedManyWithoutAttemptInput
@@ -1380,6 +1417,7 @@ export type ex_attemptsUpdateWithoutAppealsInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
@@ -1407,6 +1445,7 @@ export type ex_attemptsUncheckedUpdateWithoutAppealsInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
@@ -1431,6 +1470,7 @@ export type ex_attemptsCreateManyExamInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -1451,6 +1491,7 @@ export type ex_attemptsUpdateWithoutExamInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   link?: Prisma.ex_linksUpdateOneRequiredWithoutAttemptsNestedInput
@@ -1477,6 +1518,7 @@ export type ex_attemptsUncheckedUpdateWithoutExamInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
@@ -1502,6 +1544,7 @@ export type ex_attemptsUncheckedUpdateManyWithoutExamInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1524,6 +1567,7 @@ export type ex_attemptsCreateManyLinkInput = {
   fullscreen_exits?: number
   tab_leaves?: number
   copy_attempts?: number
+  redo_locked?: boolean
   created_at?: Date | string
   updated_at?: Date | string
 }
@@ -1544,6 +1588,7 @@ export type ex_attemptsUpdateWithoutLinkInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   exam?: Prisma.ex_examsUpdateOneRequiredWithoutAttemptsNestedInput
@@ -1570,6 +1615,7 @@ export type ex_attemptsUncheckedUpdateWithoutLinkInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   answers?: Prisma.ex_attempt_answersUncheckedUpdateManyWithoutAttemptNestedInput
@@ -1595,6 +1641,7 @@ export type ex_attemptsUncheckedUpdateManyWithoutLinkInput = {
   fullscreen_exits?: Prisma.IntFieldUpdateOperationsInput | number
   tab_leaves?: Prisma.IntFieldUpdateOperationsInput | number
   copy_attempts?: Prisma.IntFieldUpdateOperationsInput | number
+  redo_locked?: Prisma.BoolFieldUpdateOperationsInput | boolean
   created_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
   updated_at?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
 }
@@ -1667,6 +1714,7 @@ export type ex_attemptsSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   fullscreen_exits?: boolean
   tab_leaves?: boolean
   copy_attempts?: boolean
+  redo_locked?: boolean
   created_at?: boolean
   updated_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -1696,6 +1744,7 @@ export type ex_attemptsSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   fullscreen_exits?: boolean
   tab_leaves?: boolean
   copy_attempts?: boolean
+  redo_locked?: boolean
   created_at?: boolean
   updated_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -1721,6 +1770,7 @@ export type ex_attemptsSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   fullscreen_exits?: boolean
   tab_leaves?: boolean
   copy_attempts?: boolean
+  redo_locked?: boolean
   created_at?: boolean
   updated_at?: boolean
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
@@ -1746,11 +1796,12 @@ export type ex_attemptsSelectScalar = {
   fullscreen_exits?: boolean
   tab_leaves?: boolean
   copy_attempts?: boolean
+  redo_locked?: boolean
   created_at?: boolean
   updated_at?: boolean
 }
 
-export type ex_attemptsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exam_id" | "link_id" | "student_user_id" | "attempt_no" | "status" | "started_at" | "deadline_at" | "submitted_at" | "auto_submitted" | "questions" | "content" | "score" | "total" | "session_token" | "fullscreen_exits" | "tab_leaves" | "copy_attempts" | "created_at" | "updated_at", ExtArgs["result"]["ex_attempts"]>
+export type ex_attemptsOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "exam_id" | "link_id" | "student_user_id" | "attempt_no" | "status" | "started_at" | "deadline_at" | "submitted_at" | "auto_submitted" | "questions" | "content" | "score" | "total" | "session_token" | "fullscreen_exits" | "tab_leaves" | "copy_attempts" | "redo_locked" | "created_at" | "updated_at", ExtArgs["result"]["ex_attempts"]>
 export type ex_attemptsInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   exam?: boolean | Prisma.ex_examsDefaultArgs<ExtArgs>
   link?: boolean | Prisma.ex_linksDefaultArgs<ExtArgs>
@@ -1796,6 +1847,7 @@ export type $ex_attemptsPayload<ExtArgs extends runtime.Types.Extensions.Interna
     fullscreen_exits: number
     tab_leaves: number
     copy_attempts: number
+    redo_locked: boolean
     created_at: Date
     updated_at: Date
   }, ExtArgs["result"]["ex_attempts"]>
@@ -2244,6 +2296,7 @@ export interface ex_attemptsFieldRefs {
   readonly fullscreen_exits: Prisma.FieldRef<"ex_attempts", 'Int'>
   readonly tab_leaves: Prisma.FieldRef<"ex_attempts", 'Int'>
   readonly copy_attempts: Prisma.FieldRef<"ex_attempts", 'Int'>
+  readonly redo_locked: Prisma.FieldRef<"ex_attempts", 'Boolean'>
   readonly created_at: Prisma.FieldRef<"ex_attempts", 'DateTime'>
   readonly updated_at: Prisma.FieldRef<"ex_attempts", 'DateTime'>
 }

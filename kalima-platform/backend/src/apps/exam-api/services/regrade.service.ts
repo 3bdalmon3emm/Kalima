@@ -37,6 +37,8 @@ class RegradeService {
       } else if (before.status === "done" && after.status === "done" && after.score > (before.score ?? 0)) {
         examNotify.scoreRaised(id);
         raised++;
+      } else if (before.status === "done" && after.status === "done" && after.score < (before.score ?? 0)) {
+        await attemptsService.keepRedoClosed(id, before.score ?? 0);
       }
     }
     return { attempts: attemptIds.length, raised };

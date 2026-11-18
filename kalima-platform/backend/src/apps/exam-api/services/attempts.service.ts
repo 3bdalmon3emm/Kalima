@@ -93,7 +93,7 @@ class AttemptsService {
       this.db.ex_attempts.findMany({
         where: { link_id: link.id, student_user_id: studentId },
         orderBy: { attempt_no: "asc" },
-        select: { id: true, attempt_no: true, status: true, started_at: true, submitted_at: true, score: true, total: true },
+        select: { id: true, attempt_no: true, status: true, started_at: true, submitted_at: true, score: true, total: true, redo_locked: true },
       }),
       link.teacher_user_id
         ? this.db.users.findUnique({ where: { id: link.teacher_user_id }, select: { id: true, name: true, profile_pic_url: true, cover_url: true } })
@@ -130,7 +130,7 @@ class AttemptsService {
   // score, after the normal redos.
   private nextStep(
     exam: { pass_percent: number; redo_percent: number | null; max_redos: number; redo_required: boolean },
-    attempts: { id: number; status: string; score: unknown; total: unknown }[],
+    attempts: { id: number; status: string; score: unknown; total: unknown; redo_locked?: boolean }[],
     extraAttempts = 0,
   ) {
     if (!attempts.length) return { action: "start" as const };
@@ -144,15 +144,16 @@ class AttemptsService {
   }
 
   // A redo opens while the last score is under the redo mark and redos are
-  // left. Graded attempts only.
+  // left. Graded attempts only, and not one a re-grade locked (see
+  // keepRedoClosed).
   redoState(
     exam: { redo_percent: number | null; max_redos: number },
-    attempts: { status: string; score: unknown; total: unknown }[],
+    attempts: { status: string; score: unknown; total: unknown; redo_locked?: boolean }[],
   ) {
     const last = attempts[attempts.length - 1];
     const used = attempts.length - 1;
     const left = Math.max(exam.max_redos - used, 0);
-    if (!last || last.status !== "done" || exam.redo_percent === null || !left) return { available: false, left };
+    if (!last || last.status !== "done" || last.redo_locked || exam.redo_percent === null || !left) return { available: false, left };
     const percent = num(last.total) ? (num(last.score) / num(last.total)) * 100 : 0;
     return { available: percent < exam.redo_percent, left };
   }
@@ -569,7 +570,7 @@ class AttemptsService {
     const attempts = await this.db.ex_attempts.findMany({
       where: { link_id: attempt.link_id, student_user_id: studentId },
       orderBy: { attempt_no: "asc" },
-      select: { id: true, attempt_no: true, status: true, score: true, total: true },
+      select: { id: true, attempt_no: true, status: true, score: true, total: true, redo_locked: true },
     });
     const link = await this.db.ex_links.findUniqueOrThrow({ where: { id: attempt.link_id }, select: { code: true, ends_at: true, closed_at: true } });
     const base = {
@@ -612,18 +613,39 @@ class AttemptsService {
       this.db.ex_attempts.findMany({
         where: { link_id: attempt.link_id, student_user_id: attempt.student_user_id },
         orderBy: { attempt_no: "asc" },
-        select: { id: true, status: true, score: true, total: true },
+        select: { id: true, status: true, score: true, total: true, redo_locked: true },
       }),
       this.db.ex_links.findUniqueOrThrow({ where: { id: attempt.link_id }, select: { ends_at: true, closed_at: true } }),
     ]);
     return this.answersShown(exam, attempts, link);
   }
 
+  // After a re-grade lowered a submitted score: if the student had no redo
+  // and had seen the answers, the lower score must not open one (they know
+  // the answers now). Only the student's latest attempt matters.
+  async keepRedoClosed(attemptId: number, scoreBefore: number) {
+    const attempt = await this.db.ex_attempts.findUniqueOrThrow({ where: { id: attemptId }, select: { exam_id: true, link_id: true, student_user_id: true } });
+    const [exam, attempts, link] = await Promise.all([
+      this.db.ex_exams.findUniqueOrThrow({ where: { id: attempt.exam_id } }),
+      this.db.ex_attempts.findMany({
+        where: { link_id: attempt.link_id, student_user_id: attempt.student_user_id },
+        orderBy: { attempt_no: "asc" },
+        select: { id: true, status: true, score: true, total: true, redo_locked: true },
+      }),
+      this.db.ex_links.findUniqueOrThrow({ where: { id: attempt.link_id }, select: { ends_at: true, closed_at: true } }),
+    ]);
+    if (attempts[attempts.length - 1]?.id !== attemptId) return;
+    if (!this.redoState(exam, attempts).available) return;
+    const before = attempts.map((a) => (a.id === attemptId ? { ...a, score: scoreBefore } : a));
+    if (this.redoState(exam, before).available || !this.answersShown(exam, before, link)) return;
+    await this.db.ex_attempts.update({ where: { id: attemptId }, data: { redo_locked: true } });
+  }
+
   // Whether the right answers show yet. "after_last": once the student has
   // nothing left to take (no redo, nothing running) or the link has ended.
   private answersShown(
     exam: { show_answers: string; pass_percent: number; redo_percent: number | null; max_redos: number; redo_required: boolean },
-    attempts: { id: number; status: string; score: unknown; total: unknown }[],
+    attempts: { id: number; status: string; score: unknown; total: unknown; redo_locked?: boolean }[],
     link: { ends_at: Date; closed_at: Date | null },
   ) {
     const ended = !!link.closed_at || Date.now() > link.ends_at.getTime();

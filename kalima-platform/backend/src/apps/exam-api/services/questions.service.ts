@@ -233,6 +233,13 @@ class QuestionsService {
       throw new BadRequestError("A question cannot become a passage or the other way round");
     }
     if (current.type === "passage" && current.passage_id) throw new BadRequestError("Invalid passage");
+    // Students' answers are stored in the shape of the type, so a question
+    // that was answered in an exam keeps its type.
+    if (current.type !== input.type && current.type !== "passage") {
+      const probe = JSON.stringify([{ question_id: id }]);
+      const [used] = await this.db.$queryRaw<{ n: number }[]>`SELECT COUNT(*)::int AS n FROM kalima.ex_attempts WHERE questions @> ${probe}::jsonb`;
+      if (used?.n) throw new BadRequestError("This question was answered in an exam, so its type cannot change");
+    }
     const folder = await foldersService.getFolder(current.folder_id);
     await this.checkRefs(foldersService.bankIdOf(folder), input);
     input = await this.withPassageFont(current.passage_id, input);

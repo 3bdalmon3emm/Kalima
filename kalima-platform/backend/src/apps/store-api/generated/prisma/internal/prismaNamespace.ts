@@ -9753,6 +9753,7 @@ export const Ex_attemptsScalarFieldEnum = {
   fullscreen_exits: 'fullscreen_exits',
   tab_leaves: 'tab_leaves',
   copy_attempts: 'copy_attempts',
+  redo_locked: 'redo_locked',
   created_at: 'created_at',
   updated_at: 'updated_at'
 } as const

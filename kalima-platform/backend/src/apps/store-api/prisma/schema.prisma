@@ -2290,6 +2290,9 @@ model ex_attempts {
   fullscreen_exits Int                    @default(0)
   tab_leaves       Int                    @default(0)
   copy_attempts    Int                    @default(0)
+  // Set when a re-grade lowered the score after the answers were shown: no
+  // redo opens from it.
+  redo_locked      Boolean                @default(false)
   created_at       DateTime               @default(now()) @db.Timestamptz(6)
   updated_at       DateTime               @default(now()) @updatedAt @db.Timestamptz(6)
 
