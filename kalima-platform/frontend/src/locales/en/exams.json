@@ -580,5 +580,36 @@
     "noChildren": "No children linked to your account yet",
     "linkChild": "Link your child from your profile",
     "answersHidden": "The right answers show once your child can see them"
+  },
+  "export": {
+    "title": "Export results",
+    "subtitle": "Pick one or more exams and the columns. One row per student, and a column per attempt of each exam.",
+    "exams": "Exams",
+    "search": "Search by name, serial or folder",
+    "noExams": "No exams with results",
+    "selectAll": "Select all",
+    "unselectAll": "Clear",
+    "attempts_one": "1 attempt",
+    "attempts_other": "{{count}} attempts",
+    "teachers": "Teachers",
+    "teachersHint": "No teacher picked means every student",
+    "columns": "Columns",
+    "perAttempt": "Per attempt",
+    "field": {
+      "student": "Student name",
+      "serial": "Serial",
+      "phone": "Phone",
+      "parent_phone": "Parent phone",
+      "email": "Email",
+      "level": "Level",
+      "teacher": "Teacher",
+      "score": "Score",
+      "percent": "Percent %"
+    },
+    "summary_zero": "Pick at least one exam",
+    "summary_one": "1 exam picked",
+    "summary_other": "{{count}} exams picked",
+    "pickExam": "Pick at least one exam",
+    "failed": "Export failed"
   }
 }

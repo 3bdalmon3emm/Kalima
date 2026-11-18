@@ -331,5 +331,7 @@
   "Question cancelled": "تم إلغاء السؤال",
   "Question restored": "تم رجوع السؤال",
   "Question is not in this exam": "السؤال مش في الامتحان ده",
-  "This question was answered in an exam, so its type cannot change": "السؤال ده اتجاوب عليه في امتحان، فمينفعش يتغير نوعه"
+  "This question was answered in an exam, so its type cannot change": "السؤال ده اتجاوب عليه في امتحان، فمينفعش يتغير نوعه",
+  "Pick at least one exam": "اختار امتحان على الأقل",
+  "Pick at most 200 exams": "اختار 200 امتحان بالكتير"
 }

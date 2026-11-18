@@ -16,6 +16,7 @@ import { qrPng, uniqueFileNames, examUrl } from "../services/examLinkUrl";
 import { makeZip } from "../../../libs/zip";
 import { prisma } from "../../../libs/db/prisma";
 import { makeExportHandler } from "../../store-api/export";
+import { exportOptions, multiExportFile } from "../services/resultsExportMulti";
 import "../services/examResultsExport";
 import { uploadSound } from "../services/media.service";
 import { parseExamSettings, parseMark, parseRules } from "../services/examInput";
@@ -208,6 +209,20 @@ router.get("/exams/:id/attempts", handle(async (req, res) => {
 
 // Excel/CSV of results: ?exam_id=&teacher_ids=&status=&format=xlsx
 router.get("/results/export", makeExportHandler("exam-results"));
+
+// Exporting many exams at once: one row per student, a column per attempt.
+router.get("/results/export-options", handle(async (_req, res) => {
+  res.json(ok(await exportOptions()));
+}));
+
+router.post("/results/export-multi", handle(async (req, res) => {
+  const format = req.query.format === "csv" ? "csv" : "xlsx";
+  const locale = String(req.query.lang ?? "ar").toLowerCase().startsWith("en") ? "en" : "ar";
+  const file = await multiExportFile(req.body, format, locale);
+  res.setHeader("Content-Type", file.contentType);
+  res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
+  res.send(file.buffer);
+}));
 
 // { extra_attempts, extra_minutes, ends_at } for one student.
 // Accept with a mark, or reject with a reason.

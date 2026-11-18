@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Archive, FolderOpen, MoreVertical, Plus, Search, FileText, MessageSquareWarning } from 'lucide-react';
+import { Archive, FolderOpen, MoreVertical, Plus, Search, FileText, MessageSquareWarning, Download } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -90,6 +90,9 @@ export default function ExamsPage() {
                     <p className="text-sm text-muted-foreground">{t('subtitle')}</p>
                 </div>
                 <div className="flex flex-wrap gap-2">
+                    <Button variant="outline" asChild>
+                        <Link to="/admin/exams/export"><Download className="h-4 w-4" />{t('export.title')}</Link>
+                    </Button>
                     <Button variant="outline" asChild>
                         <Link to="/admin/exams/appeals"><MessageSquareWarning className="h-4 w-4" />{t('appeals.title')}</Link>
                     </Button>
