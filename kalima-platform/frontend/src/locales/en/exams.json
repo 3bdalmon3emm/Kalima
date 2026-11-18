@@ -573,5 +573,12 @@
     "countExam_other": "{{count}} exams",
     "countHomework_one": "1 homework",
     "countHomework_other": "{{count}} homework"
+  },
+  "parent": {
+    "title": "Children's exams",
+    "subtitle": "Your child's exams and homework, marks and level in each subject",
+    "noChildren": "No children linked to your account yet",
+    "linkChild": "Link your child from your profile",
+    "answersHidden": "The right answers show once your child can see them"
   }
 }

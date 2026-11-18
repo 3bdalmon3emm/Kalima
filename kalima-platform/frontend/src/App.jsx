@@ -152,6 +152,8 @@ const StudentExamsPage = lazy(() => import("./pages/student/exams/StudentExamsPa
 const ParentLayout = lazy(() => import("./layouts/ParentLayout"));
 const ParentProfilePage = lazy(() => import("./pages/parent/profile/ParentProfilePage"));
 const ParentSettingsPage = lazy(() => import("./pages/parent/settings/ParentSettingsPage"));
+const ParentExamsPage = lazy(() => import("./pages/parent/exams/ParentExamsPage"));
+const ParentResultPage = lazy(() => import("./pages/parent/exams/ParentResultPage"));
 
 const PageLoader = () => (
   <div className="flex min-h-screen items-center justify-center">
@@ -387,6 +389,8 @@ const router = createBrowserRouter(
         <Route element={<ParentLayout />}>
           <Route path="/parent/profile" element={<ParentProfilePage />} />
           <Route path="/parent/settings" element={<ParentSettingsPage />} />
+          <Route path="/parent/exams" element={<ParentExamsPage />} />
+          <Route path="/parent/exams/:childId/result/:attemptId" element={<ParentResultPage />} />
         </Route>
       </Route>
 

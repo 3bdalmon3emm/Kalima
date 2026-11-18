@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ShoppingBag, User, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Settings } from 'lucide-react';
+import { ShoppingBag, User, LogOut, Home, Globe, Moon, Sun, ChevronLeft, Menu, X, Settings, ClipboardList } from 'lucide-react';
 import useAuth from '@/hooks/auth/useAuth';
 
 const PARENT_THEME_STORAGE_KEY = 'parentTheme';
@@ -39,6 +39,7 @@ export default function ParentSidebar({ isMobileOpen, setIsMobileOpen }) {
   const navigation = [
     { name: t('nav.home'), href: '/', icon: Home, id: 'home' },
     { name: t('nav.profile'), href: '/parent/profile', icon: User, id: 'profile' },
+    { name: t('nav.exams', 'Exams'), href: '/parent/exams', icon: ClipboardList, id: 'exams' },
     { name: t('nav.settings'), href: '/parent/settings', icon: Settings, id: 'settings' },
   ];
 

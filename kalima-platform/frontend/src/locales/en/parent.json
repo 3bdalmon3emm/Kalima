@@ -22,7 +22,8 @@
     "lightMode": "Light mode",
     "darkMode": "Dark mode",
     "backToStore": "Back to Store",
-    "logout": "Logout"
+    "logout": "Logout",
+    "exams": "Children's exams"
   },
   "settings": {
     "title": "Account Settings",

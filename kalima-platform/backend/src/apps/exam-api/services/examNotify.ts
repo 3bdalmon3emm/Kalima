@@ -51,7 +51,7 @@ export const examNotify = {
       const a = await attemptInfo(attemptId);
       if (!a) return;
       if (toStudent) send([a.student_user_id], notification_key_enum.EXAM_RESULT_READY, a.id, `/e/${a.link.code}/result/${a.id}`);
-      send(await parentsOf(a.student_user_id), notification_key_enum.EXAM_RESULT_READY, a.id);
+      send(await parentsOf(a.student_user_id), notification_key_enum.EXAM_RESULT_READY, a.id, `/parent/exams/${a.student_user_id}/result/${a.id}`);
     } catch (err) { log(err); }
   },
 
