@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ChevronLeft, Copy, LogOut, Minimize, RotateCcw, Save, UserRound } from 'lucide-react';
+import { Ban, ChevronLeft, Copy, LogOut, Minimize, RotateCcw, Save, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -16,7 +16,9 @@ import AppealCard from '@/components/exams/AppealCard';
 
 // One attempt for the grader: the student's answers next to the right ones,
 // and a mark box (in halves) under every essay. The teacher (or assistant)
-// sees the same page for the students of their own links.
+// sees the same page for the students of their own links. The admin can
+// also cancel a question here for the whole exam, which reaches questions a
+// random redo drew that the exam's questions tab does not list.
 export default function ExamAttemptReviewPage({ teacher = false }) {
     const { id } = useParams();
     const { t } = useTranslation('exams');
@@ -62,6 +64,28 @@ export default function ExamAttemptReviewPage({ teacher = false }) {
         } finally {
             setSaving(false);
         }
+    };
+
+    const cancelBox = (r) => {
+        const undo = r.cancelled;
+        const run = async () => {
+            if (!window.confirm(t(undo ? 'cancel.restoreConfirm' : 'cancel.confirm'))) return;
+            try {
+                const res = await api.send(undo ? 'delete' : 'post', `/exams/${data.exam.id}/questions/${r.question_id}/cancel`);
+                toast.success(t(undo ? 'cancel.restored' : 'cancel.done', { count: res.data.attempts }));
+                take(await api.get(`/attempts/${id}`));
+            } catch (err) {
+                showError(err, t('errors.save'));
+            }
+        };
+        return (
+            <div className="mx-4 mb-4 flex justify-end">
+                <Button size="sm" variant="outline" onClick={run}>
+                    {undo ? <RotateCcw className="h-4 w-4" /> : <Ban className="h-4 w-4 text-orange-600" />}
+                    {t(undo ? 'cancel.restore' : 'cancel.button')}
+                </Button>
+            </div>
+        );
     };
 
     const gradeBox = (r) => (
@@ -141,6 +165,7 @@ export default function ExamAttemptReviewPage({ teacher = false }) {
                                             decide={async (body) => (await api.send('post', `/appeals/${a.id}/decision`, body)).data}
                                             onDecided={() => api.get(`/attempts/${id}`).then(take)} />
                                     ))}
+                                    {!teacher && data.status !== 'in_progress' && cancelBox(r)}
                                 </>
                             )}
                         />
