@@ -25,7 +25,8 @@
     "darkMode": "Dark mode",
     "backToStore": "Back to Store",
     "logout": "Logout",
-    "eBookletOrders": "E-Booklet Orders"
+    "eBookletOrders": "E-Booklet Orders",
+    "exams": "My exams"
   },
   "settings": {
     "title": "Account Settings",

@@ -146,6 +146,7 @@ const StudentLayout = lazy(() => import("./layouts/StudentLayout"));
 const StudentProfilePage = lazy(() => import("./pages/student/profile/StudentProfilePage"));
 const StudentSettingsPage = lazy(() => import("./pages/student/settings/StudentSettingsPage"));
 const StudentEBookletsPage = lazy(() => import("./pages/student/e-booklets/StudentEBookletsPage"));
+const StudentExamsPage = lazy(() => import("./pages/student/exams/StudentExamsPage"));
 
 // Parent lazy-loaded pages
 const ParentLayout = lazy(() => import("./layouts/ParentLayout"));
@@ -376,6 +377,7 @@ const router = createBrowserRouter(
           <Route path="/student/profile" element={<StudentProfilePage />} />
           <Route path="/student/settings" element={<StudentSettingsPage />} />
           <Route path="/student/e-booklets" element={<StudentEBookletsPage />} />
+          <Route path="/student/exams" element={<StudentExamsPage />} />
           <Route path="/student/e-booklets/:instanceId" element={<EBookletViewerPage />} />
         </Route>
       </Route>

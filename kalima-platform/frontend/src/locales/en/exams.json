@@ -547,5 +547,31 @@
     "done_other": "Question cancelled; {{count}} attempts updated",
     "restored_one": "Question restored; 1 attempt updated",
     "restored_other": "Question restored; {{count}} attempts updated"
+  },
+  "mine": {
+    "title": "My exams",
+    "subtitle": "Every exam and homework you took, and how you do in each subject",
+    "year": "Year {{year}}",
+    "currentYear": "current",
+    "allSubjects": "All subjects",
+    "allTypes": "Exams and homework",
+    "noSubject": "No subject",
+    "indicator": "Performance",
+    "noIndicator": "No results this year yet",
+    "average": "Average",
+    "trend": {
+      "up": "Going up",
+      "down": "Going down",
+      "steady": "Steady"
+    },
+    "list": "Exams and homework",
+    "empty": "No exams this year",
+    "running": "In progress",
+    "passed": "Passed",
+    "failed": "Not passed",
+    "countExam_one": "1 exam",
+    "countExam_other": "{{count}} exams",
+    "countHomework_one": "1 homework",
+    "countHomework_other": "{{count}} homework"
   }
 }

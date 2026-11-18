@@ -590,5 +590,37 @@
     "done_other": "اتلغى السؤال واتعدلت {{count}} محاولة",
     "restored_one": "رجع السؤال واتعدلت محاولة واحدة",
     "restored_other": "رجع السؤال واتعدلت {{count}} محاولة"
+  },
+  "mine": {
+    "title": "امتحاناتي",
+    "subtitle": "كل الامتحانات والواجبات اللي حليتها ومستواك في كل مادة",
+    "year": "سنة {{year}}",
+    "currentYear": "الحالية",
+    "allSubjects": "كل المواد",
+    "allTypes": "امتحانات وواجبات",
+    "noSubject": "بدون مادة",
+    "indicator": "مؤشر الأداء",
+    "noIndicator": "مفيش نتايج في السنة دي لسه",
+    "average": "المتوسط",
+    "trend": {
+      "up": "مستواك طالع",
+      "down": "مستواك نازل",
+      "steady": "مستواك ثابت"
+    },
+    "list": "الامتحانات والواجبات",
+    "empty": "مفيش امتحانات في السنة دي",
+    "running": "لسه شغال",
+    "passed": "ناجح",
+    "failed": "لم ينجح",
+    "countExam_one": "امتحان واحد",
+    "countExam_two": "امتحانين",
+    "countExam_few": "{{count}} امتحانات",
+    "countExam_many": "{{count}} امتحان",
+    "countExam_other": "{{count}} امتحان",
+    "countHomework_one": "واجب واحد",
+    "countHomework_two": "واجبين",
+    "countHomework_few": "{{count}} واجبات",
+    "countHomework_many": "{{count}} واجب",
+    "countHomework_other": "{{count}} واجب"
   }
 }

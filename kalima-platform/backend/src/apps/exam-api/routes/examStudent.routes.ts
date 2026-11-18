@@ -6,6 +6,7 @@ import { handle, idParam, userId } from "../http";
 import { attemptsService } from "../services/attempts.service";
 import { uploadAnswerPhoto, uploadAppealPhotos } from "../services/media.service";
 import { appealsService } from "../services/appeals.service";
+import { studentExamsService } from "../services/studentExams.service";
 
 // Taking exams, mounted at /api/v2/exams. Students reach an exam by a
 // teacher's link code; staff and teachers see exams through the preview
@@ -20,6 +21,13 @@ const token = (req: Request) => {
   const value = req.header("x-attempt-token");
   return value ? value.trim() : null;
 };
+
+// "My exams": every exam and homework taken, by school year, with the
+// performance indicator.
+router.get("/mine", handle(async (req, res) => {
+  const year = req.query.year === undefined ? undefined : Number(req.query.year);
+  res.json(ok(await studentExamsService.overview(userId(req), Number.isInteger(year) ? year : undefined)));
+}));
 
 router.get("/links/:code", handle(async (req, res) => {
   res.json(ok(await attemptsService.linkInfo(String(req.params.code), userId(req))));
