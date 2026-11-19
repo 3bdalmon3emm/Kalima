@@ -9,6 +9,7 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import MathText from '@/components/admin/question-bank/MathText';
 import { qbGet } from '@/components/admin/question-bank/api';
+import QuestionPreview from '@/components/admin/question-bank/QuestionPreview';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 
 // Folders of a bank as a nested list; `renderFolder` draws one row.
@@ -44,7 +45,9 @@ export function useBankTree(bankId) {
 }
 
 // Picks bank questions for a manual exam. The picks keep the order they were
-// ticked in; from a passage the admin ticks the children they want.
+// ticked in; from a passage the admin ticks the children they want. Each
+// question shows in full (options and the correct answer) so the admin can
+// judge it without opening the bank.
 export default function BankPicker({ open, onOpenChange, onAdd, existing = [] }) {
     const { t } = useTranslation('exams');
     const tq = useTranslation('questionBank').t;
@@ -84,11 +87,17 @@ export default function BankPicker({ open, onOpenChange, onAdd, existing = [] })
 
     const row = (q, child = false) => {
         const taken = already.has(q.id);
+        const on = taken || picked.includes(q.id);
         return (
-            <label key={q.id} className={`flex items-start gap-3 rounded border p-2 ${child ? 'ms-6' : ''} ${taken ? 'opacity-50' : 'cursor-pointer hover:bg-muted/40'}`}>
-                <Checkbox checked={taken || picked.includes(q.id)} disabled={taken} onCheckedChange={() => toggle(q.id)} className="mt-1" />
-                <div className="flex-1 min-w-0 space-y-1">
-                    <div className="line-clamp-2 text-sm"><MathText text={q.stem_text || tq(`types.${q.type}`)} /></div>
+            // A click anywhere on the card ticks it, except on its own buttons
+            // (the checkbox, "show details").
+            <div
+                key={q.id}
+                onClick={(e) => { if (!taken && !e.target.closest('button, a, audio, video')) toggle(q.id); }}
+                className={`flex items-start gap-3 rounded-lg border p-3 ${child ? 'ms-6' : ''} ${on && !taken ? 'border-primary bg-primary/5' : ''} ${taken ? 'opacity-50' : 'cursor-pointer hover:bg-muted/40'}`}
+            >
+                <Checkbox checked={on} disabled={taken} onCheckedChange={() => toggle(q.id)} className="mt-1" />
+                <div className="flex-1 min-w-0 space-y-2">
                     <div className="flex flex-wrap gap-1 text-xs">
                         <Badge variant="outline" className="font-mono" dir="ltr">{q.serial}</Badge>
                         <Badge variant="secondary">{tq(`types.${q.type}`)}</Badge>
@@ -96,22 +105,23 @@ export default function BankPicker({ open, onOpenChange, onAdd, existing = [] })
                         {q.category && <Badge variant="outline">{q.category.name}</Badge>}
                         {taken && <Badge>{t('picker.inExam')}</Badge>}
                     </div>
+                    <QuestionPreview q={q} />
                 </div>
-            </label>
+            </div>
         );
     };
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="max-w-5xl">
+            <DialogContent className="flex h-[92vh] w-[96vw] max-w-[96vw] flex-col sm:max-w-[min(96vw,1400px)]">
                 <DialogHeader><DialogTitle>{t('picker.title')}</DialogTitle></DialogHeader>
-                <div className="grid gap-4 md:grid-cols-[260px_1fr] min-h-[420px]">
-                    <div className="space-y-2 md:border-e md:pe-3">
+                <div className="grid min-h-0 flex-1 gap-4 md:grid-cols-[280px_1fr]">
+                    <div className="flex min-h-0 flex-col gap-2 md:border-e md:pe-3">
                         <Select value={bankId ? String(bankId) : ''} onValueChange={(v) => { setBankId(Number(v)); setFolderId(null); setQuestions(null); }}>
                             <SelectTrigger><SelectValue placeholder={t('picker.bank')} /></SelectTrigger>
                             <SelectContent>{banks.map((b) => <SelectItem key={b.id} value={String(b.id)}>{b.name}</SelectItem>)}</SelectContent>
                         </Select>
-                        <div className="max-h-[50vh] overflow-y-auto space-y-0.5">
+                        <div className="min-h-0 flex-1 space-y-0.5 overflow-y-auto">
                             <FolderTree
                                 folders={tree}
                                 renderFolder={(f, depth) => (
@@ -128,7 +138,7 @@ export default function BankPicker({ open, onOpenChange, onAdd, existing = [] })
                             />
                         </div>
                     </div>
-                    <div className="space-y-2 min-w-0">
+                    <div className="flex min-h-0 min-w-0 flex-col gap-2">
                         {!folderId ? (
                             <p className="text-sm text-muted-foreground py-8 text-center">{t('picker.pickFolder')}</p>
                         ) : questions === null ? (
@@ -139,11 +149,11 @@ export default function BankPicker({ open, onOpenChange, onAdd, existing = [] })
                                     <Checkbox checked={allPicked} onCheckedChange={toggleAll} disabled={!selectable.length} />
                                     {t('picker.selectAll')}
                                 </label>
-                                <div className="max-h-[50vh] overflow-y-auto space-y-1.5">
+                                <div className="min-h-0 flex-1 space-y-2 overflow-y-auto pe-1">
                                     {questions.length === 0 && <p className="text-sm text-muted-foreground">{t('picker.empty')}</p>}
                                     {questions.map((q) => (q.type === 'passage' ? (
-                                        <div key={q.id} className="space-y-1.5 rounded-md bg-muted/40 p-2">
-                                            <div className="text-sm font-medium line-clamp-2"><MathText text={q.stem_text || tq('types.passage')} /></div>
+                                        <div key={q.id} className="space-y-2 rounded-md bg-muted/40 p-3">
+                                            <div className="text-sm font-medium leading-7"><MathText text={q.stem_text || tq('types.passage')} /></div>
                                             {q.children.map((c) => row(c, true))}
                                         </div>
                                     ) : row(q)))}
