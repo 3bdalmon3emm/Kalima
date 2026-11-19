@@ -91,16 +91,6 @@ function SettingsTab({ exam, onSaved }) {
                         </SelectContent>
                     </Select>
                 </div>
-                <div className="space-y-1">
-                    <Label>{t('settings.type')}</Label>
-                    <Select value={form.type || 'exam'} onValueChange={(v) => set({ type: v })}>
-                        <SelectTrigger><SelectValue /></SelectTrigger>
-                        <SelectContent>
-                            <SelectItem value="exam">{t('types.exam')}</SelectItem>
-                            <SelectItem value="homework">{t('types.homework')}</SelectItem>
-                        </SelectContent>
-                    </Select>
-                </div>
                 {field('duration_minutes', t('settings.duration'), { type: 'number', min: 1 }, t('settings.durationHint'))}
                 {field('target_total', t('settings.targetTotal'), { type: 'number', min: 0, step: 0.5 }, t('settings.targetTotalHint'))}
                 {field('pass_percent', t('settings.passPercent'), { type: 'number', min: 0, max: 100 })}
