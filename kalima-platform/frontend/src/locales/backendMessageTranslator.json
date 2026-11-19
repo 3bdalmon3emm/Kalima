@@ -310,5 +310,7 @@
   "This order is already deleted": "هذا الطلب محذوف بالفعل",
   "This account is already deleted": "هذا الحساب محذوف بالفعل",
   "Choose the users to send this notification to": "اختر المستخدمين الذين سيصلهم الإشعار",
-  "Write both a title and a message": "اكتب العنوان ونص الإشعار"
+  "Write both a title and a message": "اكتب العنوان ونص الإشعار",
+  "Pick at least one account type": "اختر نوع حساب واحدًا على الأقل",
+  "Pick at least one column": "اختر عمودًا واحدًا على الأقل"
 }

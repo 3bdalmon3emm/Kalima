@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link, useNavigate } from 'react-router-dom';
-import { Bell, UserCog, Users } from 'lucide-react';
+import { Bell, Download, UserCog, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -114,6 +114,9 @@ export default function UsersPage() {
                             {t('totalUsers', { count: pagination.total })}
                         </p>
                     )}
+                    <Button variant="outline" asChild>
+                        <Link to="/admin/users/export"><Download className="h-4 w-4 me-2" />{t('export.title')}</Link>
+                    </Button>
                     {isAdmin && (
                         <Button variant="outline" asChild>
                             <Link to="/admin/impersonation-log"><UserCog className="h-4 w-4 me-2" />{t('impersonationLog.title')}</Link>

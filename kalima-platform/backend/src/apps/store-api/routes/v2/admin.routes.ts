@@ -6,6 +6,7 @@ import { authenticateToken } from "../../../../libs/auth/middleware";
 import { requireRole } from "../../middleware/requireRole.middleware";
 import { role_enum } from "../../generated/prisma/client";
 import { makeExportHandler } from "../../export";
+import { usersExportFile, usersExportOptions } from "../../export/users-custom-export";
 import { impersonationLogService } from "../../services/impersonation-log.service";
 
 const router = Router();
@@ -55,6 +56,23 @@ router.post("/lecturers", ...adminAuth, adminController.createLecturer);
 
 // Export users
 router.get("/users/export", ...adminAuth, makeExportHandler("users"));
+
+// Export users with the admin's choice of account types and columns.
+router.get("/users/export-options", ...adminAuth, (_req, res) => {
+  res.json({ success: true, data: usersExportOptions() });
+});
+router.post("/users/export-custom", ...adminAuth, async (req, res, next) => {
+  try {
+    const format = req.query.format === "csv" ? "csv" : "xlsx";
+    const locale = String(req.query.lang ?? "ar").toLowerCase().startsWith("en") ? "en" : "ar";
+    const file = await usersExportFile(req.body, format, locale);
+    res.setHeader("Content-Type", file.contentType);
+    res.setHeader("Content-Disposition", `attachment; filename="${file.filename}"`);
+    res.send(file.buffer);
+  } catch (err) {
+    next(err);
+  }
+});
 
 // List / search users
 router.get("/users", ...adminModeratorAuth, adminController.listUsers);

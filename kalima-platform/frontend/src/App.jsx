@@ -126,6 +126,7 @@ const ExamEditorPage = lazy(() => import("./pages/admin/exams/ExamEditorPage"));
 const ExamArchivePage = lazy(() => import("./pages/admin/exams/ExamArchivePage"));
 const ExamAttemptReviewPage = lazy(() => import("./pages/admin/exams/ExamAttemptReviewPage"));
 const ImpersonationLogPage = lazy(() => import("./pages/admin/users/ImpersonationLogPage"));
+const UsersExportPage = lazy(() => import("./pages/admin/users/UsersExportPage"));
 const DeletedOrdersPage = lazy(() => import("./pages/admin/orders/DeletedOrdersPage"));
 const ExamStartPage = lazy(() => import("./pages/exams/ExamStartPage"));
 const ExamAttemptPage = lazy(() => import("./pages/exams/ExamAttemptPage"));
@@ -325,6 +326,7 @@ const router = createBrowserRouter(
           <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
           <Route path="/admin/required-fields" element={<RequiredFieldsPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
+          <Route path="/admin/users/export" element={<UsersExportPage />} />
           <Route path="/admin/users/:id" element={<UserDetailPage />} />
           <Route element={<RoleRoute requiredRole={["Admin"]} />}>
             <Route path="/admin/impersonation-log" element={<ImpersonationLogPage />} />
