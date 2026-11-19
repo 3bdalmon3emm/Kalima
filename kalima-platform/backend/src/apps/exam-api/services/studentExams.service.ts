@@ -9,9 +9,9 @@ import type { PrismaClient } from "../../../libs/db/prisma";
 
 const TIME_ZONE = "Africa/Cairo";
 
-// Which attempt of an exam counts in the indicator. The owner has not decided
-// yet; "last" is the default until then ("best" and "first" are ready).
-export const COUNTED_ATTEMPT: "last" | "best" | "first" = "last";
+// Which attempt of an exam counts in the indicator: the best one (the
+// owner's choice, so a better redo shows). "last" and "first" also work.
+export const COUNTED_ATTEMPT: "last" | "best" | "first" = "best";
 
 const num = (d: unknown) => Number(d ?? 0);
 const round1 = (n: number) => Math.round(n * 10) / 10;
