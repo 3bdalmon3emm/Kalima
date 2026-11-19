@@ -10,7 +10,9 @@ i18n
     .use(LanguageDetector)
     .use(initReactI18next)
     .init({
-        fallbackLng: 'en',
+        // Arabic for anyone who has not picked a language yet, whatever their
+        // browser's language; the language button switches to English.
+        fallbackLng: 'ar',
         supportedLngs: ['en', 'ar'],
         debug: false,
         interpolation: {
@@ -20,7 +22,7 @@ i18n
         defaultNS: 'landing',
 
         detection: {
-            order: ['queryString', 'cookie', 'localStorage', 'navigator'],
+            order: ['queryString', 'cookie', 'localStorage'],
             caches: ['localStorage', 'cookie'],
         }
     });
