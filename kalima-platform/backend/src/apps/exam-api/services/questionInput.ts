@@ -79,8 +79,10 @@ export function parseQuestionInput(body: any): QuestionInput {
     explanation_mode: isPassage ? "none" : body.explanation_mode ?? "none",
     explanation_text: text(body.explanation_text),
     explanation_image_id: id(body.explanation_image_id),
-    model_answer_text: type === "essay" ? text(body.model_answer_text) : null,
-    model_answer_image_id: type === "essay" ? id(body.model_answer_image_id) : null,
+    // An essay's explanation is its model answer, so the old separate model
+    // answer is no longer kept.
+    model_answer_text: null,
+    model_answer_image_id: null,
     font: body.font ?? "default",
     options: [],
     matching_items: [],
@@ -156,9 +158,9 @@ export function parseQuestionInput(body: any): QuestionInput {
     if (used.size === 0) errors.push("Add at least one matching pair");
   }
 
-  // Essay: a model answer is required.
-  if (type === "essay" && !input.model_answer_text && !input.model_answer_image_id) {
-    errors.push("Add the model answer as text or an image");
+  // Essay: the explanation (its model answer) is required.
+  if (type === "essay" && input.explanation_mode !== "combined_text" && input.explanation_mode !== "image") {
+    errors.push("Add the essay explanation as text or an image");
   }
 
   // Explanation.

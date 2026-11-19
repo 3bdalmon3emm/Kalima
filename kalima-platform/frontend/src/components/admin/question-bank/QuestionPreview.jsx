@@ -50,7 +50,7 @@ export default function QuestionPreview({ q }) {
         .map((m, i) => ({ n: i + 1, to: right.findIndex((r) => r.id === m.match_item_id) }))
         .filter((p) => p.to >= 0);
     const pairArrow = i18n.dir() === 'rtl' ? '←' : '→';
-    const hasDetails = q.explanation_mode !== 'none' || q.type === 'essay';
+    const hasDetails = q.explanation_mode !== 'none';
     const look = useQuestionFont(q.font);
 
     return (
@@ -129,13 +129,6 @@ export default function QuestionPreview({ q }) {
             )}
             {details && (
                 <div className="space-y-2 rounded-md bg-muted/50 p-3 text-sm">
-                    {q.type === 'essay' && (
-                        <div>
-                            <p className="font-medium mb-1">{t('editor.modelAnswer')}</p>
-                            <MathText text={q.model_answer_text} />
-                            <Media image={q.model_answer_image} />
-                        </div>
-                    )}
                     {q.explanation_mode === 'combined_text' && (
                         <div>
                             <p className="font-medium mb-1">{t('editor.explanation')}</p>

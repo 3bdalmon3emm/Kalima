@@ -19,16 +19,25 @@ export function trueFalseOptions(t) {
 // Puts a smart-paste result into the form. A single-answer question keeps only
 // the first option marked correct; with no options found, the current ones stay.
 // True/false takes the pasted pair only when exactly two options came.
-export function withPaste(form, { stem, options }) {
+// Fills a form from a smart paste (see parseSmartPaste). An essay's text
+// after the question goes into its text explanation; options that came with
+// their own explanation switch the question to "an explanation per option".
+export function withPaste(form, { stem, options, explanation }) {
+    if (form.type === 'essay') {
+        return explanation
+            ? { ...form, stem_text: stem, explanation_mode: 'combined_text', explanation_text: explanation }
+            : { ...form, stem_text: stem };
+    }
     if (!options.length || (form.type === 'true_false' && options.length !== 2)) return { ...form, stem_text: stem };
     const single = form.type === 'mcq_single' || form.type === 'true_false';
     let seen = false;
     const next = options.map((o) => {
         const correct = o.is_correct && !(single && seen);
         if (o.is_correct) seen = true;
-        return { ...emptyOption(o.text), is_correct: correct };
+        return { ...emptyOption(o.text), is_correct: correct, explanation_text: o.explanation || '' };
     });
-    return { ...form, stem_text: stem, options: next };
+    const explained = options.some((o) => o.explanation);
+    return { ...form, stem_text: stem, options: next, ...(explained ? { explanation_mode: 'per_option' } : {}) };
 }
 
 export function emptyQuestion(type, t) {
@@ -41,11 +50,10 @@ export function emptyQuestion(type, t) {
         stem_text: '',
         stem_image: null,
         stem_audio: null,
-        explanation_mode: 'none',
+        // An essay's explanation is its model answer, written as text.
+        explanation_mode: type === 'essay' ? 'combined_text' : 'none',
         explanation_text: '',
         explanation_image: null,
-        model_answer_text: '',
-        model_answer_image: null,
         font: 'default',
         options: [],
         matching_items: [],
@@ -69,6 +77,14 @@ export function emptyQuestion(type, t) {
 
 export function fromApi(q) {
     const keyOf = (id) => `id-${id}`;
+    // An essay saved before the model answer became the explanation: its
+    // model answer is shown as the explanation.
+    const oldEssay = q.type === 'essay' && q.explanation_mode === 'none';
+    if (oldEssay) {
+        q = q.model_answer_image && !q.model_answer_text
+            ? { ...q, explanation_mode: 'image', explanation_image: q.model_answer_image, explanation_image_id: q.model_answer_image_id }
+            : { ...q, explanation_mode: 'combined_text', explanation_text: q.model_answer_text || '' };
+    }
     return {
         type: q.type,
         difficulty: q.difficulty,
@@ -81,8 +97,6 @@ export function fromApi(q) {
         explanation_mode: q.explanation_mode,
         explanation_text: q.explanation_text || '',
         explanation_image: media(q.explanation_image, q.explanation_image_id),
-        model_answer_text: q.model_answer_text || '',
-        model_answer_image: media(q.model_answer_image, q.model_answer_image_id),
         font: q.font || 'default',
         options: (q.options || []).map((o) => ({
             id: o.id,
@@ -119,8 +133,6 @@ export function toApi(state, passageId) {
         explanation_mode: state.explanation_mode,
         explanation_text: state.explanation_text,
         explanation_image_id: state.explanation_image?.id ?? null,
-        model_answer_text: state.model_answer_text,
-        model_answer_image_id: state.model_answer_image?.id ?? null,
         font: state.font,
         options: state.options.map((o) => ({
             id: o.id,

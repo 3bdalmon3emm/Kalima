@@ -45,7 +45,8 @@
     "placeholder": "Example:\nWhat is the capital of Egypt?\na) Cairo *\nb) Alexandria\nc) Aswan",
     "question": "Question",
     "found": "Options found: {{count}}",
-    "apply": "Use"
+    "apply": "Use",
+    "explanation": "Explanation"
   },
   "types": {
     "mcq_single": "Multiple choice",
@@ -106,7 +107,8 @@
     "explanationHint": "Students see it after the exam ends.",
     "perOptionHint": "Write each option's explanation under it in the options section.",
     "optionLabel": "Label",
-    "optionLabelHint": "Shown to students instead of the numbering. Only for numbered shapes in the question image."
+    "optionLabelHint": "Shown to students instead of the numbering. Only for numbered shapes in the question image.",
+    "essayExplanationHint": "The explanation is the model answer; students see it with their result."
   },
   "card": {
     "ref": "Ref",

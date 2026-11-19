@@ -214,7 +214,7 @@
   "Pair each left item with a right item": "وصّل كل عنصر في العمود الأول بعنصر في العمود الثاني",
   "A right item can be paired only once": "لا يمكن توصيل عنصر في العمود الثاني بأكثر من عنصر",
   "Add at least one matching pair": "أضف توصيلة واحدة على الأقل",
-  "Add the model answer as text or an image": "أضف الإجابة النموذجية نصًا أو صورة",
+  "Add the essay explanation as text or an image": "أضف شرح السؤال المقالي نصًا أو صورة",
   "Write the explanation": "اكتب الشرح",
   "Upload the explanation image": "ارفع صورة الشرح",
   "Per-option explanation is only for questions with options": "الشرح لكل اختيار متاح فقط للأسئلة ذات الاختيارات",

@@ -4,14 +4,18 @@
 // line is the question and every other line is an option, but only if one of
 // them is marked correct (otherwise the whole paste is the question, as in an
 // essay question). A trailing "*" or "(صح)" / "(correct)" on an option marks
-// it correct.
+// it correct. Lines under an option without a marker are that option's
+// explanation; with no options at all (an essay), the lines after the first
+// are the question's explanation.
 
 const ARABIC_LETTERS = 'أابجدهوزحطيكلمنسعفصقرشتثخذضظغ';
 const MARKER = new RegExp(
     String.raw`^\s*(?:[(\[]?\s*(?:[${ARABIC_LETTERS}]|[a-zA-Z]|\d{1,2}|[٠-٩]{1,2})\s*[)\].\-:ـ–]|[-•●▪◦*–])\s*`,
 );
 const CORRECT = /\s*(?:\*|\(\s*(?:صح|صحيح|الإجابة|correct|answer)\s*\)|✓|✔)\s*$/i;
-const QUESTION_PREFIX = /^\s*(?:س\s*\d*\s*[:/\-.)]|سؤال\s*\d*\s*[:/\-.)]|Q\s*\d*\s*[:.)\-]|\d{1,3}\s*[).\-])\s*/i;
+// "الشرح:" / "التوضيح:" / "Explanation:" before an explanation line is dropped.
+const EXPLANATION_PREFIX = /^\s*(?:ال)?(?:شرح|توضيح|تفسير|explanation)\s*[:：\-]\s*/i;
+const QUESTION_PREFIX =/^\s*(?:س\s*\d*\s*[:/\-.)]|سؤال\s*\d*\s*[:/\-.)]|Q\s*\d*\s*[:.)\-]|\d{1,3}\s*[).\-])\s*/i;
 
 // A paste on the folder page ({ text, image }), kept here for the new question
 // page it opens. That page reads it only when it was opened by the paste.
@@ -102,28 +106,38 @@ export function parseSmartPaste(raw) {
     // The first line is always the question, even if it is numbered "1-".
     const optionStart = lines.findIndex((l, i) => i > 0 && MARKER.test(l));
     let stemLines;
+    // Each option: its own line, then the lines under it (its explanation).
     let optionLines;
     if (optionStart > 0) {
         stemLines = lines.slice(0, optionStart);
         optionLines = [];
         for (const line of lines.slice(optionStart)) {
-            if (MARKER.test(line) || !optionLines.length) optionLines.push(line);
-            else optionLines[optionLines.length - 1] += ` ${line}`; // wrapped option
+            if (MARKER.test(line)) optionLines.push({ line, notes: [] });
+            else optionLines[optionLines.length - 1].notes.push(line.replace(CORRECT, '').replace(EXPLANATION_PREFIX, ''));
         }
     } else if (lines.slice(1).some((l) => CORRECT.test(l))) {
         stemLines = [lines[0]];
-        optionLines = lines.slice(1);
+        optionLines = lines.slice(1).map((line) => ({ line, notes: [] }));
     } else {
         stemLines = lines;
         optionLines = [];
     }
 
-    const stem = stemLines.join('\n').replace(QUESTION_PREFIX, '').trim();
-    const options = optionLines.map((line) => {
+    const options = optionLines.map(({ line, notes }) => {
         const is_correct = CORRECT.test(line);
         const text = line.replace(CORRECT, '').replace(MARKER, '').trim();
-        return { text, is_correct };
+        return { text, is_correct, explanation: notes.join('\n').trim() };
     }).filter((o) => o.text);
+    const stem = stemLines.join('\n').replace(QUESTION_PREFIX, '').trim();
 
-    return { stem, options };
+    // No options: an essay. Its first line is the question and the rest is
+    // the explanation (the model answer).
+    if (!options.length && lines.length > 1) {
+        return {
+            stem: lines[0].replace(QUESTION_PREFIX, '').trim(),
+            options,
+            explanation: lines.slice(1).map((l) => l.replace(EXPLANATION_PREFIX, '')).join('\n').trim(),
+        };
+    }
+    return { stem, options, explanation: '' };
 }

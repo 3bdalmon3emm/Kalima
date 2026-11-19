@@ -30,7 +30,7 @@ function Section({ title, children, hint }) {
     );
 }
 
-function SmartPasteDialog({ open, onOpenChange, onApply }) {
+function SmartPasteDialog({ open, onOpenChange, onApply, essay }) {
     const { t } = useTranslation('questionBank');
     const [text, setText] = useState('');
     const parsed = parseSmartPaste(text);
@@ -59,17 +59,26 @@ function SmartPasteDialog({ open, onOpenChange, onApply }) {
                 {text.trim() && (
                     <div className="rounded-md border p-3 text-sm space-y-1 max-h-48 overflow-y-auto">
                         <p><span className="text-muted-foreground">{t('smartPaste.question')}: </span>{parsed.stem}</p>
-                        <ol className="list-decimal ps-5">
-                            {parsed.options.map((o, i) => (
-                                <li key={i} className={o.is_correct ? 'text-green-600 font-medium' : ''}>{o.text}</li>
-                            ))}
-                        </ol>
-                        <p className="text-xs text-muted-foreground">{t('smartPaste.found', { count: parsed.options.length })}</p>
+                        {essay ? (
+                            parsed.explanation && <p className="whitespace-pre-wrap"><span className="text-muted-foreground">{t('smartPaste.explanation')}: </span>{parsed.explanation}</p>
+                        ) : (
+                            <>
+                                <ol className="list-decimal ps-5">
+                                    {parsed.options.map((o, i) => (
+                                        <li key={i}>
+                                            <span className={o.is_correct ? 'text-green-600 font-medium' : ''}>{o.text}</span>
+                                            {o.explanation && <span className="block text-xs text-muted-foreground">{t('smartPaste.explanation')}: {o.explanation}</span>}
+                                        </li>
+                                    ))}
+                                </ol>
+                                <p className="text-xs text-muted-foreground">{t('smartPaste.found', { count: parsed.options.length })}</p>
+                            </>
+                        )}
                     </div>
                 )}
                 <DialogFooter>
                     <Button
-                        disabled={!parsed.stem || parsed.options.length < 2}
+                        disabled={!parsed.stem || (!essay && parsed.options.length < 2)}
                         onClick={() => {
                             onApply(parsed);
                             setText('');
@@ -412,20 +421,14 @@ export default function QuestionEditor({ value, onChange, bankId, categories = [
                     <MatchingEditor value={value} set={set} bankId={bankId} />
                 </Section>
             )}
-            {type === 'essay' && (
-                <Section title={t('editor.modelAnswer')} hint={t('editor.modelAnswerHint')}>
-                    <MathInput rows={4} value={value.model_answer_text} onChange={(model_answer_text) => set({ model_answer_text })} />
-                    <MediaField kind="image" bankId={bankId} value={value.model_answer_image} onChange={(model_answer_image) => set({ model_answer_image })} />
-                </Section>
-            )}
 
             {/* Explanation */}
             {!isPassage && (
-                <Section title={t('editor.explanation')} hint={t('editor.explanationHint')}>
+                <Section title={t('editor.explanation')} hint={type === 'essay' ? t('editor.essayExplanationHint') : t('editor.explanationHint')}>
                     <Select value={value.explanation_mode} onValueChange={(explanation_mode) => set({ explanation_mode })}>
                         <SelectTrigger className="max-w-sm"><SelectValue /></SelectTrigger>
                         <SelectContent>
-                            <SelectItem value="none">{t('explanation.none')}</SelectItem>
+                            {type !== 'essay' && <SelectItem value="none">{t('explanation.none')}</SelectItem>}
                             <SelectItem value="combined_text">{t('explanation.combined_text')}</SelectItem>
                             {hasOptions && <SelectItem value="per_option">{t('explanation.per_option')}</SelectItem>}
                             <SelectItem value="image">{t('explanation.image')}</SelectItem>
@@ -443,7 +446,7 @@ export default function QuestionEditor({ value, onChange, bankId, categories = [
                 </Section>
             )}
 
-            <SmartPasteDialog open={pasteOpen} onOpenChange={setPasteOpen} onApply={applyPaste} />
+            <SmartPasteDialog open={pasteOpen} onOpenChange={setPasteOpen} onApply={applyPaste} essay={type === 'essay'} />
         </div>
         </QuestionFontContext.Provider>
     );
