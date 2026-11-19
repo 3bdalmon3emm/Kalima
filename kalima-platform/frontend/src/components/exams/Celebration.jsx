@@ -9,7 +9,7 @@ import { playDefaultSound } from './defaultSounds';
 // fireworks and heavy gold rain. "fail" shows no celebration. `sound` (a
 // URL) plays once when given.
 
-const PALETTES = {
+export const PALETTES = {
     pass: ['#60a5fa', '#34d399', '#fbbf24'],
     good: ['#f472b6', '#60a5fa', '#34d399', '#fbbf24', '#a78bfa'],
     great: ['#ef4444', '#f97316', '#facc15', '#22c55e', '#3b82f6', '#a855f7'],

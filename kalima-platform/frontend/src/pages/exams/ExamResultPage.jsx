@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { motion } from 'framer-motion';
-import { CheckCircle2, Hourglass, RotateCcw, XCircle, Volume2, HeartHandshake } from 'lucide-react';
+import { CheckCircle2, Hourglass, RotateCcw, XCircle, Volume2, HeartHandshake, Share2 } from 'lucide-react';
+import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
@@ -14,6 +15,8 @@ import { translateBackendMessage } from '@/lib/utils';
 import Celebration, { CelebrationBadge } from '@/components/exams/Celebration';
 import { Media } from '@/components/exams/QuestionView';
 import AppealBox from '@/components/exams/AppealBox';
+import { makeShareVideo, shareOrDownload } from '@/components/exams/shareVideo';
+import useAuth from '@/hooks/auth/useAuth';
 import { examGet, examSend, passageNumbers, requestFullscreen, savedScale, setAttemptToken } from '@/components/exams/api';
 
 function Tag({ tone, children }) {
@@ -187,6 +190,8 @@ export default function ExamResultPage() {
     const [error, setError] = useState(null);
     const [replay, setReplay] = useState(0);
     const [starting, setStarting] = useState(false);
+    const [sharing, setSharing] = useState(false);
+    const { user } = useAuth() || {};
 
     const load = () => examGet(`/attempts/${attemptId}/result`).then(setResult).catch((err) => setError(translateBackendMessage(err.response?.data?.message) || t('errors.load')));
     useEffect(() => { load(); }, [attemptId]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -210,6 +215,26 @@ export default function ExamResultPage() {
         } catch (err) {
             setError(translateBackendMessage(err.response?.data?.message) || t('errors.save'));
             setStarting(false);
+        }
+    };
+
+    // The celebration as a short video to post (passing results only).
+    const share = async () => {
+        setSharing(true);
+        try {
+            const file = await makeShareVideo(result.band, {
+                headline: t(`result.headline.${result.band}`),
+                name: user?.name || '',
+                exam: result.exam?.name || '',
+                score: `${formatMark(result.score)} / ${formatMark(result.total)}`,
+                percent: `${result.percent}%`,
+                brand: t('result.shareBrand'),
+            });
+            if (await shareOrDownload(file) === 'downloaded') toast.success(t('result.shareDownloaded'));
+        } catch {
+            toast.error(t('result.shareFailed'));
+        } finally {
+            setSharing(false);
         }
     };
 
@@ -266,6 +291,12 @@ export default function ExamResultPage() {
                             </Button>
                         )}
                         {!failed && <Button variant="outline" onClick={() => setReplay((r) => r + 1)}><Volume2 className="h-4 w-4" />{t('result.replay')}</Button>}
+                        {!failed && (
+                            <Button variant="outline" onClick={share} disabled={sharing}>
+                                {sharing ? <LoadingSpinner className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
+                                {sharing ? t('result.sharing') : t('result.share')}
+                            </Button>
+                        )}
                         <Button variant="outline" asChild><Link to={`/e/${code}`}>{t('result.back')}</Link></Button>
                     </div>
                     {result.redo?.available && <p className="text-xs text-muted-foreground">{t('result.redosLeft', { count: result.redo.left })}</p>}
