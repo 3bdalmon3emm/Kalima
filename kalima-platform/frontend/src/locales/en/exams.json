@@ -338,11 +338,12 @@
     "notConnected": "Not matched",
     "answersHiddenRedo": "The right answers show once your attempts are over. For now you can see which questions you missed, then redo the exam.",
     "answersHiddenLater": "The right answers are not shown yet; your teacher decides when.",
-    "share": "Share your celebration",
+    "share": "Make my celebration video",
     "sharing": "Making the video... stay on this page",
     "shareDownloaded": "The video was saved to your device",
     "shareFailed": "This browser cannot make the video",
-    "shareBrand": "Kalima Educational Platform"
+    "shareBrand": "Kalima Educational Platform",
+    "shareReady": "Video ready, share it"
   },
   "results": {
     "filter": {

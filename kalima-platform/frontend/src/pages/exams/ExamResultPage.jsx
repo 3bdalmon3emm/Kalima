@@ -191,6 +191,7 @@ export default function ExamResultPage() {
     const [replay, setReplay] = useState(0);
     const [starting, setStarting] = useState(false);
     const [sharing, setSharing] = useState(false);
+    const [video, setVideo] = useState(null);
     const { user } = useAuth() || {};
 
     const load = () => examGet(`/attempts/${attemptId}/result`).then(setResult).catch((err) => setError(translateBackendMessage(err.response?.data?.message) || t('errors.load')));
@@ -218,19 +219,24 @@ export default function ExamResultPage() {
         }
     };
 
-    // The celebration as a short video to post (passing results only).
+    // The celebration as a short video to post (passing results only). The
+    // first tap makes it; the second shares it, since phones open the share
+    // sheet only right after a tap.
     const share = async () => {
+        if (video) {
+            if (await shareOrDownload(video) === 'downloaded') toast.success(t('result.shareDownloaded'));
+            return;
+        }
         setSharing(true);
         try {
-            const file = await makeShareVideo(result.band, {
+            setVideo(await makeShareVideo(result.band, {
                 headline: t(`result.headline.${result.band}`),
                 name: user?.name || '',
                 exam: result.exam?.name || '',
                 score: `${formatMark(result.score)} / ${formatMark(result.total)}`,
                 percent: `${result.percent}%`,
                 brand: t('result.shareBrand'),
-            });
-            if (await shareOrDownload(file) === 'downloaded') toast.success(t('result.shareDownloaded'));
+            }, result.sound));
         } catch {
             toast.error(t('result.shareFailed'));
         } finally {
@@ -294,7 +300,7 @@ export default function ExamResultPage() {
                         {!failed && (
                             <Button variant="outline" onClick={share} disabled={sharing}>
                                 {sharing ? <LoadingSpinner className="h-4 w-4" /> : <Share2 className="h-4 w-4" />}
-                                {sharing ? t('result.sharing') : t('result.share')}
+                                {sharing ? t('result.sharing') : video ? t('result.shareReady') : t('result.share')}
                             </Button>
                         )}
                         <Button variant="outline" asChild><Link to={`/e/${code}`}>{t('result.back')}</Link></Button>

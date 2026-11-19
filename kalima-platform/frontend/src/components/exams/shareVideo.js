@@ -1,14 +1,22 @@
 import { PALETTES } from './Celebration';
+import { defaultSoundInto } from './defaultSounds';
+import { __iconNode as starIcon } from 'lucide-react/dist/esm/icons/star.js';
+import { __iconNode as partyIcon } from 'lucide-react/dist/esm/icons/party-popper.js';
+import { __iconNode as trophyIcon } from 'lucide-react/dist/esm/icons/trophy.js';
+import { __iconNode as crownIcon } from 'lucide-react/dist/esm/icons/crown.js';
+import { __iconNode as sparklesIcon } from 'lucide-react/dist/esm/icons/sparkles.js';
 
 // The celebration as a short video a student can post (a story-sized
 // 1080×1920 clip): the band's animation drawn on a canvas, with the
 // student's name, the exam, the score and the percent. Recorded in real
 // time, so it takes as long as the clip. MP4 where the browser can record
-// it (WhatsApp and Instagram take it), otherwise WebM.
+// it (WhatsApp and Instagram take it), otherwise WebM. The sound is the one
+// the page plays: the band's uploaded sound, else the built-in one.
 
 const W = 1080;
 const H = 1920;
-const SECONDS = 6;
+// The clip lasts at least this long, and longer when the sound does.
+const MIN_SECONDS = 6;
 const FPS = 30;
 const FONT = 'Cairo, "Noto Sans Arabic", sans-serif';
 
@@ -18,11 +26,64 @@ const BACKGROUND = {
     great: ['#7c2d12', '#431407'],
     perfect: ['#713f12', '#1c1917'],
 };
-const EMOJI = { pass: '⭐', good: '🎉', great: '🏆', perfect: '👑' };
+
+// The same icons and colors as the badge on the result page (CelebrationBadge).
+const BADGE = {
+    pass: { icon: starIcon, color: '#0ea5e9' },
+    good: { icon: partyIcon, color: '#ec4899' },
+    great: { icon: trophyIcon, color: '#f59e0b' },
+    perfect: { icon: crownIcon, color: '#facc15', fill: '#fde047' },
+};
+
+// Draws a lucide icon (24×24 units) centred on the origin, `size` px wide.
+function drawIcon(ctx, nodes, size, { color, fill, width = 1.6 }) {
+    ctx.save();
+    ctx.scale(size / 24, size / 24);
+    ctx.translate(-12, -12);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    for (const [tag, attrs] of nodes) {
+        const path = new Path2D();
+        if (tag === 'circle') path.arc(Number(attrs.cx), Number(attrs.cy), Number(attrs.r), 0, Math.PI * 2);
+        else path.addPath(new Path2D(attrs.d));
+        if (fill) {
+            ctx.fillStyle = fill;
+            ctx.fill(path);
+        }
+        ctx.stroke(path);
+    }
+    ctx.restore();
+}
+
+function drawBadge(ctx, band, t) {
+    const { icon, color, fill } = BADGE[band];
+    // A soft glow in the band's color; full marks pulse in gold.
+    const pulse = band === 'perfect' ? 1 + Math.sin(t * 4) * 0.15 : 1;
+    const glow = ctx.createRadialGradient(0, 0, 0, 0, 0, 300 * pulse);
+    glow.addColorStop(0, `${color}66`);
+    glow.addColorStop(1, `${color}00`);
+    ctx.fillStyle = glow;
+    ctx.fillRect(-320, -320, 640, 640);
+    if (band === 'perfect') {
+        ctx.shadowColor = 'rgba(250,204,21,0.9)';
+        ctx.shadowBlur = 60;
+    }
+    drawIcon(ctx, icon, 360, { color, fill, width: band === 'perfect' ? 1.2 : 1.6 });
+    ctx.shadowBlur = 0;
+    if (band !== 'pass') {
+        ctx.save();
+        ctx.translate(170, -170);
+        ctx.rotate(Math.sin(t * 2) * 0.15);
+        drawIcon(ctx, sparklesIcon, 110, { color: '#fbbf24', width: 2 });
+        ctx.restore();
+    }
+}
 
 const rand = (min, max) => min + Math.random() * (max - min);
 
-function particles(band) {
+function particles(band, seconds) {
     const colors = PALETTES[band];
     const confetti = Array.from({ length: { pass: 0, good: 90, great: 160, perfect: 260 }[band] }, (_, i) => ({
         color: colors[i % colors.length],
@@ -35,10 +96,10 @@ function particles(band) {
         round: Math.random() < 0.35,
     }));
     const stars = band === 'pass' ? Array.from({ length: 26 }, (_, i) => ({
-        color: colors[i % colors.length], x: rand(80, W - 80), start: rand(0, SECONDS - 1.5), size: rand(40, 80),
+        color: colors[i % colors.length], x: rand(80, W - 80), start: rand(0, seconds - 1.5), size: rand(40, 80),
     })) : [];
     const bursts = band === 'great' || band === 'perfect' ? Array.from({ length: band === 'perfect' ? 12 : 7 }, (_, i) => ({
-        color: colors[i % colors.length], x: rand(120, W - 120), y: rand(160, 760), start: 0.3 + i * (SECONDS - 1.5) / (band === 'perfect' ? 12 : 7),
+        color: colors[i % colors.length], x: rand(120, W - 120), y: rand(160, 760), start: 0.3 + i * (seconds - 1.5) / (band === 'perfect' ? 12 : 7),
     })) : [];
     return { confetti, stars, bursts };
 }
@@ -136,10 +197,7 @@ function drawFrame(ctx, t, band, p, text) {
     ctx.save();
     ctx.translate(W / 2, 640);
     ctx.scale(scale, scale);
-    ctx.font = `300px ${FONT}`;
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(EMOJI[band], 0, 0);
+    drawBadge(ctx, band, t);
     ctx.restore();
 
     // The card fades in under the badge.
@@ -161,28 +219,76 @@ function drawFrame(ctx, t, band, p, text) {
 }
 
 function videoType() {
-    const types = ['video/mp4;codecs=avc1', 'video/mp4', 'video/webm;codecs=vp9', 'video/webm'];
+    const types = ['video/mp4;codecs=avc1,mp4a.40.2', 'video/mp4', 'video/webm;codecs=vp9,opus', 'video/webm'];
     return types.find((type) => window.MediaRecorder?.isTypeSupported?.(type)) || null;
 }
 
-// text: { headline, name, exam, score, percent, brand }. Resolves to a File.
-export async function makeShareVideo(band, text) {
+// The sound as an audio track, started when `play` is called; it plays into
+// the recording only, not out loud. No sound (or no Web Audio) gives no track.
+async function soundTrack(band, soundUrl, audio) {
+    if (!audio) return { tracks: [], play: () => {}, length: 0 };
+    const out = audio.createMediaStreamDestination();
+    let buffer = null;
+    if (soundUrl) {
+        try {
+            const res = await fetch(soundUrl);
+            buffer = await audio.decodeAudioData(await res.arrayBuffer());
+        } catch {
+            buffer = null; // not readable from here: use the built-in sound
+        }
+    }
+    const play = () => {
+        const at = audio.currentTime + 0.05;
+        if (buffer) {
+            const src = audio.createBufferSource();
+            src.buffer = buffer;
+            src.connect(out);
+            src.start(at);
+        } else {
+            defaultSoundInto(band, audio, out, at);
+        }
+    };
+    // Built-in lengths are known only once played; these match defaultSounds.
+    const length = buffer ? buffer.duration : { pass: 1.4, good: 2.8, great: 4.4, perfect: 7.2 }[band] || 0;
+    return { tracks: out.stream.getAudioTracks(), play, length };
+}
+
+// text: { headline, name, exam, score, percent, brand }; soundUrl: the band's
+// uploaded sound, if any. Resolves to a File.
+export async function makeShareVideo(band, text, soundUrl = null) {
     const type = videoType();
     if (!type) throw new Error('video recording is not supported');
-    await Promise.all([document.fonts.load(`900 80px Cairo`), document.fonts.load(`600 54px Cairo`)]).catch(() => {});
+    // Made before any wait, while the tap still counts, or phones keep it
+    // muted.
+    const Ctx = window.AudioContext || window.webkitAudioContext;
+    const audio = Ctx ? new Ctx() : null;
+    audio?.resume().catch(() => {});
+    try {
+        await Promise.all([document.fonts.load(`900 80px Cairo`), document.fonts.load(`600 54px Cairo`)]).catch(() => {});
+        const sound = await soundTrack(band, soundUrl, audio);
+        return await record(band, text, type, sound);
+    } finally {
+        setTimeout(() => audio?.close().catch(() => {}), 500);
+    }
+}
 
+async function record(band, text, type, sound) {
+    const seconds = Math.max(MIN_SECONDS, Math.min(sound.length + 0.5, 15));
     const canvas = document.createElement('canvas');
     canvas.width = W;
     canvas.height = H;
     const ctx = canvas.getContext('2d');
-    const p = particles(band);
+    const p = particles(band, seconds);
     drawFrame(ctx, 0, band, p, text);
 
-    const recorder = new MediaRecorder(canvas.captureStream(FPS), { mimeType: type, videoBitsPerSecond: 6_000_000 });
+    const stream = new MediaStream([...canvas.captureStream(FPS).getVideoTracks(), ...sound.tracks]);
+    const recorder = new MediaRecorder(stream, { mimeType: type, videoBitsPerSecond: 6_000_000 });
     const chunks = [];
     recorder.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     const done = new Promise((resolve) => { recorder.onstop = resolve; });
-    recorder.start(250);
+    // One piece at the end: Safari's MP4 breaks when recorded in slices.
+    recorder.start();
+    sound.play();
 
     // A timer, not requestAnimationFrame, so the clip still finishes if the
     // student switches away (it is choppier then).
@@ -190,8 +296,8 @@ export async function makeShareVideo(band, text) {
     await new Promise((resolve) => {
         const step = () => {
             const t = (performance.now() - begin) / 1000;
-            drawFrame(ctx, Math.min(t, SECONDS), band, p, text);
-            if (t >= SECONDS) resolve();
+            drawFrame(ctx, Math.min(t, seconds), band, p, text);
+            if (t >= seconds) resolve();
             else setTimeout(step, 1000 / FPS);
         };
         step();
@@ -204,7 +310,9 @@ export async function makeShareVideo(band, text) {
 }
 
 // Opens the phone's share sheet with the file, or downloads it where
-// sharing files is not possible (most desktops).
+// sharing files is not possible (most desktops). Call it straight from a
+// tap: phones (iPhone above all) open the share sheet only then, so the
+// video is made first and shared on a second tap.
 export async function shareOrDownload(file) {
     if (navigator.canShare?.({ files: [file] })) {
         try {

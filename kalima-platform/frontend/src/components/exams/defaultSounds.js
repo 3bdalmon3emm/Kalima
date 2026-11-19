@@ -161,6 +161,13 @@ export function playBeep(freq = 880, length = 0.12, volume = 0.3) {
     osc.stop(at + length + 0.02);
 }
 
+// Plays a band's built-in sound into `out` (any node of `ctx`) from `at`;
+// returns its length in seconds, or 0 for a band with none. The share
+// video records it this way.
+export function defaultSoundInto(band, ctx, out, at) {
+    return SCORES[band] ? SCORES[band](ctx, out, at) : 0;
+}
+
 export function playDefaultSound(band) {
     const make = SCORES[band];
     const ctx = make && context();
