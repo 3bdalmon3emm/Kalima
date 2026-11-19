@@ -59,9 +59,7 @@ function SmartPasteDialog({ open, onOpenChange, onApply, essay }) {
                 {text.trim() && (
                     <div className="rounded-md border p-3 text-sm space-y-1 max-h-48 overflow-y-auto">
                         <p><span className="text-muted-foreground">{t('smartPaste.question')}: </span>{parsed.stem}</p>
-                        {essay ? (
-                            parsed.explanation && <p className="whitespace-pre-wrap"><span className="text-muted-foreground">{t('smartPaste.explanation')}: </span>{parsed.explanation}</p>
-                        ) : (
+                        {!essay && (
                             <>
                                 <ol className="list-decimal ps-5">
                                     {parsed.options.map((o, i) => (

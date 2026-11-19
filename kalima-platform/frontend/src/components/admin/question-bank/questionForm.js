@@ -19,15 +19,11 @@ export function trueFalseOptions(t) {
 // Puts a smart-paste result into the form. A single-answer question keeps only
 // the first option marked correct; with no options found, the current ones stay.
 // True/false takes the pasted pair only when exactly two options came.
-// Fills a form from a smart paste (see parseSmartPaste). An essay's text
-// after the question goes into its text explanation; options that came with
-// their own explanation switch the question to "an explanation per option".
-export function withPaste(form, { stem, options, explanation }) {
-    if (form.type === 'essay') {
-        return explanation
-            ? { ...form, stem_text: stem, explanation_mode: 'combined_text', explanation_text: explanation }
-            : { ...form, stem_text: stem };
-    }
+// Fills a form from a smart paste (see parseSmartPaste). Options that came
+// with their own explanation switch the question to "an explanation per
+// option". An essay takes the whole paste as its question.
+export function withPaste(form, { stem, options }) {
+    if (form.type === 'essay') return { ...form, stem_text: stem };
     if (!options.length || (form.type === 'true_false' && options.length !== 2)) return { ...form, stem_text: stem };
     const single = form.type === 'mcq_single' || form.type === 'true_false';
     let seen = false;

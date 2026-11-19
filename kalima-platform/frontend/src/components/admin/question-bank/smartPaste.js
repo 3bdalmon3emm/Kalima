@@ -5,8 +5,8 @@
 // them is marked correct (otherwise the whole paste is the question, as in an
 // essay question). A trailing "*" or "(صح)" / "(correct)" on an option marks
 // it correct. Lines under an option without a marker are that option's
-// explanation; with no options at all (an essay), the lines after the first
-// are the question's explanation.
+// explanation. With no options (an essay) the whole paste is the question;
+// its explanation is written or pasted separately.
 
 const ARABIC_LETTERS = 'أابجدهوزحطيكلمنسعفصقرشتثخذضظغ';
 const MARKER = new RegExp(
@@ -130,14 +130,5 @@ export function parseSmartPaste(raw) {
     }).filter((o) => o.text);
     const stem = stemLines.join('\n').replace(QUESTION_PREFIX, '').trim();
 
-    // No options: an essay. Its first line is the question and the rest is
-    // the explanation (the model answer).
-    if (!options.length && lines.length > 1) {
-        return {
-            stem: lines[0].replace(QUESTION_PREFIX, '').trim(),
-            options,
-            explanation: lines.slice(1).map((l) => l.replace(EXPLANATION_PREFIX, '')).join('\n').trim(),
-        };
-    }
-    return { stem, options, explanation: '' };
+    return { stem, options };
 }
