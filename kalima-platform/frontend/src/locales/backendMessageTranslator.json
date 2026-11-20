@@ -312,5 +312,7 @@
   "Choose the users to send this notification to": "اختر المستخدمين الذين سيصلهم الإشعار",
   "Write both a title and a message": "اكتب العنوان ونص الإشعار",
   "Pick at least one account type": "اختر نوع حساب واحدًا على الأقل",
-  "Pick at least one column": "اختر عمودًا واحدًا على الأقل"
+  "Pick at least one column": "اختر عمودًا واحدًا على الأقل",
+  "Email already in use": "البريد الإلكتروني مسجّل بالفعل لحساب آخر",
+  "Phone number already in use": "رقم الهاتف مسجّل بالفعل لحساب آخر"
 }

@@ -9,6 +9,7 @@ import { imageService } from "./image.service";
 import { teachesAtService } from "./teaches-at.service";
 import { socialMediaService } from "./social-media.service";
 import { parentChildrenService } from "./parent-children.service";
+import { userManagementService } from "./user-management.service";
 import type { UpdateProfileDto } from "../dtos/user-profile.dto";
 import { gender_enum, role_enum } from "../generated/prisma/client";
 
@@ -140,6 +141,10 @@ class UserProfileService {
   ) {
     const user = await this.db.users.findUnique({ where: { id: userId } });
     if (!user) throw new NotFoundError("User not found");
+    // A new phone must not belong to another account.
+    if (dto.phone && dto.phone.trim() !== (user.phone ?? "").trim()) {
+      await userManagementService.ensurePhoneNotExists(dto.phone, userId);
+    }
 
     // ── Basic fields (all roles) ──
     const userData: Record<string, unknown> = {};
