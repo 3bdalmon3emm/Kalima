@@ -58,7 +58,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
     { name: t('nav.eBookletTermsMilestones', 'Terms & Milestones'), href: '/admin/e-booklets/settings/terms-milestones', icon: Award, id: 'e-booklet-terms-milestones', managerOnly: true },
     { name: t('nav.coupons'), href: '/admin/coupons', icon: Ticket, id: 'coupons' },
     { name: t('nav.requiredFields'), href: '/admin/required-fields', icon: FormInput, id: 'required-fields' },
-    { name: t('nav.paymentMethods', 'Payment Methods'), href: '/admin/payment-methods', icon: CreditCard, id: 'payment-methods' },
+    { name: t('nav.paymentMethods', 'Payment Methods'), href: '/admin/payment-methods', icon: CreditCard, id: 'payment-methods', ownerOnly: true },
     { name: t('userManagement:usersList', 'Users'), href: '/admin/users', icon: Users, id: 'users' },
     { name: t('nav.notifications', 'Notifications'), href: '/admin/notifications', icon: Bell, id: 'notifications' },
     { name: t('nav.settings'), href: '/admin/settings', icon: Settings, id: 'settings' },
@@ -82,6 +82,7 @@ export default function Sidebar({ isMobileOpen, setIsMobileOpen }) {
 
   const visibleNavigation = navigation
     .filter((item) => !item.managerOnly || isAdmin || isSubAdmin)
+    .filter((item) => !item.ownerOnly || isAdmin)
     .filter((item) => !item.adminOnly || canAccessAdminAnalytics(storeRoles))
     .filter((item) => !item.employeePerformanceOnly || canAccessEmployeePerformance(storeRoles));
 

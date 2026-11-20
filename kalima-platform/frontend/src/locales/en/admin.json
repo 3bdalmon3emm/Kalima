@@ -1321,7 +1321,8 @@
     "pickMonth": "Pick a month",
     "prevYear": "Previous year",
     "nextYear": "Next year",
-    "minutes": "min"
+    "minutes": "min",
+    "pickSection": "Pick a section from the menu."
   },
   "table": {
     "productName": "Product Name",

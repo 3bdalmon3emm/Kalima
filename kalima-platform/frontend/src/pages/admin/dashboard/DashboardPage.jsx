@@ -9,13 +9,15 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import StatCard from '@/components/admin/dashboard/StatCard';
 import SectionTitle from '@/components/admin/dashboard/SectionTitle';
-
-/* ── main ── */
-
+import { useRole } from '@/hooks/useRole';
+import { canAccessAdminAnalytics } from '@/lib/adminAnalyticsAccess';
 
 /* ── main ── */
 export default function DashboardPage() {
     const { t } = useTranslation('admin');
+    const { storeRoles } = useRole();
+    // The Moderator opens the dashboard without the numbers.
+    const showStats = canAccessAdminAnalytics(storeRoles);
 
     const {
         storeStats,
@@ -26,12 +28,13 @@ export default function DashboardPage() {
     } = useAnalytics();
 
     useEffect(() => {
+        if (!showStats) return;
         fetchStoreStats();
         fetchUserStats();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    if (loading && !storeStats && !userStats) {
+    if (showStats && loading && !storeStats && !userStats) {
         return (
             <div className="flex h-[50vh] items-center justify-center">
                 <LoadingSpinner className="h-8 w-8 text-primary" />
@@ -100,11 +103,12 @@ export default function DashboardPage() {
                         {t('dashboard.title', 'Dashboard')}
                     </h1>
                     <p className="text-muted-foreground">
-                        {t('dashboard.description', 'Store performance overview')}
+                        {showStats ? t('dashboard.description', 'Store performance overview') : t('dashboard.pickSection', 'Pick a section from the menu.')}
                     </p>
                 </div>
             </div>
 
+            {showStats && (<>
             {/* Store Stats */}
             <section data-testid="dashboard-store-stats-section">
                 <SectionTitle icon={ShoppingBag}>{t('dashboard.storeStats', 'Store Statistics')}</SectionTitle>
@@ -146,6 +150,7 @@ export default function DashboardPage() {
                     </Card>
                 )}
             </section>
+            </>)}
         </div>
     );
 }

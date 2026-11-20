@@ -1,6 +1,8 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { BarChart3, BookOpenCheck, ClipboardList, Library, LayoutGrid, Printer, Settings, ShieldCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useRole } from "@/hooks/useRole";
+import { canAccessAdminAnalytics } from "@/lib/adminAnalyticsAccess";
 
 const tabs = [
   { labelKey: "admin.workspace.tabs.overview", href: "/admin/e-booklets", icon: BookOpenCheck, exact: true, testId: "overview" },
@@ -8,7 +10,7 @@ const tabs = [
   { labelKey: "admin.workspace.tabs.orders", href: "/admin/e-booklets/orders", icon: ClipboardList, testId: "orders-delivery" },
   { labelKey: "admin.workspace.tabs.access", href: "/admin/e-booklets/access", icon: ShieldCheck, testId: "teacher-access" },
   { labelKey: "admin.workspace.tabs.printTemplates", href: "/admin/e-booklets/print-templates", icon: Printer, testId: "print-templates" },
-  { labelKey: "admin.workspace.tabs.analytics", href: "/admin/e-booklets/analytics", icon: BarChart3, testId: "analytics" },
+  { labelKey: "admin.workspace.tabs.analytics", href: "/admin/e-booklets/analytics", icon: BarChart3, testId: "analytics", analytics: true },
   { labelKey: "admin.workspace.tabs.hotspotLibrary", href: "/admin/e-booklets/hotspot-library", icon: Library, testId: "hotspot-library" },
   { labelKey: "admin.workspace.tabs.settings", href: "/admin/e-booklets/settings", icon: Settings, testId: "settings" },
 ];
@@ -16,6 +18,9 @@ const tabs = [
 export default function AdminEBookletsWorkspaceLayout() {
   const { t } = useTranslation("eBooklets");
   const { pathname } = useLocation();
+  const { storeRoles } = useRole();
+  // The Moderator does not see the numbers.
+  const visibleTabs = tabs.filter((tab) => !tab.analytics || canAccessAdminAnalytics(storeRoles));
 
   return (
     <div className="space-y-6" data-testid="admin-e-booklets-workspace">
@@ -35,7 +40,7 @@ export default function AdminEBookletsWorkspaceLayout() {
             {t("admin.workspace.tabsLabel")}
           </p>
           <nav className="flex gap-2 overflow-x-auto pb-1" aria-label={t("admin.workspace.navLabel")}>
-          {tabs.map((tab) => {
+          {visibleTabs.map((tab) => {
             const Icon = tab.icon;
             const isActive = tab.exact ? pathname === tab.href : pathname.startsWith(tab.href);
             return (

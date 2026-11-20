@@ -43,7 +43,7 @@ const whatsappDisconnectAuth = [
 // ============================================
 
 router.get("/account-review-settings", ...adminAuth, adminController.getAccountReviewSettings);
-router.put("/account-review-settings", ...adminAuth, adminController.upsertAccountReviewSettings);
+router.put("/account-review-settings", ...adminSubAdminAuth, adminController.upsertAccountReviewSettings);
 
 // Create user (respects privilege matrix)
 router.post("/users", ...adminAuth, adminController.createUser);
@@ -177,10 +177,10 @@ import { whatsappController } from "../../controllers/whatsapp.controller";
 // ============================================
 // GENERAL SETTINGS
 // ============================================
-router.get("/general-settings", ...adminAuth, whatsappController.getGeneralSettings);
+router.get("/general-settings", ...adminSubAdminAuth, whatsappController.getGeneralSettings);
 router.put(
   "/general-settings/whatsapp_receiving_number",
-  ...adminAuth,
+  ...adminSubAdminAuth,
   whatsappController.updateReceivingNumber,
 );
 

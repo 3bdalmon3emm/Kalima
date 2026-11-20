@@ -10,21 +10,26 @@ import AccountReviewSection from '@/components/admin/settings/AccountReviewSecti
 import GeneralSettingsSection from '@/components/admin/settings/GeneralSettingsSection';
 import LevelsSection from '@/components/admin/settings/LevelsSection';
 import SettingsSearch from '@/components/admin/settings/SettingsSearch';
+import { useRole } from '@/hooks/useRole';
 
 export default function SettingsPage() {
     const { t, i18n } = useTranslation('admin');
     const isRtl = i18n.dir() === 'rtl';
+    const { isAdmin, isSubAdmin } = useRole();
 
-    const sections = [
+    // Platform settings (general, levels, account review) are for the Admin
+    // and SubAdmin; the Moderator keeps the sections about their own account.
+    const allSections = [
         { id: 'profile', dataKey: 'profile', translationKey: 'settings.profile.title', icon: User, component: ProfileSection },
         { id: 'password', dataKey: 'password', translationKey: 'settings.password.title', icon: Lock, component: PasswordSection },
         { id: 'account', dataKey: 'account', translationKey: 'settings.account.title', icon: Shield, component: AccountSection },
         { id: 'security', dataKey: 'email', subKeys: ['account.delete', 'account.dangerZone'], translationKey: 'settings.email.title', icon: Mail, component: SecuritySection },
         { id: 'session', dataKey: 'session', translationKey: 'settings.session.title', icon: History, component: SessionSection },
-        { id: 'general', dataKey: 'general', translationKey: 'settings.general.title', icon: Settings2, component: GeneralSettingsSection },
-        { id: 'levels', dataKey: 'levels', translationKey: 'settings.levels.title', icon: GraduationCap, component: LevelsSection },
-        { id: 'review', dataKey: 'accountReview', translationKey: 'settings.accountReview.title', icon: Users, component: AccountReviewSection },
+        { id: 'general', dataKey: 'general', translationKey: 'settings.general.title', icon: Settings2, component: GeneralSettingsSection, manager: true },
+        { id: 'levels', dataKey: 'levels', translationKey: 'settings.levels.title', icon: GraduationCap, component: LevelsSection, manager: true },
+        { id: 'review', dataKey: 'accountReview', translationKey: 'settings.accountReview.title', icon: Users, component: AccountReviewSection, manager: true },
     ];
+    const sections = allSections.filter((s) => !s.manager || isAdmin || isSubAdmin);
 
     return (
         <div className="space-y-6" dir={isRtl ? 'rtl' : 'ltr'} data-testid="admin-settings-page">

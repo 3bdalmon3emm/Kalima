@@ -295,7 +295,9 @@ const router = createBrowserRouter(
             <Route path="access/:instanceId/students" element={<AdminEBookletInstanceStudentsPage />} />
             <Route path="access/:instanceId/devices" element={<AdminEBookletDevicesPage />} />
             <Route path="print-templates" element={<AdminEBookletPrintTemplatesPage />} />
-            <Route path="analytics" element={<AdminEBookletAnalyticsPage />} />
+            <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin"]} />}>
+              <Route path="analytics" element={<AdminEBookletAnalyticsPage />} />
+            </Route>
             <Route path="hotspot-library" element={<AdminEBookletHotspotLibraryPage />} />
             <Route path="settings" element={<AdminEBookletSettingsPage />} />
             <Route path="settings/terms-milestones" element={<AdminEBookletTermsMilestonesPage />} />
@@ -323,12 +325,12 @@ const router = createBrowserRouter(
             <Route path="/admin/question-bank/folders/:folderId/questions/new" element={<QuestionEditorPage />} />
             <Route path="/admin/question-bank/questions/:questionId/edit" element={<QuestionEditorPage />} />
           </Route>
-          <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
           <Route path="/admin/required-fields" element={<RequiredFieldsPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
           <Route path="/admin/users/export" element={<UsersExportPage />} />
           <Route path="/admin/users/:id" element={<UserDetailPage />} />
           <Route element={<RoleRoute requiredRole={["Admin"]} />}>
+            <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
             <Route path="/admin/impersonation-log" element={<ImpersonationLogPage />} />
             <Route path="/admin/orders/deleted" element={<DeletedOrdersPage />} />
           </Route>

@@ -1321,7 +1321,8 @@
     "pickMonth": "اختر شهراً",
     "prevYear": "السنة السابقة",
     "nextYear": "السنة التالية",
-    "minutes": "دقيقة"
+    "minutes": "دقيقة",
+    "pickSection": "اختر القسم الذي تريده من القائمة."
   },
   "table": {
     "productName": "اسم المنتج",
