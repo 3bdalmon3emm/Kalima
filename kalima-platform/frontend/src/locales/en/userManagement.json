@@ -271,6 +271,22 @@
       "parent_government": "Governorate",
       "parent_zone": "District",
       "children": "Children"
+    },
+    "filter": {
+      "title": "Filters",
+      "hint": "Pick the values you want inside the columns; anything left empty exports everyone. A type's filters only narrow that type.",
+      "all": "All",
+      "search": "Search...",
+      "noMatch": "No matches",
+      "clear": "Clear",
+      "clearAll": "Clear all filters",
+      "government": "Governorate",
+      "zone": "District",
+      "signedUp": "Signed up",
+      "from": "From",
+      "to": "to",
+      "graduatedYes": "Graduated",
+      "graduatedNo": "Still studying"
     }
   }
 }

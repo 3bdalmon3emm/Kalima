@@ -58,8 +58,12 @@ router.post("/lecturers", ...adminAuth, adminController.createLecturer);
 router.get("/users/export", ...adminAuth, makeExportHandler("users"));
 
 // Export users with the admin's choice of account types and columns.
-router.get("/users/export-options", ...adminAuth, (_req, res) => {
-  res.json({ success: true, data: usersExportOptions() });
+router.get("/users/export-options", ...adminAuth, async (_req, res, next) => {
+  try {
+    res.json({ success: true, data: await usersExportOptions() });
+  } catch (err) {
+    next(err);
+  }
 });
 router.post("/users/export-custom", ...adminAuth, async (req, res, next) => {
   try {

@@ -2,18 +2,20 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { ChevronLeft, Download } from 'lucide-react';
+import { ChevronLeft, Download, Filter } from 'lucide-react';
 import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { translateBackendMessage } from '@/lib/utils';
+import ExportFilters, { filterCount } from './ExportFilters';
 
 // Exporting users: the admin picks the account types and the columns. One
 // row per user; a type's own columns (a student's grade, a teacher's
-// subject, ...) are offered once that type is picked. Passwords are never
-// exported.
+// subject, ...) are offered once that type is picked. Rows can be filtered
+// by the values inside the columns too (a teacher's stage, governorate, ...),
+// each type by its own. Passwords are never exported.
 const DEFAULT_COMMON = ['name', 'email', 'phone', 'roles'];
 
 function CheckRow({ checked, onChange, disabled = false, children }) {
@@ -30,6 +32,7 @@ export default function UsersExportPage() {
     const [opts, setOpts] = useState(null);
     const [roles, setRoles] = useState([]);
     const [fields, setFields] = useState(DEFAULT_COMMON);
+    const [filters, setFilters] = useState({});
     const [busy, setBusy] = useState(false);
 
     useEffect(() => {
@@ -41,14 +44,16 @@ export default function UsersExportPage() {
         const own = opts.fields[role] || [];
         setRoles((list) => (on ? [...list, role] : list.filter((r) => r !== role)));
         setFields((list) => (on ? [...new Set([...list, ...own])] : list.filter((f) => !own.includes(f))));
+        if (!on) setFilters(({ [role]: _dropped, ...rest }) => rest);
     };
+    const setGroupFilters = (group, value) => setFilters((all) => ({ ...all, [group]: value }));
     const toggleField = (field, on) => setFields((list) => (on ? [...new Set([...list, field])] : list.filter((f) => f !== field)));
 
     const download = async (format) => {
         setBusy(true);
         try {
             const lang = i18n.language === 'en' ? 'en' : 'ar';
-            const res = await axios.post(`/admin/users/export-custom?format=${format}&lang=${lang}`, { roles, fields }, { responseType: 'blob' });
+            const res = await axios.post(`/admin/users/export-custom?format=${format}&lang=${lang}`, { roles, fields, filters }, { responseType: 'blob' });
             const url = URL.createObjectURL(res.data);
             const a = document.createElement('a');
             a.href = url;
@@ -71,6 +76,8 @@ export default function UsersExportPage() {
 
     const groups = ['all', ...roles.filter((r) => opts.fields[r])];
     const ready = roles.length > 0 && fields.length > 0;
+    const filterGroups = ['all', ...roles.filter((r) => ['Student', 'Teacher', 'Parent'].includes(r))];
+    const filtersSet = filterGroups.reduce((n, g) => n + filterCount(filters[g]), 0);
 
     return (
         <div className="space-y-5 pb-24">
@@ -110,6 +117,24 @@ export default function UsersExportPage() {
                     <p className="text-xs text-muted-foreground">{t('export.noPasswords')}</p>
                 </section>
             </div>
+
+            <section className="space-y-4 rounded-xl border bg-card p-4">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <h2 className="flex items-center gap-2 font-semibold"><Filter className="h-4 w-4" />{t('export.filter.title')} <Badge variant="secondary">{filtersSet}</Badge></h2>
+                        <p className="text-xs text-muted-foreground">{t('export.filter.hint')}</p>
+                    </div>
+                    {filtersSet > 0 && <Button variant="ghost" size="sm" onClick={() => setFilters({})}>{t('export.filter.clearAll')}</Button>}
+                </div>
+                <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    {filterGroups.map((group) => (
+                        <div key={group} className="space-y-3 rounded-lg border p-3">
+                            <p className="text-sm font-semibold">{group === 'all' ? t('export.common') : t(`roles.${group}`)}</p>
+                            <ExportFilters group={group} lookups={opts.lookups} value={filters[group]} onChange={(v) => setGroupFilters(group, v)} />
+                        </div>
+                    ))}
+                </div>
+            </section>
 
             <div className="fixed inset-x-0 bottom-0 z-30 border-t bg-background/95 backdrop-blur">
                 <div className="mx-auto flex max-w-5xl flex-wrap items-center gap-3 px-4 py-3">

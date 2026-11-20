@@ -5,12 +5,17 @@
  * columns; every user who holds any of the picked types is one row. Columns
  * of a type the user does not hold stay empty. Passwords are never exported
  * (they are stored hashed).
+ *
+ * Rows can also be filtered by what is inside the columns: the account level,
+ * gender and sign-up dates for every account, and per type its own values (a
+ * teacher's stages, subject, governorate, district; a student's stage, grade,
+ * track, governorate, district; ...). A type's filters only narrow that type.
  */
 
 import { prisma } from "../../../libs/db/prisma";
 import { toCSV, toExcel } from "../../../libs/export";
 import { BadRequestError } from "../../../libs/errors";
-import { role_enum } from "../generated/prisma/client";
+import { Prisma, role_enum, user_flag_enum } from "../generated/prisma/client";
 
 type Locale = "ar" | "en";
 
@@ -78,13 +83,76 @@ const WORDS = {
   },
 };
 
-// The catalogue for the export page: the account types and, per type, the
-// columns it can pick.
-export function usersExportOptions() {
+const TEACHING_STAGES = ["primary", "preparatory", "secondary"] as const;
+
+// The catalogue for the export page: the account types, per type the columns
+// it can pick, and the values its filters choose from.
+export async function usersExportOptions() {
+  const [governments, zones, stages, levels, subjects, factions] = await Promise.all([
+    prisma.government.findMany({ where: { active: { not: false } }, select: { id: true, title: true }, orderBy: { title: "asc" } }),
+    prisma.zones.findMany({ where: { active: { not: false } }, select: { id: true, title: true, government_id: true }, orderBy: { title: "asc" } }),
+    prisma.stages.findMany({ select: { id: true, title: true, title_ar: true }, orderBy: { sort_order: "asc" } }),
+    prisma.levels.findMany({
+      where: { active: { not: false } },
+      select: { id: true, title: true, title_ar: true, stage_id: true },
+      orderBy: [{ sort_order: "asc" }, { id: "asc" }],
+    }),
+    prisma.subjects.findMany({ where: { active: { not: false } }, select: { id: true, title: true }, orderBy: { title: "asc" } }),
+    prisma.students.findMany({ where: { faction: { not: null } }, distinct: ["faction"], select: { faction: true } }),
+  ]);
   return {
     roles: ROLES,
     fields: Object.fromEntries(Object.entries(FIELDS).map(([group, fields]) => [group, Object.keys(fields)])),
+    lookups: {
+      flags: Object.values(user_flag_enum),
+      teaching_stages: TEACHING_STAGES,
+      governments,
+      zones,
+      stages,
+      levels,
+      subjects,
+      factions: factions.map((f) => f.faction).filter((f): f is string => !!f && !!f.trim()).sort(),
+    },
   };
+}
+
+// Filter values arrive as lists; keep the ids (or the allowed words) only.
+const ids = (v: unknown) => (Array.isArray(v) ? v.map(Number).filter((n) => Number.isInteger(n) && n > 0) : []);
+const words = (v: unknown, allowed?: readonly string[]) =>
+  Array.isArray(v) ? v.map(String).filter((w) => w.trim() && (!allowed || allowed.includes(w))) : [];
+const dateOf = (v: unknown, end = false) => {
+  if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return undefined;
+  const d = new Date(`${v}T00:00:00.000Z`);
+  if (end) d.setUTCDate(d.getUTCDate() + 1);
+  return d;
+};
+const place = (f: any) => ({
+  ...(ids(f?.government).length ? { government_id: { in: ids(f.government) } } : {}),
+  ...(ids(f?.zone).length ? { zone_id: { in: ids(f.zone) } } : {}),
+});
+
+// What a user of the given type must match to be exported, beyond holding it.
+function roleFilter(role: string, f: any): Prisma.usersWhereInput | null {
+  if (role === "Student") {
+    const where: Prisma.studentsWhereInput = { ...place(f) };
+    if (ids(f?.level).length) where.level_id = { in: ids(f.level) };
+    else if (ids(f?.stage).length) where.levels = { stage_id: { in: ids(f.stage) } };
+    if (words(f?.faction).length) where.faction = { in: words(f.faction) };
+    if (f?.graduated === "yes" || f?.graduated === "no") where.graduated = f.graduated === "yes";
+    return Object.keys(where).length ? { students: { is: where } } : null;
+  }
+  if (role === "Teacher") {
+    const where: Prisma.teachersWhereInput = { ...place(f) };
+    if (ids(f?.subject).length) where.subject_id = { in: ids(f.subject) };
+    const stages = words(f?.stage, TEACHING_STAGES);
+    if (stages.length) where.OR = stages.map((st) => ({ [`is_${st}`]: true }));
+    return Object.keys(where).length ? { teachers: { is: where } } : null;
+  }
+  if (role === "Parent") {
+    const where: Prisma.parentsWhereInput = place(f);
+    return Object.keys(where).length ? { parents: { is: where } } : null;
+  }
+  return null;
 }
 
 export async function buildUsersExport(body: any, locale: Locale) {
@@ -95,11 +163,28 @@ export async function buildUsersExport(body: any, locale: Locale) {
     : [];
   if (!fields.length) throw new BadRequestError("Pick at least one column");
 
+  // Every picked type, narrowed by its own filters; the shared filters
+  // (level, gender, sign-up dates) apply to all of them.
+  const filters = body?.filters ?? {};
+  const common = filters.all ?? {};
+  const where: Prisma.usersWhereInput = {
+    is_deleted: { not: true },
+    OR: roles.map((role: string) => {
+      const holds: Prisma.usersWhereInput = { OR: [{ role: role as role_enum }, { user_roles: { some: { role: role as role_enum } } }] };
+      const own = roleFilter(role, filters[role]);
+      return own ? { AND: [holds, own] } : holds;
+    }),
+  };
+  const flags = words(common.flag, Object.values(user_flag_enum));
+  if (flags.length) where.flag = { in: flags as user_flag_enum[] };
+  const genders = words(common.gender, ["male", "female"]);
+  if (genders.length) where.gender = { in: genders as ("male" | "female")[] };
+  const from = dateOf(common.from);
+  const to = dateOf(common.to, true);
+  if (from || to) where.created_at = { ...(from ? { gte: from } : {}), ...(to ? { lt: to } : {}) };
+
   const users = await prisma.users.findMany({
-    where: {
-      is_deleted: { not: true },
-      OR: [{ role: { in: roles } }, { user_roles: { some: { role: { in: roles } } } }],
-    },
+    where,
     orderBy: { id: "asc" },
     select: {
       id: true, name: true, email: true, phone: true, secondary_phone: true, gender: true,
