@@ -1,7 +1,7 @@
 import crypto from "crypto";
 import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
-import { BadRequestError, ConflictError, NotFoundError } from "../../../libs/errors";
+import { BadRequestError, ConflictError, ForbiddenError, NotFoundError } from "../../../libs/errors";
 import { examFoldersService } from "./examFolders.service";
 import { examsService, groupPassages, pairCount, shuffled } from "./exams.service";
 import { questionsService } from "./questions.service";
@@ -169,6 +169,18 @@ class AttemptsService {
   // ---------- Starting ----------
 
   async start(code: string, studentId: number) {
+    // Staff see exams through the preview, which saves nothing; an account
+    // that is also staff never takes one, even with a student role.
+    const staff = await this.db.users.count({
+      where: {
+        id: studentId,
+        OR: [
+          { role: { in: ["Admin", "SubAdmin", "Moderator"] } },
+          { user_roles: { some: { role: { in: ["Admin", "SubAdmin", "Moderator"] } } } },
+        ],
+      },
+    });
+    if (staff) throw new ForbiddenError("Staff accounts cannot take exams; use the exam preview");
     const link = await this.openLink(code);
     await this.finishExpired({ link_id: link.id, student_user_id: studentId });
     const override = await this.overrideFor(link.id, studentId);
