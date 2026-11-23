@@ -63,6 +63,15 @@ export const examNotify = {
     } catch (err) { log(err); }
   },
 
+  // A teacher or admin changed an essay mark on a finished attempt and the
+  // score went down (a raise goes through scoreRaised).
+  async scoreChanged(attemptId: number) {
+    try {
+      const a = await attemptInfo(attemptId);
+      if (a) send([a.student_user_id], notification_key_enum.EXAM_SCORE_CHANGED, a.id, `/e/${a.link.code}/result/${a.id}`, true);
+    } catch (err) { log(err); }
+  },
+
   // A submitted attempt waits for essay marks: the teacher and assistants.
   async essayToGrade(attemptId: number) {
     try {

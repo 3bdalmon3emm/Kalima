@@ -38,6 +38,7 @@
     "EXAM_APPEAL_REJECTED": "Your appeal was answered",
     "EXAM_RESULT_READY": "An exam result is out",
     "EXAM_SCORE_RAISED": "Your exam score went up after a re-grade",
+    "EXAM_SCORE_CHANGED": "Your exam score was changed after the teacher reviewed it",
     "EXAM_ESSAY_TO_GRADE": "A student submitted an exam with an essay to grade",
     "EXAM_ESSAY_EDITED": "An essay question you graded was edited; review the marks if needed"
   },

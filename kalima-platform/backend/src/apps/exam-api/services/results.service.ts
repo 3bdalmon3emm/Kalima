@@ -135,7 +135,14 @@ class ResultsService {
 
     const { before, after } = await rescore(id, this.db);
     if (before.status === "pending" && after.status === "done") examNotify.resultReady(id, true);
-    else if (before.status === "done" && after.status === "done" && after.score < (before.score ?? 0)) await attemptsService.keepRedoClosed(id, before.score ?? 0);
+    else if (before.status === "done" && after.status === "done" && after.score !== before.score) {
+      // The student hears when a finished result changes.
+      if (after.score > (before.score ?? 0)) examNotify.scoreRaised(id);
+      else {
+        await attemptsService.keepRedoClosed(id, before.score ?? 0);
+        examNotify.scoreChanged(id);
+      }
+    }
     return this.detail(id);
   }
 }
