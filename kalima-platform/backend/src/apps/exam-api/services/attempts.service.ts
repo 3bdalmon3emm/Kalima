@@ -196,7 +196,7 @@ class AttemptsService {
     if (next.action !== "start" && next.action !== "redo") throw new BadRequestError("You cannot start this exam again");
 
     const isRedo = attempts.length > 0;
-    const picked = await this.pickQuestions(exam, isRedo, attempts[attempts.length - 1]);
+    const picked = await this.pickQuestions(exam, isRedo, attempts);
     if (!picked.length) throw new BadRequestError("This exam has no questions");
     const content = await this.snapshot(exam.id, picked);
     const now = new Date();
@@ -238,11 +238,14 @@ class AttemptsService {
   private async pickQuestions(
     exam: { id: number; mode: string; shuffle: boolean; redo_new_questions: boolean },
     isRedo: boolean,
-    previous?: { questions: unknown },
+    previous: { questions: unknown }[] = [],
   ): Promise<AttemptQuestion[]> {
     let list: (AttemptQuestion & { passage_id: number | null })[];
     if (isRedo && exam.mode === "random" && exam.redo_new_questions) {
-      const { picks } = await examsService.drawQuestions(exam.id);
+      // Questions this student already had come last, used only when the
+      // bank runs short.
+      const seen = new Set(previous.flatMap((p) => (p.questions as AttemptQuestion[]).map((q) => q.question_id)));
+      const { picks } = await examsService.drawQuestions(exam.id, seen);
       list = picks.map(({ section_id, question_id, mark, passage_id }) => ({ section_id, question_id, mark, passage_id }));
     } else {
       const rows = await this.db.ex_exam_questions.findMany({

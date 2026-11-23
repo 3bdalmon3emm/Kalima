@@ -381,7 +381,8 @@ class ExamsService {
 
   // Picks questions for every rule of the exam. Returns the picks without
   // saving them, plus what each rule was short of.
-  async drawQuestions(examId: number) {
+  // Questions in avoid are drawn only when a rule has nothing else left.
+  async drawQuestions(examId: number, avoid: Set<number> = new Set()) {
     const sections = await this.db.ex_sections.findMany({
       where: { exam_id: examId },
       orderBy: [{ sort_order: "asc" }, { id: "asc" }],
@@ -410,7 +411,8 @@ class ExamsService {
             },
             select: { id: true, type: true, passage_id: true },
           });
-          const free = shuffled(candidates.filter((c) => !taken.has(c.id)));
+          const open = candidates.filter((c) => !taken.has(c.id));
+          const free = [...shuffled(open.filter((c) => !avoid.has(c.id))), ...shuffled(open.filter((c) => avoid.has(c.id)))];
           if (free.length < wanted) {
             shortages.push({ section_id: section.id, rule_id: rule.id, difficulty, wanted, available: free.length });
           }
