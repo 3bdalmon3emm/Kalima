@@ -39,6 +39,13 @@ export default defineConfig(({ command, mode }) => {
           changeOrigin: true,
           secure: false,
         },
+        // Live notifications, as nginx does in production.
+        '/socket.io': {
+          target: apiProxyTarget,
+          changeOrigin: true,
+          secure: false,
+          ws: true,
+        },
       },
       cors: true,
     },
