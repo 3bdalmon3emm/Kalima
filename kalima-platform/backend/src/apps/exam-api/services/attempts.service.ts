@@ -414,7 +414,8 @@ class AttemptsService {
     return attempt;
   }
 
-  // Autosave: the answers changed since the last save, in one request.
+  // Autosave: the answers changed since the last save, in one request. The
+  // deadline comes back so an open page learns of extra minutes.
   async saveAnswers(id: number, studentId: number, token: string | null, raw: unknown) {
     const attempt = await this.runningAttempt(id, studentId, token);
     const answers = await this.checkAnswers(attempt, raw);
@@ -423,7 +424,7 @@ class AttemptsService {
       create: { attempt_id: id, question_id: a.question_id, answer: a.answer, flagged: a.flagged },
       update: { answer: a.answer, flagged: a.flagged },
     })));
-    return { saved: answers.length };
+    return { saved: answers.length, deadline_at: attempt.deadline_at };
   }
 
   // Keeps only what fits the question: options of that question, pairs of

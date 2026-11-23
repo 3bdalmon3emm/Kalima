@@ -125,13 +125,19 @@ export default function ExamAttemptPage() {
     const look = useQuestionFont(q?.font, scale);
 
     // ---------- Saving ----------
+    // Extra minutes given while the exam is open arrive with every save.
+    const takeDeadline = (deadline) => {
+        if (deadline) setAttempt((prev) => (prev && prev.deadline_at !== deadline ? { ...prev, deadline_at: deadline } : prev));
+    };
+
     const save = useCallback(async () => {
         if (!dirty.current.size || takenOver || finished.current) return true;
         const ids = [...dirty.current];
         dirty.current.clear();
         const batch = ids.map((qid) => ({ question_id: qid, answer: answersRef.current[qid]?.answer || {}, flagged: !!answersRef.current[qid]?.flagged }));
         try {
-            await examSend('put', `/attempts/${id}/answers`, { answers: batch }, id);
+            const res = await examSend('put', `/attempts/${id}/answers`, { answers: batch }, id);
+            takeDeadline(res?.deadline_at);
             return true;
         } catch (err) {
             ids.forEach((qid) => dirty.current.add(qid));
@@ -174,6 +180,24 @@ export default function ExamAttemptPage() {
     }, [id, code]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ---------- Timer ----------
+    // At zero, ask the server first: the deadline may have moved later.
+    const checking = useRef(false);
+    const checkDeadline = async () => {
+        if (checking.current || finished.current) return;
+        checking.current = true;
+        try {
+            const res = await examSend('put', `/attempts/${id}/answers`, { answers: [] }, id);
+            if (res?.deadline_at && new Date(res.deadline_at).getTime() > Date.now() + offset) {
+                takeDeadline(res.deadline_at);
+                return;
+            }
+        } catch {
+            // Time is up on the server too, or the network is down: submit.
+        } finally {
+            checking.current = false;
+        }
+        submit(true);
+    };
     const left = useCountdown(attempt?.deadline_at, offset);
     useEffect(() => {
         if (left === null || !attempt) return;
@@ -197,7 +221,7 @@ export default function ExamAttemptPage() {
             alerted.current.tick = seconds;
             playBeep(seconds <= 5 ? 1320 : 880);
         }
-        if (left === 0) submit(true);
+        if (left === 0) checkDeadline();
     }, [left]); // eslint-disable-line react-hooks/exhaustive-deps
 
     // ---------- Leaving the page or full screen (counted quietly) ----------
