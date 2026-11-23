@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Archive, FolderOpen, MoreVertical, Plus, Search, FileText, MessageSquareWarning, Download } from 'lucide-react';
+import { Archive, FolderOpen, MoreVertical, Plus, Search, FileText, MessageSquareWarning, Download, UserPlus, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
@@ -12,6 +12,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import SortableList from '@/components/admin/question-bank/SortableList';
 import { NameDialog, showError } from '@/components/admin/question-bank/BankDialogs';
 import SoundsPanel from '@/components/admin/exams/SoundsPanel';
+import { AddFolderTeacherDialog, FolderTeachersDialog } from '@/components/admin/exams/FolderTeachersPanel';
 import { exGet, exSend } from '@/components/admin/exams/api';
 
 // Search exams by name or serial anywhere in the tree.
@@ -56,6 +57,7 @@ export default function ExamsPage() {
     const [params, setParams] = useSearchParams();
     const [folders, setFolders] = useState(null);
     const [creating, setCreating] = useState(false);
+    const [teachers, setTeachers] = useState(null);
     const tab = params.get('tab') || 'exams';
 
     const load = () => exGet('/folders').then(setFolders).catch((err) => { setFolders([]); showError(err, t('errors.load')); });
@@ -135,6 +137,12 @@ export default function ExamsPage() {
                                             <Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={() => setTeachers({ type: 'add', folder })}>
+                                                <UserPlus className="h-4 w-4" />{t('teachers.add')}
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={() => setTeachers({ type: 'list', folder })}>
+                                                <Users className="h-4 w-4" />{t('teachers.folderTitle')}
+                                            </DropdownMenuItem>
                                             <DropdownMenuItem onClick={() => archive(folder)} className="text-destructive">
                                                 <Archive className="h-4 w-4" />{t('common.archive')}
                                             </DropdownMenuItem>
@@ -151,6 +159,8 @@ export default function ExamsPage() {
                 </TabsContent>
             </Tabs>
 
+            <AddFolderTeacherDialog folder={teachers?.folder} open={teachers?.type === 'add'} onOpenChange={(o) => !o && setTeachers(null)} />
+            <FolderTeachersDialog folder={teachers?.folder} open={teachers?.type === 'list'} onOpenChange={(o) => !o && setTeachers(null)} />
             <NameDialog
                 open={creating}
                 onOpenChange={setCreating}

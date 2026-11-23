@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { Archive, ChevronLeft, FileText, FolderOpen, FolderPlus, MoreVertical, Pencil, Plus } from 'lucide-react';
+import { Archive, ChevronLeft, FileText, FolderOpen, FolderPlus, MoreVertical, Pencil, Plus, UserPlus, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,7 +14,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import SortableList from '@/components/admin/question-bank/SortableList';
 import { NameDialog, showError } from '@/components/admin/question-bank/BankDialogs';
 import { exGet, exSend } from '@/components/admin/exams/api';
-import FolderTeachersPanel from '@/components/admin/exams/FolderTeachersPanel';
+import FolderTeachersPanel, { AddFolderTeacherDialog, FolderTeachersDialog } from '@/components/admin/exams/FolderTeachersPanel';
 
 // Name, exam or homework, and manual or random. The way it is built cannot
 // change later; everything else is in the exam's settings.
@@ -81,6 +81,7 @@ export default function ExamFolderPage() {
     const { t } = useTranslation('exams');
     const [folder, setFolder] = useState(null);
     const [dialog, setDialog] = useState(null);
+    const [teachers, setTeachers] = useState(null);
 
     const load = () => exGet(`/folders/${id}`).then(setFolder).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { setFolder(null); load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -139,10 +140,21 @@ export default function ExamFolderPage() {
                             {handle}
                             <FolderOpen className="h-5 w-5 text-primary shrink-0" />
                             <Link to={`/admin/exams/folders/${child.id}`} className="flex-1 truncate font-medium">{child.name}</Link>
-                            <Button variant="ghost" size="icon" title={t('common.archive')}
-                                onClick={() => window.confirm(t('folder.archiveConfirm', { name: child.name })) && act(() => exSend('post', `/folders/${child.id}/archive`), t('common.archived'))}>
-                                <Archive className="h-4 w-4" />
-                            </Button>
+                            <DropdownMenu>
+                                <DropdownMenuTrigger asChild><Button variant="ghost" size="icon"><MoreVertical className="h-4 w-4" /></Button></DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                    <DropdownMenuItem onClick={() => setTeachers({ type: 'add', folder: child })}>
+                                        <UserPlus className="h-4 w-4" />{t('teachers.add')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setTeachers({ type: 'list', folder: child })}>
+                                        <Users className="h-4 w-4" />{t('teachers.folderTitle')}
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem className="text-destructive"
+                                        onClick={() => window.confirm(t('folder.archiveConfirm', { name: child.name })) && act(() => exSend('post', `/folders/${child.id}/archive`), t('common.archived'))}>
+                                        <Archive className="h-4 w-4" />{t('common.archive')}
+                                    </DropdownMenuItem>
+                                </DropdownMenuContent>
+                            </DropdownMenu>
                         </div>
                     )}
                 />
@@ -206,6 +218,8 @@ export default function ExamFolderPage() {
                 confirmLabel={t('common.save')}
                 onSubmit={async ({ name }) => { await exSend('patch', `/folders/${folder.id}`, { name }); load(); }}
             />
+            <AddFolderTeacherDialog folder={teachers?.folder} open={teachers?.type === 'add'} onOpenChange={(o) => !o && setTeachers(null)} />
+            <FolderTeachersDialog folder={teachers?.folder} open={teachers?.type === 'list'} onOpenChange={(o) => !o && setTeachers(null)} />
             <NewExamDialog open={dialog === 'exam'} onOpenChange={(o) => !o && setDialog(null)} folderId={folder.id} />
         </div>
     );

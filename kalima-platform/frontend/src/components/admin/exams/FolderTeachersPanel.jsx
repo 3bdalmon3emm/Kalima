@@ -5,6 +5,7 @@ import { CalendarClock, FileArchive, Plus, Trash2, UserRound, Users } from 'luci
 import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/ui/loading-spinner';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import TeacherAssignDialog from './TeacherAssignDialog';
 import { ex, exGet, exSend } from './api';
@@ -107,5 +108,33 @@ export default function FolderTeachersPanel({ folder }) {
                 }}
             />
         </section>
+    );
+}
+
+// The folder's teachers from a folder card's menu, without opening the folder.
+export function FolderTeachersDialog({ folder, open, onOpenChange }) {
+    const { t } = useTranslation('exams');
+    return (
+        <Dialog open={open} onOpenChange={onOpenChange}>
+            <DialogContent className="sm:max-w-2xl">
+                <DialogHeader><DialogTitle>{folder?.name}</DialogTitle><DialogDescription className="sr-only">{t('teachers.folderTitle')}</DialogDescription></DialogHeader>
+                {folder && <FolderTeachersPanel folder={folder} />}
+            </DialogContent>
+        </Dialog>
+    );
+}
+
+// Adds a teacher on a folder straight from its card's menu.
+export function AddFolderTeacherDialog({ folder, open, onOpenChange }) {
+    const { t } = useTranslation('exams');
+    return (
+        <TeacherAssignDialog
+            open={open}
+            onOpenChange={onOpenChange}
+            title={folder ? `${t('teachers.add')} - ${folder.name}` : undefined}
+            onSubmit={async (body) => {
+                try { await exSend('post', `/folders/${folder.id}/teachers`, body); toast.success(t('teachers.added')); } catch (err) { showError(err, t('errors.save')); throw err; }
+            }}
+        />
     );
 }
