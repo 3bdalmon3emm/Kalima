@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AArrowDown, AArrowUp, BookOpen, ChevronLeft, ChevronRight, Clock, Flag, LayoutGrid, Maximize, Send, UserRound, X } from 'lucide-react';
+import { AArrowDown, AArrowUp, BookOpen, ChevronLeft, ChevronRight, Clock, Flag, LayoutGrid, Maximize, Send, UserRound, WifiOff, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import LoadingSpinner from '@/components/ui/loading-spinner';
@@ -89,6 +89,9 @@ export default function ExamAttemptPage() {
     const [scale, setScale] = useState(savedScale);
     const [takenOver, setTakenOver] = useState(false);
     const [confirming, setConfirming] = useState(false);
+    // A save failed (or the device went offline): the answers live only in
+    // this page until the next save works.
+    const [unsaved, setUnsaved] = useState(false);
     const [submitting, setSubmitting] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [files, setFiles] = useState([]);
@@ -138,11 +141,13 @@ export default function ExamAttemptPage() {
         try {
             const res = await examSend('put', `/attempts/${id}/answers`, { answers: batch }, id);
             takeDeadline(res?.deadline_at);
+            setUnsaved(false);
             return true;
         } catch (err) {
             ids.forEach((qid) => dirty.current.add(qid));
             if (err.response?.status === 409) setTakenOver(true);
             else if (err.response?.data?.message?.includes('Time is up')) { finished.current = true; navigate(`/e/${code}/result/${id}`, { replace: true }); }
+            else setUnsaved(true);
             return false;
         }
     }, [id, takenOver]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -150,7 +155,16 @@ export default function ExamAttemptPage() {
     useEffect(() => {
         if (!attempt) return undefined;
         const timer = setInterval(save, SAVE_EVERY_MS);
-        return () => clearInterval(timer);
+        // Back online: save at once instead of waiting for the next tick.
+        const onOnline = () => { save(); };
+        const onOffline = () => setUnsaved(true);
+        window.addEventListener('online', onOnline);
+        window.addEventListener('offline', onOffline);
+        return () => {
+            clearInterval(timer);
+            window.removeEventListener('online', onOnline);
+            window.removeEventListener('offline', onOffline);
+        };
     }, [attempt, save]);
 
     const setAnswer = (qid, patch) => {
@@ -302,6 +316,8 @@ export default function ExamAttemptPage() {
     const stamp = [attempt.teacher_name || attempt.student?.name, attempt.student?.serial && `#${attempt.student.serial}`].filter(Boolean).join(' · ');
 
     const answeredCount = order.length - unanswered;
+    const firstFlagged = order.findIndex(({ qid }) => answers[qid]?.flagged);
+    const flaggedCount = order.filter(({ qid }) => answers[qid]?.flagged).length;
     const showNotice = left !== null && left > 0 && left <= 600_000;
     // Without a duration the exam runs until the link ends (often days away):
     // the end time shows instead of a long countdown, until the last hour.
@@ -416,6 +432,12 @@ export default function ExamAttemptPage() {
                 </aside>
 
                 <main className="min-w-0 flex-1 px-3 py-5 sm:px-6">
+                    {unsaved && (
+                        <div role="alert" className="mx-auto mb-4 flex max-w-5xl items-center gap-2 rounded-lg border border-red-300 bg-red-50 px-3 py-2 text-sm text-red-900 dark:bg-red-950/30 dark:text-red-200">
+                            <WifiOff className="h-4 w-4 shrink-0" />
+                            <span className="flex-1">{t('take.unsaved')}</span>
+                        </div>
+                    )}
                     {outOfFullscreen && (
                         <div className="mx-auto mb-4 flex max-w-5xl items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
                             <span className="flex-1">{t('take.backToFullscreen')}</span>
@@ -500,6 +522,14 @@ export default function ExamAttemptPage() {
                         <DialogTitle>{t('take.submitTitle')}</DialogTitle>
                         <DialogDescription>{unanswered ? t('take.submitUnanswered', { count: unanswered }) : t('take.submitAll')}</DialogDescription>
                     </DialogHeader>
+                    {flaggedCount > 0 && (
+                        <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-sm text-amber-900 dark:bg-amber-950/30 dark:text-amber-200">
+                            <Flag className="h-4 w-4 shrink-0" fill="currentColor" />
+                            <span className="flex-1">{t('take.submitFlagged', { count: flaggedCount })}</span>
+                            <Button size="sm" variant="outline" onClick={() => { setConfirming(false); go(firstFlagged); }}>{t('take.goToFlagged')}</Button>
+                        </div>
+                    )}
+                    {unsaved && <p className="text-sm text-red-700 dark:text-red-300">{t('take.unsaved')}</p>}
                     <DialogFooter className="gap-2">
                         <Button variant="outline" onClick={() => setConfirming(false)}>{t('take.keepGoing')}</Button>
                         <Button onClick={() => submit(false)} disabled={submitting}>{submitting && <LoadingSpinner className="h-4 w-4" />}{t('take.submitNow')}</Button>
