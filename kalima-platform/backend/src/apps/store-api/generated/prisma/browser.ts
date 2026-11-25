@@ -542,3 +542,8 @@ export type teacher_assistants = Prisma.teacher_assistantsModel
  * 
  */
 export type impersonation_logs = Prisma.impersonation_logsModel
+/**
+ * Model staff_shifts
+ * 
+ */
+export type staff_shifts = Prisma.staff_shiftsModel

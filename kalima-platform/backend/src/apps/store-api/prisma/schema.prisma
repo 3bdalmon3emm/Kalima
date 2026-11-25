@@ -2467,3 +2467,21 @@ model impersonation_logs {
   @@index([started_at(sort: Desc)], map: "ix_impersonation_logs_started")
   @@index([actor_user_id, target_user_id], map: "ix_impersonation_logs_actor")
 }
+
+// Staff shifts: the SubAdmin and the Moderator start and end a shift from
+// their dashboard; the Admin sees the worked hours. A shift left open 12 hours
+// is closed on its own (auto_closed). One open shift per person (a partial
+// unique index in the migration: ux_staff_shifts_open).
+model staff_shifts {
+  id          Int       @id @default(autoincrement())
+  user_id     Int
+  started_at  DateTime  @default(now()) @db.Timestamptz(6)
+  ended_at    DateTime? @db.Timestamptz(6)
+  auto_closed Boolean   @default(false)
+  edited_by   Int?
+  edited_at   DateTime? @db.Timestamptz(6)
+  created_at  DateTime  @default(now()) @db.Timestamptz(6)
+
+  @@index([user_id, started_at], map: "ix_staff_shifts_user_started")
+  @@index([started_at], map: "ix_staff_shifts_started")
+}

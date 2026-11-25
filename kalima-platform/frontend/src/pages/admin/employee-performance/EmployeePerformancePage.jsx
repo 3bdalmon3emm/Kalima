@@ -8,6 +8,8 @@ import { Button } from '@/components/ui/button';
 import DayRangeFilter, { RANGE_PRESETS } from '@/components/admin/DayRangeFilter';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import SectionTitle from '@/components/admin/dashboard/SectionTitle';
+import StaffAttendanceSection from '@/components/admin/shifts/StaffAttendanceSection';
+import { useRole } from '@/hooks/useRole';
 
 // Roles shown as columns in the created-accounts table.
 const CREATED_ROLES = ['Teacher', 'Student', 'Parent', 'Assistant', 'Lecturer', 'Moderator', 'SubAdmin'];
@@ -15,6 +17,9 @@ const CREATED_ROLES = ['Teacher', 'Student', 'Parent', 'Assistant', 'Lecturer', 
 export default function EmployeePerformancePage() {
     const navigate = useNavigate();
     const { t } = useTranslation('admin');
+    // Staff attendance is the Admin's only.
+    const { storeRoles, academyRoles } = useRole();
+    const isAdmin = [...storeRoles, ...academyRoles].includes('Admin');
     const {
         loading,
         confirmerStats,
@@ -57,6 +62,9 @@ export default function EmployeePerformancePage() {
                     </p>
                 </div>
             </div>
+            {/* Shifts have their own period, so they sit above the range that drives the sections below. */}
+            {isAdmin && <StaffAttendanceSection />}
+
             <div className="sticky top-0 z-10 -mx-1 rounded-lg border bg-background/95 p-3 backdrop-blur">
                 <DayRangeFilter value={range} onChange={setRange} />
             </div>

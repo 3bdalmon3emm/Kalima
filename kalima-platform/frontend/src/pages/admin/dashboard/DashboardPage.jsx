@@ -11,11 +11,16 @@ import StatCard from '@/components/admin/dashboard/StatCard';
 import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 import { useRole } from '@/hooks/useRole';
 import { canAccessAdminAnalytics } from '@/lib/adminAnalyticsAccess';
+import MyShiftCard from '@/components/admin/shifts/MyShiftCard';
 
 /* ── main ── */
 export default function DashboardPage() {
     const { t } = useTranslation('admin');
-    const { storeRoles } = useRole();
+    const { storeRoles, academyRoles } = useRole();
+    // The SubAdmin and the Moderator start and end their shifts here (the
+    // role may sit on either portal; the server accepts any portal).
+    const allRoles = [...storeRoles, ...academyRoles];
+    const showShift = !allRoles.includes('Admin') && (allRoles.includes('SubAdmin') || allRoles.includes('Moderator'));
     // The Moderator opens the dashboard without the numbers.
     const showStats = canAccessAdminAnalytics(storeRoles);
 
@@ -107,6 +112,8 @@ export default function DashboardPage() {
                     </p>
                 </div>
             </div>
+
+            {showShift && <MyShiftCard />}
 
             {showStats && (<>
             {/* Store Stats */}

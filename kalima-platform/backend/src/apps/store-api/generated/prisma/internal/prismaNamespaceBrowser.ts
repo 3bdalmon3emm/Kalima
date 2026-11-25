@@ -155,7 +155,8 @@ export const ModelName = {
   ex_teacher_assignments: 'ex_teacher_assignments',
   ex_student_overrides: 'ex_student_overrides',
   teacher_assistants: 'teacher_assistants',
-  impersonation_logs: 'impersonation_logs'
+  impersonation_logs: 'impersonation_logs',
+  staff_shifts: 'staff_shifts'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -1821,6 +1822,20 @@ export const Impersonation_logsScalarFieldEnum = {
 } as const
 
 export type Impersonation_logsScalarFieldEnum = (typeof Impersonation_logsScalarFieldEnum)[keyof typeof Impersonation_logsScalarFieldEnum]
+
+
+export const Staff_shiftsScalarFieldEnum = {
+  id: 'id',
+  user_id: 'user_id',
+  started_at: 'started_at',
+  ended_at: 'ended_at',
+  auto_closed: 'auto_closed',
+  edited_by: 'edited_by',
+  edited_at: 'edited_at',
+  created_at: 'created_at'
+} as const
+
+export type Staff_shiftsScalarFieldEnum = (typeof Staff_shiftsScalarFieldEnum)[keyof typeof Staff_shiftsScalarFieldEnum]
 
 
 export const SortOrder = {
