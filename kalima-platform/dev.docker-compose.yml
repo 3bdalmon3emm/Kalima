@@ -12,6 +12,7 @@ services:
         VITE_FIREBASE_STORAGE_BUCKET: ${VITE_FIREBASE_STORAGE_BUCKET}
         VITE_FIREBASE_APP_ID: ${VITE_FIREBASE_APP_ID}
         VITE_FIREBASE_MESSAGING_SENDER_ID: ${VITE_FIREBASE_MESSAGING_SENDER_ID}
+        VITE_PUBLIC_APP_URL: https://dev.kalima-edu.com
     ports:
       - "8089:80"
       - "4449:443"
@@ -56,6 +57,7 @@ services:
       - INITIAL_ADMIN_PASSWORD=${INITIAL_ADMIN_PASSWORD}
       - INITIAL_ADMIN_NAME=${INITIAL_ADMIN_NAME}
       - APP_URL=https://dev.kalima-edu.com
+      - PUBLIC_APP_URL=https://dev.kalima-edu.com
       - SUPPORT_URL=https://dev.kalima-edu.com/support
     depends_on:
       dev-postgres:
