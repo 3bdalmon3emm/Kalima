@@ -14,7 +14,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import SortableList from '@/components/admin/question-bank/SortableList';
 import { NameDialog, showError } from '@/components/admin/question-bank/BankDialogs';
 import { exGet, exSend } from '@/components/admin/exams/api';
-import FolderTeachersPanel, { AddFolderTeacherDialog, FolderTeachersDialog } from '@/components/admin/exams/FolderTeachersPanel';
+import { AddFolderTeacherDialog, FolderTeachersDialog } from '@/components/admin/exams/FolderTeachersPanel';
 
 // Name, exam or homework, and manual or random. The way it is built cannot
 // change later; everything else is in the exam's settings.
@@ -117,15 +117,17 @@ export default function ExamFolderPage() {
                     <Button variant="ghost" size="icon" onClick={() => setDialog('rename')} title={t('common.rename')}><Pencil className="h-4 w-4" /></Button>
                     {folder.hidden && <Badge variant="destructive">{t('common.archived')}</Badge>}
                 </div>
-                {!folder.hidden && (
-                    <div className="flex flex-wrap gap-2">
-                        <Button variant="outline" onClick={() => setDialog('folder')}><FolderPlus className="h-4 w-4" />{t('folder.newSub')}</Button>
-                        <Button onClick={() => setDialog('exam')}><Plus className="h-4 w-4" />{t('exam.new')}</Button>
-                    </div>
-                )}
+                <div className="flex flex-wrap gap-2">
+                    {/* The teachers open in a side list, so a long list never pushes the exams down. */}
+                    <Button variant="outline" onClick={() => setTeachers({ type: 'list', folder })}><Users className="h-4 w-4" />{t('teachers.folderTitle')}</Button>
+                    {!folder.hidden && (
+                        <>
+                            <Button variant="outline" onClick={() => setDialog('folder')}><FolderPlus className="h-4 w-4" />{t('folder.newSub')}</Button>
+                            <Button onClick={() => setDialog('exam')}><Plus className="h-4 w-4" />{t('exam.new')}</Button>
+                        </>
+                    )}
+                </div>
             </div>
-
-            <FolderTeachersPanel folder={folder} />
 
             {folder.children.length > 0 && (
                 <SortableList

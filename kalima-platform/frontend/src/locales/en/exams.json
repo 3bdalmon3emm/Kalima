@@ -404,6 +404,7 @@
     "datesHint": "These dates apply to all of this teacher's links here; one link can be changed on its own later.",
     "folderTitle": "Folder teachers",
     "folderHint": "Each teacher here has a permanent link on every exam in this folder, now and later.",
+    "searchTeachers": "Search by name, email or phone",
     "none": "No teachers yet.",
     "zip": "All QR codes (ZIP)",
     "zipEmpty": "This teacher has no exams in this folder",

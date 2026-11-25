@@ -4,8 +4,9 @@ import { toast } from 'sonner';
 import { CalendarClock, FileArchive, Plus, Trash2, UserRound, Users } from 'lucide-react';
 import axios from '@/api/axios';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import TeacherAssignDialog from './TeacherAssignDialog';
 import { ex, exGet, exSend } from './api';
@@ -27,6 +28,11 @@ export default function FolderTeachersPanel({ folder }) {
     const [rows, setRows] = useState(null);
     const [dialog, setDialog] = useState(null);
     const [zipping, setZipping] = useState(null);
+    const [term, setTerm] = useState('');
+    const needle = term.trim().toLowerCase();
+    const shown = rows && needle
+        ? rows.filter((r) => [r.teacher.name, r.teacher.email, r.teacher.phone].some((v) => v && String(v).toLowerCase().includes(needle)))
+        : rows;
 
     const load = () => exGet(`/folders/${folder.id}/teachers`).then(setRows).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { setRows(null); load(); }, [folder.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -68,11 +74,14 @@ export default function FolderTeachersPanel({ folder }) {
                 </div>
                 {!folder.hidden && <Button size="sm" onClick={() => setDialog({ type: 'add' })}><Plus className="h-4 w-4" />{t('teachers.add')}</Button>}
             </div>
+            {rows?.length > 0 && (
+                <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={t('teachers.searchTeachers')} />
+            )}
             {!rows ? <div className="flex justify-center py-4"><LoadingSpinner /></div>
-                : rows.length === 0 ? <p className="py-3 text-center text-sm text-muted-foreground">{t('teachers.none')}</p>
+                : shown.length === 0 ? <p className="py-3 text-center text-sm text-muted-foreground">{t(rows.length ? 'search.none' : 'teachers.none')}</p>
                     : (
                         <div className="divide-y">
-                            {rows.map((row) => (
+                            {shown.map((row) => (
                                 <div key={row.id} className="flex flex-wrap items-center gap-3 py-2">
                                     <TeacherAvatar teacher={row.teacher} />
                                     <div className="min-w-0 flex-1">
@@ -111,16 +120,17 @@ export default function FolderTeachersPanel({ folder }) {
     );
 }
 
-// The folder's teachers from a folder card's menu, without opening the folder.
+// The folder's teachers in a side list (from the folder page or a folder
+// card's menu), so a long list never pushes the exams down.
 export function FolderTeachersDialog({ folder, open, onOpenChange }) {
     const { t } = useTranslation('exams');
     return (
-        <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-2xl">
-                <DialogHeader><DialogTitle>{folder?.name}</DialogTitle><DialogDescription className="sr-only">{t('teachers.folderTitle')}</DialogDescription></DialogHeader>
-                {folder && <FolderTeachersPanel folder={folder} />}
-            </DialogContent>
-        </Dialog>
+        <Sheet open={open} onOpenChange={onOpenChange}>
+            <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+                <SheetHeader><SheetTitle>{folder?.name}</SheetTitle><SheetDescription className="sr-only">{t('teachers.folderTitle')}</SheetDescription></SheetHeader>
+                <div className="px-4 pb-6">{folder && <FolderTeachersPanel folder={folder} />}</div>
+            </SheetContent>
+        </Sheet>
     );
 }
 
