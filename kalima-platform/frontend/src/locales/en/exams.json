@@ -468,7 +468,7 @@
     "level": "Level",
     "attempts": "Attempts",
     "best": "Best score",
-    "randomHint": "A random exam: each student draws questions by the same rules; this is a sample.",
+    "randomHint": "A random exam: the questions were drawn once and every student gets the same ones; these are they.",
     "questionN": "Question {{n}}",
     "marks_one": "1 mark",
     "marks_other": "{{count}} marks",
@@ -546,7 +546,7 @@
   },
   "preview": {
     "hint": "A preview of the exam as a student sees it, with the right and model answers. Nothing is saved.",
-    "hintRandom": "A preview as a student sees it, with the answers. The exam is random: each student draws questions by the same rules; these are the questions drawn now.",
+    "hintRandom": "A preview as a student sees it, with the answers. The exam is random: these questions were drawn once and every student gets the same ones in a different order. \"Draw again\" changes them for everyone; a student gets new questions only on a redo set to new questions.",
     "questions_zero": "No questions",
     "questions_one": "1 question",
     "questions_other": "{{count}} questions",
