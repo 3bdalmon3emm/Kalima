@@ -376,89 +376,91 @@ router.post(
   ...adminManagerAuth,
   eBookletController.reorderMilestones,
 );
+// Access codes and their printing are open to moderators too; analytics,
+// settings, terms, milestones and progress stay with Admin/SubAdmin.
 router.post(
   "/admin/e-booklet-access-codes",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminGenerateAccessCode,
 );
 router.get(
   "/admin/e-booklet-access-codes",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminListAccessCodes,
 );
 router.post(
   "/admin/e-booklet-access-codes/bulk",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminGenerateAccessCodes,
 );
 router.post(
   "/admin/e-booklet-access-codes/free",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminGenerateFreeCode,
 );
 router.get(
   "/admin/e-booklet-access-code-print/templates",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminListPrintTemplates,
 );
 router.post(
   "/admin/e-booklet-access-code-print/templates",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminCreatePrintTemplate,
 );
 router.patch(
   "/admin/e-booklet-access-code-print/templates/:templateId",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminUpdatePrintTemplate,
 );
 router.patch(
   "/admin/e-booklet-access-code-print/templates/:templateId/archive",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminArchivePrintTemplate,
 );
 router.patch(
   "/admin/e-booklet-access-code-print/templates/:templateId/activate",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminActivatePrintTemplate,
 );
 router.delete(
   "/admin/e-booklet-access-code-print/templates/:templateId",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminDeletePrintTemplate,
 );
 router.get(
   "/admin/e-booklet-access-code-print/presets",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminListPrintPresets,
 );
 router.post(
   "/admin/e-booklet-access-code-print/presets",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminCreatePrintPreset,
 );
 router.post(
   "/admin/e-booklet-access-code-print/batches/snapshot",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminCreatePrintBatchSnapshot,
 );
 router.get(
   "/admin/e-booklet-access-code-print/batches",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminListPrintBatches,
 );
 router.post(
   "/admin/e-booklet-access-code-print/batches",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminGeneratePrintBatch,
 );
 router.post(
   "/admin/e-booklet-access-code-print/preview",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminPreviewPrintCard,
 );
 router.get(
   "/admin/e-booklet-access-code-print/batches/:batchId/pdf",
-  ...adminManagerAuth,
+  ...adminAuth,
   eBookletController.adminDownloadPrintBatchPdf,
 );
 router.get(
