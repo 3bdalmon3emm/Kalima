@@ -253,6 +253,37 @@ export class ProductService {
   // READ — ALL
   // ============================================
 
+  // The products page filter, shared with the export so both list the same
+  // products: not archived unless asked, search in title, description and
+  // serial (always as text), and a category with everything under it.
+  async productListWhere(filters?: { is_archived?: boolean; category_id?: number; search?: string }) {
+    const where: any = { deleted_at: null, is_archived: false };
+
+    if (filters?.is_archived !== undefined) {
+      where.is_archived = filters.is_archived;
+    }
+
+    const search = filters?.search === undefined || filters.search === null ? "" : String(filters.search).trim();
+    if (search) {
+      where.OR = [
+        { title: { contains: search, mode: "insensitive" } },
+        { description: { contains: search, mode: "insensitive" } },
+        { serial: { contains: search, mode: "insensitive" } },
+      ];
+    }
+
+    if (filters?.category_id) {
+      const categoryIds = await this.collectDescendantCategoryIds(
+        Number(filters.category_id),
+      );
+
+      where.product_categories = {
+        some: { category_id: { in: categoryIds } },
+      };
+    }
+    return where;
+  }
+
   async getAllProducts(
     userId?: number,
     filters?: {
@@ -272,29 +303,7 @@ export class ProductService {
     const limit = filters?.limit ?? 20;
     const skip = (page - 1) * limit;
 
-    const where: any = { deleted_at: null, is_archived: false };
-
-    if (filters?.is_archived !== undefined) {
-      where.is_archived = filters.is_archived;
-    }
-
-    if (filters?.search) {
-      where.OR = [
-        { title: { contains: filters.search, mode: "insensitive" } },
-        { description: { contains: filters.search, mode: "insensitive" } },
-        { serial: { contains: filters.search, mode: "insensitive" } },
-      ];
-    }
-
-    if (filters?.category_id) {
-      const categoryIds = await this.collectDescendantCategoryIds(
-        filters.category_id,
-      );
-
-      where.product_categories = {
-        some: { category_id: { in: categoryIds } },
-      };
-    }
+    const where = await this.productListWhere(filters);
 
     const [rawData, total] = await Promise.all([
       this.db.products.findMany({

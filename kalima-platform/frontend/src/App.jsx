@@ -127,6 +127,9 @@ const ExamArchivePage = lazy(() => import("./pages/admin/exams/ExamArchivePage")
 const ExamAttemptReviewPage = lazy(() => import("./pages/admin/exams/ExamAttemptReviewPage"));
 const ExamResultsExportPage = lazy(() => import("./pages/admin/exams/ExamResultsExportPage"));
 const ExamAppealsPage = lazy(() => import("./pages/admin/exams/ExamAppealsPage"));
+const ImpersonationLogPage = lazy(() => import("./pages/admin/users/ImpersonationLogPage"));
+const UsersExportPage = lazy(() => import("./pages/admin/users/UsersExportPage"));
+const DeletedOrdersPage = lazy(() => import("./pages/admin/orders/DeletedOrdersPage"));
 const ExamStartPage = lazy(() => import("./pages/exams/ExamStartPage"));
 const ExamAttemptPage = lazy(() => import("./pages/exams/ExamAttemptPage"));
 const ExamResultPage = lazy(() => import("./pages/exams/ExamResultPage"));
@@ -253,9 +256,12 @@ const router = createBrowserRouter(
               />
             </Route>
             <Route path="/orders" element={<MyOrdersPage />} />
-            <Route path="/notifications" element={<NotificationsPage />} />
           </Route>
 
+        </Route>
+        {/* Every signed-in user's notifications, whatever the role */}
+        <Route element={<ProtectedRoute requireAuth={true} />}>
+          <Route path="/notifications" element={<NotificationsPage />} />
         </Route>
         <Route path="/e-booklet-invite/:token" element={<AcceptEBookletInvitePage />} />
         <Route path="/e-booklet-code" element={<AcceptEBookletInvitePage mode="code" />} />
@@ -264,8 +270,8 @@ const router = createBrowserRouter(
         {/* 404 Fallback */}
         <Route path="*" element={<NotFoundPage />} />
       </Route>
-      {/* Admin Routes */}
-      <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin"]} />}>
+      {/* Admin Routes: all staff (Admin, SubAdmin, Moderator) */}
+      <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin", "Moderator"]} />}>
         <Route element={<AdminLayout />}>
           <Route path="/admin" element={<DashboardPage />} />
           <Route path="/admin/dashboard" element={<DashboardPage />} />
@@ -296,7 +302,9 @@ const router = createBrowserRouter(
             <Route path="access/:instanceId/students" element={<AdminEBookletInstanceStudentsPage />} />
             <Route path="access/:instanceId/devices" element={<AdminEBookletDevicesPage />} />
             <Route path="print-templates" element={<AdminEBookletPrintTemplatesPage />} />
-            <Route path="analytics" element={<AdminEBookletAnalyticsPage />} />
+            <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin"]} />}>
+              <Route path="analytics" element={<AdminEBookletAnalyticsPage />} />
+            </Route>
             <Route path="hotspot-library" element={<AdminEBookletHotspotLibraryPage />} />
             <Route path="settings" element={<AdminEBookletSettingsPage />} />
             <Route path="settings/terms-milestones" element={<AdminEBookletTermsMilestonesPage />} />
@@ -311,22 +319,30 @@ const router = createBrowserRouter(
           <Route path="/admin/e-booklet-terms-milestones" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/milestones/:achievementId" element={<Navigate to="/admin/e-booklets/settings/terms-milestones" replace />} />
           <Route path="/admin/e-booklets/access-codes" element={<LegacyEBookletRedirect type="accessCodes" />} />
-          <Route path="/admin/question-bank" element={<QuestionBankPage />} />
-          <Route path="/admin/exams" element={<ExamsPage />} />
-          <Route path="/admin/exams/archive" element={<ExamArchivePage />} />
-          <Route path="/admin/exams/folders/:id" element={<ExamFolderPage />} />
-          <Route path="/admin/exams/attempts/:id" element={<ExamAttemptReviewPage />} />
-          <Route path="/admin/exams/appeals" element={<ExamAppealsPage />} />
-          <Route path="/admin/exams/export" element={<ExamResultsExportPage />} />
-          <Route path="/admin/exams/:examId" element={<ExamEditorPage />} />
-          <Route path="/admin/question-bank/archive" element={<QuestionBankArchivePage />} />
-          <Route path="/admin/question-bank/folders/:id" element={<BankFolderPage />} />
-          <Route path="/admin/question-bank/folders/:folderId/questions/new" element={<QuestionEditorPage />} />
-          <Route path="/admin/question-bank/questions/:questionId/edit" element={<QuestionEditorPage />} />
-          <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
+          {/* Question bank and exams: all staff */}
+          <Route element={<RoleRoute requiredRole={["Admin", "SubAdmin", "Moderator"]} />}>
+            <Route path="/admin/question-bank" element={<QuestionBankPage />} />
+            <Route path="/admin/exams" element={<ExamsPage />} />
+            <Route path="/admin/exams/archive" element={<ExamArchivePage />} />
+            <Route path="/admin/exams/folders/:id" element={<ExamFolderPage />} />
+            <Route path="/admin/exams/attempts/:id" element={<ExamAttemptReviewPage />} />
+            <Route path="/admin/exams/appeals" element={<ExamAppealsPage />} />
+            <Route path="/admin/exams/export" element={<ExamResultsExportPage />} />
+            <Route path="/admin/exams/:examId" element={<ExamEditorPage />} />
+            <Route path="/admin/question-bank/archive" element={<QuestionBankArchivePage />} />
+            <Route path="/admin/question-bank/folders/:id" element={<BankFolderPage />} />
+            <Route path="/admin/question-bank/folders/:folderId/questions/new" element={<QuestionEditorPage />} />
+            <Route path="/admin/question-bank/questions/:questionId/edit" element={<QuestionEditorPage />} />
+          </Route>
           <Route path="/admin/required-fields" element={<RequiredFieldsPage />} />
           <Route path="/admin/users" element={<UsersPage />} />
+          <Route path="/admin/users/export" element={<UsersExportPage />} />
           <Route path="/admin/users/:id" element={<UserDetailPage />} />
+          <Route element={<RoleRoute requiredRole={["Admin"]} />}>
+            <Route path="/admin/payment-methods" element={<PaymentMethodsPage />} />
+            <Route path="/admin/impersonation-log" element={<ImpersonationLogPage />} />
+            <Route path="/admin/orders/deleted" element={<DeletedOrdersPage />} />
+          </Route>
           <Route path="/users/:id" element={<LegacyAdminNotificationRedirect type="user" />} />
           <Route path="/admin/users/:id/appreciation" element={<UserAppreciationPage />} />
           <Route path="/admin/coupons" element={<CouponsPage />} />

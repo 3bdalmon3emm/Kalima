@@ -11,6 +11,7 @@
 
 import { prisma } from "../../../libs/db/prisma";
 import { registerExportResource } from "./export.service";
+import { productService } from "../services/product.service";
 import {
   productMapper,
   categoryMapper,
@@ -86,35 +87,11 @@ export function registerAllExportResources(): void {
   registerExportResource("products", {
     label: "products",
     mapper: productMapper,
-    fetcher: (ids, filters) => {
-      const where: any = {
-        deleted_at: null,
-        ...(ids ? { id: { in: ids } } : {}),
-      };
-
-      if (filters?.is_archived !== undefined) {
-        where.is_archived = filters.is_archived as boolean;
-      }
-
-      if (filters?.search) {
-        where.OR = [
-          {
-            title: { contains: filters.search as string, mode: "insensitive" },
-          },
-          {
-            description: {
-              contains: filters.search as string,
-              mode: "insensitive",
-            },
-          },
-        ];
-      }
-
-      if (filters?.category_id) {
-        where.product_categories = {
-          some: { category_id: filters.category_id as number },
-        };
-      }
+    fetcher: async (ids, filters) => {
+      // Picked rows export exactly as picked; otherwise the page's own filter.
+      const where: any = ids
+        ? { deleted_at: null, id: { in: ids } }
+        : await productService.productListWhere(filters as any);
 
       return prisma.products.findMany({
         where,
@@ -202,7 +179,10 @@ export function registerAllExportResources(): void {
     label: "purchases",
     mapper: purchaseMapper,
     fetcher: (ids, filters) => {
+      // Deleted orders never export.
       const where: any = {
+        deleted_at: null,
+        is_deleted: { not: true },
         ...(ids ? { id: { in: ids } } : {}),
       };
 

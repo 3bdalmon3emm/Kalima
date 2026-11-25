@@ -89,6 +89,7 @@ class UserManagementService {
   ): Promise<{ user: any; email: string }> {
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const [passwordHash, requiresReview] = await Promise.all([
       this.hashPassword(input.password),
@@ -172,6 +173,7 @@ class UserManagementService {
   ): Promise<{ user: any; email: string }> {
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const [passwordHash, requiresReview] = await Promise.all([
       this.hashPassword(input.password),
@@ -232,6 +234,7 @@ class UserManagementService {
   ): Promise<{ user: any; email: string }> {
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const [passwordHash, requiresReview] = await Promise.all([
       this.hashPassword(input.password),
@@ -286,6 +289,7 @@ class UserManagementService {
   ): Promise<{ user: any; email: string }> {
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const [passwordHash, requiresReview] = await Promise.all([
       this.hashPassword(input.password),
@@ -345,8 +349,9 @@ class UserManagementService {
     input: TeacherFirebaseRegistrationDto,
     firebaseUser: FirebaseUserData,
   ): Promise<{ user: any; email: string }> {
-    const [, requiresReview] = await Promise.all([
+    const [, , requiresReview] = await Promise.all([
       this.ensureEmailNotExists(firebaseUser.email),
+      this.ensurePhoneNotExists(input.phone),
       accountReviewService.roleRequiresReview(role_enum.Teacher),
     ]);
 
@@ -424,8 +429,9 @@ class UserManagementService {
     input: StudentFirebaseRegistrationDto,
     firebaseUser: FirebaseUserData,
   ): Promise<{ user: any; email: string }> {
-    const [, requiresReview] = await Promise.all([
+    const [, , requiresReview] = await Promise.all([
       this.ensureEmailNotExists(firebaseUser.email),
+      this.ensurePhoneNotExists(input.phone),
       accountReviewService.roleRequiresReview(role_enum.Student),
     ]);
 
@@ -480,8 +486,9 @@ class UserManagementService {
     input: ParentFirebaseRegistrationDto,
     firebaseUser: FirebaseUserData,
   ): Promise<{ user: any; email: string }> {
-    const [, requiresReview] = await Promise.all([
+    const [, , requiresReview] = await Promise.all([
       this.ensureEmailNotExists(firebaseUser.email),
+      this.ensurePhoneNotExists(input.phone),
       accountReviewService.roleRequiresReview(role_enum.Parent),
     ]);
 
@@ -530,8 +537,9 @@ class UserManagementService {
     input: LecturerFirebaseRegistrationDto,
     firebaseUser: FirebaseUserData,
   ): Promise<{ user: any; email: string }> {
-    const [, requiresReview] = await Promise.all([
+    const [, , requiresReview] = await Promise.all([
       this.ensureEmailNotExists(firebaseUser.email),
+      this.ensurePhoneNotExists(input.phone),
       accountReviewService.roleRequiresReview(role_enum.Lecturer),
     ]);
 
@@ -591,6 +599,7 @@ class UserManagementService {
 
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const passwordHash = await this.hashPassword(input.password);
 
@@ -639,6 +648,7 @@ class UserManagementService {
 
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const passwordHash = await this.hashPassword(input.password);
 
@@ -690,6 +700,7 @@ class UserManagementService {
 
     const email = this.normalizeEmail(input.email);
     await this.ensureEmailNotExists(email);
+    await this.ensurePhoneNotExists(input.phone);
 
     const passwordHash = await this.hashPassword(input.password);
 
@@ -740,8 +751,9 @@ class UserManagementService {
     const email = this.normalizeEmail(input.email);
 
     // Verify both email uniqueness and lecturer existence concurrently
-    const [, lecturer] = await Promise.all([
+    const [, , lecturer] = await Promise.all([
       this.ensureEmailNotExists(email),
+      this.ensurePhoneNotExists(input.phone),
       this.db.lecturers.findUnique({
         where: { user_id: input.lecturer_user_id },
       }),
@@ -1073,34 +1085,44 @@ class UserManagementService {
   // DELETE USER
   // ============================================
 
-  async deleteUser(userId: number): Promise<void> {
+  // Deleting an account wipes its personal data only (name, email, phones,
+  // password, photo, Google sign-in) and signs it out everywhere. Its roles,
+  // orders and records stay, under "Deleted account #id", so statistics and
+  // order history are unchanged. Who deleted it, when and why are recorded.
+  async deleteUser(userId: number, by?: { actorId?: number; reason?: string }): Promise<void> {
     const user = await this.db.users.findUnique({
       where: { id: userId },
-      select: { id: true, email: true, phone: true },
+      select: { id: true, is_deleted: true },
     });
 
     if (!user) {
       throw new NotFoundError("User not found");
     }
+    if (user.is_deleted) {
+      throw new BadRequestError("This account is already deleted");
+    }
 
-    const ts = Date.now();
-    await this.db.users.update({
-      where: { id: userId },
-      data: {
-        email: user.email ? `${user.email}_deleted_${ts}` : null,
-        phone: user.phone ? `${user.phone}_deleted_${ts}` : null,
-                password: null,
-        // we leave 'name' and relations intact for order history
-        updated_at: new Date(),
-        deleted_at: new Date(),
-        is_deleted: true,
-      },
-    });
-
-    // Cleanup active sessions
-    await this.db.refresh_tokens.deleteMany({ where: { user_id: userId } });
-    await this.db.user_roles.deleteMany({ where: { user_id: userId } });
-    await this.db.auth_identities.deleteMany({ where: { user_id: userId } });
+    await this.db.$transaction([
+      this.db.users.update({
+        where: { id: userId },
+        data: {
+          name: `حساب محذوف #${userId}`,
+          email: null,
+          phone: null,
+          secondary_phone: null,
+          password: null,
+          profile_pic_url: null,
+          updated_at: new Date(),
+          deleted_at: new Date(),
+          is_deleted: true,
+          deleted_by: by?.actorId ?? null,
+          delete_reason: by?.reason?.trim() ? by.reason.trim().slice(0, 1000) : null,
+        },
+      }),
+      this.db.students.updateMany({ where: { user_id: userId }, data: { parent_phone_number: null } }),
+      this.db.refresh_tokens.deleteMany({ where: { user_id: userId } }),
+      this.db.auth_identities.deleteMany({ where: { user_id: userId } }),
+    ]);
   }
 
   // ============================================
@@ -1117,6 +1139,7 @@ class UserManagementService {
       confirmed?: boolean;
       isDeleted?: boolean;
       includeFlag?: boolean;
+      flag?: string;
     } = {},
   ) {
     const page = Math.max(1, options.page ?? 1);
@@ -1133,12 +1156,20 @@ class UserManagementService {
       where.confirmed = options.confirmed;
     }
 
-    // Text search on name, email, phone
+    // Account level (staff only).
+    if (options.flag && options.includeFlag && (Object.values(user_flag_enum) as string[]).includes(options.flag)) {
+      where.flag = options.flag as user_flag_enum;
+    }
+
+    // Text search on name, email, phone; a whole number also finds the
+    // student with that serial.
     if (options.search) {
+      const serial = /^\d{1,9}$/.test(options.search.trim()) ? Number(options.search.trim()) : null;
       where.OR = [
         { name: { contains: options.search, mode: "insensitive" } },
         { email: { contains: options.search, mode: "insensitive" } },
         { phone: { contains: options.search } },
+        ...(serial !== null ? [{ students: { sequenced_id: serial } }] : []),
       ];
     }
 
@@ -1171,13 +1202,14 @@ class UserManagementService {
               role: true,
             },
           },
+          students: { select: { sequenced_id: true } },
         },
       }),
       this.db.users.count({ where }),
     ]);
 
     return {
-      users,
+      users: users.map(({ students, ...u }) => ({ ...u, student_serial: students?.sequenced_id ?? null })),
       pagination: {
         page,
         limit,
@@ -1386,15 +1418,45 @@ class UserManagementService {
     return email.trim().toLowerCase();
   }
 
+  // One account per email and per phone. A banned account keeps its email
+  // and phone, so it still blocks them; a deleted account has them wiped.
   async ensureEmailNotExists(email: string): Promise<void> {
     const existing = await this.db.users.findFirst({
-      where: { email },
+      where: { email: { equals: email.trim(), mode: "insensitive" } },
       select: { id: true },
     });
 
     if (existing) {
       throw new ConflictError("Email already in use", [
         { field: "email", message: "Email already in use" },
+      ]);
+    }
+  }
+
+  // The ways one Egyptian mobile number gets written (01..., +201..., 201...,
+  // 00201...), so the same number in another format still counts as taken.
+  phoneVariants(phone: string): string[] {
+    const raw = phone.trim();
+    const digits = raw.replace(/\D/g, "");
+    const local = digits.replace(/^(?:00)?20(?=1\d{9}$)/, "0");
+    if (!/^01\d{9}$/.test(local)) return [...new Set([raw, digits].filter(Boolean))];
+    const rest = local.slice(1);
+    return [...new Set([raw, local, `+20${rest}`, `20${rest}`, `0020${rest}`])];
+  }
+
+  async ensurePhoneNotExists(phone: string | null | undefined, exceptUserId?: number): Promise<void> {
+    if (!phone || !phone.trim()) return;
+    const existing = await this.db.users.findFirst({
+      where: {
+        phone: { in: this.phoneVariants(phone) },
+        ...(exceptUserId ? { id: { not: exceptUserId } } : {}),
+      },
+      select: { id: true },
+    });
+
+    if (existing) {
+      throw new ConflictError("Phone number already in use", [
+        { field: "phone", message: "Phone number already in use" },
       ]);
     }
   }

@@ -3,7 +3,7 @@
   "title": "User Management",
   "subtitle": "Manage users, roles, and account permissions",
   "totalUsers": "{{count}} users",
-  "searchPlaceholder": "Search by name, email, or phone...",
+  "searchPlaceholder": "Search by name, email, phone or student serial...",
   "noUsers": "No users found",
   "noUsersDescription": "No users match your current filters.",
   "stats": {
@@ -16,7 +16,8 @@
   "filters": {
     "allRoles": "All Roles",
     "role": "Role",
-    "clearFilters": "Clear Filters"
+    "clearFilters": "Clear Filters",
+    "allLevels": "All levels"
   },
   "table": {
     "user": "User",
@@ -60,7 +61,8 @@
     "cancel": "Cancel",
     "edit": "Edit",
     "save": "Save",
-    "changePassword": "Change Password"
+    "changePassword": "Change Password",
+    "downloadPhoto": "Download photo (largest size)"
   },
   "messages": {
     "approveSuccess": "User approved successfully",
@@ -115,7 +117,7 @@
     "parents": "Parents",
     "assists": "Assists",
     "confirmDeleteTitle": "Are you sure?",
-    "confirmDeleteDesc": "This action cannot be undone. This will permanently delete the user account.",
+    "confirmDeleteDesc": "This cannot be undone. The account's personal data (name, email, phones, password, photo, Google sign-in) is wiped and it is signed out everywhere. Its orders, roles and records stay, under \"Deleted account\".",
     "userNotFound": "User not found.",
     "idLabel": "ID",
     "parentPhone": "Parent",
@@ -126,9 +128,6 @@
     "lecturerId": "Lecturer ID",
     "level": "Level",
     "graduate": "Graduate",
-    "government": "Government",
-    "zone": "Zone",
-    "subject": "Subject",
     "selectSubject": "Select subject...",
     "selectGovernment": "Select government...",
     "selectZone": "Select zone...",
@@ -147,7 +146,6 @@
     "roles": "Roles",
     "noRoles": "No roles assigned",
     "secondaryPhone": "Secondary Phone",
-    "phone": "Phone",
     "assignRolePrompt": "Assign a role to get started",
     "noAvailablePortals": "This user already has roles in every available portal.",
     "oneRolePerPortalMessage": "A user cannot hold more than one active role in the same portal.",
@@ -156,13 +154,17 @@
       "PRO": "Pro",
       "NORMAL": "Normal",
       "OBSERVER": "Observer",
-      "Warned": "Warned"
+      "Warned": "Warned",
+      "SUSPICIOUS": "Suspicious",
+      "BANNED": "Banned"
     },
     "changePasswordTitle": "Change password",
     "changePasswordDescription": "Set a new password for {{name}}. Their active sessions will be signed out.",
     "newPassword": "New password",
     "confirmNewPassword": "Confirm new password",
-    "passwordMinLength": "Password must be at least 8 characters."
+    "passwordMinLength": "Password must be at least 8 characters.",
+    "deleteReason": "Reason (optional)",
+    "studentSerial": "Student serial"
   },
   "createDialog": {
     "title": "Create New User",
@@ -212,5 +214,79 @@
     "page": "Page",
     "of": "of",
     "showing": "Showing {{from}}-{{to}} of {{total}}"
+  },
+  "impersonationLog": {
+    "title": "Impersonation log",
+    "subtitle": "Who entered whose account, when they started and when they left. Admin only.",
+    "error": "Could not load the log",
+    "empty": "No impersonations yet.",
+    "actor": "Impersonated by",
+    "target": "Account",
+    "started": "Started",
+    "ended": "Left",
+    "noEnd": "Session ended without leaving",
+    "prev": "Previous",
+    "next": "Next"
+  },
+  "notifySelected": "Notify selected ({{count}})",
+  "selectAll": "Select all",
+  "export": {
+    "title": "Export users",
+    "subtitle": "Pick the account types and columns; the sheet has one row per user.",
+    "types": "Account types",
+    "typesHint": "Each type you pick adds its own columns.",
+    "columns": "Columns",
+    "common": "Every account",
+    "noPasswords": "Passwords are never exported; they are stored encrypted.",
+    "pickType": "Pick at least one account type",
+    "summary": "{{types}} account types, {{columns}} columns",
+    "failed": "Export failed",
+    "loadFailed": "Could not load the export options",
+    "field": {
+      "id": "Account ID",
+      "name": "Name",
+      "email": "Email",
+      "phone": "Phone",
+      "secondary_phone": "Secondary phone",
+      "gender": "Gender",
+      "flag": "Account level",
+      "roles": "Roles",
+      "confirmed": "Confirmed",
+      "email_verified": "Email verified",
+      "created_at": "Signed up",
+      "student_serial": "Student serial",
+      "level": "Grade",
+      "stage": "Stage",
+      "faction": "Track",
+      "student_government": "Governorate",
+      "student_zone": "District",
+      "parent_phone": "Parent phone",
+      "graduated": "Graduated",
+      "teacher_serial": "Teacher code",
+      "subject": "Subject",
+      "teaching_stages": "Stages taught",
+      "teacher_government": "Governorate",
+      "teacher_zone": "District",
+      "teaches_at": "Teaching places",
+      "parent_government": "Governorate",
+      "parent_zone": "District",
+      "children": "Children"
+    },
+    "filter": {
+      "title": "Filters",
+      "hint": "Pick the values you want inside the columns; anything left empty exports everyone. A type's filters only narrow that type.",
+      "all": "All",
+      "search": "Search...",
+      "noMatch": "No matches",
+      "clear": "Clear",
+      "clearAll": "Clear all filters",
+      "government": "Governorate",
+      "zone": "District",
+      "signedUp": "Signed up",
+      "from": "From",
+      "to": "to",
+      "graduatedYes": "Graduated",
+      "graduatedNo": "Still studying"
+    }
   }
 }

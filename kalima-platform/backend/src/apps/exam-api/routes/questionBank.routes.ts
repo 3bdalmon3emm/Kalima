@@ -17,7 +17,7 @@ import { parseQuestionInput } from "../services/questionInput";
 // have full control; nobody else reaches the bank.
 
 const router = Router();
-router.use(authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin]));
+router.use(authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]));
 
 const ok = (data?: unknown, message?: string) => ({ success: true, ...(message && { message }), ...(data !== undefined && { data }) });
 

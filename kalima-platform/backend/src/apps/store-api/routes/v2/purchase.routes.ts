@@ -35,6 +35,8 @@ router.get(
   purchaseController.getConfirmedEmployeeProducts,
 );
 router.get("/", ...adminAuth, purchaseController.getAll);
+// Deleted orders: Admin only.
+router.get("/deleted", authenticateToken, requireRole([role_enum.Admin]), purchaseController.listDeleted);
 router.get("/:id", ...adminAuth, purchaseController.getById);
 
 router.patch("/:id/receive", ...adminAuth, purchaseController.receive);

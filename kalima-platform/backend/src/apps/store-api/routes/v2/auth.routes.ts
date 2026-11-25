@@ -1,8 +1,9 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { authController } from "../../controllers/auth.controller";
 import { authenticateToken } from "../../../../libs/auth/middleware";
 import { role_enum } from "../../generated/prisma/enums";
 import { requireRole } from "../../middleware/requireRole.middleware";
+import { canGrant } from "../../../../libs/auth/roleRank";
 
 const router = Router();
 
@@ -106,14 +107,22 @@ const adminModeratorAuth = [
   requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
 ];
 
-router.post("/admin/impersonation/start", adminSubAdminAuth, authController.startImpersonation);
+// Who may impersonate whom is decided in authService.startImpersonation.
+router.post("/admin/impersonation/start", adminModeratorAuth, authController.startImpersonation);
 router.post("/admin/impersonation/stop", authenticateToken, authController.stopImpersonation);
 
-router.post("/admin/create-admin", adminAuth, authController.createAdmin);
-router.post("/admin/create-subadmin", adminAuth, authController.createSubAdmin);
+// Staff accounts only below the creator's own rank (nobody creates an Admin).
+const canCreate = (role: string) => (req: Request, res: Response, next: NextFunction) => {
+  if (canGrant((req as any).user?.roles, role)) return next();
+  res.status(403).json({ success: false, message: `You cannot create a ${role} account` });
+};
+
+router.post("/admin/create-admin", adminAuth, canCreate(role_enum.Admin), authController.createAdmin);
+router.post("/admin/create-subadmin", adminAuth, canCreate(role_enum.SubAdmin), authController.createSubAdmin);
 router.post(
   "/admin/create-moderator",
   adminSubAdminAuth,
+  canCreate(role_enum.Moderator),
   authController.createModerator,
 );
 router.post(

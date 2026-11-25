@@ -11,6 +11,8 @@ const adminAuth = [
   requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
 ];
 const adminOnlyAuth = [authenticateToken, requireRole([role_enum.Admin])];
+// Adding and editing stages and grades is a platform setting.
+const managerAuth = [authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin])];
 
 // PUBLIC
 router.get("/export", ...adminAuth, makeExportHandler("levels"));
@@ -19,10 +21,10 @@ router.get("/stages", levelsController.getAllStages);
 router.get("/:id", levelsController.getLevelById);
 
 // ADMIN / SUBADMIN
-router.post("/stages", ...adminAuth, levelsController.createStage);
-router.patch("/stages/:id", ...adminAuth, levelsController.updateStage);
-router.post("/", ...adminAuth, levelsController.createLevel);
-router.patch("/:id", ...adminAuth, levelsController.updateLevel);
+router.post("/stages", ...managerAuth, levelsController.createStage);
+router.patch("/stages/:id", ...managerAuth, levelsController.updateStage);
+router.post("/", ...managerAuth, levelsController.createLevel);
+router.patch("/:id", ...managerAuth, levelsController.updateLevel);
 
 // ADMIN only
 router.delete("/stages/:id", ...adminOnlyAuth, levelsController.deleteStage);

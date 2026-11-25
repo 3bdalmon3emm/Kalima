@@ -31,6 +31,8 @@ import {
 } from '@/components/ui/dropdown-menu';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { useTranslation } from 'react-i18next';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
+import { ACCOUNT_LEVELS } from '@/lib/accountLevels';
 import { extractImageColors } from '@/lib/imageColors';
 import SendNotificationModal from '@/components/admin/notifications/SendNotificationModal';
 import { Bell } from 'lucide-react';
@@ -49,6 +51,8 @@ export default function DetailHeader({
     onResetPassword,
     actionLoading,
     canResetPassword,
+    canManage = true,
+    canEdit = true,
     isRtl,
     t
 }) {
@@ -56,6 +60,7 @@ export default function DetailHeader({
     const [bannerColors, setBannerColors] = useState(null);
     const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
     const [isPasswordDialogOpen, setIsPasswordDialogOpen] = useState(false);
+    const [deleteReason, setDeleteReason] = useState('');
     const [password, setPassword] = useState('');
     const [passwordConfirmation, setPasswordConfirmation] = useState('');
     const [passwordError, setPasswordError] = useState('');
@@ -69,17 +74,8 @@ export default function DetailHeader({
         }
     }, [user?.profile_pic_url]);
 
-    const getFlagConfig = (flag) => {
-        const f = flag || 'NORMAL';
-        if (f === 'ELITE') return { icon: Crown, color: 'bg-amber-500/10 text-amber-600 border-amber-500/20 shadow-amber-500/5' };
-        if (f === 'PRO') return { icon: Zap, color: 'bg-indigo-500/10 text-indigo-600 border-indigo-500/20 shadow-indigo-500/5' };
-        if (f === 'OBSERVER') return { icon: Eye, color: 'bg-slate-500/10 text-slate-600 border-slate-500/20' };
-        if (f === 'Warned') return { icon: AlertTriangle, color: 'bg-red-500/10 text-red-600 border-red-500/20 animate-pulse' };
-        return { icon: ShieldCheck, color: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20' };
-    };
 
-    const flagConfig = getFlagConfig(user.flag);
-    const FlagIcon = flagConfig.icon;
+
 
     const handlePasswordSubmit = async (event) => {
         event.preventDefault();
@@ -180,22 +176,21 @@ export default function DetailHeader({
                                     </Badge>
                                 )}
 
+                                {/* The account level, large and colored; the menu changes it. */}
                                 <DropdownMenu dir={i18n.dir()}>
-                                    <DropdownMenuTrigger className="focus:outline-none">
-                                        <Badge variant="outline" className={`h-5 gap-1 px-2 border-dashed uppercase text-[10px] tracking-widest font-black cursor-pointer hover:opacity-80 transition-opacity ${flagConfig.color}`}>
-                                            <FlagIcon className={`${i18n.language === 'ar' ? 'scale-x-[-1]' : ''} h-3 w-3`} />
-                                            {t(`details.flags.${user.flag || 'NORMAL'}`, user.flag || 'NORMAL')}
-                                            <ChevronDown className="h-3 w-3 opacity-50 ms-0.5" />
-                                        </Badge>
+                                    <DropdownMenuTrigger className="focus:outline-none" disabled={!canEdit}>
+                                        <AccountLevelBadge level={user.flag} size="lg" className={canEdit ? 'cursor-pointer hover:opacity-90' : ''}>
+                                            {canEdit && <ChevronDown className="h-4 w-4 opacity-60" />}
+                                        </AccountLevelBadge>
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align={i18n.dir() === 'rtl' ? 'end' : 'start'}>
-                                        {['ELITE', 'PRO', 'NORMAL', 'OBSERVER', 'Warned'].map(flagOption => (
+                                        {ACCOUNT_LEVELS.map(({ value }) => (
                                             <DropdownMenuItem
-                                                key={flagOption}
-                                                onClick={() => onUpdateFlag && onUpdateFlag(flagOption)}
-                                                className={`cursor-pointer ${user.flag === flagOption ? 'bg-primary/10 font-bold' : ''}`}
+                                                key={value}
+                                                onClick={() => onUpdateFlag && onUpdateFlag(value)}
+                                                className={`cursor-pointer ${user.flag === value ? 'bg-primary/10' : ''}`}
                                             >
-                                                {t(`details.flags.${flagOption}`, flagOption)}
+                                                <AccountLevelBadge level={value} />
                                             </DropdownMenuItem>
                                         ))}
                                     </DropdownMenuContent>
@@ -230,7 +225,7 @@ export default function DetailHeader({
                             </>
                         ) : (
                             <>
-                                {!user.is_deleted && !user.confirmed && (
+                                {!user.is_deleted && !user.confirmed && canManage && (
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -242,7 +237,7 @@ export default function DetailHeader({
                                         {t('actions.approve')}
                                     </Button>
                                 )}
-                                {!user.is_deleted && user.confirmed && (
+                                {!user.is_deleted && user.confirmed && canManage && (
                                     <Button
                                         variant="outline"
                                         size="sm"
@@ -254,17 +249,19 @@ export default function DetailHeader({
                                         {t('actions.reject')}
                                     </Button>
                                 )}
-                                <Button size="sm" onClick={onEdit}>
-                                    <Edit3 className="h-4 w-4 me-2" />
-                                    {t('actions.edit')}
-                                </Button>
+                                {canEdit && (
+                                    <Button size="sm" onClick={onEdit}>
+                                        <Edit3 className="h-4 w-4 me-2" />
+                                        {t('actions.edit')}
+                                    </Button>
+                                )}
                                 {canResetPassword && !user.is_deleted && (
                                     <Button variant="outline" size="sm" onClick={() => setIsPasswordDialogOpen(true)}>
                                         <KeyRound className="h-4 w-4 me-2" />
                                         {t('actions.changePassword')}
                                     </Button>
                                 )}
-                                {!user.is_deleted && (
+                                {!user.is_deleted && canManage && (
                                     <AlertDialog>
                                         <AlertDialogTrigger asChild>
                                             <Button variant="outline" size="sm" className="text-destructive hover:bg-destructive/10 border-destructive/30">
@@ -277,9 +274,13 @@ export default function DetailHeader({
                                                 <AlertDialogTitle>{t('details.confirmDeleteTitle')}</AlertDialogTitle>
                                                 <AlertDialogDescription>{t('details.confirmDeleteDesc')}</AlertDialogDescription>
                                             </AlertDialogHeader>
+                                            <div className="space-y-1.5">
+                                                <label className="text-sm font-medium">{t('details.deleteReason', 'Reason (optional)')}</label>
+                                                <textarea className="w-full rounded-md border bg-background p-2 text-sm" rows={3} value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} />
+                                            </div>
                                             <AlertDialogFooter>
                                                 <AlertDialogCancel>{t('actions.cancel')}</AlertDialogCancel>
-                                                <AlertDialogAction onClick={onDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                                                <AlertDialogAction onClick={() => onDelete(deleteReason.trim())} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
                                                     {t('actions.delete')}
                                                 </AlertDialogAction>
                                             </AlertDialogFooter>

@@ -1,3 +1,4 @@
+import type { DayRange } from "../utils/dayRange";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
@@ -5,7 +6,7 @@ import { CreatePurchaseDto, CreatePurchaseItemDto } from "../dtos/purchase.dto";
 import { userManagementService } from "./user-management.service";
 import { imageService } from "./image.service";
 import type { Prisma } from "../generated/prisma/client";
-import { role_enum } from "../generated/prisma/client";
+import { role_enum, user_flag_enum } from "../generated/prisma/client";
 import type { CheckoutDto } from "../dtos/cart.dto";
 import { couponService } from "./coupon.service";
 import { validatePaymentForCheckout } from "./checkout-validation.service";
@@ -44,6 +45,7 @@ const PURCHASE_INCLUDE = {
       email: true,
       phone: true,
       role: true,
+      flag: true,
       user_roles: { select: { role: true } },
     },
   },
@@ -235,6 +237,7 @@ export class PurchasesService {
     minTotal?: number;
     maxTotal?: number;
     productId?: number;
+    flag?: string;
     page: number;
     limit: number;
   }) {
@@ -254,6 +257,10 @@ export class PurchasesService {
 
     if (filters.status) {
       where.status = filters.status;
+    }
+
+    if (filters.flag && (Object.values(user_flag_enum) as string[]).includes(filters.flag)) {
+      where.users = { flag: filters.flag as user_flag_enum };
     }
 
     if (filters.startDate || filters.endDate) {
@@ -362,6 +369,7 @@ export class PurchasesService {
     limit: number,
     month?: number,
     year?: number,
+    range?: DayRange | "all" | null,
   ) {
     const skip = (page - 1) * limit;
 
@@ -369,8 +377,10 @@ export class PurchasesService {
     const targetMonth = month || now.getMonth() + 1;
     const targetYear = year || now.getFullYear();
 
-    const startDate = new Date(targetYear, targetMonth - 1, 1);
-    const endDate = new Date(targetYear, targetMonth, 1);
+    // A day range (or "all") wins over the month.
+    const when: DayRange = range === "all" ? {} : range
+      ? range
+      : { gte: new Date(targetYear, targetMonth - 1, 1), lt: new Date(targetYear, targetMonth, 1) };
 
     // 1. Get all eligible users (Admin, SubAdmin, Moderator)
     const eligibleRoles: role_enum[] = ["Admin", "SubAdmin", "Moderator"];
@@ -422,10 +432,8 @@ export class PurchasesService {
         confirmed_by: { in: adminIds },
         status: "confirmed",
         deleted_at: null,
-        confirmed_at: {
-          gte: startDate,
-          lt: endDate,
-        },
+        is_deleted: { not: true },
+        confirmed_at: when,
       },
     });
 
@@ -438,10 +446,8 @@ export class PurchasesService {
         confirmed_by: { in: adminIds },
         status: "confirmed",
         deleted_at: null,
-        confirmed_at: {
-          gte: startDate,
-          lt: endDate,
-        },
+        is_deleted: { not: true },
+        confirmed_at: when,
       },
       select: {
         confirmed_by: true,
@@ -475,7 +481,7 @@ export class PurchasesService {
       where: {
         action: "booklet_delivered",
         actor_user_id: { in: adminIds },
-        created_at: { gte: startDate, lt: endDate },
+        created_at: when,
       },
     });
     const eBookletsMap = new Map<number, number>(
@@ -511,6 +517,7 @@ export class PurchasesService {
       limit?: number;
       month?: number;
       year?: number;
+      range?: DayRange | null;
       type?: "all" | "normal" | "ebooklet";
       search?: string;
     } = {},
@@ -535,7 +542,9 @@ export class PurchasesService {
     }
 
     let dateFilter: { gte?: Date; lt?: Date } | undefined;
-    if (options.month && options.year) {
+    if (options.range) {
+      dateFilter = options.range;
+    } else if (options.month && options.year) {
       dateFilter = {
         gte: new Date(options.year, options.month - 1, 1),
         lt: new Date(options.year, options.month, 1),
@@ -1056,8 +1065,11 @@ export class PurchasesService {
     return updated;
   }
 
-  /** Hard-delete a purchase. Restores used coupons if confirmed. */
-  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null) {
+  /** Delete a purchase (kept for the record, out of every count) with who,
+   * when and why. Restores used coupons if confirmed. */
+  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null, reason?: string) {
+    const why = (reason ?? "").trim();
+    if (why.length < 3) throw new BadRequestError("A reason is required to delete an order");
     const purchase = await this.db.purchases.findUnique({
       where: { id: purchaseId },
       include: {
@@ -1066,6 +1078,7 @@ export class PurchasesService {
       },
     });
     if (!purchase) throw new NotFoundError("Purchase not found");
+    if (purchase.deleted_at || purchase.is_deleted) throw new BadRequestError("This order is already deleted");
 
     await this.db.$transaction(async (tx) => {
       if (purchase.status === "confirmed") {
@@ -1073,7 +1086,7 @@ export class PurchasesService {
       }
       await tx.purchases.update({
         where: { id: purchaseId },
-        data: { deleted_at: new Date(), is_deleted: true },
+        data: { deleted_at: new Date(), is_deleted: true, deleted_by: adminId ?? null, delete_reason: why.slice(0, 1000) },
       });
       await tx.user_analytics.update({
         where: { user_id: purchase.user_id },
@@ -1101,6 +1114,48 @@ export class PurchasesService {
         })
       .catch((err) => console.error("[Purchases] Failed to send delete email:", err));
     }
+  }
+
+  /** Deleted orders for the Admin: who deleted each one, when and why. */
+  async listDeleted(filters: { search?: string; page: number; limit: number }) {
+    const where: Prisma.purchasesWhereInput = { OR: [{ deleted_at: { not: null } }, { is_deleted: true }] };
+    const s = filters.search?.trim();
+    if (s) {
+      where.AND = [{
+        OR: [
+          { purchase_serial: { contains: s, mode: "insensitive" } },
+          { users: { name: { contains: s, mode: "insensitive" } } },
+          { users: { phone: { contains: s, mode: "insensitive" } } },
+          { delete_reason: { contains: s, mode: "insensitive" } },
+        ],
+      }];
+    }
+    const [rows, total] = await Promise.all([
+      this.db.purchases.findMany({
+        where,
+        orderBy: [{ deleted_at: "desc" }, { id: "desc" }],
+        skip: (filters.page - 1) * filters.limit,
+        take: filters.limit,
+        select: {
+          id: true, purchase_serial: true, status: true, total: true, created_at: true,
+          deleted_at: true, deleted_by: true, delete_reason: true,
+          users: { select: { id: true, name: true, phone: true } },
+        },
+      }),
+      this.db.purchases.count({ where }),
+    ]);
+    const deleters = await this.db.users.findMany({
+      where: { id: { in: [...new Set(rows.map((r) => r.deleted_by).filter((x): x is number => x !== null))] } },
+      select: { id: true, name: true },
+    });
+    const nameOf = new Map(deleters.map((u) => [u.id, u.name]));
+    return {
+      orders: rows.map((r) => ({ ...r, deleted_by_user: r.deleted_by ? { id: r.deleted_by, name: nameOf.get(r.deleted_by) ?? null } : null })),
+      total,
+      page: filters.page,
+      pages: Math.max(Math.ceil(total / filters.limit), 1),
+      limit: filters.limit,
+    };
   }
 
   /** Remove a single item; recalculate totals. Cannot remove last item. */

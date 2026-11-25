@@ -8,10 +8,8 @@ import { makeExportHandler } from "../../export";
 
 const router = Router();
 
-const adminAuth = [
-  authenticateToken,
-  requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]),
-];
+// Managing payment methods: the Admin only.
+const adminAuth = [authenticateToken, requireRole([role_enum.Admin])];
 
 router.get("/export", ...adminAuth, makeExportHandler("payment-methods"));
 
@@ -27,27 +25,23 @@ router.get(
   paymentMethodController.getPaymentMethod
 );
 
-// Admin-only routes
 router.post(
   "/",
-  authenticateToken,
-  requireRole([role_enum.Admin]),
+  ...adminAuth,
   uploadSingleImage("image"),
   paymentMethodController.createPaymentMethod
 );
 
 router.patch(
   "/:id",
-  authenticateToken,
-  requireRole([role_enum.Admin]),
+  ...adminAuth,
   uploadSingleImage("image"),
   paymentMethodController.updatePaymentMethod
 );
 
 router.delete(
   "/:id",
-  authenticateToken,
-  requireRole([role_enum.Admin]),
+  ...adminAuth,
   paymentMethodController.deletePaymentMethod
 );
 

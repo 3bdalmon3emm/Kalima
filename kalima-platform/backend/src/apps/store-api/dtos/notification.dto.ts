@@ -53,6 +53,17 @@ export class SendNotificationDto {
   @IsString()
   @MaxLength(255)
   target_link?: string;
+
+  // Written by the admin: the title and the text the user reads.
+  @IsOptional()
+  @IsString()
+  @MaxLength(200)
+  title?: string;
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(5000)
+  body?: string;
 }
 
 /**

@@ -557,3 +557,8 @@ export type ex_student_overrides = Prisma.ex_student_overridesModel
  * 
  */
 export type teacher_assistants = Prisma.teacher_assistantsModel
+/**
+ * Model impersonation_logs
+ * 
+ */
+export type impersonation_logs = Prisma.impersonation_logsModel

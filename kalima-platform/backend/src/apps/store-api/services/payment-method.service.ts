@@ -36,7 +36,8 @@ export const paymentMethodService = {
     const limit = filters?.limit || 10;
     const skip = (page - 1) * limit;
 
-    const where: Prisma.payment_methodsWhereInput = {};
+    // Deleted methods never list.
+    const where: Prisma.payment_methodsWhereInput = { is_deleted: { not: true } };
 
     if (filters?.status !== undefined) {
       where.status = filters.status;

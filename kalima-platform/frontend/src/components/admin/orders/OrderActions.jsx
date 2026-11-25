@@ -38,6 +38,7 @@ export default function OrderActions({ order, onActionSuccess }) {
     const { receiveOrder, confirmOrder, deliverOrder, returnOrder, deleteOrder, actionLoading } = useOrders({ autoFetch: false });
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [deleteReason, setDeleteReason] = useState('');
     const [noteDialogOpen, setNoteDialogOpen] = useState(false);
     const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
     const [editableWhatsAppMessage, setEditableWhatsAppMessage] = useState('');
@@ -96,11 +97,12 @@ export default function OrderActions({ order, onActionSuccess }) {
     };
 
     const handleDelete = async () => {
-        const res = await deleteOrder(order.id);
+        const res = await deleteOrder(order.id, deleteReason.trim());
         if (res?.success && onActionSuccess) {
             onActionSuccess();
         }
         setDeleteDialogOpen(false);
+        setDeleteReason('');
     };
 
     const status = order?.status?.toLowerCase();
@@ -115,9 +117,14 @@ export default function OrderActions({ order, onActionSuccess }) {
                             {t('orders.messages.deleteOrderWarning')}
                         </AlertDialogDescription>
                     </AlertDialogHeader>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-medium">{t('orders.delete.reason', 'Reason for deleting')} <span className="text-destructive">*</span></label>
+                        <Textarea value={deleteReason} onChange={(e) => setDeleteReason(e.target.value)} rows={3} placeholder={t('orders.delete.reasonPlaceholder', 'For example: duplicate order, test order...')} />
+                        <p className="text-xs text-muted-foreground">{t('orders.delete.reasonHint', 'Required. A deleted order is kept for the record but counts nowhere.')}</p>
+                    </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
+                        <AlertDialogAction onClick={handleDelete} disabled={deleteReason.trim().length < 3} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
                             {t('common.confirm', 'Confirm')}
                         </AlertDialogAction>
                     </AlertDialogFooter>

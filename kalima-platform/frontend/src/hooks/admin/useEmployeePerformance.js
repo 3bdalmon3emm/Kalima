@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import useApiMutation from '../useApiMutation';
+import { rangeQuery } from '@/components/admin/DayRangeFilter';
 
 // Upper bound for eligible staff (Admin/SubAdmin/Moderator) shown in the
 // confirmed-purchases-by-manager table, which has no pagination controls.
@@ -15,20 +16,20 @@ export const useEmployeePerformance = () => {
 
     const [employeeSalesDetails, setEmployeeSalesDetails] = useState(null);
 
-    const fetchConfirmerStats = useCallback(async () => {
+    // Every section takes the same day range ({ from, to } or null for all time).
+    const fetchConfirmerStats = useCallback(async (range) => {
         setLoading(true);
         try {
-            const data = await fetchApi({ endpoint: '/admin/dashboard/confirmer-stats', method: 'get' });
+            const q = rangeQuery(range, null).toString();
+            const data = await fetchApi({ endpoint: `/admin/dashboard/confirmer-stats${q ? `?${q}` : ''}`, method: 'get' });
             if (data?.success) setConfirmerStats(data.data);
         } finally { setLoading(false); }
     }, [fetchApi]);
 
-    const fetchConfirmedCount = useCallback(async (month, year) => {
+    const fetchConfirmedCount = useCallback(async (range) => {
         setLoading(true);
         try {
-            const queries = new URLSearchParams();
-            if (month) queries.append('month', month);
-            if (year) queries.append('year', year);
+            const queries = rangeQuery(range);
             // This table has no pagination UI, so request all eligible staff in a
             // single page. Without an explicit limit the API defaults to 10 rows,
             // which silently hides every employee past the first 10 (Arabic names
@@ -39,10 +40,11 @@ export const useEmployeePerformance = () => {
         } finally { setLoading(false); }
     }, [fetchApi]);
 
-    const fetchCreatedAccounts = useCallback(async () => {
+    const fetchCreatedAccounts = useCallback(async (range) => {
         setLoading(true);
         try {
-            const data = await fetchApi({ endpoint: '/admin/users/stats/created-accounts', method: 'get' });
+            const q = rangeQuery(range, null).toString();
+            const data = await fetchApi({ endpoint: `/admin/users/stats/created-accounts${q ? `?${q}` : ''}`, method: 'get' });
             if (data?.success) setCreatedAccounts(data.data);
         } finally { setLoading(false); }
     }, [fetchApi]);
@@ -51,6 +53,8 @@ export const useEmployeePerformance = () => {
         setLoading(true);
         try {
             const queries = new URLSearchParams();
+            if (params.from) queries.append('from', params.from);
+            if (params.to) queries.append('to', params.to);
             if (params.month) queries.append('month', params.month);
             if (params.year) queries.append('year', params.year);
             if (params.type && params.type !== 'all') queries.append('type', params.type);

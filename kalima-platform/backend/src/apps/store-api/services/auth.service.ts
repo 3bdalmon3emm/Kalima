@@ -47,6 +47,9 @@ import {
 import { getEmailService } from "../emails/email.service";
 import fs from "fs";
 import { userManagementService } from "./user-management.service";
+import { isStaff, outranks } from "../../../libs/auth/roleRank";
+import { largeGooglePhoto } from "../../../libs/auth/googlePhoto";
+import { prisma } from "../../../libs/db/prisma";
 import {
   UnauthorizedError,
   ForbiddenError,
@@ -357,7 +360,8 @@ class AuthService {
       throw new UnauthorizedError("Invalid or expired refresh token");
     }
 
-    const tokens = await this.issueTokens(payload.userId);
+    // A refresh keeps the same device; only a new sign-in signs out the others.
+    const tokens = await this.issueTokens(payload.userId, undefined, { skipSingleSessionRevocation: true });
 
     return { tokens };
   }
@@ -379,12 +383,7 @@ class AuthService {
     }
 
     const actorRoles = actor.roles ?? [];
-    const canImpersonate = actorRoles.some((role) => {
-      const roleName = String(role.role);
-      return roleName === role_enum.Admin || roleName === role_enum.SubAdmin;
-    });
-
-    if (!canImpersonate) {
+    if (!isStaff(actorRoles)) {
       throw new ForbiddenError("Only admins can impersonate users");
     }
 
@@ -405,31 +404,28 @@ class AuthService {
       throw new NotFoundError("User not found");
     }
 
-    const isSubAdmin =
-      actorRoles.some((role) => role.role === role_enum.SubAdmin) &&
-      !actorRoles.some((role) => role.role === role_enum.Admin);
-    const privilegedTargetRoles = new Set<role_enum>([
-      role_enum.Admin,
-      role_enum.SubAdmin,
-      role_enum.Moderator,
-    ]);
-    const targetIsPrivileged = targetUser.user_roles.some((role) =>
-      privilegedTargetRoles.has(role.role),
-    );
-
-    if (isSubAdmin && targetIsPrivileged) {
+    // Admin, SubAdmin and Moderator impersonate only accounts below their own
+    // rank (libs/auth/roleRank).
+    const targetRoles = [
+      ...((targetUser as any).role ? [(targetUser as any).role] : []),
+      ...targetUser.user_roles.map((role) => role.role),
+    ];
+    if (!outranks(actorRoles, targetRoles)) {
       throw new ForbiddenError(
-        "Subadmins cannot impersonate privileged accounts",
+        "You cannot impersonate an account at your level or above",
       );
     }
 
     const startedAt = new Date().toISOString();
+    await prisma.impersonation_logs.create({
+      data: { actor_user_id: actor.userId, target_user_id: targetUser.id, started_at: new Date(startedAt) },
+    });
     const tokens = await this.issueTokens(targetUser.id, {
       actorUserId: actor.userId,
       actorRoles: actorRoles.map((r) => ({ portal: r.portal, role: r.role })),
       targetUserId: targetUser.id,
       startedAt,
-    });
+    }, { skipSingleSessionRevocation: true }); // the impersonated user stays signed in
 
     return {
       user: this.userService.mapToBaseUserData(targetUser),
@@ -447,6 +443,11 @@ class AuthService {
     if (!actor.impersonation) {
       throw new BadRequestError("No active impersonation session");
     }
+    const { actorUserId, targetUserId, startedAt } = actor.impersonation;
+    await prisma.impersonation_logs.updateMany({
+      where: { actor_user_id: actorUserId, target_user_id: targetUserId, started_at: new Date(startedAt), ended_at: null },
+      data: { ended_at: new Date() },
+    });
 
     return { message: "Impersonation stopped" };
   }
@@ -457,7 +458,7 @@ class AuthService {
 
   async deleteAccount(userId: number): Promise<{ message: string }> {
     await revokeAllRefreshTokensForUser(userId);
-    await this.userService.deleteUser(userId);
+    await this.userService.deleteUser(userId, { actorId: userId, reason: "Deleted by the account owner" });
     return { message: "Account deleted successfully" };
   }
 
@@ -885,7 +886,7 @@ class AuthService {
       email: decoded.email.toLowerCase(),
       name: decoded.name ?? decoded.email.split("@")[0],
       emailVerified: decoded.email_verified ?? false,
-      photoUrl: decoded.picture,
+      photoUrl: largeGooglePhoto(decoded.picture),
       provider,
     };
   }
@@ -927,9 +928,10 @@ class AuthService {
     };
   }
 
+  // Staff roles that may stay signed in on several devices. The Admin is
+  // not one of them: a new sign-in signs the Admin out everywhere else.
   private hasAdminSideRole(roles: Array<{ role: role_enum }>): boolean {
     const adminSideRoles: role_enum[] = [
-      role_enum.Admin,
       role_enum.SubAdmin,
       role_enum.Moderator,
       role_enum.Assistant,

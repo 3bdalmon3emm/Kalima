@@ -161,7 +161,8 @@ export const useOrders = (optionsOrId = null) => {
     const returnOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/return`, method: 'patch' }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
     const addAdminNote = (orderId, note) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/admin-note`, method: 'patch', data: { admin_notes: note } }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
 
-    const deleteOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}`, method: 'delete' }).then(res => { if (!id) fetchOrders(); return res; }));
+    // Deleting needs a reason (kept with the order for the Admin).
+    const deleteOrder = (orderId, reason) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}`, method: 'delete', data: { reason } }).then(res => { if (!id) fetchOrders(); return res; }));
     const deleteOrderItem = (orderId, itemId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/items/${itemId}`, method: 'delete' }).then(res => { if (id) fetchOrderById(id); return res; }));
 
     const setSearch = useCallback((query) => {
@@ -171,6 +172,12 @@ export const useOrders = (optionsOrId = null) => {
 
     const setStatus = useCallback((status) => {
         setFilters((prev) => ({ ...prev, status }));
+        setPagination((prev) => ({ ...prev, page: 1 }));
+    }, []);
+
+    // The customer's current account level.
+    const setFlag = useCallback((flag) => {
+        setFilters((prev) => ({ ...prev, flag: flag === 'all' ? '' : flag }));
         setPagination((prev) => ({ ...prev, page: 1 }));
     }, []);
 
@@ -207,6 +214,7 @@ export const useOrders = (optionsOrId = null) => {
         // Setters
         setSearch,
         setStatus,
+        setFlag,
         setDateRange,
         setPage
     };

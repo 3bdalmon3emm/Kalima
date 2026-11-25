@@ -4,7 +4,10 @@ import useOrders from '@/hooks/useOrders';
 import OrdersToolbar from '@/components/admin/orders/OrdersToolbar';
 import OrdersTable from '@/components/admin/orders/OrdersTable';
 import StoreStatsCards from '@/components/admin/orders/StoreStatsCards';
-import { Download } from 'lucide-react';
+import { Download, Trash2 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import useRole from '@/hooks/useRole';
+import { canAccessAdminAnalytics } from '@/lib/adminAnalyticsAccess';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import useExport from '@/hooks/useExport';
@@ -27,6 +30,9 @@ import {
 
 export default function OrdersPage() {
     const { t, i18n } = useTranslation('admin');
+    const { isAdmin, storeRoles } = useRole();
+    // The money cards are numbers the Moderator does not see.
+    const showStats = canAccessAdminAnalytics(storeRoles);
     const {
         orders,
         pagination,
@@ -34,6 +40,7 @@ export default function OrdersPage() {
         loading,
         setSearch,
         setStatus,
+        setFlag,
         setDateRange,
         setPage,
         fetchOrders
@@ -91,6 +98,11 @@ export default function OrdersPage() {
                     </p>
                 </div>
                 <div className="flex items-center gap-2">
+                    {isAdmin && (
+                        <Button variant="outline" asChild>
+                            <Link to="/admin/orders/deleted"><Trash2 className="h-4 w-4 me-2" />{t('orders.deleted.title', 'Deleted orders')}</Link>
+                        </Button>
+                    )}
                     <DropdownMenu dir={i18n.dir()}>
                         <DropdownMenuTrigger asChild>
                             <Button disabled={exportLoading} variant="outline" data-testid="orders-export-button">
@@ -120,13 +132,14 @@ export default function OrdersPage() {
                 </div>
             )}
 
-            <StoreStatsCards />
+            {showStats && <StoreStatsCards startDate={filters.startDate} endDate={filters.endDate} />}
 
             <OrdersToolbar
                 filters={filters}
                 onSearchChange={handleSearch}
                 onStatusChange={handleStatus}
                 onDateRangeChange={handleDateRangeChange}
+                onFlagChange={setFlag}
             />
 
             <OrdersTable

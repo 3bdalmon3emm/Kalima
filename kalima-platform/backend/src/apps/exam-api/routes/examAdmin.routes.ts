@@ -21,10 +21,10 @@ import "../services/examResultsExport";
 import { uploadSound } from "../services/media.service";
 import { parseExamSettings, parseMark, parseRules } from "../services/examInput";
 
-// Building exams, mounted at /api/v2/exam-admin. Admin and SubAdmin only.
+// Building exams, mounted at /api/v2/exam-admin. All staff (Admin, SubAdmin, Moderator).
 
 const router = Router();
-router.use(authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin]));
+router.use(authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin, role_enum.Moderator]));
 
 const ok = (data?: unknown, message?: string) => ({ success: true, ...(message && { message }), ...(data !== undefined && { data }) });
 

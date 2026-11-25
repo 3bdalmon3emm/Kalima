@@ -22,7 +22,7 @@ const adminAuth = [
 router.get("/store-stats", ...adminAnalyticsAuth, adminDashboardController.getStoreStatistics);
 
 // Confirmer Statistics
-router.get("/confirmer-stats", ...adminAuth, adminDashboardController.getConfirmerStatistics);
+router.get("/confirmer-stats", ...employeePerformanceAuth, adminDashboardController.getConfirmerStatistics);
 
 // Product Performance Ranking
 router.get("/product-performance", ...adminAnalyticsAuth, adminDashboardController.getProductPerformance);

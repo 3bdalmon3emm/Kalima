@@ -38,7 +38,7 @@ export function getDefaultRouteForPortalAccess(portalAccess) {
     const academyRoles = portalAccess?.academy?.roles || [];
     const roles = [...storeRoles, ...academyRoles];
 
-    if (roles.includes('Admin') || roles.includes('SubAdmin')) return '/admin/dashboard';
+    if (roles.includes('Admin') || roles.includes('SubAdmin') || roles.includes('Moderator')) return '/admin/dashboard';
     if (roles.includes('Teacher')) return '/teacher/profile';
     if (roles.includes('Student')) return '/student/profile';
     if (roles.includes('Parent')) return '/parent/profile';

@@ -38,11 +38,12 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { GENDERS } from '@/lib/adminConstants';
 import { useAdminUsers } from '@/hooks/admin/useAdminUsers';
 import { useRole } from '@/hooks/useRole';
+import { canGrant } from '@/lib/roleRank';
 import useLookups from '@/hooks/useLookups';
 
 export default function CreateUserDialog({ onSuccess }) {
     const { t, i18n } = useTranslation('userManagement');
-    const { hasAdminAccess } = useRole();
+    const { storeRoles } = useRole();
     const {
         createAdminUser,
         createSubAdminUser,
@@ -275,9 +276,10 @@ export default function CreateUserDialog({ onSuccess }) {
                                             </SelectTrigger>
                                         </FormControl>
                                         <SelectContent>
-                                            {hasAdminAccess && <SelectItem value="Admin">{t('roles.Admin')}</SelectItem>}
-                                            {hasAdminAccess && <SelectItem value="SubAdmin">{t('roles.SubAdmin')}</SelectItem>}
-                                            <SelectItem value="Moderator">{t('roles.Moderator')}</SelectItem>
+                                            {/* Staff roles only below the creator's own rank. */}
+                                            {['Admin', 'SubAdmin', 'Moderator'].filter((r) => canGrant(storeRoles, r)).map((r) => (
+                                                <SelectItem key={r} value={r}>{t(`roles.${r}`)}</SelectItem>
+                                            ))}
                                             <SelectItem value="Assistant">{t('roles.Assistant', 'Assistant')}</SelectItem>
                                             <SelectItem value="Teacher">{t('roles.Teacher')}</SelectItem>
                                             <SelectItem value="Student">{t('roles.Student', 'Student')}</SelectItem>

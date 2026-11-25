@@ -65,7 +65,8 @@ export async function exportResource(
     throw new Error(`Unknown export resource: ${resourceName}`);
   }
 
-  const records = await config.fetcher(ids, filters);
+  // Rows picked by checkbox export exactly as picked, with no filter on top.
+  const records = await config.fetcher(ids, ids && ids.length ? {} : filters);
 
   if (records.length > MAX_EXPORT_ROWS) {
     throw new Error(

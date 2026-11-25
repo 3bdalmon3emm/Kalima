@@ -57,8 +57,8 @@ function parseQueryFilters(
       continue;
     }
 
-    // numbers (integers and decimals)
-    if (/^\d+(\.\d+)?$/.test(val)) {
+    // numbers (integers and decimals), except text fields typed as digits
+    if (/^\d+(\.\d+)?$/.test(val) && !/search|serial|phone|email|code|name/i.test(key)) {
       filters[key] = Number(val);
       continue;
     }

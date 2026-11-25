@@ -86,7 +86,7 @@ export type EBookletPurchaseListFilters = {
 };
 
 export const E_BOOKLET_ADMIN_PURCHASE_INCLUDE = {
-  teacher: { select: { id: true, name: true, email: true, phone: true } },
+  teacher: { select: { id: true, name: true, email: true, phone: true, flag: true } },
   template: true,
   template_version: true,
   instances: true,

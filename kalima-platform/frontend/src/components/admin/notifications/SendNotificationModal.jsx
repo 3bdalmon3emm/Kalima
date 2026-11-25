@@ -1,8 +1,11 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { NOTIFICATION_CATEGORIES, useNotifications } from '@/contexts/NotificationsContext';
-
+import { Bell, Send } from 'lucide-react';
+import { toast } from 'sonner';
+import { useNotifications } from '@/contexts/NotificationsContext';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import {
     Dialog,
     DialogContent,
@@ -10,31 +13,35 @@ import {
     DialogFooter,
     DialogHeader,
     DialogTitle,
-} from "@/components/ui/dialog";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Bell, Send } from 'lucide-react';
-import { toast } from 'sonner';
+} from '@/components/ui/dialog';
 
-export default function SendNotificationModal({ open, onOpenChange, userId, entityType, entityId }) {
+// The admin writes the whole notification: a title and a text. It goes to
+// one user (`userId`) or several (`userIds`), inside the platform only.
+export default function SendNotificationModal({ open, onOpenChange, userId, userIds, entityType, entityId, onSent }) {
     const { t } = useTranslation('notifications');
     const { adminSendNotification } = useNotifications();
-
     const [sending, setSending] = useState(false);
-    const [category, setCategory] = useState(10);
-    const [messageKey, setMessageKey] = useState('CUSTOM');
+    const [title, setTitle] = useState('');
+    const [body, setBody] = useState('');
+    const targets = userIds?.length ? userIds : userId ? [userId] : [];
 
     const handleSend = async () => {
         setSending(true);
         try {
             await adminSendNotification({
-                user_ids: [userId],
-                category,
-                message_key: messageKey,
+                user_ids: targets,
+                category: 10,
+                message_key: 'CUSTOM',
+                title: title.trim(),
+                body: body.trim(),
                 entity_type: entityType,
-                entity_id: entityId
+                entity_id: entityId,
             });
             toast.success(t('admin.send_success'));
+            setTitle('');
+            setBody('');
             onOpenChange(false);
+            onSent?.();
         } catch (error) {
             console.error('Failed to send notification:', error);
         } finally {
@@ -44,58 +51,35 @@ export default function SendNotificationModal({ open, onOpenChange, userId, enti
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="sm:max-w-[425px] rounded-3xl">
+            <DialogContent className="sm:max-w-[480px] rounded-3xl">
                 <DialogHeader>
                     <DialogTitle className="text-2xl font-black flex items-center gap-2">
                         <Bell className="h-6 w-6 text-primary" />
                         {t('admin.send_notification')}
                     </DialogTitle>
                     <DialogDescription className="font-medium text-muted-foreground">
-                        Send a direct notification to this user.
+                        {t('admin.send_to', { count: targets.length, defaultValue: 'To {{count}} user(s), inside the platform.' })}
                     </DialogDescription>
                 </DialogHeader>
 
-                <div className="grid gap-6 py-6">
-                    <div className="space-y-2">
-                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t('admin.category')}</label>
-                        <Select value={category.toString()} onValueChange={(v) => setCategory(parseInt(v))}>
-                            <SelectTrigger className="h-12 rounded-xl border-border bg-muted/30 font-bold">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl">
-                                {Object.entries(NOTIFICATION_CATEGORIES).map(([key, val]) => (
-                                    <SelectItem key={val} value={val.toString()}>
-                                        {t(`categories.${val}`)}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                <div className="grid gap-4 py-4">
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold">{t('admin.title_label', 'Title')}</label>
+                        <Input value={title} maxLength={200} onChange={(e) => setTitle(e.target.value)} placeholder={t('admin.title_placeholder', 'For example: Your order is ready')} />
                     </div>
-
-                    <div className="space-y-2">
-                        <label className="text-xs font-black uppercase tracking-widest text-muted-foreground">{t('admin.message_key')}</label>
-                        <Select value={messageKey} onValueChange={setMessageKey}>
-                            <SelectTrigger className="h-12 rounded-xl border-border bg-muted/30 font-bold">
-                                <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl">
-                                <SelectItem value="CUSTOM">{t('keys.CUSTOM')}</SelectItem>
-                                <SelectItem value="ORDER_ADMIN_NOTE">{t('keys.ORDER_ADMIN_NOTE')}</SelectItem>
-                                <SelectItem value="ACCOUNT_UPDATE">{t('keys.ACCOUNT_UPDATE')}</SelectItem>
-                                <SelectItem value="SYSTEM_ANNOUNCEMENT">{t('keys.SYSTEM_ANNOUNCEMENT')}</SelectItem>
-                            </SelectContent>
-                        </Select>
+                    <div className="space-y-1.5">
+                        <label className="text-sm font-bold">{t('admin.body_label', 'Message')}</label>
+                        <Textarea value={body} rows={5} maxLength={5000} onChange={(e) => setBody(e.target.value)} placeholder={t('admin.body_placeholder', 'Write what the user should read')} />
                     </div>
                 </div>
 
                 <DialogFooter>
-                    <Button 
-                        onClick={handleSend} 
-                        className="w-full h-12 rounded-xl font-bold" 
-                        disabled={sending}
-                        loading={sending}
+                    <Button
+                        onClick={handleSend}
+                        className="w-full h-12 rounded-xl font-bold"
+                        disabled={sending || !title.trim() || !body.trim() || !targets.length}
                     >
-                        <Send className="h-4 w-4 mr-2" />
+                        <Send className="h-4 w-4 me-2" />
                         {t('admin.send_notification')}
                     </Button>
                 </DialogFooter>

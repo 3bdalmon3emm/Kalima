@@ -487,7 +487,8 @@ export const ModelName = {
   ex_celebration_sounds: 'ex_celebration_sounds',
   ex_teacher_assignments: 'ex_teacher_assignments',
   ex_student_overrides: 'ex_student_overrides',
-  teacher_assistants: 'teacher_assistants'
+  teacher_assistants: 'teacher_assistants',
+  impersonation_logs: 'impersonation_logs'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -503,7 +504,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_cancelled_questions" | "ex_appeals" | "ex_celebration_sounds" | "ex_teacher_assignments" | "ex_student_overrides" | "teacher_assistants"
+    modelProps: "auth_identities" | "user_analytics" | "user_roles" | "users" | "user_appreciation_pages" | "user_appreciation_comments" | "account_review_settings" | "refresh_tokens" | "assistants" | "government" | "lecturers" | "levels" | "stages" | "level_promotions" | "parent_children" | "parents" | "sites" | "social_media" | "students" | "subjects" | "teachers" | "teaches_at" | "zones" | "email_verification_tokens" | "password_reset_tokens" | "categories" | "product_categories" | "coupons" | "coupon_usages" | "product_required_fields" | "products" | "product_reviews" | "samples" | "required_field_definitions" | "carts" | "cart_items" | "cart_item_required_fields" | "purchases" | "purchase_items" | "purchase_item_required_fields" | "payment_methods" | "sample_sections" | "images" | "e_booklet_templates" | "e_booklet_template_versions" | "e_booklet_hotspots" | "e_booklet_hotspot_presets" | "e_booklet_hotspot_preset_usages" | "e_booklet_purchases" | "e_booklet_template_payment_methods" | "e_booklet_template_required_fields" | "e_booklet_purchase_required_fields" | "e_booklet_terms" | "e_booklet_global_settings" | "e_booklet_instances" | "e_booklet_milestones" | "e_booklet_milestone_achievements" | "e_booklet_teacher_terms_acceptances" | "teacher_wallets" | "teacher_wallet_ledger" | "teacher_wallet_credit_lots" | "teacher_wallet_spend_allocations" | "e_booklet_access_codes" | "e_booklet_access_code_print_templates" | "e_booklet_access_code_print_presets" | "e_booklet_access_code_print_batches" | "e_booklet_access_code_print_batch_codes" | "e_booklet_access_code_redemptions" | "e_booklet_access" | "e_booklet_invites" | "e_booklet_devices" | "e_booklet_device_allowances" | "e_booklet_student_purchase_links" | "e_booklet_invite_redemptions" | "e_booklet_file_assets" | "e_booklet_page_previews" | "e_booklet_audit_logs" | "e_booklet_analytics_events" | "product_gallery" | "product_gallery_videos" | "general_settings" | "notifications" | "qb_media" | "qb_folders" | "qb_folder_levels" | "qb_categories" | "qb_questions" | "qb_question_options" | "qb_matching_items" | "ex_folders" | "ex_exams" | "ex_sections" | "ex_exam_questions" | "ex_draw_rules" | "ex_links" | "ex_attempts" | "ex_attempt_answers" | "ex_answer_files" | "ex_cancelled_questions" | "ex_appeals" | "ex_celebration_sounds" | "ex_teacher_assignments" | "ex_student_overrides" | "teacher_assistants" | "impersonation_logs"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -8203,6 +8204,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    impersonation_logs: {
+      payload: Prisma.$impersonation_logsPayload<ExtArgs>
+      fields: Prisma.impersonation_logsFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.impersonation_logsFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.impersonation_logsFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        findFirst: {
+          args: Prisma.impersonation_logsFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.impersonation_logsFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        findMany: {
+          args: Prisma.impersonation_logsFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>[]
+        }
+        create: {
+          args: Prisma.impersonation_logsCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        createMany: {
+          args: Prisma.impersonation_logsCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.impersonation_logsCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>[]
+        }
+        delete: {
+          args: Prisma.impersonation_logsDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        update: {
+          args: Prisma.impersonation_logsUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        deleteMany: {
+          args: Prisma.impersonation_logsDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.impersonation_logsUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.impersonation_logsUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>[]
+        }
+        upsert: {
+          args: Prisma.impersonation_logsUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$impersonation_logsPayload>
+        }
+        aggregate: {
+          args: Prisma.Impersonation_logsAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateImpersonation_logs>
+        }
+        groupBy: {
+          args: Prisma.impersonation_logsGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Impersonation_logsGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.impersonation_logsCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.Impersonation_logsCountAggregateOutputType> | number
+        }
+      }
+    }
   }
 } & {
   other: {
@@ -8297,6 +8372,8 @@ export const UsersScalarFieldEnum = {
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
   cover_url: 'cover_url',
+  deleted_by: 'deleted_by',
+  delete_reason: 'delete_reason',
   secondary_phone: 'secondary_phone',
   profile_pic_url: 'profile_pic_url',
   password_changed_at: 'password_changed_at',
@@ -8747,7 +8824,10 @@ export const PurchasesScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  deleted_by: 'deleted_by',
+  delete_reason: 'delete_reason',
+  customer_flag: 'customer_flag'
 } as const
 
 export type PurchasesScalarFieldEnum = (typeof PurchasesScalarFieldEnum)[keyof typeof PurchasesScalarFieldEnum]
@@ -8939,6 +9019,7 @@ export type E_booklet_hotspot_preset_usagesScalarFieldEnum = (typeof E_booklet_h
 
 export const E_booklet_purchasesScalarFieldEnum = {
   id: 'id',
+  customer_flag: 'customer_flag',
   teacher_id: 'teacher_id',
   template_id: 'template_id',
   template_version_id: 'template_version_id',
@@ -9505,6 +9586,8 @@ export const NotificationsScalarFieldEnum = {
   entity_type: 'entity_type',
   entity_id: 'entity_id',
   target_link: 'target_link',
+  title: 'title',
+  body: 'body',
   is_read: 'is_read',
   created_by: 'created_by',
   created_at: 'created_at'
@@ -9870,6 +9953,17 @@ export const Teacher_assistantsScalarFieldEnum = {
 } as const
 
 export type Teacher_assistantsScalarFieldEnum = (typeof Teacher_assistantsScalarFieldEnum)[keyof typeof Teacher_assistantsScalarFieldEnum]
+
+
+export const Impersonation_logsScalarFieldEnum = {
+  id: 'id',
+  actor_user_id: 'actor_user_id',
+  target_user_id: 'target_user_id',
+  started_at: 'started_at',
+  ended_at: 'ended_at'
+} as const
+
+export type Impersonation_logsScalarFieldEnum = (typeof Impersonation_logsScalarFieldEnum)[keyof typeof Impersonation_logsScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -10761,6 +10855,7 @@ export type GlobalOmitConfig = {
   ex_teacher_assignments?: Prisma.ex_teacher_assignmentsOmit
   ex_student_overrides?: Prisma.ex_student_overridesOmit
   teacher_assistants?: Prisma.teacher_assistantsOmit
+  impersonation_logs?: Prisma.impersonation_logsOmit
 }
 
 /* Types for Logging */

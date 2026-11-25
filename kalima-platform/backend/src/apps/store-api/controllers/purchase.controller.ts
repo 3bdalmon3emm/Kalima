@@ -1,3 +1,4 @@
+import { dayRange } from "../utils/dayRange";
 import { Request, Response, NextFunction } from "express";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
@@ -51,6 +52,7 @@ export const purchaseController = {
         minTotal: dto.minTotal,
         maxTotal: dto.maxTotal,
         productId: dto.productId,
+        flag: dto.flag,
         page: dto.page || 1,
         limit: dto.limit || 10,
       });
@@ -99,6 +101,7 @@ export const purchaseController = {
         limit,
         month,
         year,
+        req.query.all === "1" ? "all" : dayRange(req.query as Record<string, unknown>),
       );
 
       res.status(200).json({
@@ -139,6 +142,7 @@ export const purchaseController = {
           limit,
           month,
           year,
+          range: dayRange(req.query as Record<string, unknown>),
           type,
           search,
         },
@@ -286,11 +290,24 @@ export const purchaseController = {
       const id = parseIntParam(req.params.id, "purchase ID");
       const adminId = (req.user as any).userId;
       const io = req.app.get("io");
-      await purchasesService.deletePurchase(id, adminId, io);
+      await purchasesService.deletePurchase(id, adminId, io, typeof req.body?.reason === "string" ? req.body.reason : "");
       res.status(200).json({
         success: true,
         message: "Purchase deleted successfully",
       });
+    } catch (err) {
+      next(err);
+    }
+  },
+
+  /** GET /deleted — deleted orders (Admin only) */
+  async listDeleted(req: Request, res: Response, next: NextFunction) {
+    try {
+      const page = Math.max(parseInt(req.query.page as string, 10) || 1, 1);
+      const limit = Math.min(Math.max(parseInt(req.query.limit as string, 10) || 20, 1), 100);
+      const search = typeof req.query.search === "string" ? req.query.search : undefined;
+      const result = await purchasesService.listDeleted({ search, page, limit });
+      res.status(200).json({ success: true, data: result.orders, pagination: { total: result.total, page: result.page, pages: result.pages, limit: result.limit } });
     } catch (err) {
       next(err);
     }

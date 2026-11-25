@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { format } from 'date-fns';
 import { arSA } from 'date-fns/locale';
-import { Eye, CheckCircle2, XCircle, Trash2, ChevronLeft, ChevronRight, HeartHandshake, UserCog, KeyRound } from 'lucide-react';
+import { Eye, CheckCircle2, XCircle, Trash2, ChevronLeft, ChevronRight, HeartHandshake, UserCog, KeyRound, ImageDown } from 'lucide-react';
 
 import {
     Table,
@@ -38,6 +38,10 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
+import { outranks } from '@/lib/roleRank';
+import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
+import { Checkbox } from '@/components/ui/checkbox';
+import { largestPhotoUrl } from '@/lib/profilePhoto';
 import { useRole } from '@/hooks/useRole';
 import AppreciationQrButton from './AppreciationQrButton';
 
@@ -53,16 +57,15 @@ export default function UsersTable({
     onImpersonate,
     onResetPassword,
     currentUserId,
-    actorIsSubAdmin,
-    actorIsAdmin,
     impersonatingUserId,
+    selectedIds,
+    onToggleSelect,
+    onToggleAll,
 }) {
     const { t, i18n } = useTranslation('userManagement');
     const isRtl = i18n.dir() === 'rtl';
 
-    const { isAdmin: isRoleAdmin, isSubAdmin: isRoleSubAdmin } = useRole();
-    const isAdmin = actorIsAdmin ?? isRoleAdmin;
-    const isSubAdmin = actorIsSubAdmin ?? isRoleSubAdmin;
+    const { storeRoles } = useRole();
 
     const [passwordDialogOpen, setPasswordDialogOpen] = useState(false);
     const [selectedUserForPassword, setSelectedUserForPassword] = useState(null);
@@ -149,6 +152,15 @@ export default function UsersTable({
                 <Table>
                     <TableHeader>
                         <TableRow>
+                            {onToggleSelect && (
+                                <TableHead className="w-10">
+                                    <Checkbox
+                                        checked={users.length > 0 && users.filter((u) => !u.is_deleted).every((u) => selectedIds?.includes(u.id))}
+                                        onCheckedChange={(v) => onToggleAll?.(!!v)}
+                                        aria-label={t('selectAll', 'Select all')}
+                                    />
+                                </TableHead>
+                            )}
                             <TableHead>{t('table.user')}</TableHead>
                             <TableHead>{t('table.email')}</TableHead>
                             <TableHead>{t('table.phone')}</TableHead>
@@ -166,12 +178,10 @@ export default function UsersTable({
                                 user.role,
                                 ...(user.user_roles?.map(({ role }) => role) ?? []),
                             ].filter(Boolean);
-                            const isTargetAdmin = targetRoles.some(r => String(r).toLowerCase() === 'admin');
-                            const canEditPassword = !user.is_deleted && (isAdmin || (isSubAdmin && !isTargetAdmin));
-                            const canImpersonate = canImpersonateUser({
-                                actorIsSubAdmin,
-                                targetRoles,
-                            });
+                            // Staff act only on accounts below their own rank.
+                            const canManage = !isCurrentUser && outranks(storeRoles, targetRoles);
+                            const canEditPassword = !user.is_deleted && canManage;
+                            const canImpersonate = canImpersonateUser({ actorRoles: storeRoles, targetRoles });
                             const displayEmail = user.email?.includes('_deleted_')
                                 ? user.email.split('_deleted_')[0]
                                 : user.email;
@@ -181,6 +191,15 @@ export default function UsersTable({
 
                             return (
                                 <TableRow key={user.id} data-testid={`users-table-row-${user.id}`}>
+                                    {onToggleSelect && (
+                                        <TableCell className="w-10">
+                                            <Checkbox
+                                                checked={!!selectedIds?.includes(user.id)}
+                                                disabled={user.is_deleted}
+                                                onCheckedChange={(v) => onToggleSelect(user.id, !!v)}
+                                            />
+                                        </TableCell>
+                                    )}
                                     {/* User */}
                                     <TableCell truncate title={user.name || undefined}>
                                         <div className="flex items-center gap-3">
@@ -192,6 +211,9 @@ export default function UsersTable({
                                             </Avatar>
                                             <div className="min-w-0">
                                                 <p className="font-medium text-sm truncate max-w-[160px]">{user.name}</p>
+                                                {user.student_serial && (
+                                                    <p className="text-xs text-muted-foreground tabular-nums" dir="ltr">#{user.student_serial}</p>
+                                                )}
                                                 {user.created_at && (
                                                     <p className="text-xs text-muted-foreground tabular-nums">
                                                         {format(new Date(user.created_at), 'PP', { locale: isRtl ? arSA : undefined })}
@@ -215,11 +237,14 @@ export default function UsersTable({
 
                                     {/* Role */}
                                     <TableCell status>
-                                        {primaryRole ? (
-                                            <Badge variant="secondary">{t(`roles.${primaryRole}`, primaryRole)}</Badge>
-                                        ) : (
-                                            <span className="text-muted-foreground text-sm">—</span>
-                                        )}
+                                        <div className="flex flex-wrap items-center gap-1">
+                                            {primaryRole ? (
+                                                <Badge variant="secondary">{t(`roles.${primaryRole}`, primaryRole)}</Badge>
+                                            ) : (
+                                                <span className="text-muted-foreground text-sm">—</span>
+                                            )}
+                                            {user.flag && user.flag !== 'NORMAL' && <AccountLevelBadge level={user.flag} />}
+                                        </div>
                                     </TableCell>
 
                                     {/* Verification status */}
@@ -267,6 +292,15 @@ export default function UsersTable({
                                                 <AppreciationQrButton userId={user.id} />
                                             )}
 
+                                            {/* The profile photo at its largest size */}
+                                            {user.profile_pic_url && (
+                                                <Button variant="ghost" size="icon" className="h-8 w-8" asChild title={t('actions.downloadPhoto', 'Download photo')}>
+                                                    <a href={largestPhotoUrl(user.profile_pic_url)} target="_blank" rel="noopener noreferrer" download>
+                                                        <ImageDown className="h-4 w-4" />
+                                                    </a>
+                                                </Button>
+                                            )}
+
                                              {!user.is_deleted && onImpersonate && canImpersonate && (
                                                 <Button
                                                     variant="ghost"
@@ -297,7 +331,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Approve */}
-                                            {!user.is_deleted && !user.confirmed && (
+                                            {!user.is_deleted && !user.confirmed && canManage && (
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -312,7 +346,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Reject */}
-                                            {!user.is_deleted && user.confirmed && (
+                                            {!user.is_deleted && user.confirmed && canManage && (
                                                 <Button
                                                     variant="ghost"
                                                     size="icon"
@@ -327,7 +361,7 @@ export default function UsersTable({
                                             )}
 
                                             {/* Delete */}
-                                            {!user.is_deleted && (
+                                            {!user.is_deleted && canManage && (
                                                 <AlertDialog>
                                                     <AlertDialogTrigger asChild>
                                                         <Button

@@ -56,6 +56,7 @@ export type E_booklet_purchasesSumAggregateOutputType = {
 
 export type E_booklet_purchasesMinAggregateOutputType = {
   id: number | null
+  customer_flag: string | null
   teacher_id: number | null
   template_id: number | null
   template_version_id: number | null
@@ -78,6 +79,7 @@ export type E_booklet_purchasesMinAggregateOutputType = {
 
 export type E_booklet_purchasesMaxAggregateOutputType = {
   id: number | null
+  customer_flag: string | null
   teacher_id: number | null
   template_id: number | null
   template_version_id: number | null
@@ -100,6 +102,7 @@ export type E_booklet_purchasesMaxAggregateOutputType = {
 
 export type E_booklet_purchasesCountAggregateOutputType = {
   id: number
+  customer_flag: number
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -153,6 +156,7 @@ export type E_booklet_purchasesSumAggregateInputType = {
 
 export type E_booklet_purchasesMinAggregateInputType = {
   id?: true
+  customer_flag?: true
   teacher_id?: true
   template_id?: true
   template_version_id?: true
@@ -175,6 +179,7 @@ export type E_booklet_purchasesMinAggregateInputType = {
 
 export type E_booklet_purchasesMaxAggregateInputType = {
   id?: true
+  customer_flag?: true
   teacher_id?: true
   template_id?: true
   template_version_id?: true
@@ -197,6 +202,7 @@ export type E_booklet_purchasesMaxAggregateInputType = {
 
 export type E_booklet_purchasesCountAggregateInputType = {
   id?: true
+  customer_flag?: true
   teacher_id?: true
   template_id?: true
   template_version_id?: true
@@ -307,6 +313,7 @@ export type e_booklet_purchasesGroupByArgs<ExtArgs extends runtime.Types.Extensi
 
 export type E_booklet_purchasesGroupByOutputType = {
   id: number
+  customer_flag: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -353,6 +360,7 @@ export type e_booklet_purchasesWhereInput = {
   OR?: Prisma.e_booklet_purchasesWhereInput[]
   NOT?: Prisma.e_booklet_purchasesWhereInput | Prisma.e_booklet_purchasesWhereInput[]
   id?: Prisma.IntFilter<"e_booklet_purchases"> | number
+  customer_flag?: Prisma.StringNullableFilter<"e_booklet_purchases"> | string | null
   teacher_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_version_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
@@ -384,6 +392,7 @@ export type e_booklet_purchasesWhereInput = {
 
 export type e_booklet_purchasesOrderByWithRelationInput = {
   id?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrderInput | Prisma.SortOrder
   teacher_id?: Prisma.SortOrder
   template_id?: Prisma.SortOrder
   template_version_id?: Prisma.SortOrder
@@ -418,6 +427,7 @@ export type e_booklet_purchasesWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.e_booklet_purchasesWhereInput | Prisma.e_booklet_purchasesWhereInput[]
   OR?: Prisma.e_booklet_purchasesWhereInput[]
   NOT?: Prisma.e_booklet_purchasesWhereInput | Prisma.e_booklet_purchasesWhereInput[]
+  customer_flag?: Prisma.StringNullableFilter<"e_booklet_purchases"> | string | null
   teacher_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_version_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
@@ -449,6 +459,7 @@ export type e_booklet_purchasesWhereUniqueInput = Prisma.AtLeast<{
 
 export type e_booklet_purchasesOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrderInput | Prisma.SortOrder
   teacher_id?: Prisma.SortOrder
   template_id?: Prisma.SortOrder
   template_version_id?: Prisma.SortOrder
@@ -480,6 +491,7 @@ export type e_booklet_purchasesScalarWhereWithAggregatesInput = {
   OR?: Prisma.e_booklet_purchasesScalarWhereWithAggregatesInput[]
   NOT?: Prisma.e_booklet_purchasesScalarWhereWithAggregatesInput | Prisma.e_booklet_purchasesScalarWhereWithAggregatesInput[]
   id?: Prisma.IntWithAggregatesFilter<"e_booklet_purchases"> | number
+  customer_flag?: Prisma.StringNullableWithAggregatesFilter<"e_booklet_purchases"> | string | null
   teacher_id?: Prisma.IntWithAggregatesFilter<"e_booklet_purchases"> | number
   template_id?: Prisma.IntWithAggregatesFilter<"e_booklet_purchases"> | number
   template_version_id?: Prisma.IntWithAggregatesFilter<"e_booklet_purchases"> | number
@@ -502,6 +514,7 @@ export type e_booklet_purchasesScalarWhereWithAggregatesInput = {
 }
 
 export type e_booklet_purchasesCreateInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -528,6 +541,7 @@ export type e_booklet_purchasesCreateInput = {
 
 export type e_booklet_purchasesUncheckedCreateInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -553,6 +567,7 @@ export type e_booklet_purchasesUncheckedCreateInput = {
 }
 
 export type e_booklet_purchasesUpdateInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -579,6 +594,7 @@ export type e_booklet_purchasesUpdateInput = {
 
 export type e_booklet_purchasesUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -605,6 +621,7 @@ export type e_booklet_purchasesUncheckedUpdateInput = {
 
 export type e_booklet_purchasesCreateManyInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -627,6 +644,7 @@ export type e_booklet_purchasesCreateManyInput = {
 }
 
 export type e_booklet_purchasesUpdateManyMutationInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -645,6 +663,7 @@ export type e_booklet_purchasesUpdateManyMutationInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -678,6 +697,7 @@ export type e_booklet_purchasesOrderByRelationAggregateInput = {
 
 export type e_booklet_purchasesCountOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
   teacher_id?: Prisma.SortOrder
   template_id?: Prisma.SortOrder
   template_version_id?: Prisma.SortOrder
@@ -715,6 +735,7 @@ export type e_booklet_purchasesAvgOrderByAggregateInput = {
 
 export type e_booklet_purchasesMaxOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
   teacher_id?: Prisma.SortOrder
   template_id?: Prisma.SortOrder
   template_version_id?: Prisma.SortOrder
@@ -737,6 +758,7 @@ export type e_booklet_purchasesMaxOrderByAggregateInput = {
 
 export type e_booklet_purchasesMinOrderByAggregateInput = {
   id?: Prisma.SortOrder
+  customer_flag?: Prisma.SortOrder
   teacher_id?: Prisma.SortOrder
   template_id?: Prisma.SortOrder
   template_version_id?: Prisma.SortOrder
@@ -1040,6 +1062,7 @@ export type e_booklet_purchasesUpdateOneWithoutWallet_ledger_entriesNestedInput 
 }
 
 export type e_booklet_purchasesCreateWithoutTeacherInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1065,6 +1088,7 @@ export type e_booklet_purchasesCreateWithoutTeacherInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutTeacherInput = {
   id?: number
+  customer_flag?: string | null
   template_id: number
   template_version_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -1119,6 +1143,7 @@ export type e_booklet_purchasesScalarWhereInput = {
   OR?: Prisma.e_booklet_purchasesScalarWhereInput[]
   NOT?: Prisma.e_booklet_purchasesScalarWhereInput | Prisma.e_booklet_purchasesScalarWhereInput[]
   id?: Prisma.IntFilter<"e_booklet_purchases"> | number
+  customer_flag?: Prisma.StringNullableFilter<"e_booklet_purchases"> | string | null
   teacher_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
   template_version_id?: Prisma.IntFilter<"e_booklet_purchases"> | number
@@ -1141,6 +1166,7 @@ export type e_booklet_purchasesScalarWhereInput = {
 }
 
 export type e_booklet_purchasesCreateWithoutPayment_methodsInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1166,6 +1192,7 @@ export type e_booklet_purchasesCreateWithoutPayment_methodsInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutPayment_methodsInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1216,6 +1243,7 @@ export type e_booklet_purchasesUpdateManyWithWhereWithoutPayment_methodsInput = 
 }
 
 export type e_booklet_purchasesCreateWithoutPayment_screenshotInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1241,6 +1269,7 @@ export type e_booklet_purchasesCreateWithoutPayment_screenshotInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutPayment_screenshotInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1291,6 +1320,7 @@ export type e_booklet_purchasesUpdateManyWithWhereWithoutPayment_screenshotInput
 }
 
 export type e_booklet_purchasesCreateWithoutTemplateInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1316,6 +1346,7 @@ export type e_booklet_purchasesCreateWithoutTemplateInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutTemplateInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_version_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -1366,6 +1397,7 @@ export type e_booklet_purchasesUpdateManyWithWhereWithoutTemplateInput = {
 }
 
 export type e_booklet_purchasesCreateWithoutTemplate_versionInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1391,6 +1423,7 @@ export type e_booklet_purchasesCreateWithoutTemplate_versionInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutTemplate_versionInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -1441,6 +1474,7 @@ export type e_booklet_purchasesUpdateManyWithWhereWithoutTemplate_versionInput =
 }
 
 export type e_booklet_purchasesCreateWithoutRequired_fieldsInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1466,6 +1500,7 @@ export type e_booklet_purchasesCreateWithoutRequired_fieldsInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutRequired_fieldsInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1506,6 +1541,7 @@ export type e_booklet_purchasesUpdateToOneWithWhereWithoutRequired_fieldsInput =
 }
 
 export type e_booklet_purchasesUpdateWithoutRequired_fieldsInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1531,6 +1567,7 @@ export type e_booklet_purchasesUpdateWithoutRequired_fieldsInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutRequired_fieldsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1555,6 +1592,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutRequired_fieldsInput = {
 }
 
 export type e_booklet_purchasesCreateWithoutInstancesInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1580,6 +1618,7 @@ export type e_booklet_purchasesCreateWithoutInstancesInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutInstancesInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1620,6 +1659,7 @@ export type e_booklet_purchasesUpdateToOneWithWhereWithoutInstancesInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutInstancesInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1645,6 +1685,7 @@ export type e_booklet_purchasesUpdateWithoutInstancesInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutInstancesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1669,6 +1710,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutInstancesInput = {
 }
 
 export type e_booklet_purchasesCreateWithoutWallet_ledger_entriesInput = {
+  customer_flag?: string | null
   status?: $Enums.e_booklet_purchase_status_enum
   price?: runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1694,6 +1736,7 @@ export type e_booklet_purchasesCreateWithoutWallet_ledger_entriesInput = {
 
 export type e_booklet_purchasesUncheckedCreateWithoutWallet_ledger_entriesInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1734,6 +1777,7 @@ export type e_booklet_purchasesUpdateToOneWithWhereWithoutWallet_ledger_entriesI
 }
 
 export type e_booklet_purchasesUpdateWithoutWallet_ledger_entriesInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1759,6 +1803,7 @@ export type e_booklet_purchasesUpdateWithoutWallet_ledger_entriesInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutWallet_ledger_entriesInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1784,6 +1829,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutWallet_ledger_entriesInput 
 
 export type e_booklet_purchasesCreateManyTeacherInput = {
   id?: number
+  customer_flag?: string | null
   template_id: number
   template_version_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -1805,6 +1851,7 @@ export type e_booklet_purchasesCreateManyTeacherInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutTeacherInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1830,6 +1877,7 @@ export type e_booklet_purchasesUpdateWithoutTeacherInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutTeacherInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -1855,6 +1903,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutTeacherInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyWithoutTeacherInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -1877,6 +1926,7 @@ export type e_booklet_purchasesUncheckedUpdateManyWithoutTeacherInput = {
 
 export type e_booklet_purchasesCreateManyPayment_methodsInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1898,6 +1948,7 @@ export type e_booklet_purchasesCreateManyPayment_methodsInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutPayment_methodsInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -1923,6 +1974,7 @@ export type e_booklet_purchasesUpdateWithoutPayment_methodsInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutPayment_methodsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1948,6 +2000,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutPayment_methodsInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyWithoutPayment_methodsInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -1970,6 +2023,7 @@ export type e_booklet_purchasesUncheckedUpdateManyWithoutPayment_methodsInput = 
 
 export type e_booklet_purchasesCreateManyPayment_screenshotInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   template_version_id: number
@@ -1991,6 +2045,7 @@ export type e_booklet_purchasesCreateManyPayment_screenshotInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutPayment_screenshotInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2016,6 +2071,7 @@ export type e_booklet_purchasesUpdateWithoutPayment_screenshotInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutPayment_screenshotInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2041,6 +2097,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutPayment_screenshotInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyWithoutPayment_screenshotInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
@@ -2063,6 +2120,7 @@ export type e_booklet_purchasesUncheckedUpdateManyWithoutPayment_screenshotInput
 
 export type e_booklet_purchasesCreateManyTemplateInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_version_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -2084,6 +2142,7 @@ export type e_booklet_purchasesCreateManyTemplateInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutTemplateInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2109,6 +2168,7 @@ export type e_booklet_purchasesUpdateWithoutTemplateInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutTemplateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -2134,6 +2194,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutTemplateInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyWithoutTemplateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_version_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -2156,6 +2217,7 @@ export type e_booklet_purchasesUncheckedUpdateManyWithoutTemplateInput = {
 
 export type e_booklet_purchasesCreateManyTemplate_versionInput = {
   id?: number
+  customer_flag?: string | null
   teacher_id: number
   template_id: number
   status?: $Enums.e_booklet_purchase_status_enum
@@ -2177,6 +2239,7 @@ export type e_booklet_purchasesCreateManyTemplate_versionInput = {
 }
 
 export type e_booklet_purchasesUpdateWithoutTemplate_versionInput = {
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
   price?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
   wallet_credit_applied?: Prisma.DecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string
@@ -2202,6 +2265,7 @@ export type e_booklet_purchasesUpdateWithoutTemplate_versionInput = {
 
 export type e_booklet_purchasesUncheckedUpdateWithoutTemplate_versionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -2227,6 +2291,7 @@ export type e_booklet_purchasesUncheckedUpdateWithoutTemplate_versionInput = {
 
 export type e_booklet_purchasesUncheckedUpdateManyWithoutTemplate_versionInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
+  customer_flag?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   teacher_id?: Prisma.IntFieldUpdateOperationsInput | number
   template_id?: Prisma.IntFieldUpdateOperationsInput | number
   status?: Prisma.Enume_booklet_purchase_status_enumFieldUpdateOperationsInput | $Enums.e_booklet_purchase_status_enum
@@ -2298,6 +2363,7 @@ export type E_booklet_purchasesCountOutputTypeCountWallet_ledger_entriesArgs<Ext
 
 export type e_booklet_purchasesSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  customer_flag?: boolean
   teacher_id?: boolean
   template_id?: boolean
   template_version_id?: boolean
@@ -2330,6 +2396,7 @@ export type e_booklet_purchasesSelect<ExtArgs extends runtime.Types.Extensions.I
 
 export type e_booklet_purchasesSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  customer_flag?: boolean
   teacher_id?: boolean
   template_id?: boolean
   template_version_id?: boolean
@@ -2358,6 +2425,7 @@ export type e_booklet_purchasesSelectCreateManyAndReturn<ExtArgs extends runtime
 
 export type e_booklet_purchasesSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
+  customer_flag?: boolean
   teacher_id?: boolean
   template_id?: boolean
   template_version_id?: boolean
@@ -2386,6 +2454,7 @@ export type e_booklet_purchasesSelectUpdateManyAndReturn<ExtArgs extends runtime
 
 export type e_booklet_purchasesSelectScalar = {
   id?: boolean
+  customer_flag?: boolean
   teacher_id?: boolean
   template_id?: boolean
   template_version_id?: boolean
@@ -2407,7 +2476,7 @@ export type e_booklet_purchasesSelectScalar = {
   updated_at?: boolean
 }
 
-export type e_booklet_purchasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "teacher_id" | "template_id" | "template_version_id" | "status" | "price" | "wallet_credit_applied" | "final_payable_price" | "marketing_price" | "internal_price" | "access_expires_at" | "currency" | "payment_method" | "payment_method_id" | "payment_reference" | "payment_screenshot_id" | "branding_json" | "admin_notes" | "created_at" | "updated_at", ExtArgs["result"]["e_booklet_purchases"]>
+export type e_booklet_purchasesOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "customer_flag" | "teacher_id" | "template_id" | "template_version_id" | "status" | "price" | "wallet_credit_applied" | "final_payable_price" | "marketing_price" | "internal_price" | "access_expires_at" | "currency" | "payment_method" | "payment_method_id" | "payment_reference" | "payment_screenshot_id" | "branding_json" | "admin_notes" | "created_at" | "updated_at", ExtArgs["result"]["e_booklet_purchases"]>
 export type e_booklet_purchasesInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   teacher?: boolean | Prisma.usersDefaultArgs<ExtArgs>
   template?: boolean | Prisma.e_booklet_templatesDefaultArgs<ExtArgs>
@@ -2448,6 +2517,7 @@ export type $e_booklet_purchasesPayload<ExtArgs extends runtime.Types.Extensions
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
+    customer_flag: string | null
     teacher_id: number
     template_id: number
     template_version_id: number
@@ -2899,6 +2969,7 @@ export interface Prisma__e_booklet_purchasesClient<T, Null = never, ExtArgs exte
  */
 export interface e_booklet_purchasesFieldRefs {
   readonly id: Prisma.FieldRef<"e_booklet_purchases", 'Int'>
+  readonly customer_flag: Prisma.FieldRef<"e_booklet_purchases", 'String'>
   readonly teacher_id: Prisma.FieldRef<"e_booklet_purchases", 'Int'>
   readonly template_id: Prisma.FieldRef<"e_booklet_purchases", 'Int'>
   readonly template_version_id: Prisma.FieldRef<"e_booklet_purchases", 'Int'>

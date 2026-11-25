@@ -135,7 +135,8 @@ export const NotificationsProvider = ({ children }) => {
         if (!isAuthenticated) return;
         setLoading(true);
         try {
-            const { data } = await getMyNotifications({ is_read: false, limit: 20 });
+            // Read and unread alike: read ones stay in the bell, shown as read.
+            const { data } = await getMyNotifications({ limit: 20 });
             const nextNotifications = (data.data ?? data).notifications || [];
             const newlyDiscoveredNotifications = [];
 
@@ -167,7 +168,7 @@ export const NotificationsProvider = ({ children }) => {
     const handleMarkAsRead = async (id) => {
         try {
             await markAsRead(id);
-            setNotifications(prev => prev.filter(n => n.id !== id));
+            setNotifications(prev => prev.map(n => (n.id === id ? { ...n, is_read: true } : n)));
             setUnreadCount(prev => Math.max(0, prev - 1));
         } catch (error) {
             console.error('Failed to mark notification as read:', error);
@@ -177,7 +178,7 @@ export const NotificationsProvider = ({ children }) => {
     const handleMarkAllAsRead = async () => {
         try {
             await markAllAsRead();
-            setNotifications([]);
+            setNotifications(prev => prev.map(n => ({ ...n, is_read: true })));
             setUnreadCount(0);
             toast.success(t('marked_all_read', 'All notifications marked as read'));
         } catch (error) {

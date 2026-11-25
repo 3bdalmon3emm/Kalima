@@ -154,7 +154,8 @@ export const ModelName = {
   ex_celebration_sounds: 'ex_celebration_sounds',
   ex_teacher_assignments: 'ex_teacher_assignments',
   ex_student_overrides: 'ex_student_overrides',
-  teacher_assistants: 'teacher_assistants'
+  teacher_assistants: 'teacher_assistants',
+  impersonation_logs: 'impersonation_logs'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -228,6 +229,8 @@ export const UsersScalarFieldEnum = {
   deleted_at: 'deleted_at',
   is_deleted: 'is_deleted',
   cover_url: 'cover_url',
+  deleted_by: 'deleted_by',
+  delete_reason: 'delete_reason',
   secondary_phone: 'secondary_phone',
   profile_pic_url: 'profile_pic_url',
   password_changed_at: 'password_changed_at',
@@ -678,7 +681,10 @@ export const PurchasesScalarFieldEnum = {
   created_at: 'created_at',
   updated_at: 'updated_at',
   deleted_at: 'deleted_at',
-  is_deleted: 'is_deleted'
+  is_deleted: 'is_deleted',
+  deleted_by: 'deleted_by',
+  delete_reason: 'delete_reason',
+  customer_flag: 'customer_flag'
 } as const
 
 export type PurchasesScalarFieldEnum = (typeof PurchasesScalarFieldEnum)[keyof typeof PurchasesScalarFieldEnum]
@@ -870,6 +876,7 @@ export type E_booklet_hotspot_preset_usagesScalarFieldEnum = (typeof E_booklet_h
 
 export const E_booklet_purchasesScalarFieldEnum = {
   id: 'id',
+  customer_flag: 'customer_flag',
   teacher_id: 'teacher_id',
   template_id: 'template_id',
   template_version_id: 'template_version_id',
@@ -1436,6 +1443,8 @@ export const NotificationsScalarFieldEnum = {
   entity_type: 'entity_type',
   entity_id: 'entity_id',
   target_link: 'target_link',
+  title: 'title',
+  body: 'body',
   is_read: 'is_read',
   created_by: 'created_by',
   created_at: 'created_at'
@@ -1801,6 +1810,17 @@ export const Teacher_assistantsScalarFieldEnum = {
 } as const
 
 export type Teacher_assistantsScalarFieldEnum = (typeof Teacher_assistantsScalarFieldEnum)[keyof typeof Teacher_assistantsScalarFieldEnum]
+
+
+export const Impersonation_logsScalarFieldEnum = {
+  id: 'id',
+  actor_user_id: 'actor_user_id',
+  target_user_id: 'target_user_id',
+  started_at: 'started_at',
+  ended_at: 'ended_at'
+} as const
+
+export type Impersonation_logsScalarFieldEnum = (typeof Impersonation_logsScalarFieldEnum)[keyof typeof Impersonation_logsScalarFieldEnum]
 
 
 export const SortOrder = {

@@ -54,6 +54,9 @@ model users {
   is_deleted                          Boolean?                              @default(false)
   // The teacher's cover photo, shown on the exam start page.
   cover_url                           String?
+  // Who deleted the account and why.
+  deleted_by                          Int?
+  delete_reason                       String?
   secondary_phone                     String?                               @db.VarChar
   profile_pic_url                     String?
   password_changed_at                 DateTime?                             @db.Timestamp(6)
@@ -589,6 +592,11 @@ model purchases {
   updated_at                        DateTime?                           @db.Timestamp(6)
   deleted_at                        DateTime?                           @db.Timestamp(6)
   is_deleted                        Boolean?                            @default(false)
+  // Who deleted the order and why (required when deleting).
+  deleted_by                        Int?
+  delete_reason                     String?
+  // The customer's account level when ordering (set by a database trigger).
+  customer_flag                     String?                             @db.VarChar(20)
   purchase_items                    purchase_items[]
   coupon_usages                     coupon_usages[]
   e_booklet_access_code_redemptions e_booklet_access_code_redemptions[]
@@ -1064,6 +1072,8 @@ model e_booklet_hotspot_preset_usages {
 
 model e_booklet_purchases {
   id                    Int                            @id @default(autoincrement())
+  // The teacher's account level when ordering (set by a database trigger).
+  customer_flag         String?                              @db.VarChar(20)
   teacher_id            Int
   template_id           Int
   template_version_id   Int
@@ -1860,6 +1870,10 @@ model notifications {
   /// Deep-link for the frontend to navigate to (e.g. /orders/7, /users/42)
   target_link String? @db.VarChar(255)
 
+  /// A notification written by an admin: its own title and text.
+  title String? @db.VarChar(200)
+  body  String?
+
   /// Read tracking
   is_read Boolean @default(false)
 
@@ -2440,4 +2454,16 @@ model teacher_assistants {
 
   @@unique([teacher_user_id, assistant_user_id], map: "ux_teacher_assistants")
   @@index([assistant_user_id], map: "ix_teacher_assistants_assistant")
+}
+
+// Every impersonation: who, as whom, when it started and stopped.
+model impersonation_logs {
+  id             Int       @id @default(autoincrement())
+  actor_user_id  Int
+  target_user_id Int
+  started_at     DateTime  @default(now()) @db.Timestamptz(6)
+  ended_at       DateTime? @db.Timestamptz(6)
+
+  @@index([started_at(sort: Desc)], map: "ix_impersonation_logs_started")
+  @@index([actor_user_id, target_user_id], map: "ix_impersonation_logs_actor")
 }
