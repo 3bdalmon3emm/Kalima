@@ -5,7 +5,7 @@ import { Copy, FileSpreadsheet, LogOut, Minimize, UserRound } from 'lucide-react
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/ui/loading-spinner';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import TeacherFilter from './TeacherFilter';
 import { useExport } from '@/hooks/useExport';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { exGet, formatMark } from './api';
@@ -61,13 +61,7 @@ export default function ResultsTab({ exam }) {
     return (
         <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-                <Select value={teacher} onValueChange={setTeacher}>
-                    <SelectTrigger className="w-52"><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">{t('results.allTeachers')}</SelectItem>
-                        {teachers.map((u) => <SelectItem key={u.id} value={String(u.id)}>{u.name}</SelectItem>)}
-                    </SelectContent>
-                </Select>
+                <TeacherFilter teachers={teachers} value={teacher} onChange={setTeacher} />
                 <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting}>
                     {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
                 </Button>

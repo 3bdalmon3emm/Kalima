@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { ex, exGet } from '@/components/admin/exams/api';
+import { teacherMatches } from '@/components/admin/exams/FolderTeachersPanel';
 
 // Exporting the results of many exams at once: the admin picks the exams,
 // optionally some teachers, and the columns. One row per student, and for
@@ -32,6 +33,7 @@ export default function ExamResultsExportPage() {
     const [search, setSearch] = useState('');
     const [exams, setExams] = useState([]);
     const [teachers, setTeachers] = useState([]);
+    const [teacherTerm, setTeacherTerm] = useState('');
     const [studentFields, setStudentFields] = useState(DEFAULT_STUDENT);
     const [attemptFields, setAttemptFields] = useState(['score']);
     const [busy, setBusy] = useState(false);
@@ -112,8 +114,11 @@ export default function ExamResultsExportPage() {
                     <section className="space-y-2 rounded-xl border bg-card p-4">
                         <h2 className="font-semibold">{t('export.teachers')}</h2>
                         <p className="text-xs text-muted-foreground">{t('export.teachersHint')}</p>
+                        {opts.teachers.length > 0 && (
+                            <Input value={teacherTerm} onChange={(e) => setTeacherTerm(e.target.value)} placeholder={t('teachers.searchTeachers')} />
+                        )}
                         <div className="max-h-48 overflow-y-auto">
-                            {opts.teachers.map((tc) => (
+                            {opts.teachers.filter((tc) => teacherMatches(tc, teacherTerm)).map((tc) => (
                                 <CheckRow key={tc.id} checked={teachers.includes(tc.id)} onChange={(on) => toggle(setTeachers, tc.id, on)}>{tc.name}</CheckRow>
                             ))}
                         </div>
