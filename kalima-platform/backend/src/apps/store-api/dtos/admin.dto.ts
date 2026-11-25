@@ -259,4 +259,9 @@ export class UpsertAccountReviewSettingsDto {
 export class UpdateUserFlagDto {
   @IsEnum(user_flag_enum)
   flag: user_flag_enum;
+
+  // Why the account's level changed; staff see it, the user never does.
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }

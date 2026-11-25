@@ -611,11 +611,11 @@ export function useAdminEBookletPurchases() {
   );
 
   const updatePurchaseStatus = useCallback(
-    (purchaseId, nextStatus, adminNotes) =>
+    (purchaseId, nextStatus, adminNotes, reason) =>
       fetchApi({
         endpoint: `/admin/e-booklet-purchases/${purchaseId}/status`,
         method: "patch",
-        data: { status: nextStatus, admin_notes: adminNotes },
+        data: { status: nextStatus, admin_notes: adminNotes, ...(reason && { reason }) },
         defaultSuccessMessage: i18n.t("eBooklets:toasts.purchaseUpdated"),
       }),
     [fetchApi],

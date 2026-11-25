@@ -1,4 +1,5 @@
 import { dayRange } from "../utils/dayRange";
+import { staffActor } from "../services/staff-action-log.service";
 import { Request, Response, NextFunction } from "express";
 import { validate } from "class-validator";
 import { plainToInstance } from "class-transformer";
@@ -240,7 +241,7 @@ export const purchaseController = {
       const id = parseIntParam(req.params.id, "purchase ID");
       const adminId = (req.user as any).userId;
       const io = req.app.get("io");
-      const purchase = await purchasesService.returnPurchase(id, adminId, io);
+      const purchase = await purchasesService.returnPurchase(id, adminId, io, req.body?.reason, staffActor(req));
       res.status(200).json({
         success: true,
         message: "Purchase returned successfully",
@@ -290,7 +291,7 @@ export const purchaseController = {
       const id = parseIntParam(req.params.id, "purchase ID");
       const adminId = (req.user as any).userId;
       const io = req.app.get("io");
-      await purchasesService.deletePurchase(id, adminId, io, typeof req.body?.reason === "string" ? req.body.reason : "");
+      await purchasesService.deletePurchase(id, adminId, io, typeof req.body?.reason === "string" ? req.body.reason : "", staffActor(req));
       res.status(200).json({
         success: true,
         message: "Purchase deleted successfully",
@@ -320,7 +321,7 @@ export const purchaseController = {
       const itemId = parseIntParam(req.params.itemId, "item ID");
       const adminId = (req.user as any).userId;
       const io = req.app.get("io");
-      const purchase = await purchasesService.deleteItem(purchaseId, itemId, adminId, io);
+      const purchase = await purchasesService.deleteItem(purchaseId, itemId, adminId, io, req.body?.reason, staffActor(req));
       res.status(200).json({
         success: true,
         message: "Item removed from purchase",

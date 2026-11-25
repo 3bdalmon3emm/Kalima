@@ -158,12 +158,13 @@ export const useOrders = (optionsOrId = null) => {
     const receiveOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/receive`, method: 'patch' }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
     const confirmOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/confirm`, method: 'patch' }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
     const deliverOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/deliver`, method: 'patch' }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
-    const returnOrder = (orderId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/return`, method: 'patch' }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
+    // Returning and removing an item need a reason (staff-only log).
+    const returnOrder = (orderId, reason) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/return`, method: 'patch', data: { reason } }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
     const addAdminNote = (orderId, note) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/admin-note`, method: 'patch', data: { admin_notes: note } }).then(res => { if (!id) fetchOrders(); else fetchOrderById(id); return res; }));
 
     // Deleting needs a reason (kept with the order for the Admin).
     const deleteOrder = (orderId, reason) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}`, method: 'delete', data: { reason } }).then(res => { if (!id) fetchOrders(); return res; }));
-    const deleteOrderItem = (orderId, itemId) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/items/${itemId}`, method: 'delete' }).then(res => { if (id) fetchOrderById(id); return res; }));
+    const deleteOrderItem = (orderId, itemId, reason) => handleAction(() => fetchApi({ endpoint: `/purchases/${orderId}/items/${itemId}`, method: 'delete', data: { reason } }).then(res => { if (id) fetchOrderById(id); return res; }));
 
     const setSearch = useCallback((query) => {
         setFilters((prev) => ({ ...prev, search: query }));

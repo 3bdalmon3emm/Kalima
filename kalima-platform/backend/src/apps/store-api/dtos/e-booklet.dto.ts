@@ -368,6 +368,11 @@ export class UpdateEBookletPurchaseStatusDto {
   @IsOptional()
   @IsString()
   admin_notes?: string;
+
+  // Required to cancel or reject: kept with who did it in the staff log.
+  @IsOptional()
+  @IsString()
+  reason?: string;
 }
 
 export class DeliverEBookletDto {

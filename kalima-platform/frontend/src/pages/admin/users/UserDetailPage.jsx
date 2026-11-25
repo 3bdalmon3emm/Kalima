@@ -25,10 +25,13 @@ import AssistantCard from '@/components/admin/users/details/AssistantCard';
 import AssistantTeachersCard from '@/components/admin/users/details/AssistantTeachersCard';
 import ParentCard from '@/components/admin/users/details/ParentCard';
 import UsersCreatedCard from '@/components/admin/users/details/UsersCreatedCard';
+import ReasonDialog from '@/components/admin/staff-log/ReasonDialog';
+import StaffActionLog from '@/components/admin/staff-log/StaffActionLog';
 
 export default function UserDetailPage() {
     const { id } = useParams();
     const { t, i18n } = useTranslation('userManagement');
+    const { t: tLog } = useTranslation('staffLog');
     const isRtl = i18n.dir() === 'rtl';
     const { isAdmin, storeRoles } = useRole();
     const { user: currentUser } = useAuth();
@@ -159,9 +162,16 @@ export default function UserDetailPage() {
         }
     };
 
-    const handleUpdateFlag = async (flag) => {
-        await updateUserFlag(id, flag);
+    // A level change asks why first; the reason goes to the level history.
+    const [flagChange, setFlagChange] = useState(null);
+    const [logKey, setLogKey] = useState(0);
+    const handleUpdateFlag = (flag) => setFlagChange(flag);
+    const confirmFlag = async (reason) => {
+        const res = await updateUserFlag(id, flagChange, reason);
+        if (!res) return false;
         fetchUserById(id);
+        setLogKey((k) => k + 1);
+        return true;
     };
 
     const handleResetPassword = async (password) => resetUserPassword(id, password);
@@ -254,6 +264,14 @@ export default function UserDetailPage() {
                 t={t}
             />
 
+            <ReasonDialog
+                open={!!flagChange}
+                onOpenChange={(o) => !o && setFlagChange(null)}
+                title={tLog('flagDialog.title')}
+                description={flagChange ? tLog('flagDialog.description', { level: t(`details.flags.${flagChange}`, flagChange) }) : ''}
+                onConfirm={confirmFlag}
+            />
+
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
                 {/* Left Column: Analytics & Roles */}
@@ -267,6 +285,8 @@ export default function UserDetailPage() {
                         hasAdminAccess={canManage}
                         t={t}
                     />
+
+                    <StaffActionLog entityType="user" entityId={Number(id)} refreshKey={logKey} title={tLog('flagTitle')} emptyText={tLog('flagEmpty')} />
 
                     <UsersCreatedCard createdEntries={createdEntries} t={t} />
 

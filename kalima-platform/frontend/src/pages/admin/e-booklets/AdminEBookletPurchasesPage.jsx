@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useReasonPrompt, { askClosingReason } from '@/components/admin/staff-log/useReasonPrompt';
 import { Link, useSearchParams } from "react-router-dom";
 import { Download, PackageCheck } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -57,6 +58,8 @@ const purchaseAmount = (purchase) => purchase?.final_payable_price ?? purchase?.
 
 export default function AdminEBookletPurchasesPage() {
   const { t, i18n } = useTranslation("eBooklets");
+  const { t: tLog } = useTranslation("staffLog");
+  const [askReason, reasonDialog] = useReasonPrompt();
   const [searchParams, setSearchParams] = useSearchParams();
   const {
     purchases,
@@ -121,7 +124,11 @@ export default function AdminEBookletPurchasesPage() {
 
   const refresh = () => fetchPurchases().catch(() => {});
   const handleMarkPaid = (purchase) => markPaid(purchase.id);
-  const handleUpdateStatus = (purchase, nextStatus) => updatePurchaseStatus(purchase.id, nextStatus, purchase.admin_notes);
+  const handleUpdateStatus = async (purchase, nextStatus) => {
+    const reason = await askClosingReason(askReason, tLog, purchase.status, nextStatus);
+    if (reason === null) return undefined;
+    return updatePurchaseStatus(purchase.id, nextStatus, purchase.admin_notes, reason);
+  };
 
   const handleExport = (format) => {
     exportData({
@@ -141,6 +148,7 @@ export default function AdminEBookletPurchasesPage() {
 
   return (
     <div className="space-y-6" data-testid="admin-e-booklet-purchases-page">
+      {reasonDialog}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">

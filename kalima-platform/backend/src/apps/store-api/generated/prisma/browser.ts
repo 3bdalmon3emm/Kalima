@@ -547,3 +547,8 @@ export type impersonation_logs = Prisma.impersonation_logsModel
  * 
  */
 export type staff_shifts = Prisma.staff_shiftsModel
+/**
+ * Model staff_action_logs
+ * 
+ */
+export type staff_action_logs = Prisma.staff_action_logsModel

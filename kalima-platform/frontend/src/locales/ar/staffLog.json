@@ -1,0 +1,28 @@
+{
+    "title": "سجل الإجراءات",
+    "empty": "لا توجد إجراءات مسجلة.",
+    "by": "بواسطة {{name}}",
+    "asUser": "أثناء الدخول بحساب {{name}}",
+    "unknown": "غير معروف",
+    "flagTitle": "سجل تصنيف الحساب",
+    "flagEmpty": "لم يتغير تصنيف هذا الحساب منذ بدء التسجيل.",
+    "action": {
+        "flag": "تغيير التصنيف",
+        "return": "مرتجع",
+        "item_delete": "حذف منتج من الطلب",
+        "delete": "حذف الطلب",
+        "cancelled": "إلغاء الطلب",
+        "rejected": "رفض الطلب"
+    },
+    "reason": {
+        "label": "السبب",
+        "placeholder": "اكتب السبب...",
+        "hint": "مطلوب. يظهر للأدمن والسب أدمن والمودريتور فقط، ولا يظهر للمستخدم.",
+        "cancel": "إلغاء",
+        "confirm": "تأكيد"
+    },
+    "flagDialog": { "title": "تغيير تصنيف الحساب", "description": "إلى: {{level}}" },
+    "returnDialog": { "title": "مرتجع الطلب", "description": "سيتحول الطلب إلى مرتجع." },
+    "itemDialog": { "title": "حذف منتج من الطلب", "description": "سيُعاد حساب إجمالي الطلب." },
+    "ebookletDialog": { "title": "سبب {{status}}" }
+}

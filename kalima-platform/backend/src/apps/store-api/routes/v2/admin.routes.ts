@@ -8,6 +8,8 @@ import { role_enum } from "../../generated/prisma/client";
 import { makeExportHandler } from "../../export";
 import { usersExportFile, usersExportOptions } from "../../export/users-custom-export";
 import { impersonationLogService } from "../../services/impersonation-log.service";
+import { staffActionLogService } from "../../services/staff-action-log.service";
+import { BadRequestError } from "../../../../libs/errors";
 
 const router = Router();
 
@@ -148,6 +150,19 @@ router.delete("/users/:userId/roles", ...adminAuth, adminController.revokeRole);
 
 // Delete a user
 router.delete("/users/:userId", ...adminAuth, adminController.deleteUser);
+
+// Who changed an account's level, returned an order, removed an item, deleted
+// an order or cancelled an e-booklet order, and why. Staff only.
+router.get("/staff-actions", ...adminModeratorAuth, async (req, res, next) => {
+  try {
+    const type = String(req.query.entity_type || "");
+    const id = Number(req.query.entity_id);
+    if (!["user", "purchase", "e_booklet_purchase"].includes(type) || !id) throw new BadRequestError("entity_type and entity_id are required");
+    res.json({ success: true, data: await staffActionLogService.list(type, id) });
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Impersonation log: Admin only.
 router.get("/impersonation-logs", ...adminOnlyAuth, async (req, res, next) => {

@@ -40,6 +40,7 @@ import {
   BadRequestError,
 } from "../../../libs/errors";
 import { accountReviewService } from "./account-review.service";
+import type { StaffActor } from "./staff-action-log.service";
 
 // ============================================
 // CONSTANTS
@@ -1259,17 +1260,19 @@ class UserManagementService {
     return user;
   }
 
-  async updateUserFlag(userId: number, flag: user_flag_enum) {
+  // The level change and its reason go to the staff action log together.
+  async updateUserFlag(userId: number, flag: user_flag_enum, reason: string, actor: StaffActor) {
     const user = await this.db.users.findUnique({
       where: { id: userId },
-      select: { id: true },
+      select: { id: true, flag: true },
     });
 
     if (!user) {
       throw new NotFoundError("User not found");
     }
 
-    return this.db.users.update({
+    const [updated] = await this.db.$transaction([
+      this.db.users.update({
       where: { id: userId },
       data: {
         flag,
@@ -1281,7 +1284,20 @@ class UserManagementService {
         email: true,
         flag: true,
       },
-    });
+    }),
+      this.db.staff_action_logs.create({
+        data: {
+          entity_type: "user",
+          entity_id: userId,
+          action: "flag",
+          reason,
+          actor_user_id: actor.actorId,
+          as_user_id: actor.asUserId,
+          meta: { from: user.flag, to: flag },
+        },
+      }),
+    ]);
+    return updated;
   }
 
   // ============================================

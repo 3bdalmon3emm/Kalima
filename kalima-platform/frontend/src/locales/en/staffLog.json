@@ -1,0 +1,28 @@
+{
+    "title": "Action log",
+    "empty": "No actions recorded.",
+    "by": "By {{name}}",
+    "asUser": "while viewing as {{name}}",
+    "unknown": "unknown",
+    "flagTitle": "Account level history",
+    "flagEmpty": "This account's level has not changed since recording began.",
+    "action": {
+        "flag": "Level changed",
+        "return": "Returned",
+        "item_delete": "Item removed from the order",
+        "delete": "Order deleted",
+        "cancelled": "Order cancelled",
+        "rejected": "Order rejected"
+    },
+    "reason": {
+        "label": "Reason",
+        "placeholder": "Write the reason...",
+        "hint": "Required. Shown to admins, sub-admins and moderators only, never to the user.",
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+    },
+    "flagDialog": { "title": "Change account level", "description": "To: {{level}}" },
+    "returnDialog": { "title": "Return the order", "description": "The order becomes returned." },
+    "itemDialog": { "title": "Remove an item from the order", "description": "The order's total is recalculated." },
+    "ebookletDialog": { "title": "Reason: {{status}}" }
+}

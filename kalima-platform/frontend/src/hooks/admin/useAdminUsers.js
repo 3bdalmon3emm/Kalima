@@ -77,13 +77,14 @@ export const useAdminUsers = () => {
     }, []);
 
     // ─── Update User Flag ─────────────────────────────────────────────────────────
-    const updateUserFlag = useCallback(async (userId, flag) => {
+    // The reason is required; staff see it in the account's level history.
+    const updateUserFlag = useCallback(async (userId, flag, reason) => {
         setLoading(true);
         try {
             const response = await mutate({
                 endpoint: `/admin/users/${userId}/flag`,
                 method: 'patch',
-                data: { flag },
+                data: { flag, reason },
             });
             setSelectedUser(response || null);
             return response;

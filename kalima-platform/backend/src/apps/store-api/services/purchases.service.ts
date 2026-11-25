@@ -7,6 +7,7 @@ import { userManagementService } from "./user-management.service";
 import { imageService } from "./image.service";
 import type { Prisma } from "../generated/prisma/client";
 import { role_enum, user_flag_enum } from "../generated/prisma/client";
+import { requireReason, staffActionLogService, type StaffActor } from "./staff-action-log.service";
 import type { CheckoutDto } from "../dtos/cart.dto";
 import { couponService } from "./coupon.service";
 import { validatePaymentForCheckout } from "./checkout-validation.service";
@@ -976,7 +977,8 @@ export class PurchasesService {
   }
 
   /** received | confirmed | delivered → returned */
-  async returnPurchase(purchaseId: number, adminId: number, io?: SocketIOServer | null) {
+  async returnPurchase(purchaseId: number, adminId: number, io?: SocketIOServer | null, reason?: string, actor?: StaffActor) {
+    const why = requireReason(reason);
     const purchase = await this.db.purchases.findUnique({
       where: { id: purchaseId },
       include: {
@@ -991,10 +993,20 @@ export class PurchasesService {
       );
     }
 
-    const updated = await this.db.purchases.update({
-      where: { id: purchaseId },
-      data: { status: "returned", returned_by: adminId, returned_at: new Date(), updated_at: new Date() },
-      include: PURCHASE_INCLUDE,
+    // The reason lives in the staff log only: never in the customer's
+    // order, notification or email.
+    const updated = await this.db.$transaction(async (tx) => {
+      const row = await tx.purchases.update({
+        where: { id: purchaseId },
+        data: { status: "returned", returned_by: adminId, returned_at: new Date(), updated_at: new Date() },
+        include: PURCHASE_INCLUDE,
+      });
+      await staffActionLogService.record({
+        entityType: "purchase", entityId: purchaseId, action: "return", reason: why,
+        actor: actor ?? { actorId: adminId ?? null, asUserId: null },
+        meta: { from: purchase.status, total: Number(purchase.total) },
+      }, tx);
+      return row;
     });
 
     const customer = purchase.users;
@@ -1067,7 +1079,7 @@ export class PurchasesService {
 
   /** Delete a purchase (kept for the record, out of every count) with who,
    * when and why. Restores used coupons if confirmed. */
-  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null, reason?: string) {
+  async deletePurchase(purchaseId: number, adminId?: number, io?: SocketIOServer | null, reason?: string, actor?: StaffActor) {
     const why = (reason ?? "").trim();
     if (why.length < 3) throw new BadRequestError("A reason is required to delete an order");
     const purchase = await this.db.purchases.findUnique({
@@ -1088,6 +1100,11 @@ export class PurchasesService {
         where: { id: purchaseId },
         data: { deleted_at: new Date(), is_deleted: true, deleted_by: adminId ?? null, delete_reason: why.slice(0, 1000) },
       });
+      await staffActionLogService.record({
+        entityType: "purchase", entityId: purchaseId, action: "delete", reason: why.slice(0, 1000),
+        actor: actor ?? { actorId: adminId ?? null, asUserId: null },
+        meta: { status: purchase.status, total: Number(purchase.total) },
+      }, tx);
       await tx.user_analytics.update({
         where: { user_id: purchase.user_id },
         data: {
@@ -1164,7 +1181,10 @@ export class PurchasesService {
     itemId: number,
     adminId?: number,
     io?: SocketIOServer | null,
+    reason?: string,
+    actor?: StaffActor,
   ) {
+    const why = requireReason(reason);
     const purchase = await this.db.purchases.findUnique({
       where: { id: purchaseId },
       include: {
@@ -1195,6 +1215,11 @@ export class PurchasesService {
         where: { id: itemId },
         data: { deleted_at: new Date(), is_deleted: true },
       });
+      await staffActionLogService.record({
+        entityType: "purchase", entityId: purchaseId, action: "item_delete", reason: why,
+        actor: actor ?? { actorId: adminId ?? null, asUserId: null },
+        meta: { item_id: itemId, product_id: item.product_id, title: item.products?.title ?? null, quantity: item.quantity, price: Number(item.price_at_purchase) },
+      }, tx);
 
       if (priceDiff > 0) {
         await tx.user_analytics.update({

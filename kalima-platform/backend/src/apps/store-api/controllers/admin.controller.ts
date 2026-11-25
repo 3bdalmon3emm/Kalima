@@ -4,6 +4,7 @@ import { plainToInstance } from "class-transformer";
 import { userManagementService } from "../services/user-management.service";
 import { notificationService } from "../services/notification.service";
 import { accountReviewService } from "../services/account-review.service";
+import { requireReason, staffActor } from "../services/staff-action-log.service";
 import {
   AssignRoleDto,
   RevokeRoleDto,
@@ -594,6 +595,8 @@ export const adminController = {
       const updated = await userManagementService.updateUserFlag(
         userId,
         dto.flag,
+        requireReason(dto.reason),
+        staffActor(req),
       );
 
       res.status(200).json({

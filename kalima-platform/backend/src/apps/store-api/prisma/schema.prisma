@@ -2485,3 +2485,22 @@ model staff_shifts {
   @@index([user_id, started_at], map: "ix_staff_shifts_user_started")
   @@index([started_at], map: "ix_staff_shifts_started")
 }
+
+// Staff action log: account flag changes, order returns, items removed from
+// orders, deleted orders and cancelled/rejected e-booklet orders, with who
+// did it (the real person when viewing as someone: as_user_id is the account
+// they viewed as) and why. Staff read it; customers never see it.
+model staff_action_logs {
+  id            Int      @id @default(autoincrement())
+  entity_type   String   @db.VarChar(40)
+  entity_id     Int
+  action        String   @db.VarChar(40)
+  reason        String?
+  actor_user_id Int?
+  as_user_id    Int?
+  meta          Json?
+  created_at    DateTime @default(now()) @db.Timestamptz(6)
+
+  @@index([entity_type, entity_id, created_at(sort: Desc)], map: "ix_staff_action_logs_entity")
+  @@index([actor_user_id, created_at(sort: Desc)], map: "ix_staff_action_logs_actor")
+}

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import ReasonDialog from '@/components/admin/staff-log/ReasonDialog';
 import { useTranslation } from 'react-i18next';
 import { MoreHorizontal, Eye, CheckCircle, RotateCcw, Package, Trash2, FileText, MessageCircle, Truck } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -39,6 +40,8 @@ export default function OrderActions({ order, onActionSuccess }) {
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
+    const [returnOpen, setReturnOpen] = useState(false);
+    const { t: tLog } = useTranslation('staffLog');
     const [noteDialogOpen, setNoteDialogOpen] = useState(false);
     const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
     const [editableWhatsAppMessage, setEditableWhatsAppMessage] = useState('');
@@ -109,6 +112,18 @@ export default function OrderActions({ order, onActionSuccess }) {
 
     return (
         <div className="flex items-center justify-end gap-1">
+            <ReasonDialog
+                open={returnOpen}
+                onOpenChange={setReturnOpen}
+                title={tLog('returnDialog.title')}
+                description={tLog('returnDialog.description')}
+                onConfirm={async (reason) => {
+                    const res = await returnOrder(order.id, reason);
+                    if (!res?.success) return false;
+                    if (onActionSuccess) onActionSuccess();
+                    return true;
+                }}
+            />
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -245,7 +260,7 @@ export default function OrderActions({ order, onActionSuccess }) {
 
                     {(status === 'received' || status === 'confirmed' || status === 'delivered') && (
                         <DropdownMenuItem
-                            onClick={() => handleAction(() => returnOrder(order.id))}
+                            onClick={() => setReturnOpen(true)}
                             className="cursor-pointer flex items-center text-highlight focus:text-highlight"
                             data-testid="admin-orders-action-return"
                         >

@@ -13,6 +13,8 @@ import AdminNotesSection from '@/components/admin/orders/AdminNotesSection';
 import SendNotificationModal from '@/components/admin/notifications/SendNotificationModal';
 import { Bell } from 'lucide-react';
 import AppreciationQrButton from '@/components/admin/users/AppreciationQrButton';
+import ReasonDialog from '@/components/admin/staff-log/ReasonDialog';
+import StaffActionLog from '@/components/admin/staff-log/StaffActionLog';
 
 import {
     AlertDialog,
@@ -57,6 +59,8 @@ export default function OrderDetailPage() {
 
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [deleteReason, setDeleteReason] = useState('');
+    const [returnOpen, setReturnOpen] = useState(false);
+    const { t: tLog } = useTranslation('staffLog');
     const [isWhatsAppDialogOpen, setIsWhatsAppDialogOpen] = useState(false);
     const [isNotifModalOpen, setIsNotifModalOpen] = useState(false);
     const [editableWhatsAppMessage, setEditableWhatsAppMessage] = useState('');
@@ -175,6 +179,14 @@ export default function OrderDetailPage() {
 
     return (
         <div className="max-w-6xl mx-auto space-y-6">
+            <ReasonDialog
+                open={returnOpen}
+                onOpenChange={setReturnOpen}
+                title={tLog('returnDialog.title')}
+                description={tLog('returnDialog.description')}
+                onConfirm={async (reason) => !!(await returnOrder(order.id, reason))?.success}
+            />
+
             <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -290,7 +302,7 @@ export default function OrderDetailPage() {
 
                     {(status === 'received' || status === 'confirmed' || status === 'delivered') && (
                         <Button
-                            onClick={() => returnOrder(order.id)}
+                            onClick={() => setReturnOpen(true)}
                             disabled={actionLoading}
                             variant="outline"
                             className="text-highlight border-highlight hover:bg-highlight/10"
@@ -529,6 +541,9 @@ export default function OrderDetailPage() {
 
                     {/* Status Timeline */}
                     <StatusTimeline order={order} />
+
+                    {/* Who returned it, removed items or deleted it, and why (staff only). */}
+                    <StaffActionLog entityType="purchase" entityId={order.id} refreshKey={order.updated_at} hideWhenEmpty />
 
                     {/* Coupon Info */}
                     {order.coupon_usages && order.coupon_usages.length > 0 && (

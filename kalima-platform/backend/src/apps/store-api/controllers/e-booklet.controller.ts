@@ -1,4 +1,6 @@
 import { Request, Response, NextFunction } from "express";
+import { requireReason, staffActionLogService, staffActor } from "../services/staff-action-log.service";
+import { prisma } from "../../../libs/db/prisma";
 import crypto from "crypto";
 import path from "path";
 import { plainToInstance } from "class-transformer";
@@ -877,11 +879,24 @@ export const eBookletController = {
   async updatePurchaseStatus(req: Request, res: Response, next: NextFunction) {
     try {
       const dto = await validateDto(UpdateEBookletPurchaseStatusDto, req.body);
+      const id = parseId(req.params.id, "purchase ID");
+      // Cancelling or rejecting an order stands for deleting it: it needs a
+      // reason, logged with who did it.
+      // (Only when the status changes: saving notes on an already cancelled
+      // order asks nothing.)
+      const current = (dto.status === "cancelled" || dto.status === "rejected")
+        ? await prisma.e_booklet_purchases.findUnique({ where: { id }, select: { status: true } })
+        : null;
+      const closing = !!current && current.status !== dto.status;
+      const reason = closing ? requireReason(dto.reason) : null;
       const data = await getEBookletService().updatePurchaseStatus(
-        parseId(req.params.id, "purchase ID"),
+        id,
         dto.status,
         dto.admin_notes,
       );
+      if (closing) {
+        await staffActionLogService.record({ entityType: "e_booklet_purchase", entityId: id, action: dto.status, reason, actor: staffActor(req) });
+      }
       res.status(200).json({ success: true, data });
     } catch (error) {
       next(error);

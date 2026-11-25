@@ -355,5 +355,16 @@
   "Pick at least one account type": "اختر نوع حساب واحدًا على الأقل",
   "Pick at least one column": "اختر عمودًا واحدًا على الأقل",
   "Email already in use": "البريد الإلكتروني مسجّل بالفعل لحساب آخر",
-  "Phone number already in use": "رقم الهاتف مسجّل بالفعل لحساب آخر"
+  "Phone number already in use": "رقم الهاتف مسجّل بالفعل لحساب آخر",
+  "Write the reason": "اكتب السبب",
+  "entity_type and entity_id are required": "بيانات السجل ناقصة",
+  "A shift is already running": "عندك شيفت شغال بالفعل",
+  "No shift is running": "مفيش شيفت شغال",
+  "Shifts cannot be changed while viewing as another user": "لا يمكن تغيير الشيفت أثناء الدخول بحساب مستخدم آخر",
+  "Invalid shift time": "وقت الشيفت غير صحيح",
+  "A shift cannot be in the future": "لا يمكن أن يكون الشيفت في المستقبل",
+  "The shift must end after it starts": "يجب أن تكون نهاية الشيفت بعد بدايته",
+  "This shift overlaps another shift": "الشيفت ده متداخل مع شيفت تاني",
+  "Pick the employee": "اختر الموظف",
+  "Shift not found": "الشيفت غير موجود"
 }

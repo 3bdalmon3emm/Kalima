@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
+import StaffActionLog from '@/components/admin/staff-log/StaffActionLog';
+import useReasonPrompt, { askClosingReason } from '@/components/admin/staff-log/useReasonPrompt';
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { BookOpenCheck, CheckCircle2, ChevronLeft, ExternalLink, Save } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -41,6 +43,9 @@ function Card({ title, children, className = "" }) {
 
 export default function AdminEBookletPurchaseDetailPage() {
   const { t, i18n } = useTranslation("eBooklets");
+  const { t: tLog } = useTranslation("staffLog");
+  const [askReason, reasonDialog] = useReasonPrompt();
+  const [logKey, setLogKey] = useState(0);
   const navigate = useNavigate();
   const { purchaseId } = useParams();
   const {
@@ -102,8 +107,11 @@ export default function AdminEBookletPurchaseDetailPage() {
     await loadPurchase();
   };
   const setStatus = async (nextStatus) => {
-    await updatePurchaseStatus(purchase.id, nextStatus, adminNotes);
+    const reason = await askClosingReason(askReason, tLog, purchase.status, nextStatus);
+    if (reason === null) return;
+    await updatePurchaseStatus(purchase.id, nextStatus, adminNotes, reason);
     await loadPurchase();
+    setLogKey((k) => k + 1);
   };
   const startEditExpiry = () => {
     setExpiryDraft(instance?.access_expires_at ? new Date(instance.access_expires_at).toISOString().slice(0, 10) : "");
@@ -118,6 +126,7 @@ export default function AdminEBookletPurchaseDetailPage() {
 
   return (
     <div className="mx-auto max-w-6xl space-y-6" data-testid="admin-e-booklet-purchase-detail-page">
+      {reasonDialog}
       <div className="flex flex-col gap-4 border-b pb-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => navigate("/admin/e-booklets/orders")} aria-label={t("common.back", { defaultValue: "Back" })}>
@@ -188,6 +197,9 @@ export default function AdminEBookletPurchaseDetailPage() {
               <Button onClick={saveNotes} disabled={loading}><Save className="h-4 w-4" />{t("admin.purchases.saveNote", { defaultValue: "Save note" })}</Button>
             </div>
           </Card>
+
+          {/* Who cancelled or rejected it, and why (staff only). */}
+          <StaffActionLog entityType="e_booklet_purchase" entityId={purchase.id} refreshKey={logKey} hideWhenEmpty />
 
           <Card title={t("admin.purchases.teacherInfo", { defaultValue: "Teacher Info" })} className="border-primary/20">
             <DetailRow label={t("common.name", { defaultValue: "Name" })} value={purchase.teacher?.name} />

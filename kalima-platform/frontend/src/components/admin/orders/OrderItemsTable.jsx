@@ -5,27 +5,20 @@ import { formatCurrency, buildProductImages } from '@/lib/storeUtils';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Trash2, ChevronDown, ChevronUp } from 'lucide-react';
-import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+import ReasonDialog from '@/components/admin/staff-log/ReasonDialog';
 
 export default function OrderItemsTable({ items, onDeleteItem, orderId }) {
     const { t } = useTranslation('admin');
     const [deleteItemId, setDeleteItemId] = useState(null);
     const [isExpanded, setIsExpanded] = useState(true);
 
-    const handleDeleteConfirm = () => {
-        if (deleteItemId) {
-            onDeleteItem(orderId, deleteItemId);
-            setDeleteItemId(null);
-        }
+    // Removing an item asks why; staff see the reason in the order's log.
+    const handleDeleteConfirm = async (reason) => {
+        if (!deleteItemId) return false;
+        const res = await onDeleteItem(orderId, deleteItemId, reason);
+        if (!res?.success) return false;
+        setDeleteItemId(null);
+        return true;
     };
 
     if (!items?.length) return null;
@@ -57,22 +50,14 @@ export default function OrderItemsTable({ items, onDeleteItem, orderId }) {
                 </Button>
             </div>
 
-            <AlertDialog open={!!deleteItemId} onOpenChange={(open) => !open && setDeleteItemId(null)}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>{t('orders.actions.deleteItem', 'Remove Item')}</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            {t('orders.messages.deleteItemWarning', 'Are you sure you want to remove this item from the order? This action cannot be undone.')}
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>{t('common.cancel', 'Cancel')}</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDeleteConfirm} className="bg-destructive hover:bg-destructive/90 text-destructive-foreground">
-                            {t('common.confirm', 'Confirm')}
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            <ReasonDialog
+                open={!!deleteItemId}
+                onOpenChange={(open) => !open && setDeleteItemId(null)}
+                title={t('orders.actions.deleteItem', 'Remove Item')}
+                description={t('orders.messages.deleteItemWarning', 'Are you sure you want to remove this item from the order? This action cannot be undone.')}
+                destructive
+                onConfirm={handleDeleteConfirm}
+            />
 
             {isExpanded && (
                 <div className="space-y-4 animate-in fade-in duration-200">

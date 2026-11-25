@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import useReasonPrompt, { askClosingReason } from '@/components/admin/staff-log/useReasonPrompt';
 import { useNavigate } from "react-router-dom";
 import { PencilLine, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,8 @@ export default function AdminEBookletPurchaseDeliveryForm({
   onChanged,
 }) {
   const navigate = useNavigate();
+  const { t: tLog } = useTranslation("staffLog");
+  const [askReason, reasonDialog] = useReasonPrompt();
   const [deliveryForm, setDeliveryForm] = useState({
     custom_document_file_id: "",
     display_title: "",
@@ -132,7 +135,9 @@ export default function AdminEBookletPurchaseDeliveryForm({
 
   const handleStatus = async (nextStatus) => {
     if (!purchase) return;
-    await updatePurchaseStatus(purchase.id, nextStatus, deliveryForm.admin_notes);
+    const reason = await askClosingReason(askReason, tLog, purchase.status, nextStatus);
+    if (reason === null) return;
+    await updatePurchaseStatus(purchase.id, nextStatus, deliveryForm.admin_notes, reason);
     onChanged?.();
   };
 
@@ -168,6 +173,7 @@ export default function AdminEBookletPurchaseDeliveryForm({
 
   return (
     <section className="space-y-4 rounded-lg border bg-background p-4" data-testid="admin-e-booklet-purchases-delivery-section">
+      {reasonDialog}
       <div>
         <h2 className="text-lg font-semibold">{t("admin.purchases.delivery")}</h2>
         <p className="text-sm text-muted-foreground">
