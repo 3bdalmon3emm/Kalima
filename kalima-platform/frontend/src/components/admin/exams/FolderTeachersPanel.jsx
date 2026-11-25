@@ -13,6 +13,12 @@ import { ex, exGet, exSend } from './api';
 
 export const formatDate = (v) => (v ? new Date(v).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : '—');
 
+// A teacher matches a search by name, email or phone.
+export const teacherMatches = (teacher, term) => {
+    const needle = term.trim().toLowerCase();
+    return !needle || [teacher?.name, teacher?.email, teacher?.phone].some((v) => v && String(v).toLowerCase().includes(needle));
+};
+
 export function TeacherAvatar({ teacher, className = 'h-9 w-9' }) {
     return (
         <span className={`flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted ${className}`}>
@@ -29,10 +35,7 @@ export default function FolderTeachersPanel({ folder }) {
     const [dialog, setDialog] = useState(null);
     const [zipping, setZipping] = useState(null);
     const [term, setTerm] = useState('');
-    const needle = term.trim().toLowerCase();
-    const shown = rows && needle
-        ? rows.filter((r) => [r.teacher.name, r.teacher.email, r.teacher.phone].some((v) => v && String(v).toLowerCase().includes(needle)))
-        : rows;
+    const shown = rows && rows.filter((r) => teacherMatches(r.teacher, term));
 
     const load = () => exGet(`/folders/${folder.id}/teachers`).then(setRows).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { setRows(null); load(); }, [folder.id]); // eslint-disable-line react-hooks/exhaustive-deps

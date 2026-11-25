@@ -5,11 +5,12 @@ import { toast } from 'sonner';
 import { CalendarClock, Copy, Lock, LockOpen, Plus, QrCode, RotateCcw, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import LinkQrDialog from '@/components/exams/LinkQrDialog';
 import TeacherAssignDialog from './TeacherAssignDialog';
-import { TeacherAvatar, formatDate } from './FolderTeachersPanel';
+import { TeacherAvatar, formatDate, teacherMatches } from './FolderTeachersPanel';
 import { ex, examLink, exGet, exSend } from './api';
 
 export const STATE_STYLE = {
@@ -28,6 +29,7 @@ export default function ExamTeachersTab({ exam }) {
     const { t } = useTranslation('exams');
     const [rows, setRows] = useState(null);
     const [dialog, setDialog] = useState(null);
+    const [term, setTerm] = useState('');
 
     const load = () => exGet(`/exams/${exam.id}/teachers`).then(setRows).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { load(); }, [exam.id]); // eslint-disable-line react-hooks/exhaustive-deps
@@ -44,6 +46,7 @@ export default function ExamTeachersTab({ exam }) {
     };
 
     if (!rows) return <div className="flex justify-center py-10"><LoadingSpinner /></div>;
+    const shown = rows.filter((row) => teacherMatches(row.teacher, term));
 
     return (
         <div className="space-y-4">
@@ -52,11 +55,14 @@ export default function ExamTeachersTab({ exam }) {
                 {!exam.archived_at && <Button size="sm" onClick={() => setDialog({ type: 'add' })}><Plus className="h-4 w-4" />{t('teachers.addOnExam')}</Button>}
             </div>
             {!exam.published_at && <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">{t('teachers.notPublishedHint')}</p>}
-            {rows.length === 0 ? (
-                <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">{t('teachers.none')}</p>
+            {rows.length > 0 && (
+                <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={t('teachers.searchTeachers')} className="sm:w-80" />
+            )}
+            {shown.length === 0 ? (
+                <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">{t(rows.length ? 'search.none' : 'teachers.none')}</p>
             ) : (
                 <div className="space-y-3">
-                    {rows.map((row) => (
+                    {shown.map((row) => (
                         <div key={row.teacher.id} className="space-y-3 rounded-lg border bg-card p-4">
                             <div className="flex flex-wrap items-center gap-3">
                                 <TeacherAvatar teacher={row.teacher} className="h-10 w-10" />
