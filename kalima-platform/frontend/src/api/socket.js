@@ -1,6 +1,9 @@
 import { io } from 'socket.io-client';
 
 const resolveSocketURL = () => {
+    // Same rule as the API in api/axios.js: the dev site talks to the dev
+    // server, not to the production address baked into production builds.
+    if (window.location.hostname.includes('dev')) return 'wss://dev.kalima-edu.com';
     const target = import.meta.env.VITE_API_PROXY_TARGET || import.meta.env.VITE_API_URL || '';
     if (!/^https?:\/\//.test(target)) return undefined;
     return target.replace(/\/api\/v\d+\/?$/, '').replace('https', 'wss');
