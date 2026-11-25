@@ -126,10 +126,11 @@ export default function FolderTeachersPanel({ folder }) {
 // The folder's teachers in a side list (from the folder page or a folder
 // card's menu), so a long list never pushes the exams down.
 export function FolderTeachersDialog({ folder, open, onOpenChange }) {
-    const { t } = useTranslation('exams');
+    const { t, i18n } = useTranslation('exams');
     return (
         <Sheet open={open} onOpenChange={onOpenChange}>
-            <SheetContent className="w-full overflow-y-auto sm:max-w-xl">
+            {/* Like the cart: slide in and out from the page's end side (left in Arabic, right in English). */}
+            <SheetContent side={i18n.dir() === 'rtl' ? 'left' : 'right'} className="w-full overflow-y-auto sm:max-w-xl">
                 <SheetHeader><SheetTitle>{folder?.name}</SheetTitle><SheetDescription className="sr-only">{t('teachers.folderTitle')}</SheetDescription></SheetHeader>
                 <div className="px-4 pb-6">{folder && <FolderTeachersPanel folder={folder} />}</div>
             </SheetContent>
