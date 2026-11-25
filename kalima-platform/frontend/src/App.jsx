@@ -1,6 +1,7 @@
 import { createBrowserRouter, createRoutesFromElements, RouterProvider, Route, Outlet, Navigate, useLocation, useParams } from "react-router-dom";
 import { useState, useEffect, Suspense, lazy } from "react";
 import { useTranslation } from "react-i18next";
+import { DirectionProvider } from "@radix-ui/react-direction";
 import LoadingSpinner from "@/components/ui/loading-spinner";
 import { Toaster } from 'sonner';
 import { E_BOOKLET_ORDERS_ALLOWED_ROLES } from "./pages/e-booklets/eBookletOrdersContract.mjs";
@@ -173,13 +174,17 @@ function Root() {
     document.documentElement.lang = i18n.language;
   }, [i18n, i18n.language]);
 
+  // Radix parts (tabs, menus, selects, sliders...) ignore the page's dir and
+  // lay out left to right unless told; give them the language's direction.
   return (
-    <ErrorBoundary>
-      <ImpersonationBanner />
-      <Suspense fallback={<PageLoader />}>
-        <Outlet />
-      </Suspense>
-    </ErrorBoundary>
+    <DirectionProvider dir={i18n.dir()}>
+      <ErrorBoundary>
+        <ImpersonationBanner />
+        <Suspense fallback={<PageLoader />}>
+          <Outlet />
+        </Suspense>
+      </ErrorBoundary>
+    </DirectionProvider>
   );
 }
 
