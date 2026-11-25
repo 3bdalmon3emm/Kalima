@@ -411,6 +411,8 @@
     "editDates": "Edit dates",
     "remove": "Remove",
     "removeConfirm": "Remove {{name}}? Their links close; results are kept.",
+    "removeFromFolder": "Remove from the whole folder",
+    "removeFolderConfirm": "Remove {{name}} from the whole «{{folder}}» folder? Their links in every exam of the folder close; results are kept.",
     "removed": "Teacher removed",
     "added": "Teacher added",
     "saved": "Saved",

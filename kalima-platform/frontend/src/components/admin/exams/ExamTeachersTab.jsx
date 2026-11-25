@@ -96,10 +96,16 @@ export default function ExamTeachersTab({ exam }) {
                                                 <Lock className="h-4 w-4" />{t('teachers.close')}
                                             </Button>
                                         )}
-                                        {row.source.type === 'exam' && (
+                                        {row.source.type === 'exam' ? (
                                             <Button variant="ghost" size="sm" className="text-destructive"
                                                 onClick={() => window.confirm(t('teachers.removeConfirm', { name: row.teacher.name })) && act(() => exSend('delete', `/teacher-assignments/${row.assignment_id}`), t('teachers.removed')).catch(() => {})}>
                                                 <Trash2 className="h-4 w-4" />{t('teachers.remove')}
+                                            </Button>
+                                        ) : (
+                                            // Added through a folder: removing takes the teacher off that whole folder.
+                                            <Button variant="ghost" size="sm" className="text-destructive"
+                                                onClick={() => window.confirm(t('teachers.removeFolderConfirm', { name: row.teacher.name, folder: row.source.name })) && act(() => exSend('delete', `/teacher-assignments/${row.assignment_id}`), t('teachers.removed')).catch(() => {})}>
+                                                <Trash2 className="h-4 w-4" />{t('teachers.removeFromFolder')}
                                             </Button>
                                         )}
                                     </div>
