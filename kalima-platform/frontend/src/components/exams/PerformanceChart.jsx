@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 // A student's results in one subject over time, for the student, their
@@ -9,14 +9,25 @@ import { useTranslation } from 'react-i18next';
 // dot shows the exam, the date and the score. Under the chart: the latest
 // result, the best, the lowest and the change since the first exam.
 
-// Drawn small so the text stays readable in a narrow card.
-const W = 400;
-const H = 220;
+// Drawn at the card's real width in pixels, so the text keeps the same size
+// on a phone and on a wide screen instead of growing with the card.
+const H = 200;
 const PAD = { top: 24, bottom: 28, side: 40, end: 30 };
 
 export default function PerformanceChart({ points }) {
     const { t, i18n } = useTranslation('exams');
     const gradientId = useId().replace(/:/g, '');
+    const boxRef = useRef(null);
+    const [W, setW] = useState(400);
+    useEffect(() => {
+        const el = boxRef.current;
+        if (!el) return undefined;
+        const measure = () => setW(Math.max(260, Math.round(el.clientWidth)));
+        measure();
+        const ro = new ResizeObserver(measure);
+        ro.observe(el);
+        return () => ro.disconnect();
+    }, []);
     const rtl = i18n.dir() === 'rtl';
     const lang = i18n.language === 'ar' ? 'ar-EG' : 'en-GB';
     // Percents written like the rest of the page: 87.5%.
@@ -59,8 +70,8 @@ export default function PerformanceChart({ points }) {
     ];
 
     return (
-        <div className="space-y-2">
-            <svg viewBox={`0 0 ${W} ${H}`} className="h-auto w-full" dir="ltr" style={{ direction: 'ltr' }} role="img" aria-label={t('chart.label')}>
+        <div className="space-y-2" ref={boxRef}>
+            <svg viewBox={`0 0 ${W} ${H}`} width={W} height={H} className="block max-w-full" dir="ltr" style={{ direction: 'ltr' }} role="img" aria-label={t('chart.label')}>
                 <defs>
                     <linearGradient id={gradientId} x1="0" x2="0" y1="0" y2="1">
                         <stop offset="0%" className="text-primary" stopColor="currentColor" stopOpacity="0.28" />
