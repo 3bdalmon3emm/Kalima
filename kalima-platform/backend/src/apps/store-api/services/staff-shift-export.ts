@@ -25,7 +25,12 @@ export const hm = (seconds: number) => {
   return `${Math.floor(m / 60)}:${String(m % 60).padStart(2, "0")}`;
 };
 const decimalHours = (seconds: number) => Math.round((seconds / 3600) * 100) / 100;
-const at = (d: Date | string) => time.format(new Date(d));
+// The time as people in Egypt say it: "9:15 الصبح", "12 الضهر", "12 بالليل" (AM/PM read the wrong way round at 12).
+const dayPart = (h: number) => (h >= 4 && h < 6 ? "الفجر" : h >= 6 && h < 12 ? "الصبح" : h >= 12 && h < 15 ? "الضهر" : h >= 15 && h < 18 ? "العصر" : h === 18 ? "المغرب" : "بالليل");
+const at = (d: Date | string) => {
+  const [h, m] = time.format(new Date(d)).split(":").map(Number);
+  return `${h % 12 || 12}${m ? `:${String(m).padStart(2, "0")}` : ""} ${dayPart(h)}`;
+};
 // A day key "2026-11-26" read as noon Cairo, so the weekday never slips.
 const dayDate = (key: string) => new Date(`${key}T12:00:00+02:00`);
 // Saturday starts a week.

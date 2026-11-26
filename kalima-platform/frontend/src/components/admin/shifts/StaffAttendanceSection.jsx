@@ -13,7 +13,7 @@ import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 import { TeacherAvatar } from '@/components/admin/exams/FolderTeachersPanel';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import ShiftDialog from './ShiftDialog';
-import { cairoToday, dayTone, shiftTone, SHIFT_TONE, formatDay, formatDuration, formatMonth, formatShort, formatTime, hours, shiftDate, shiftsApi } from './api';
+import { cairoToday, dayTone, shiftTone, spokenHour, SHIFT_TONE, formatDay, formatDuration, formatMonth, formatShort, formatTime, hours, shiftDate, shiftsApi } from './api';
 
 const PERIODS = ['day', 'week', 'month', 'year'];
 const HOUR = 3600_000;
@@ -171,8 +171,7 @@ function DayView({ data, onShift }) {
     const ticks = [];
     for (let h = h0; h <= h1; h += 1) ticks.push(h);
     const pct = (h) => `${((Math.min(Math.max(h, h0), h1) - h0) / span) * 100}%`;
-    const hourFmt = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-GB', { hour: 'numeric', hour12: true, timeZone: 'Africa/Cairo' });
-    const tickLabel = (h) => hourFmt.format(new Date(from + h * HOUR));
+    const tickLabel = (h) => spokenHour(Number(new Date(from + h * HOUR).toLocaleString('en-GB', { timeZone: 'Africa/Cairo', hour: '2-digit', hourCycle: 'h23' })), lang);
     // Bars run from the page's start side, so the hours read like the text.
     const side = i18n.dir() === 'rtl' ? 'right' : 'left';
 
@@ -274,7 +273,8 @@ function WeekView({ data, onShift, onDay }) {
                                                         onClick={() => onShift(sh, e.user)}
                                                         className={`block w-full whitespace-nowrap rounded px-1 py-1 text-center text-[11px] font-semibold tabular-nums transition hover:brightness-110 ${shiftTone(sh)}`}
                                                     >
-                                                        {formatShort(sh.started_at, lang)}–{sh.open ? t('report.now') : formatShort(sh.ended_at, lang)}
+                                                        <span className="block">{formatShort(sh.started_at, lang)}</span>
+                                                        <span className="block opacity-90">{sh.open ? t('report.now') : formatShort(sh.ended_at, lang)}</span>
                                                     </button>
                                                 ))}
                                                 <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className={`h-full ${dayTone(day.seconds)}`} style={{ width: `${Math.min(100, (day.seconds / (8 * 3600)) * 100)}%` }} /></div>

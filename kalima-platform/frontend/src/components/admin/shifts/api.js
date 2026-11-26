@@ -32,9 +32,39 @@ export function formatClock(ms) {
     return `${pad(Math.floor(s / 3600))}:${pad(Math.floor((s % 3600) / 60))}:${pad(s % 60)}`;
 }
 
-export const formatTime = (v, lang) => (v ? new Date(v).toLocaleTimeString(locale(lang), { timeZone: TZ, hour: 'numeric', minute: '2-digit' }) : '—');
-// 24-hour and short, for tight cells: 08:42.
-export const formatShort = (v, lang) => (v ? new Date(v).toLocaleTimeString(locale(lang), { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }) : '—');
+// The part of the day as people in Egypt say it, instead of AM/PM (which
+// read the wrong way round at 12): 12 at night, 9 in the morning, 12 noon,
+// 3 in the afternoon, 7 in the evening.
+export function dayPart(hour) {
+    if (hour >= 4 && hour < 6) return 'الفجر';
+    if (hour >= 6 && hour < 12) return 'الصبح';
+    if (hour >= 12 && hour < 15) return 'الضهر';
+    if (hour >= 15 && hour < 18) return 'العصر';
+    if (hour === 18) return 'المغرب';
+    return 'بالليل';
+}
+const cairoHM = (v) => {
+    const p = Object.fromEntries(new Intl.DateTimeFormat('en-GB', { timeZone: TZ, hour: '2-digit', minute: '2-digit', hourCycle: 'h23' }).formatToParts(new Date(v)).map((x) => [x.type, x.value]));
+    return [Number(p.hour), Number(p.minute)];
+};
+const arNum = (n) => n.toLocaleString('ar-EG', { useGrouping: false });
+// "٩:١٥ الصبح", "١٢ الضهر", "١٢ بالليل"; English keeps "9:15 AM".
+export function spokenTime(v, lang) {
+    if (!v) return '—';
+    if (lang !== 'ar') return new Date(v).toLocaleTimeString('en-GB', { timeZone: TZ, hour: 'numeric', minute: '2-digit', hour12: true });
+    const [h, m] = cairoHM(v);
+    const h12 = h % 12 || 12;
+    return `${arNum(h12)}${m ? `:${String(m).padStart(2, '0').replace(/\d/g, (d) => arNum(Number(d)))}` : ''} ${dayPart(h)}`;
+}
+// A whole hour of the day (0-23) for the timeline scale.
+export function spokenHour(hour, lang) {
+    if (lang !== 'ar') return `${hour % 12 || 12} ${hour < 12 ? 'AM' : 'PM'}`;
+    return `${arNum(hour % 12 || 12)} ${dayPart(hour)}`;
+}
+
+export const formatTime = (v, lang) => spokenTime(v, lang);
+// The same, for tight cells.
+export const formatShort = (v, lang) => spokenTime(v, lang);
 export const formatDay = (v, lang, opts = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' }) =>
     new Date(`${v}T12:00:00Z`).toLocaleDateString(locale(lang), { timeZone: 'UTC', ...opts });
 export const formatMonth = (v, lang, opts = { month: 'long', year: 'numeric' }) =>
