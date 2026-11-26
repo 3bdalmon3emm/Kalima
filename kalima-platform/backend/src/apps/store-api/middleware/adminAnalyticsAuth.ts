@@ -9,3 +9,7 @@ export const adminAnalyticsAuth = [
   authenticateToken,
   adminAnalyticsRoleGuard,
 ];
+
+// The money cards over the orders page (the same store numbers) stay with
+// the SubAdmin too; the analytics page itself is the Admin's.
+export const orderStatsAuth = [authenticateToken, requireRole([role_enum.Admin, role_enum.SubAdmin])];

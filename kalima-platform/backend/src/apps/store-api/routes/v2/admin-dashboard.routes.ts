@@ -3,7 +3,7 @@ import { adminDashboardController } from "../../controllers/admin-dashboard.cont
 import { authenticateToken } from "../../../../libs/auth/middleware";
 import { requireRole } from "../../middleware/requireRole.middleware";
 import { role_enum } from "../../generated/prisma/client";
-import { adminAnalyticsAuth } from "../../middleware/adminAnalyticsAuth";
+import { adminAnalyticsAuth, orderStatsAuth } from "../../middleware/adminAnalyticsAuth";
 import { employeePerformanceAuth } from "../../middleware/employeePerformanceAuth";
 
 const router = Router();
@@ -19,7 +19,7 @@ const adminAuth = [
 // ============================================
 
 // Overview, Monthly Trends, Daily stats
-router.get("/store-stats", ...adminAnalyticsAuth, adminDashboardController.getStoreStatistics);
+router.get("/store-stats", ...orderStatsAuth, adminDashboardController.getStoreStatistics);
 
 // Confirmer Statistics
 router.get("/confirmer-stats", ...employeePerformanceAuth, adminDashboardController.getConfirmerStatistics);

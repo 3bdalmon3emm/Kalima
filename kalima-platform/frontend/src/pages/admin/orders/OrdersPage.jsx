@@ -7,7 +7,7 @@ import StoreStatsCards from '@/components/admin/orders/StoreStatsCards';
 import { Download, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import useRole from '@/hooks/useRole';
-import { canAccessAdminAnalytics } from '@/lib/adminAnalyticsAccess';
+import { canSeeOrderStats } from '@/lib/adminAnalyticsAccess';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import useExport from '@/hooks/useExport';
@@ -32,7 +32,7 @@ export default function OrdersPage() {
     const { t, i18n } = useTranslation('admin');
     const { isAdmin, storeRoles } = useRole();
     // The money cards are numbers the Moderator does not see.
-    const showStats = canAccessAdminAnalytics(storeRoles);
+    const showStats = canSeeOrderStats(storeRoles);
     const {
         orders,
         pagination,
