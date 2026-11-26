@@ -194,23 +194,11 @@ function DayView({ data, onShift }) {
                             <div className="relative h-9 flex-1 rounded-lg border bg-muted/30">
                                 {ticks.map((h) => <span key={h} className="absolute inset-y-0 w-px bg-border/70" style={{ [side]: pct(h) }} />)}
                                 {!shifts.length && <span className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">{t('report.noShift')}</span>}
-                                {shifts.map((sh, i) => {
+                                {shifts.map((sh) => {
                                     const a = Math.max(0, at(sh.started_at));
                                     const b = Math.min(24, at(sh.ended_at, now));
-                                    const prev = shifts[i - 1];
-                                    const gapFrom = prev?.ended_at ? Math.min(24, at(prev.ended_at)) : null;
-                                    const gap = gapFrom !== null && a > gapFrom ? (a - gapFrom) * 3600 : 0;
                                     return (
                                         <Fragment key={sh.id}>
-                                        {gap >= 60 && (
-                                            <span
-                                                className="absolute top-1/2 flex -translate-y-1/2 items-center justify-center overflow-hidden whitespace-nowrap text-[10px] text-muted-foreground"
-                                                style={{ [side]: pct(gapFrom), width: `calc(${pct(a)} - ${pct(gapFrom)})` }}
-                                                title={`${t('report.break')}: ${formatShort(prev.ended_at, lang)} – ${formatShort(sh.started_at, lang)}`}
-                                            >
-                                                <span className="truncate px-0.5">{t('report.break')} {formatDuration(gap, t)}</span>
-                                            </span>
-                                        )}
                                         <button
                                             key={sh.id}
                                             type="button"

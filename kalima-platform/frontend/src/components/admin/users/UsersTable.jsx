@@ -38,7 +38,7 @@ import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { canImpersonateUser } from '@/utils/impersonationPermissions';
-import { outranks } from '@/lib/roleRank';
+import { outranks, STAFF_RANK } from '@/lib/roleRank';
 import AccountLevelBadge from '@/components/admin/AccountLevelBadge';
 import { Checkbox } from '@/components/ui/checkbox';
 import { largestPhotoUrl } from '@/lib/profilePhoto';
@@ -171,7 +171,10 @@ export default function UsersTable({
                     </TableHeader>
                     <TableBody>
                         {users.map((user) => {
-                            const primaryRole = user.role || user.user_roles?.[0]?.role;
+                            // The badge reads the roles table (what filters and counts use), the
+                            // highest staff role first; the old users.role column is only a fallback.
+                            const roleList = user.user_roles?.map(({ role }) => role) ?? [];
+                            const primaryRole = [...roleList].sort((x, y) => (STAFF_RANK[y] || 0) - (STAFF_RANK[x] || 0))[0] || user.role;
                             const isTeacher = String(primaryRole).toLowerCase() === 'teacher';
                             const isCurrentUser = Number(user.id) === Number(currentUserId);
                             const targetRoles = [

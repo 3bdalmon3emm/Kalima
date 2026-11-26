@@ -68,7 +68,6 @@
       "short": "Under 6",
       "none": "Did not work"
     },
-    "break": "Break",
     "exportExcel": "Export month (Excel)",
     "print": "Print month / PDF",
     "exportHint": "The whole month shown: a page per employee, the month in weeks, each week with its total.",
