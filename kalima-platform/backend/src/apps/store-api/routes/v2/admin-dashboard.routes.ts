@@ -33,7 +33,8 @@ router.get("/response-time", ...adminAnalyticsAuth, adminDashboardController.get
 // Staff Performance Tracking (Received/Confirmed/Returned/Response Times)
 router.get("/staff-report", ...employeePerformanceAuth, adminDashboardController.getStaffPerformanceReport);
 
-// User Stats (total users, by role, verified)
-router.get("/user-stats", ...adminAnalyticsAuth, adminDashboardController.getUserStats);
+// User Stats (total users, by role, verified): the counts over the users
+// page, which the SubAdmin and the Moderator see too.
+router.get("/user-stats", ...orderStatsAuth, adminDashboardController.getUserStats);
 
 export default router;
