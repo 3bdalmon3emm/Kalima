@@ -69,9 +69,9 @@
       "none": "Did not work"
     },
     "break": "Break",
-    "exportExcel": "Export Excel",
-    "print": "Print / PDF",
-    "exportHint": "The whole month: a summary per employee and a page per employee with every day.",
+    "exportExcel": "Export month (Excel)",
+    "print": "Print month / PDF",
+    "exportHint": "The whole month shown: a page per employee, the month in weeks, each week with its total.",
     "closePrint": "Close"
   },
   "dialog": {
@@ -101,7 +101,20 @@
     "autoClosed": "closed automatically",
     "daysAndShifts": "{{days}} days · {{shifts}} shifts",
     "employeeSign": "Employee signature",
-    "managerSign": "Manager signature"
+    "managerSign": "Manager signature",
+    "monthTitle": "Staff attendance - {{month}}",
+    "monthTotal": "Month total",
+    "week": "Week {{n}}",
+    "weekTotal": "Week total",
+    "empty": "No attendance in {{month}}.",
+    "ordinal": {
+      "0": "1",
+      "1": "2",
+      "2": "3",
+      "3": "4",
+      "4": "5",
+      "5": "6"
+    }
   },
   "hints": {
     "totalHours": "Everyone's hours in the period shown, open shifts counted up to now.",

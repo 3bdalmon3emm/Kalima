@@ -95,13 +95,18 @@ export default function StaffAttendanceSection() {
                 </div>
                 <Input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} className="w-40" dir="ltr" />
                 <Button variant="outline" size="sm" onClick={() => setDate(cairoToday())}>{t('report.today')}</Button>
-                <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting} title={t('report.exportHint')}>
-                    {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('report.exportExcel')}
-                </Button>
-                <Button size="sm" variant="outline" onClick={() => setPrinting(true)} title={t('report.exportHint')}>
-                    <Printer className="h-4 w-4" />{t('report.print')}
-                </Button>
-                <Button size="sm" onClick={() => setDialog({ add: true, employees: data?.employees || [], date: period === 'day' ? date : cairoToday() })}>
+                {/* Only a whole month is exported: the month shown. */}
+                {period === 'month' && (
+                    <>
+                        <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting} title={t('report.exportHint')}>
+                            {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('report.exportExcel')}
+                        </Button>
+                        <Button size="sm" variant="outline" onClick={() => setPrinting(true)} title={t('report.exportHint')}>
+                            <Printer className="h-4 w-4" />{t('report.print')}
+                        </Button>
+                    </>
+                )}
+                <Button size="sm" className={period === 'month' ? '' : 'ms-auto'} onClick={() => setDialog({ add: true, employees: data?.employees || [], date: period === 'day' ? date : cairoToday() })}>
                     <Plus className="h-4 w-4" />{t('report.addShift')}
                 </Button>
             </div>
