@@ -1,3 +1,4 @@
+import { cairoDayStart, cairoRange } from "../../../libs/cairoRange";
 import path from "path";
 import { promises as fsPromises } from "fs";
 import crypto from "crypto";
@@ -121,8 +122,9 @@ function parseFilterDate(value: unknown, label: string, boundary?: "start" | "en
   const date = new Date(raw);
   if (Number.isNaN(date.getTime())) throw new BadRequestError(`Invalid ${label}`);
   if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
-    if (boundary === "end") date.setUTCHours(23, 59, 59, 999);
-    if (boundary === "start") date.setUTCHours(0, 0, 0, 0);
+    // A written day is the whole Cairo day.
+    if (boundary === "end") return new Date(cairoDayStart(raw, 1).getTime() - 1);
+    if (boundary === "start") return cairoDayStart(raw);
   }
   return date;
 }
@@ -5061,9 +5063,9 @@ export class EBookletService {
     if (filters.studentId) where.student_id = filters.studentId;
     if (filters.source) where.source = filters.source;
     if (filters.startDate || filters.endDate) {
-      where.created_at = {};
-      if (filters.startDate) where.created_at.gte = new Date(filters.startDate);
-      if (filters.endDate) where.created_at.lte = new Date(filters.endDate);
+      // Whole Cairo days for YYYY-MM-DD; a full timestamp as it is.
+      const created = cairoRange(filters.startDate, filters.endDate);
+      if (created) where.created_at = created;
     }
     return where;
   }
@@ -5125,9 +5127,9 @@ export class EBookletService {
     if (filters.teacherId) purchasesWhere.teacher_id = filters.teacherId;
     if (filters.templateId) purchasesWhere.template_id = filters.templateId;
     if (filters.startDate || filters.endDate) {
-      purchasesWhere.created_at = {};
-      if (filters.startDate) purchasesWhere.created_at.gte = new Date(filters.startDate);
-      if (filters.endDate) purchasesWhere.created_at.lte = new Date(filters.endDate);
+      // Whole Cairo days for YYYY-MM-DD; a full timestamp as it is.
+      const created = cairoRange(filters.startDate, filters.endDate);
+      if (created) purchasesWhere.created_at = created;
     }
 
     const instancesWhere: Record<string, any> = {};
@@ -5135,9 +5137,9 @@ export class EBookletService {
     if (filters.templateId) instancesWhere.template_id = filters.templateId;
     if (filters.instanceId) instancesWhere.id = filters.instanceId;
     if (filters.startDate || filters.endDate) {
-      instancesWhere.created_at = {};
-      if (filters.startDate) instancesWhere.created_at.gte = new Date(filters.startDate);
-      if (filters.endDate) instancesWhere.created_at.lte = new Date(filters.endDate);
+      // Whole Cairo days for YYYY-MM-DD; a full timestamp as it is.
+      const created = cairoRange(filters.startDate, filters.endDate);
+      if (created) instancesWhere.created_at = created;
     }
 
     const [events, sources, revenue, offline, online, failures, instances, purchasesAgg, activeAccessCount, activeDevicesCount] = await Promise.all([

@@ -1,3 +1,4 @@
+import { cairoRange } from "../../../libs/cairoRange";
 import type { DayRange } from "../utils/dayRange";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
@@ -269,9 +270,9 @@ class PurchasesService {
     }
 
     if (filters.startDate || filters.endDate) {
-      where.created_at = {};
-      if (filters.startDate) where.created_at.gte = new Date(filters.startDate);
-      if (filters.endDate) where.created_at.lte = new Date(filters.endDate);
+      // Whole Cairo days for YYYY-MM-DD; a full timestamp as it is.
+      const created = cairoRange(filters.startDate, filters.endDate);
+      if (created) where.created_at = created;
     }
 
     if (filters.minTotal !== undefined || filters.maxTotal !== undefined) {

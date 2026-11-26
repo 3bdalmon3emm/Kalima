@@ -1,3 +1,4 @@
+import { cairoRange } from "../../../libs/cairoRange";
 /**
  * Registers every Store API v2 resource for export.
  *
@@ -146,15 +147,8 @@ export function registerAllExportResources(): void {
       }
 
       if (filters?.startDate || filters?.endDate) {
-        where.created_at = {};
-        if (filters.startDate) {
-          where.created_at.gte = new Date(filters.startDate as string);
-        }
-        if (filters.endDate) {
-          const endOfDay = new Date(filters.endDate as string);
-          endOfDay.setUTCHours(23, 59, 59, 999);
-          where.created_at.lte = endOfDay;
-        }
+        const created = cairoRange(filters.startDate, filters.endDate);
+        if (created) where.created_at = created;
       }
 
       if (filters?.isAmount !== undefined) {
@@ -200,13 +194,8 @@ export function registerAllExportResources(): void {
       }
 
       if (filters?.startDate || filters?.endDate) {
-        where.created_at = {};
-        if (filters.startDate) {
-          where.created_at.gte = new Date(filters.startDate as string);
-        }
-        if (filters.endDate) {
-          where.created_at.lte = new Date(filters.endDate as string);
-        }
+        const created = cairoRange(filters.startDate, filters.endDate);
+        if (created) where.created_at = created;
       }
 
       if (filters?.minTotal !== undefined || filters?.maxTotal !== undefined) {

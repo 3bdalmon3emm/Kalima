@@ -1,3 +1,4 @@
+import { cairoDayStart } from "../../../libs/cairoRange";
 /**
  * Users export with the admin's choice of account types and columns.
  *
@@ -122,9 +123,8 @@ const words = (v: unknown, allowed?: readonly string[]) =>
   Array.isArray(v) ? v.map(String).filter((w) => w.trim() && (!allowed || allowed.includes(w))) : [];
 const dateOf = (v: unknown, end = false) => {
   if (typeof v !== "string" || !/^\d{4}-\d{2}-\d{2}$/.test(v)) return undefined;
-  const d = new Date(`${v}T00:00:00.000Z`);
-  if (end) d.setUTCDate(d.getUTCDate() + 1);
-  return d;
+  // Whole Cairo days: the end is the next day's start.
+  return cairoDayStart(v, end ? 1 : 0);
 };
 const place = (f: any) => ({
   ...(ids(f?.government).length ? { government_id: { in: ids(f.government) } } : {}),
@@ -247,7 +247,7 @@ export async function buildUsersExport(body: any, locale: Locale) {
       roles: [...held].map((r) => w.roles[r] ?? r).join("، "),
       confirmed: yesNo(u.confirmed),
       email_verified: yesNo(u.is_email_verified),
-      created_at: u.created_at ? u.created_at.toISOString().slice(0, 10) : "",
+      created_at: u.created_at ? u.created_at.toLocaleDateString("en-CA", { timeZone: "Africa/Cairo" }) : "",
       student_serial: s?.sequenced_id ?? "",
       level: named(s?.levels),
       stage: named(s?.levels?.stages),

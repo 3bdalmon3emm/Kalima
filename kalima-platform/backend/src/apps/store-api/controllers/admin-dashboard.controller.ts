@@ -1,3 +1,4 @@
+import { cairoRange } from "../../../libs/cairoRange";
 import { dayRange } from "../utils/dayRange";
 import { Request, Response, NextFunction } from "express";
 import { prisma } from "../../../libs/db/prisma";
@@ -19,12 +20,10 @@ export const adminDashboardController = {
       // Live orders only (deleted orders never count), in the same date
       // window the orders table uses; either end may be open.
       const whereClause: any = { deleted_at: null, is_deleted: { not: true } };
-      if (startDate || endDate) {
-        whereClause.created_at = {
-          ...(startDate && { gte: new Date(startDate as string) }),
-          ...(endDate && { lte: new Date(endDate as string) }),
-        };
-      }
+      // Whole Cairo days for YYYY-MM-DD (the analytics page); a full
+      // timestamp (the orders page, the dashboard) as it is.
+      const created = cairoRange(startDate, endDate);
+      if (created) whereClause.created_at = created;
 
       // Pending orders are about now, not the filter: those placed today
       // (Cairo) and the older ones nobody has handled yet.

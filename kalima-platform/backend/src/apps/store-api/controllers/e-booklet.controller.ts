@@ -215,6 +215,15 @@ function parseOptionalIsoDate(raw: unknown, label: string): string | undefined {
   return parsed.toISOString();
 }
 
+// A day "2026-11-26" stays as written (a whole Cairo day downstream); any
+// other date becomes an ISO timestamp.
+function parseOptionalDay(raw: unknown, label: string): string | undefined {
+  if (!raw) return undefined;
+  const value = String(Array.isArray(raw) ? raw[0] : raw);
+  if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+  return parseOptionalIsoDate(value, label);
+}
+
 function parseOptionalFutureIsoDate(raw: unknown, label: string): string | undefined {
   const value = parseOptionalIsoDate(raw, label);
   if (!value) return undefined;
@@ -246,8 +255,8 @@ function parseStrictBoolean(raw: unknown, label: string): boolean {
 }
 
 function analyticsFilters(req: Request) {
-  const startDate = parseOptionalIsoDate(req.query.start_date, "start_date");
-  const endDate = parseOptionalIsoDate(req.query.end_date, "end_date");
+  const startDate = parseOptionalDay(req.query.start_date ?? req.query.startDate, "start_date");
+  const endDate = parseOptionalDay(req.query.end_date ?? req.query.endDate, "end_date");
   if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
     throw new BadRequestError("start_date must be before end_date");
   }

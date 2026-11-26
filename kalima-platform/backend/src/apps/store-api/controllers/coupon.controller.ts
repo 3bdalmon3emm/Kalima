@@ -113,13 +113,9 @@ export const couponController = {
           ? req.query.isAmount === "1"
           : undefined;
 
-      const startDate = req.query.startDate
-        ? new Date(req.query.startDate as string)
-        : undefined;
-
-      const endDate = req.query.endDate
-        ? new Date(req.query.endDate as string)
-        : undefined;
+      // Kept as written: a day "2026-11-26" is read as the whole Cairo day.
+      const startDate = req.query.startDate ? String(req.query.startDate) : undefined;
+      const endDate = req.query.endDate ? String(req.query.endDate) : undefined;
 
       const page = req.query.page ? parseInt(req.query.page as string, 10) : 1;
 

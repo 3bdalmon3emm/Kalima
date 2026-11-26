@@ -1,3 +1,4 @@
+import { cairoRange } from "../../../libs/cairoRange";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { prisma } from "../../../libs/db/prisma";
 import {
@@ -241,8 +242,8 @@ export class CouponService {
     active?: boolean;
     product_id?: number;
     category_id?: number;
-    startDate?: Date;
-    endDate?: Date;
+    startDate?: string | Date;
+    endDate?: string | Date;
     isAmount?: boolean;
     search?: string;
   }): Promise<{
@@ -272,15 +273,9 @@ export class CouponService {
     }
 
     if (filters?.startDate || filters?.endDate) {
-      where.created_at = {};
-      if (filters.startDate) {
-        where.created_at.gte = filters.startDate;
-      }
-      if (filters.endDate) {
-        const endOfDay = new Date(filters.endDate);
-        endOfDay.setUTCHours(23, 59, 59, 999);
-        where.created_at.lte = endOfDay;
-      }
+      // Whole Cairo days for YYYY-MM-DD; a full timestamp as it is.
+      const created = cairoRange(filters.startDate, filters.endDate);
+      if (created) where.created_at = created;
     }
 
     if (filters?.isAmount !== undefined && filters?.isAmount !== null) {
