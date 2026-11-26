@@ -132,7 +132,8 @@ export default function UsersPage() {
             </div>
 
             {/* Stats */}
-            <UserStatsCards />
+            {/* The user counts are statistics: the Admin's only (the API refuses others). */}
+            {isAdmin && <UserStatsCards />}
 
             {/* Filters */}
             <UserFilters
