@@ -48,3 +48,10 @@ export function cairoRange(start?: unknown, end?: unknown): { gte?: Date; lt?: D
 }
 
 export const isDateOnly = (v: unknown) => typeof v === "string" && DATE_ONLY.test(v);
+
+// An expiry or end date: a written day "2026-12-31" lasts until the last
+// moment of that day in Cairo; a full timestamp is used as it is.
+export function cairoDayEnd(value: string | Date): Date {
+  if (typeof value === "string" && DATE_ONLY.test(value)) return new Date(cairoDayStart(value, 1).getTime() - 1);
+  return new Date(value);
+}

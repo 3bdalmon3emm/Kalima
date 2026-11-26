@@ -1,4 +1,4 @@
-import { cairoDayStart, cairoRange } from "../../../libs/cairoRange";
+import { cairoDayEnd, cairoDayStart, cairoRange } from "../../../libs/cairoRange";
 import path from "path";
 import { promises as fsPromises } from "fs";
 import crypto from "crypto";
@@ -3522,7 +3522,7 @@ export class EBookletService {
     }
     const settings = await this.getGlobalSettings();
     const accessExpiresAt = dto.access_expires_at
-      ? new Date(dto.access_expires_at)
+      ? cairoDayEnd(dto.access_expires_at)
       : this.addDaysFromNow(settings.default_access_duration_days);
     if (!accessExpiresAt) {
       throw new BadRequestError("Access expiry is required for delivered e-booklets.");

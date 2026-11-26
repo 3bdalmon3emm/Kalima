@@ -1,3 +1,4 @@
+import { cairoDayEnd } from "../../../libs/cairoRange";
 import { Request, Response, NextFunction } from "express";
 import { requireReason, staffActionLogService, staffActor } from "../services/staff-action-log.service";
 import { prisma } from "../../../libs/db/prisma";
@@ -224,8 +225,10 @@ function parseOptionalDay(raw: unknown, label: string): string | undefined {
   return parseOptionalIsoDate(value, label);
 }
 
+// An expiry: a written day lasts until the end of that day in Cairo.
 function parseOptionalFutureIsoDate(raw: unknown, label: string): string | undefined {
-  const value = parseOptionalIsoDate(raw, label);
+  const day = raw ? String(Array.isArray(raw) ? raw[0] : raw) : "";
+  const value = /^\d{4}-\d{2}-\d{2}$/.test(day) ? cairoDayEnd(day).toISOString() : parseOptionalIsoDate(raw, label);
   if (!value) return undefined;
   if (new Date(value).getTime() <= Date.now()) throw new BadRequestError(`${label} must be in the future`);
   return value;
@@ -987,7 +990,7 @@ export const eBookletController = {
       const dto = await validateDto(UpdateEBookletAccessExpiryDto, req.body);
       const data = await getEBookletService().updateInstanceAccessExpiry(
         parseId(req.params.id, "instance ID"),
-        new Date(dto.access_expires_at),
+        cairoDayEnd(dto.access_expires_at),
       );
       res.status(200).json({ success: true, data });
     } catch (error) {
