@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { endOfDay, startOfDay } from 'date-fns';
 import { useTranslation } from 'react-i18next';
 import useOrders from '@/hooks/useOrders';
 import OrdersToolbar from '@/components/admin/orders/OrdersToolbar';
@@ -72,7 +73,11 @@ export default function OrdersPage() {
     };
 
     const handleDateRangeChange = (range) => {
-        setDateRange(range?.from || null, range?.to || null);
+        // The calendar gives each day at 12 at night; the last day counts until
+        // its end, and one picked day alone is that whole day.
+        const from = range?.from || null;
+        const to = range?.to || range?.from || null;
+        setDateRange(from ? startOfDay(from) : null, to ? endOfDay(to) : null);
     };
 
     const handleActionSuccess = () => {
