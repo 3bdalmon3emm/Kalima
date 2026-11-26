@@ -480,7 +480,14 @@
     "noMatch": "No exam matches",
     "examsCount_zero": "No exams",
     "examsCount_one": "1 exam",
-    "examsCount_other": "{{count}} exams"
+    "examsCount_other": "{{count}} exams",
+    "filter": {
+      "all": "All",
+      "graded": "Graded",
+      "ungraded": "Not graded yet",
+      "passed": "Passed",
+      "failed": "Failed"
+    }
   },
   "assistant": {
     "title": "Teachers they assist",

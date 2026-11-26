@@ -37,7 +37,8 @@ router.get("/exams/list", handle(async (req, res) => {
 
 // A page of the students who took the exam through this teacher's links.
 router.get("/exams/:id/students", handle(async (req, res) => {
-  res.json(ok(await teacherPortalService.students(idParam(req), await teachersOf(req), searchTerm(req.query.q), paging(req.query))));
+  const filter = typeof req.query.filter === "string" ? req.query.filter : "all";
+  res.json(ok(await teacherPortalService.students(idParam(req), await teachersOf(req), searchTerm(req.query.q), paging(req.query), filter)));
 }));
 
 router.get("/exams/:id", handle(async (req, res) => {

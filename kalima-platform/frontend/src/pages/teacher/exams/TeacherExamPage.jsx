@@ -40,7 +40,9 @@ export default function TeacherExamPage() {
     // time, searched on the server.
     const load = () => teacherApi.get(`/exams/${id}`).then(setData).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { setData(null); load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
-    const list = usePagedList(({ q, page }) => teacherApi.get(`/exams/${id}/students`, { q, page }), [id], (err) => showError(err, t('errors.load')));
+    // Who to show: everyone, graded or not yet, passed or failed.
+    const [filter, setFilter] = useState('all');
+    const list = usePagedList(({ q, page }) => teacherApi.get(`/exams/${id}/students`, { q, page, ...(filter !== 'all' && { filter }) }), [id, filter], (err) => showError(err, t('errors.load')));
     const students = list.data?.items || [];
     const search = list.term;
     const setSearch = list.setTerm;
@@ -100,6 +102,14 @@ export default function TeacherExamPage() {
                         <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting || !data.summary?.students}>
                             {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
                         </Button>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                        {['all', 'graded', 'ungraded', 'passed', 'failed'].map((f) => (
+                            <Button key={f} size="sm" variant={filter === f ? 'default' : 'outline'} onClick={() => setFilter(f)}>
+                                {t(`teacher.filter.${f}`)}
+                                {list.data?.counts && <span className="opacity-70">({list.data.counts[f] ?? 0})</span>}
+                            </Button>
+                        ))}
                     </div>
                     {!list.data ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !students.length ? (
                         <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t('results.empty')}</p>

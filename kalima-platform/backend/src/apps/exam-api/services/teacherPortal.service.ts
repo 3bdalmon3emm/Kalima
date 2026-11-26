@@ -125,25 +125,41 @@ class TeacherPortalService {
   // A page of the students who came through these teachers' links, the
   // latest active first, each with every attempt. Search by name, phone or
   // number runs over all of them.
-  async students(examId: number, teacherIds: number[], q = "", p: Paging = paging()) {
+  // filter: graded (has a finished attempt), ungraded (none finished yet:
+  // waiting for essay marks or still solving), passed / failed (best
+  // finished attempt against the pass mark). counts covers every choice.
+  async students(examId: number, teacherIds: number[], q = "", p: Paging = paging(), filter = "all") {
     const links = await this.linksTo(examId, teacherIds);
     const exam = await this.db.ex_exams.findUnique({ where: { id: examId }, select: { pass_percent: true } });
     if (!exam) throw new NotFoundError("Exam not found");
     const scope = { link_id: { in: links.map((l) => l.id) } };
     const matching = await resultsService.matchingStudents(scope, searchTerm(q));
     const where = { ...scope, ...(matching && { student_user_id: { in: matching } }) };
-    const [groups, all] = await Promise.all([
+    const [ordered, done] = await Promise.all([
       this.db.ex_attempts.groupBy({
         by: ["student_user_id"],
         where,
         _max: { started_at: true },
         orderBy: [{ _max: { started_at: "desc" } }, { student_user_id: "asc" }],
-        skip: p.skip,
-        take: p.size,
       }),
-      this.db.ex_attempts.findMany({ where, distinct: ["student_user_id"], select: { student_user_id: true } }),
+      this.db.ex_attempts.findMany({ where: { ...where, status: "done" }, select: { student_user_id: true, score: true, total: true } }),
     ]);
-    const ids = groups.map((g) => g.student_user_id);
+    // Each student's best finished percent.
+    const bestOf = new Map<number, number>();
+    for (const a of done) {
+      const total = num(a.total);
+      const percent = total ? (num(a.score) / total) * 100 : 0;
+      if (!bestOf.has(a.student_user_id) || percent > bestOf.get(a.student_user_id)!) bestOf.set(a.student_user_id, percent);
+    }
+    const kind = (id: number) => (!bestOf.has(id) ? "ungraded" : bestOf.get(id)! >= exam.pass_percent ? "passed" : "failed");
+    const allIds = ordered.map((g) => g.student_user_id);
+    const counts = { all: allIds.length, graded: bestOf.size, ungraded: 0, passed: 0, failed: 0 };
+    for (const id of allIds) counts[kind(id)] += 1;
+    const chosen = filter === "graded" ? allIds.filter((id) => bestOf.has(id))
+      : ["ungraded", "passed", "failed"].includes(filter) ? allIds.filter((id) => kind(id) === filter)
+        : allIds;
+    const ids = chosen.slice(p.skip, p.skip + p.size);
+    const all = chosen;
     const attempts = await this.db.ex_attempts.findMany({
       where: { ...scope, student_user_id: { in: ids } },
       orderBy: [{ student_user_id: "asc" }, { attempt_no: "asc" }],
@@ -174,7 +190,7 @@ class TeacherPortalService {
       const percent = s.best !== null && s.total ? round2((s.best / s.total) * 100) : null;
       return { ...s, last_status: last.status, percent, band: percent === null ? null : bandFor(percent, exam.pass_percent) };
     });
-    return paged(items, all.length, p);
+    return { counts, ...paged(items, all.length, p) };
   }
 
   // Every link these teachers ever had, for their appeals.

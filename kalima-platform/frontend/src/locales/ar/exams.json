@@ -532,7 +532,14 @@
     "examsCount_two": "امتحانين",
     "examsCount_few": "{{count}} امتحانات",
     "examsCount_many": "{{count}} امتحان",
-    "examsCount_other": "{{count}} امتحان"
+    "examsCount_other": "{{count}} امتحان",
+    "filter": {
+      "all": "الكل",
+      "graded": "اتصححوا",
+      "ungraded": "لسه ما اتصححوش",
+      "passed": "نجحوا",
+      "failed": "ما نجحوش"
+    }
   },
   "assistant": {
     "title": "المدرسين اللي بيساعدهم",
