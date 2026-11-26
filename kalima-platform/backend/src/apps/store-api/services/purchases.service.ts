@@ -70,7 +70,11 @@ const PURCHASE_INCLUDE = {
   },
 } as const;
 
-export class PurchasesService {
+export // An order a staff member confirmed still counts as their sale after it is
+// delivered; only a returned (or deleted) order leaves their numbers.
+const SOLD_STATUSES = ["confirmed", "delivered"];
+
+class PurchasesService {
   constructor(private db: PrismaClient = prisma) {}
 
   // ---------------------------------------------------------------
@@ -431,7 +435,7 @@ export class PurchasesService {
       _count: { _all: true },
       where: {
         confirmed_by: { in: adminIds },
-        status: "confirmed",
+        status: { in: SOLD_STATUSES },
         deleted_at: null,
         is_deleted: { not: true },
         confirmed_at: when,
@@ -445,7 +449,7 @@ export class PurchasesService {
     const confirmedPurchases = await this.db.purchases.findMany({
       where: {
         confirmed_by: { in: adminIds },
-        status: "confirmed",
+        status: { in: SOLD_STATUSES },
         deleted_at: null,
         is_deleted: { not: true },
         confirmed_at: when,
@@ -559,7 +563,7 @@ export class PurchasesService {
 
     const purchaseWhere: Prisma.purchasesWhereInput = {
       confirmed_by: employeeId,
-      status: "confirmed",
+      status: { in: SOLD_STATUSES },
       deleted_at: null,
       ...(dateFilter ? { confirmed_at: dateFilter } : {}),
     };
