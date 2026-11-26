@@ -83,30 +83,33 @@ export default function EmployeePerformancePage() {
             {/* Confirmer Stats (Who handled how many) */}
             <section data-testid="ep-confirmer-stats-section">
                 <SectionTitle icon={CheckCircle}>{t('dashboard.confirmerStats', 'Confirmer Statistics')}</SectionTitle>
+                <p className="-mt-2 mb-3 text-xs text-muted-foreground">{t('dashboard.confirmerStatsHint', 'Every order a staff member confirmed counts for them, split by where it is now.')}</p>
                 <Card className="shadow-sm">
                     <CardContent className="p-0 overflow-x-auto">
                         <table className="kalima-data-table text-start">
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.adminName', 'Admin Name')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.email', 'Email')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.totalHandled', 'Total Handled')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.confirmed', 'Confirmed')}</th>
+                                    <th className="px-6 py-3 font-medium text-start">{t('table.nameEmail', 'Name and email')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.ordersConfirmedBy', 'Orders they confirmed')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.awaitingDelivery', 'Confirmed, not delivered yet')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.deliveredOrders', 'Delivered')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.returnedOrders', 'Returned')}</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {confirmerStats && confirmerStats.length > 0 ? (
                                     confirmerStats.map((item, idx) => (
                                         <tr key={item.user?.id || idx}>
-                                            <td className="kalima-truncate px-6 py-4 font-medium" title={item.user?.name || 'Unknown'}>{item.user?.name || 'Unknown'}</td>
-                                            <td className="kalima-truncate px-6 py-4" title={item.user?.email}>{item.user?.email}</td>
-                                            <td className="kalima-number px-6 py-4">{item.totalHandled || 0}</td>
-                                            <td className="kalima-number px-6 py-4 text-emerald-600">{item.byStatus?.confirmed || 0}</td>
+                                            <td className="px-6 py-4"><NameEmail name={item.user?.name} email={item.user?.email} /></td>
+                                            <td className="kalima-number px-6 py-4 font-semibold">{item.totalHandled || 0}</td>
+                                            <td className="kalima-number px-6 py-4 text-amber-600">{item.byStatus?.confirmed || 0}</td>
+                                            <td className="kalima-number px-6 py-4 text-emerald-600">{item.byStatus?.delivered || 0}</td>
+                                            <td className="kalima-number px-6 py-4 text-destructive">{item.byStatus?.returned || 0}</td>
                                         </tr>
                                     ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="4" className="px-6 py-8 text-center text-muted-foreground">
+                                        <td colSpan="5" className="px-6 py-8 text-center text-muted-foreground">
                                             {t('table.noData', 'No data available')}
                                         </td>
                                     </tr>

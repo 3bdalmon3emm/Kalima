@@ -1322,7 +1322,8 @@
     "prevYear": "Previous year",
     "nextYear": "Next year",
     "minutes": "min",
-    "pickSection": "Pick a section from the menu."
+    "pickSection": "Pick a section from the menu.",
+    "confirmerStatsHint": "Every order a staff member confirmed counts for them, then shows where it is now: awaiting delivery, delivered or returned. Deleted orders never count."
   },
   "table": {
     "productName": "Product Name",
@@ -1345,7 +1346,11 @@
     "phone": "Phone",
     "role": "Role",
     "actions": "Actions",
-    "nameEmail": "Name and email"
+    "nameEmail": "Name and email",
+    "ordersConfirmedBy": "Orders they confirmed",
+    "awaitingDelivery": "Confirmed, not delivered yet",
+    "deliveredOrders": "Delivered",
+    "returnedOrders": "Returned"
   },
   "employeePerformanceDetails": {
     "viewSales": "View Sales",

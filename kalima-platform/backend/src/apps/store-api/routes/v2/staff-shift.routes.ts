@@ -4,6 +4,7 @@ import { ForbiddenError } from "../../../../libs/errors";
 import { requireRole } from "../../middleware/requireRole.middleware";
 import { role_enum } from "../../generated/prisma/client";
 import { staffShiftService, SHIFT_ROLES } from "../../services/staff-shift.service";
+import { attendanceWorkbook } from "../../services/staff-shift-export";
 
 const router = Router();
 
@@ -27,6 +28,15 @@ router.post("/me/start", ...shiftAuth, noImpersonation, wrap((req) => staffShift
 router.post("/me/end", ...shiftAuth, noImpersonation, wrap((req) => staffShiftService.end(userId(req))));
 
 router.get("/report", ...adminOnlyAuth, wrap((req) => staffShiftService.report(String(req.query.period || "day"), req.query.date ? String(req.query.date) : undefined)));
+// A month as an Excel workbook for paying staff: ?month=YYYY-MM.
+router.get("/export", ...adminOnlyAuth, (req: Request, res: Response, next: NextFunction) => {
+  const month = typeof req.query.month === "string" && /^\d{4}-\d{2}$/.test(req.query.month) ? req.query.month : undefined;
+  attendanceWorkbook(month).then(({ filename, buffer }) => {
+    res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+    res.setHeader("Content-Disposition", `attachment; filename="${filename}"`);
+    res.send(buffer);
+  }).catch(next);
+});
 router.post("/", ...adminOnlyAuth, wrap((req) => staffShiftService.add(userId(req), req.body || {})));
 router.patch("/:id", ...adminOnlyAuth, wrap((req) => staffShiftService.edit(userId(req), Number(req.params.id), req.body || {})));
 router.delete("/:id", ...adminOnlyAuth, wrap((req) => staffShiftService.remove(Number(req.params.id))));

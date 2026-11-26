@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState, Fragment } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronLeft, ChevronRight, Clock, Plus, Timer, UserCheck, Users } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Clock, FileSpreadsheet, Plus, Printer, Timer, UserCheck, Users } from 'lucide-react';
+import axios from '@/api/axios';
+import AttendancePrint from './AttendancePrint';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -25,7 +27,28 @@ export default function StaffAttendanceSection() {
     const [date, setDate] = useState(cairoToday());
     const [data, setData] = useState(null);
     const [dialog, setDialog] = useState(null);
+    const [printing, setPrinting] = useState(false);
+    const [exporting, setExporting] = useState(false);
     const key = `${period}|${date}`;
+    // Exports cover the whole month of the chosen date.
+    const month = date.slice(0, 7);
+
+    const exportExcel = async () => {
+        setExporting(true);
+        try {
+            const res = await axios.get('/staff-shifts/export', { params: { month }, responseType: 'blob' });
+            const href = URL.createObjectURL(res.data);
+            const a = document.createElement('a');
+            a.href = href;
+            a.download = `attendance-${month}.xlsx`;
+            a.click();
+            URL.revokeObjectURL(href);
+        } catch (err) {
+            showError(err, t('errors.load'));
+        } finally {
+            setExporting(false);
+        }
+    };
 
     const load = useCallback(() => shiftsApi.get('/report', { period, date })
         .then((d) => setData({ ...d, key }))
@@ -48,6 +71,7 @@ export default function StaffAttendanceSection() {
 
     return (
         <section className="space-y-4" data-testid="ep-staff-attendance-section">
+            {printing && <AttendancePrint month={month} onClose={() => setPrinting(false)} />}
             <SectionTitle icon={Clock}>{t('report.title')}</SectionTitle>
 
             <div className="flex flex-wrap items-center gap-2 rounded-xl border bg-card p-2">
@@ -70,7 +94,13 @@ export default function StaffAttendanceSection() {
                 </div>
                 <Input type="date" value={date} onChange={(e) => e.target.value && setDate(e.target.value)} className="w-40" dir="ltr" />
                 <Button variant="outline" size="sm" onClick={() => setDate(cairoToday())}>{t('report.today')}</Button>
-                <Button size="sm" className="ms-auto" onClick={() => setDialog({ add: true, employees: data?.employees || [], date: period === 'day' ? date : cairoToday() })}>
+                <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting} title={t('report.exportHint')}>
+                    {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('report.exportExcel')}
+                </Button>
+                <Button size="sm" variant="outline" onClick={() => setPrinting(true)} title={t('report.exportHint')}>
+                    <Printer className="h-4 w-4" />{t('report.print')}
+                </Button>
+                <Button size="sm" onClick={() => setDialog({ add: true, employees: data?.employees || [], date: period === 'day' ? date : cairoToday() })}>
                     <Plus className="h-4 w-4" />{t('report.addShift')}
                 </Button>
             </div>
@@ -131,11 +161,12 @@ function DayView({ data, onShift }) {
     let h1 = all.length ? Math.ceil(Math.max(...all.map((x) => x[1]))) : 20;
     if (h1 - h0 < 8) { const pad = Math.ceil((8 - (h1 - h0)) / 2); h0 = Math.max(0, h0 - pad); h1 = Math.min(24, h0 + Math.max(8, h1 - h0 + pad)); }
     const span = h1 - h0;
-    const step = span <= 12 ? 2 : 3;
+    // A line and a label on every hour, so a start, an end or a break can be read off the scale.
     const ticks = [];
-    for (let h = Math.ceil(h0 / step) * step; h <= h1; h += step) ticks.push(h);
+    for (let h = h0; h <= h1; h += 1) ticks.push(h);
     const pct = (h) => `${((Math.min(Math.max(h, h0), h1) - h0) / span) * 100}%`;
-    const tickLabel = (h) => formatTime(new Date(from + h * HOUR), lang);
+    const hourFmt = new Intl.DateTimeFormat(lang === 'ar' ? 'ar-EG' : 'en-GB', { hour: 'numeric', hour12: true, timeZone: 'Africa/Cairo' });
+    const tickLabel = (h) => hourFmt.format(new Date(from + h * HOUR));
     // Bars run from the page's start side, so the hours read like the text.
     const side = i18n.dir() === 'rtl' ? 'right' : 'left';
 
@@ -144,23 +175,36 @@ function DayView({ data, onShift }) {
             <div className="min-w-[640px]">
                 <div className="flex items-center gap-3 border-b px-4 py-2 text-[11px] text-muted-foreground">
                     <div className="w-48 shrink-0" />
-                    <div className="relative h-4 flex-1">
-                        {ticks.map((h) => <span key={h} className="absolute -translate-x-1/2 whitespace-nowrap rtl:translate-x-1/2" style={{ [side]: pct(h) }}>{tickLabel(h)}</span>)}
+                    <div className="relative h-5 flex-1">
+                        {ticks.map((h) => <span key={h} className="absolute -translate-x-1/2 whitespace-nowrap text-[10px] font-medium tabular-nums rtl:translate-x-1/2" style={{ [side]: pct(h) }}>{tickLabel(h)}</span>)}
                     </div>
                     <div className="w-20 shrink-0 text-end">{t('report.total')}</div>
                 </div>
                 {data.employees.map((e) => {
-                    const shifts = e.columns[data.date]?.shifts || [];
+                    const shifts = [...(e.columns[data.date]?.shifts || [])].sort((x, y) => new Date(x.started_at) - new Date(y.started_at));
                     return (
                         <div key={e.user.id} className="flex items-center gap-3 border-b px-4 py-3 last:border-0">
                             <div className="w-48 shrink-0"><Person employee={e} /></div>
                             <div className="relative h-9 flex-1 rounded-lg border bg-muted/30">
-                                {ticks.map((h) => <span key={h} className="absolute inset-y-0 w-px bg-border" style={{ [side]: pct(h) }} />)}
+                                {ticks.map((h) => <span key={h} className="absolute inset-y-0 w-px bg-border/70" style={{ [side]: pct(h) }} />)}
                                 {!shifts.length && <span className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">{t('report.noShift')}</span>}
-                                {shifts.map((sh) => {
+                                {shifts.map((sh, i) => {
                                     const a = Math.max(0, at(sh.started_at));
                                     const b = Math.min(24, at(sh.ended_at, now));
+                                    const prev = shifts[i - 1];
+                                    const gapFrom = prev?.ended_at ? Math.min(24, at(prev.ended_at)) : null;
+                                    const gap = gapFrom !== null && a > gapFrom ? (a - gapFrom) * 3600 : 0;
                                     return (
+                                        <Fragment key={sh.id}>
+                                        {gap >= 60 && (
+                                            <span
+                                                className="absolute top-1/2 flex -translate-y-1/2 items-center justify-center overflow-hidden whitespace-nowrap text-[10px] text-muted-foreground"
+                                                style={{ [side]: pct(gapFrom), width: `calc(${pct(a)} - ${pct(gapFrom)})` }}
+                                                title={`${t('report.break')}: ${formatShort(prev.ended_at, lang)} – ${formatShort(sh.started_at, lang)}`}
+                                            >
+                                                <span className="truncate px-0.5">{t('report.break')} {formatDuration(gap, t)}</span>
+                                            </span>
+                                        )}
                                         <button
                                             key={sh.id}
                                             type="button"
@@ -169,8 +213,9 @@ function DayView({ data, onShift }) {
                                             className={`absolute top-1.5 bottom-1.5 min-w-1.5 rounded-md text-[10px] font-semibold shadow-sm ring-1 ring-black/10 transition hover:brightness-110 ${shiftTone(sh)} ${sh.open ? 'animate-pulse' : ''}`}
                                             style={{ [side]: pct(a), width: `calc(${pct(b)} - ${pct(a)})` }}
                                         >
-                                            <span className="block truncate px-1">{formatTime(sh.started_at, lang)}</span>
+                                            <span className="block truncate px-1 tabular-nums">{formatShort(sh.started_at, lang)}–{sh.open ? t('report.now') : formatShort(sh.ended_at, lang)}</span>
                                         </button>
+                                        </Fragment>
                                     );
                                 })}
                             </div>

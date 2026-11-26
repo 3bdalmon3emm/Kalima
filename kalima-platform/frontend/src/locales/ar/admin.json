@@ -1322,7 +1322,8 @@
     "prevYear": "السنة السابقة",
     "nextYear": "السنة التالية",
     "minutes": "دقيقة",
-    "pickSection": "اختر القسم الذي تريده من القائمة."
+    "pickSection": "اختر القسم الذي تريده من القائمة.",
+    "confirmerStatsHint": "كل طلب أكّده الموظف يُحسب له، ثم يظهر حسب حالته الحالية: بانتظار التوصيل أو تم توصيله أو مرتجع. الطلبات المحذوفة لا تُحسب."
   },
   "table": {
     "productName": "اسم المنتج",
@@ -1345,7 +1346,11 @@
     "phone": "الهاتف",
     "role": "الدور",
     "actions": "الإجراءات",
-    "nameEmail": "الاسم والبريد الإلكتروني"
+    "nameEmail": "الاسم والبريد الإلكتروني",
+    "ordersConfirmedBy": "الطلبات التي أكّدها",
+    "awaitingDelivery": "مؤكدة بانتظار التوصيل",
+    "deliveredOrders": "تم توصيلها",
+    "returnedOrders": "مرتجعة"
   },
   "employeePerformanceDetails": {
     "viewSales": "عرض المبيعات",
