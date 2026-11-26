@@ -31,7 +31,7 @@ import {
 export default function OrdersPage() {
     const { t, i18n } = useTranslation('admin');
     const { isAdmin, storeRoles } = useRole();
-    // The money cards are numbers the Moderator does not see.
+    // The money cards: Admin, SubAdmin and Moderator.
     const showStats = canSeeOrderStats(storeRoles);
     const {
         orders,
