@@ -1439,5 +1439,23 @@
     "clear": "Clear",
     "fromTime": "From hour",
     "toTime": "To hour"
+  },
+  "hints": {
+    "nameEmail": "The staff member's name, with their email under it.",
+    "ordersConfirmedBy": "Every store order this person pressed \"Confirm\" on in the chosen period, whatever its status now. Deleted orders never count.",
+    "awaitingDelivery": "Orders they confirmed that are not delivered yet.",
+    "deliveredOrders": "Orders they confirmed that were then delivered.",
+    "returnedOrders": "Orders they confirmed that the customer then returned.",
+    "id": "The staff member's account number.",
+    "phone": "The staff member's mobile number.",
+    "role": "Their role: Admin, SubAdmin or Moderator.",
+    "confirmedCount": "Store orders they confirmed in the period that were not returned or deleted (confirmed and delivered).",
+    "productsSold": "The quantities in those orders added up: an order with 3 copies of a book counts 3.",
+    "eBookletsDelivered": "E-booklet orders they handed to the teacher (pressed \"Delivered\") in the period.",
+    "actions": "Open the staff member's sales: every order and product.",
+    "adminName": "The staff member who created the accounts from the dashboard.",
+    "email": "The staff member's email.",
+    "createdRole": "\"{{role}}\" accounts this person created from the dashboard in the chosen period. Deleted accounts never count.",
+    "createdAccounts": "Every account they created in the period, staff accounts included. An account with several roles counts once."
   }
 }

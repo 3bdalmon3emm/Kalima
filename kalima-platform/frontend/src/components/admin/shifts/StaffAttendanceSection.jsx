@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { ChevronLeft, ChevronRight, Clock, FileSpreadsheet, Plus, Printer, Timer, UserCheck, Users } from 'lucide-react';
 import axios from '@/api/axios';
 import AttendancePrint from './AttendancePrint';
+import HintLabel from '@/components/admin/HintLabel';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -106,10 +107,10 @@ export default function StaffAttendanceSection() {
             </div>
 
             <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
-                <StatCard icon={Clock} label={t('report.totalHours')} value={formatDuration(s.seconds, t)} />
-                <StatCard icon={Users} label={t('report.worked')} value={s.worked ?? '—'} color="text-blue-500" />
-                <StatCard icon={UserCheck} label={t('report.onShift')} value={s.on_shift ?? '—'} color="text-emerald-500" />
-                <StatCard icon={Timer} label={t('report.avgDay')} value={formatDuration(s.avg_day_seconds, t)} color="text-violet-500" />
+                <StatCard icon={Clock} label={t('report.totalHours')} hint={t('hints.totalHours')} value={formatDuration(s.seconds, t)} />
+                <StatCard icon={Users} label={t('report.worked')} hint={t('hints.worked')} value={s.worked ?? '—'} color="text-blue-500" />
+                <StatCard icon={UserCheck} label={t('report.onShift')} hint={t('hints.onShift')} value={s.on_shift ?? '—'} color="text-emerald-500" />
+                <StatCard icon={Timer} label={t('report.avgDay')} hint={t('hints.avgDay')} value={formatDuration(s.avg_day_seconds, t)} color="text-violet-500" />
             </div>
 
             <Card className="shadow-sm">
@@ -178,7 +179,7 @@ function DayView({ data, onShift }) {
                     <div className="relative h-5 flex-1">
                         {ticks.map((h) => <span key={h} className="absolute -translate-x-1/2 whitespace-nowrap text-[10px] font-medium tabular-nums rtl:translate-x-1/2" style={{ [side]: pct(h) }}>{tickLabel(h)}</span>)}
                     </div>
-                    <div className="w-20 shrink-0 text-end">{t('report.total')}</div>
+                    <div className="w-20 shrink-0 text-end"><HintLabel hint={t('hints.total')}>{t('report.total')}</HintLabel></div>
                 </div>
                 {data.employees.map((e) => {
                     const shifts = [...(e.columns[data.date]?.shifts || [])].sort((x, y) => new Date(x.started_at) - new Date(y.started_at));
@@ -251,7 +252,7 @@ function WeekView({ data, onShift, onDay }) {
             <table className="w-full min-w-[900px] text-sm">
                 <thead className="bg-muted/50 text-xs text-muted-foreground">
                     <tr>
-                        <th className="p-3 text-start font-medium">{t('report.employee')}</th>
+                        <th className="p-3 text-start font-medium"><HintLabel hint={t('hints.employee')}>{t('report.employee')}</HintLabel></th>
                         {data.columns.map((d) => (
                             <th key={d} className="p-2 text-center font-medium">
                                 <button type="button" className="hover:text-foreground" onClick={() => onDay(d)}>
@@ -260,7 +261,7 @@ function WeekView({ data, onShift, onDay }) {
                                 </button>
                             </th>
                         ))}
-                        <th className="p-3 text-end font-medium">{t('report.total')}</th>
+                        <th className="p-3 text-end font-medium"><HintLabel hint={t('hints.total')}>{t('report.total')}</HintLabel></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -309,14 +310,14 @@ function MonthView({ data, onDay }) {
             <table className="w-full text-sm">
                 <thead className="bg-muted/50 text-[11px] text-muted-foreground">
                     <tr>
-                        <th className="sticky start-0 z-10 bg-muted p-3 text-start font-medium">{t('report.employee')}</th>
+                        <th className="sticky start-0 z-10 bg-muted p-3 text-start font-medium"><HintLabel hint={t('hints.employee')}>{t('report.employee')}</HintLabel></th>
                         {data.columns.map((d) => (
                             <th key={d} className="px-0.5 py-2 text-center font-medium">
                                 <button type="button" className="w-6 hover:text-foreground" onClick={() => onDay(d)} title={formatDay(d, lang)}>{Number(d.slice(8))}</button>
                             </th>
                         ))}
-                        <th className="p-3 text-center font-medium">{t('report.days')}</th>
-                        <th className="p-3 text-end font-medium">{t('report.total')}</th>
+                        <th className="p-3 text-center font-medium"><HintLabel hint={t('hints.days')}>{t('report.days')}</HintLabel></th>
+                        <th className="p-3 text-end font-medium"><HintLabel hint={t('hints.total')}>{t('report.total')}</HintLabel></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -352,13 +353,13 @@ function YearView({ data, onMonth }) {
             <table className="w-full min-w-[900px] text-sm">
                 <thead className="bg-muted/50 text-xs text-muted-foreground">
                     <tr>
-                        <th className="p-3 text-start font-medium">{t('report.employee')}</th>
+                        <th className="p-3 text-start font-medium"><HintLabel hint={t('hints.employee')}>{t('report.employee')}</HintLabel></th>
                         {data.columns.map((m) => (
                             <th key={m} className="p-2 text-center font-medium">
                                 <button type="button" className="hover:text-foreground" onClick={() => onMonth(m)}>{formatMonth(m, lang, { month: 'short' })}</button>
                             </th>
                         ))}
-                        <th className="p-3 text-end font-medium">{t('report.total')}</th>
+                        <th className="p-3 text-end font-medium"><HintLabel hint={t('hints.total')}>{t('report.total')}</HintLabel></th>
                     </tr>
                 </thead>
                 <tbody>

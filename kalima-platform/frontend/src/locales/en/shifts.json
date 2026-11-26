@@ -102,5 +102,14 @@
     "daysAndShifts": "{{days}} days · {{shifts}} shifts",
     "employeeSign": "Employee signature",
     "managerSign": "Manager signature"
+  },
+  "hints": {
+    "totalHours": "Everyone's hours in the period shown, open shifts counted up to now.",
+    "worked": "Staff who worked at least one shift in the period shown.",
+    "onShift": "Staff who started a shift and have not ended it yet.",
+    "avgDay": "Average hours per working day: total hours divided by days worked.",
+    "employee": "The staff member and their role. A green dot means they are on a shift now.",
+    "total": "The staff member's hours in the period shown.",
+    "days": "Days they worked at least one shift."
   }
 }

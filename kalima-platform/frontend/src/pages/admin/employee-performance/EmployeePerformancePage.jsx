@@ -9,6 +9,7 @@ import DayRangeFilter, { RANGE_PRESETS } from '@/components/admin/DayRangeFilter
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 import StaffAttendanceSection from '@/components/admin/shifts/StaffAttendanceSection';
+import HintLabel from '@/components/admin/HintLabel';
 import { useRole } from '@/hooks/useRole';
 
 // Roles shown as columns in the created-accounts table (the platform's users;
@@ -89,11 +90,11 @@ export default function EmployeePerformancePage() {
                         <table className="kalima-data-table text-start">
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.nameEmail', 'Name and email')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.ordersConfirmedBy', 'Orders they confirmed')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.awaitingDelivery', 'Confirmed, not delivered yet')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.deliveredOrders', 'Delivered')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.returnedOrders', 'Returned')}</th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.nameEmail')}>{t('table.nameEmail', 'Name and email')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.ordersConfirmedBy')}>{t('table.ordersConfirmedBy', 'Orders they confirmed')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.awaitingDelivery')}>{t('table.awaitingDelivery', 'Confirmed, not delivered yet')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.deliveredOrders')}>{t('table.deliveredOrders', 'Delivered')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.returnedOrders')}>{t('table.returnedOrders', 'Returned')}</HintLabel></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -131,14 +132,14 @@ export default function EmployeePerformancePage() {
                         <table className="kalima-data-table text-start">
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.id', 'ID')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.nameEmail', 'Name and email')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.phone', 'Phone')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.role', 'Role')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.confirmedCount', 'Store Sales')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.productsSold', 'Products Sold')}</th>
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.eBookletsDelivered', 'E-Booklets Delivered')}</th>
-                                    <th className="px-6 py-3 font-medium text-center">{t('table.actions', 'Actions')}</th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.id')}>{t('table.id', 'ID')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.nameEmail')}>{t('table.nameEmail', 'Name and email')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.phone')}>{t('table.phone', 'Phone')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.role')}>{t('table.role', 'Role')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.confirmedCount')}>{t('table.confirmedCount', 'Store Sales')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.productsSold')}>{t('table.productsSold', 'Products Sold')}</HintLabel></th>
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.eBookletsDelivered')}>{t('table.eBookletsDelivered', 'E-Booklets Delivered')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-center"><HintLabel hint={t('hints.actions')}>{t('table.actions', 'Actions')}</HintLabel></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -191,10 +192,10 @@ export default function EmployeePerformancePage() {
                         <table className="kalima-data-table text-start">
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.adminName', 'Admin Name')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.email', 'Email')}</th>
-                                    {CREATED_ROLES.map((r) => <th key={r} className="kalima-number px-4 py-3 font-medium">{t(`roles.${r}`, r)}</th>)}
-                                    <th className="kalima-number px-6 py-3 font-medium">{t('table.createdAccounts', 'Accounts Created')}</th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.adminName')}>{t('table.adminName', 'Admin Name')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.email')}>{t('table.email', 'Email')}</HintLabel></th>
+                                    {CREATED_ROLES.map((r) => <th key={r} className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.createdRole', { role: t(`roles.${r}`, r) })}>{t(`roles.${r}`, r)}</HintLabel></th>)}
+                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.createdAccounts')}>{t('table.createdAccounts', 'Accounts Created')}</HintLabel></th>
                                 </tr>
                             </thead>
                             <tbody>
