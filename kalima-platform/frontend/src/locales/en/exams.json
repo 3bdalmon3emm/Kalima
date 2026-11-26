@@ -666,5 +666,16 @@
   "studentCard": {
     "title": "Student's exams",
     "hint": "Every exam and homework they took, with all attempts, and their performance in each subject as the student sees it."
+  },
+  "chart": {
+    "label": "Results in this subject over time",
+    "latest": "Latest",
+    "best": "Best",
+    "lowest": "Lowest",
+    "change": "Change since the first",
+    "passMark": "Pass {{percent}}",
+    "passed": "Passed",
+    "failed": "Failed",
+    "passLine": "Pass mark"
   }
 }

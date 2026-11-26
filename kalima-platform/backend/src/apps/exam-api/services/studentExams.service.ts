@@ -27,7 +27,7 @@ export function schoolYearOf(at: Date) {
   return month >= 7 ? year : year - 1;
 }
 
-type Point = { exam_id: number; name: string; at: Date; percent: number };
+type Point = { exam_id: number; name: string; at: Date; percent: number; pass_percent: number };
 
 // Up, down or steady from the slope of a straight line through the points
 // (in percent per exam); under one point either way counts as steady.
@@ -125,7 +125,7 @@ class StudentExamsService {
       if (!r.counted) continue;
       const key = `${r.subject?.id ?? 0}:${r.exam.type}`;
       if (!groups.has(key)) groups.set(key, { subject: r.subject, type: r.exam.type, points: [] });
-      groups.get(key)!.points.push({ exam_id: r.exam.id, name: r.exam.name, at: r.counted.at, percent: r.counted.percent });
+      groups.get(key)!.points.push({ exam_id: r.exam.id, name: r.exam.name, at: r.counted.at, percent: r.counted.percent, pass_percent: r.exam.pass_percent });
     }
     const indicators = [...groups.values()].map((g) => {
       const points = g.points.sort((a, b) => a.at.getTime() - b.at.getTime());

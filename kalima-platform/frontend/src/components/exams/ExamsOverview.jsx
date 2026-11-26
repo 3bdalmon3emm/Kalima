@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import Pager from './Pager';
+import PerformanceChart from './PerformanceChart';
 
 // "My exams" for a student, and the same view of a child for their parent
 // and of any student for the admin: the school year, the year at a glance,
@@ -21,29 +22,6 @@ const ALL = 'all';
 
 // "2026/2027", kept left to right inside Arabic text.
 export const yearLabel = (y) => `\u2066${y}/${y + 1}\u2069`;
-
-// A small line chart of the percents in date order, 0-100.
-function LineChart({ points }) {
-    const w = 280;
-    const h = 90;
-    const pad = 8;
-    const x = (i) => (points.length === 1 ? w / 2 : pad + (i * (w - 2 * pad)) / (points.length - 1));
-    const y = (p) => h - pad - (p / 100) * (h - 2 * pad);
-    const line = points.map((p, i) => `${x(i)},${y(p.percent)}`).join(' ');
-    return (
-        <svg viewBox={`0 0 ${w} ${h}`} className="h-24 w-full" role="img" dir="ltr">
-            {[0, 50, 100].map((g) => (
-                <line key={g} x1={pad} x2={w - pad} y1={y(g)} y2={y(g)} className="stroke-border" strokeDasharray={g === 50 ? '3 3' : undefined} strokeWidth="1" />
-            ))}
-            {points.length > 1 && <polyline points={line} fill="none" className="stroke-primary" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />}
-            {points.map((p, i) => (
-                <circle key={i} cx={x(i)} cy={y(p.percent)} r="3.5" className="fill-primary">
-                    <title>{`${p.name}: ${p.percent}%`}</title>
-                </circle>
-            ))}
-        </svg>
-    );
-}
 
 function Trend({ trend, t }) {
     const map = {
@@ -138,7 +116,7 @@ export default function ExamsOverview({ load, resultHref }) {
                 {indicators.length === 0 ? (
                     <p className="rounded-lg border bg-card p-6 text-center text-sm text-muted-foreground">{t('mine.noIndicator')}</p>
                 ) : (
-                    <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                    <div className="grid gap-4 lg:grid-cols-2">
                         {indicators.map((g) => (
                             <div key={`${g.subject?.id ?? 0}:${g.type}`} className="rounded-xl border bg-card p-4">
                                 <div className="flex items-start justify-between gap-2">
@@ -151,7 +129,7 @@ export default function ExamsOverview({ load, resultHref }) {
                                         <p className="text-xs text-muted-foreground">{t('mine.average')}</p>
                                     </div>
                                 </div>
-                                <LineChart points={g.points} />
+                                <PerformanceChart points={g.points} />
                                 <Trend trend={g.trend} t={t} />
                             </div>
                         ))}
