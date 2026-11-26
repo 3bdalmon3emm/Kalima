@@ -122,7 +122,9 @@
       "confirmedRevenue": "Confirmed revenue",
       "pendingPurchases": "Pending purchases",
       "ordersValue": "Orders value",
-      "averageConfirmed": "Average confirmed order"
+      "averageConfirmed": "Average confirmed order",
+      "pendingToday": "Pending today",
+      "pendingOlder": "Pending from earlier days"
     },
     "status": {
       "label": "Status",

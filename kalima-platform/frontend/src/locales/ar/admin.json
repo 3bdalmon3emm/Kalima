@@ -122,7 +122,9 @@
       "confirmedRevenue": "الإيرادات المؤكدة",
       "pendingPurchases": "مشتريات قيد الانتظار",
       "ordersValue": "قيمة الطلبات",
-      "averageConfirmed": "متوسط الطلب المؤكد"
+      "averageConfirmed": "متوسط الطلب المؤكد",
+      "pendingToday": "مشتريات قيد الانتظار اليوم",
+      "pendingOlder": "مشتريات قيد الانتظار قديمة"
     },
     "status": {
       "label": "الحالة",

@@ -26,6 +26,16 @@ export const adminDashboardController = {
         };
       }
 
+      // Pending orders are about now, not the filter: those placed today
+      // (Cairo) and the older ones nobody has handled yet.
+      const todayKey = new Intl.DateTimeFormat("en-CA", { timeZone: "Africa/Cairo" }).format(new Date());
+      const today = dayRange({ from: todayKey, to: todayKey })!;
+      const live = { deleted_at: null, is_deleted: { not: true }, status: "pending" };
+      const [pendingToday, pendingOlder] = await Promise.all([
+        prisma.purchases.count({ where: { ...live, created_at: { gte: today.gte, lt: today.lt } } }),
+        prisma.purchases.count({ where: { ...live, created_at: { lt: today.gte } } }),
+      ]);
+
       const [aggregates, confirmedAggregates, pendingCount] = await Promise.all(
         [
           prisma.purchases.aggregate({
@@ -56,6 +66,8 @@ export const adminDashboardController = {
             confirmedPurchases: confirmedAggregates._count.id,
             confirmedRevenue: confirmedAggregates._sum.total || 0,
             pendingPurchases: pendingCount,
+            pendingToday,
+            pendingOlder,
           },
         },
       });
