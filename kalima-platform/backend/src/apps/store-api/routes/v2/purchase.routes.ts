@@ -1,3 +1,4 @@
+import { employeePerformanceAuth } from "../../middleware/employeePerformanceAuth";
 import { Router } from "express";
 import { purchaseController } from "../../controllers/purchase.controller";
 import { authenticateToken } from "../../../../libs/auth/middleware";
@@ -26,12 +27,12 @@ router.get("/my", authenticateToken, purchaseController.getMyPurchases);
 router.get("/export", ...adminAuth, makeExportHandler("purchases"));
 router.get(
   "/confirmed-count",
-  ...adminAuth,
+  ...employeePerformanceAuth,
   purchaseController.getConfirmedCount,
 );
 router.get(
   "/confirmed-items/:employeeId",
-  ...adminAuth,
+  ...employeePerformanceAuth,
   purchaseController.getConfirmedEmployeeProducts,
 );
 router.get("/", ...adminAuth, purchaseController.getAll);

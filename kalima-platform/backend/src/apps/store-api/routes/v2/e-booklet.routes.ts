@@ -1,3 +1,4 @@
+import { adminAnalyticsAuth } from "../../middleware/adminAnalyticsAuth";
 import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { eBookletController } from "../../controllers/e-booklet.controller";
@@ -313,12 +314,12 @@ router.post(
 );
 router.get(
   "/admin/e-booklet-analytics",
-  ...adminManagerAuth,
+  ...adminAnalyticsAuth,
   eBookletController.adminAnalytics,
 );
 router.get(
   "/admin/e-booklet-analytics.csv",
-  ...adminManagerAuth,
+  ...adminAnalyticsAuth,
   eBookletController.exportAdminAnalyticsCsv,
 );
 router.get(

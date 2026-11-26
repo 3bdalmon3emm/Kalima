@@ -1,3 +1,4 @@
+import { employeePerformanceAuth } from "../../middleware/employeePerformanceAuth";
 import { Router } from "express";
 import { adminController } from "../../controllers/admin.controller";
 import { adminUserStatsController } from "../../controllers/admin-user-stats.controller";
@@ -86,7 +87,7 @@ router.get("/users", ...adminModeratorAuth, adminController.listUsers);
 // Created Accounts Statistics
 router.get(
   "/users/stats/created-accounts",
-  ...adminAuth,
+  ...employeePerformanceAuth,
   adminUserStatsController.getCreatedAccountsStats,
 );
 
