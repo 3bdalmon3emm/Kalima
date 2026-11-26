@@ -10,7 +10,7 @@ import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 import { TeacherAvatar } from '@/components/admin/exams/FolderTeachersPanel';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import ShiftDialog from './ShiftDialog';
-import { cairoToday, dayTone, formatDay, formatDuration, formatMonth, formatShort, formatTime, hours, shiftDate, shiftsApi } from './api';
+import { cairoToday, dayTone, shiftTone, SHIFT_TONE, formatDay, formatDuration, formatMonth, formatShort, formatTime, hours, shiftDate, shiftsApi } from './api';
 
 const PERIODS = ['day', 'week', 'month', 'year'];
 const HOUR = 3600_000;
@@ -154,7 +154,7 @@ function DayView({ data, onShift }) {
                     return (
                         <div key={e.user.id} className="flex items-center gap-3 border-b px-4 py-3 last:border-0">
                             <div className="w-48 shrink-0"><Person employee={e} /></div>
-                            <div className="relative h-9 flex-1 rounded-lg bg-muted/40">
+                            <div className="relative h-9 flex-1 rounded-lg border bg-muted/30">
                                 {ticks.map((h) => <span key={h} className="absolute inset-y-0 w-px bg-border" style={{ [side]: pct(h) }} />)}
                                 {!shifts.length && <span className="absolute inset-0 flex items-center justify-center text-xs text-muted-foreground">{t('report.noShift')}</span>}
                                 {shifts.map((sh) => {
@@ -166,7 +166,7 @@ function DayView({ data, onShift }) {
                                             type="button"
                                             onClick={() => onShift(sh, e.user)}
                                             title={`${formatTime(sh.started_at, lang)} – ${sh.open ? t('report.now') : formatTime(sh.ended_at, lang)}`}
-                                            className={`absolute top-1.5 bottom-1.5 min-w-1.5 rounded-md text-[10px] font-semibold text-white transition hover:brightness-110 ${sh.open ? 'animate-pulse bg-emerald-500' : sh.auto_closed ? 'bg-amber-500' : 'bg-emerald-600'}`}
+                                            className={`absolute top-1.5 bottom-1.5 min-w-1.5 rounded-md text-[10px] font-semibold shadow-sm ring-1 ring-black/10 transition hover:brightness-110 ${shiftTone(sh)} ${sh.open ? 'animate-pulse' : ''}`}
                                             style={{ [side]: pct(a), width: `calc(${pct(b)} - ${pct(a)})` }}
                                         >
                                             <span className="block truncate px-1">{formatTime(sh.started_at, lang)}</span>
@@ -187,8 +187,8 @@ function DayView({ data, onShift }) {
 function Legend({ month = false }) {
     const { t } = useTranslation('shifts');
     const items = month
-        ? [['bg-emerald-500', t('report.legend.full')], ['bg-emerald-300 dark:bg-emerald-700', t('report.legend.mid')], ['bg-amber-400', t('report.legend.short')], ['bg-muted', t('report.legend.none')]]
-        : [['bg-emerald-600', t('report.legend.closed')], ['bg-emerald-500 animate-pulse', t('report.legend.open')], ['bg-amber-500', t('report.legend.auto')]];
+        ? [[dayTone(8 * 3600), t('report.legend.full')], [dayTone(6 * 3600), t('report.legend.mid')], [dayTone(3600), t('report.legend.short')], [dayTone(0), t('report.legend.none')]]
+        : [[SHIFT_TONE.closed, t('report.legend.closed')], [`${SHIFT_TONE.open} animate-pulse`, t('report.legend.open')], [SHIFT_TONE.auto, t('report.legend.auto')]];
     return (
         <div className="flex flex-wrap gap-4 px-4 py-3 text-xs text-muted-foreground">
             {items.map(([c, l]) => <span key={l} className="inline-flex items-center gap-1.5"><span className={`h-3 w-3 rounded-full ${c}`} />{l}</span>)}
@@ -227,19 +227,19 @@ function WeekView({ data, onShift, onDay }) {
                                 return (
                                     <td key={d} className="p-1.5">
                                         {!day?.seconds ? <div className="flex h-full min-h-12 items-center justify-center rounded-md bg-muted/30 text-xs text-muted-foreground">—</div> : (
-                                            <div className="space-y-1 rounded-md border bg-muted/20 p-1.5">
+                                            <div className="space-y-1 rounded-md border bg-card p-1.5 shadow-sm">
                                                 {day.shifts.map((sh) => (
                                                     <button
                                                         key={sh.id}
                                                         type="button"
                                                         onClick={() => onShift(sh, e.user)}
-                                                        className={`block w-full whitespace-nowrap rounded px-1 py-0.5 text-center text-[11px] tabular-nums hover:bg-muted ${sh.open ? 'font-semibold text-emerald-600' : sh.auto_closed ? 'text-amber-600' : ''}`}
+                                                        className={`block w-full whitespace-nowrap rounded px-1 py-1 text-center text-[11px] font-semibold tabular-nums transition hover:brightness-110 ${shiftTone(sh)}`}
                                                     >
                                                         {formatShort(sh.started_at, lang)}–{sh.open ? t('report.now') : formatShort(sh.ended_at, lang)}
                                                     </button>
                                                 ))}
-                                                <div className="h-1 overflow-hidden rounded-full bg-muted"><div className="h-full bg-emerald-500" style={{ width: `${Math.min(100, (day.seconds / (8 * 3600)) * 100)}%` }} /></div>
-                                                <p className="text-center text-[11px] font-semibold">{formatDuration(day.seconds, t)}</p>
+                                                <div className="h-1.5 overflow-hidden rounded-full bg-muted"><div className={`h-full ${dayTone(day.seconds)}`} style={{ width: `${Math.min(100, (day.seconds / (8 * 3600)) * 100)}%` }} /></div>
+                                                <p className="text-center text-xs font-bold">{formatDuration(day.seconds, t)}</p>
                                             </div>
                                         )}
                                     </td>

@@ -75,8 +75,16 @@ export function shiftDate(date, period, step) {
 // The colour of a day by its hours (month view and the legend).
 export function dayTone(seconds) {
     const h = (seconds || 0) / 3600;
-    if (h <= 0) return 'bg-muted';
+    if (h <= 0) return 'bg-transparent ring-1 ring-inset ring-muted-foreground/30';
     if (h >= 8) return 'bg-emerald-500';
-    if (h >= 6) return 'bg-emerald-300 dark:bg-emerald-700';
-    return 'bg-amber-400';
+    if (h >= 6) return 'bg-sky-500';
+    return 'bg-orange-500';
 }
+
+// A shift's colour: finished blue, running green, closed by itself orange.
+export const SHIFT_TONE = {
+    closed: 'bg-sky-600 text-white',
+    open: 'bg-emerald-500 text-white',
+    auto: 'bg-orange-500 text-white',
+};
+export const shiftTone = (sh) => SHIFT_TONE[sh.open ? 'open' : sh.auto_closed ? 'auto' : 'closed'];

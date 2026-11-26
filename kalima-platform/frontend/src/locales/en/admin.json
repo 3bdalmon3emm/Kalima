@@ -1344,7 +1344,8 @@
     "name": "Name",
     "phone": "Phone",
     "role": "Role",
-    "actions": "Actions"
+    "actions": "Actions",
+    "nameEmail": "Name and email"
   },
   "employeePerformanceDetails": {
     "viewSales": "View Sales",
@@ -1430,6 +1431,8 @@
     "all": "All time",
     "from": "From",
     "to": "To",
-    "clear": "Clear"
+    "clear": "Clear",
+    "fromTime": "From hour",
+    "toTime": "To hour"
   }
 }

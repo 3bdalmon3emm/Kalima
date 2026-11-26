@@ -38,7 +38,7 @@ export default function EmployeePerformanceDetailPage() {
     const [range, setRange] = useState(() => {
         const from = searchParams.get('from');
         const to = searchParams.get('to');
-        if (from || to) return { from: from || '', to: to || '' };
+        if (from || to) return { from: from || '', to: to || '', fromTime: searchParams.get('from_time') || '', toTime: searchParams.get('to_time') || '' };
         const month = Number(searchParams.get('month'));
         const year = Number(searchParams.get('year')) || new Date().getFullYear();
         if (month) {
@@ -60,7 +60,7 @@ export default function EmployeePerformanceDetailPage() {
     } = useEmployeePerformance();
 
     useEffect(() => {
-        setSearchParams(range ? { from: range.from || '', to: range.to || '' } : {}, { replace: true });
+        setSearchParams(range ? { from: range.from || '', to: range.to || '', ...(range.fromTime && { from_time: range.fromTime }), ...(range.toTime && { to_time: range.toTime }) } : {}, { replace: true });
     }, [range, setSearchParams]);
 
     const loadData = () => {
@@ -72,6 +72,8 @@ export default function EmployeePerformanceDetailPage() {
         if (range) {
             params.from = range.from;
             params.to = range.to;
+            params.fromTime = range.fromTime;
+            params.toTime = range.toTime;
         }
         fetchEmployeeProducts(id, params);
     };
@@ -79,7 +81,7 @@ export default function EmployeePerformanceDetailPage() {
     useEffect(() => {
         loadData();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id, range?.from, range?.to, !range]);
+    }, [id, range?.from, range?.to, range?.fromTime, range?.toTime, !range]);
 
     const employee = employeeSalesDetails?.employee;
     const summary = employeeSalesDetails?.summary || {
@@ -168,7 +170,7 @@ export default function EmployeePerformanceDetailPage() {
                     </div>
                 </div>
 
-                <DayRangeFilter value={range} onChange={(r) => { setRange(r); setCurrentPage(1); }} />
+                <DayRangeFilter value={range} onChange={(r) => { setRange(r); setCurrentPage(1); }} withTime />
             </div>
 
             {/* KPI Metric Summary Cards */}

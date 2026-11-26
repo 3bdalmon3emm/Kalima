@@ -1344,7 +1344,8 @@
     "name": "الاسم",
     "phone": "الهاتف",
     "role": "الدور",
-    "actions": "الإجراءات"
+    "actions": "الإجراءات",
+    "nameEmail": "الاسم والبريد الإلكتروني"
   },
   "employeePerformanceDetails": {
     "viewSales": "عرض المبيعات",
@@ -1430,6 +1431,8 @@
     "all": "الكل",
     "from": "من",
     "to": "إلى",
-    "clear": "مسح"
+    "clear": "مسح",
+    "fromTime": "من الساعة",
+    "toTime": "لحد الساعة"
   }
 }

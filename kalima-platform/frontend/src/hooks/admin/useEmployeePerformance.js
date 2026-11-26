@@ -55,6 +55,8 @@ export const useEmployeePerformance = () => {
             const queries = new URLSearchParams();
             if (params.from) queries.append('from', params.from);
             if (params.to) queries.append('to', params.to);
+            if (params.fromTime) queries.append('from_time', params.fromTime);
+            if (params.toTime) queries.append('to_time', params.toTime);
             if (params.month) queries.append('month', params.month);
             if (params.year) queries.append('year', params.year);
             if (params.type && params.type !== 'all') queries.append('type', params.type);

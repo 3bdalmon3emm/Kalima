@@ -11,8 +11,19 @@ import SectionTitle from '@/components/admin/dashboard/SectionTitle';
 import StaffAttendanceSection from '@/components/admin/shifts/StaffAttendanceSection';
 import { useRole } from '@/hooks/useRole';
 
-// Roles shown as columns in the created-accounts table.
-const CREATED_ROLES = ['Teacher', 'Student', 'Parent', 'Assistant', 'Lecturer', 'Moderator', 'SubAdmin'];
+// Roles shown as columns in the created-accounts table (the platform's users;
+// staff accounts still count in the total).
+const CREATED_ROLES = ['Teacher', 'Student', 'Parent', 'Assistant'];
+
+// The person's name with their email under it, in one cell.
+function NameEmail({ name, email }) {
+    return (
+        <div className="min-w-0 leading-tight">
+            <p className="kalima-truncate font-medium" title={name || 'Unknown'}>{name || 'Unknown'}</p>
+            {email && <p className="kalima-truncate text-xs text-muted-foreground" dir="ltr" title={email}>{email}</p>}
+        </div>
+    );
+}
 
 export default function EmployeePerformancePage() {
     const navigate = useNavigate();
@@ -38,7 +49,7 @@ export default function EmployeePerformancePage() {
         fetchConfirmedCount(range);
         fetchCreatedAccounts(range);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [range?.from, range?.to, !range]);
+    }, [range?.from, range?.to, range?.fromTime, range?.toTime, !range]);
 
     if (loading && !confirmerStats && !confirmedCount && !createdAccounts) {
         return (
@@ -66,7 +77,7 @@ export default function EmployeePerformancePage() {
             {isAdmin && <StaffAttendanceSection />}
 
             <div className="sticky top-0 z-10 -mx-1 rounded-lg border bg-background/95 p-3 backdrop-blur">
-                <DayRangeFilter value={range} onChange={setRange} />
+                <DayRangeFilter value={range} onChange={setRange} withTime />
             </div>
 
             {/* Confirmer Stats (Who handled how many) */}
@@ -118,8 +129,7 @@ export default function EmployeePerformancePage() {
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
                                     <th className="kalima-number px-6 py-3 font-medium">{t('table.id', 'ID')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.name', 'Name')}</th>
-                                    <th className="px-6 py-3 font-medium text-start">{t('table.email', 'Email')}</th>
+                                    <th className="px-6 py-3 font-medium text-start">{t('table.nameEmail', 'Name and email')}</th>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.phone', 'Phone')}</th>
                                     <th className="px-6 py-3 font-medium text-start">{t('table.role', 'Role')}</th>
                                     <th className="kalima-number px-6 py-3 font-medium">{t('table.confirmedCount', 'Store Sales')}</th>
@@ -134,8 +144,7 @@ export default function EmployeePerformancePage() {
                                         return (
                                             <tr key={idx}>
                                                 <td className="kalima-number px-6 py-4">{item.id}</td>
-                                                <td className="kalima-truncate px-6 py-4 font-medium" title={item.name || 'Unknown'}>{item.name || 'Unknown'}</td>
-                                                <td className="kalima-truncate px-6 py-4" title={item.email}>{item.email}</td>
+                                                <td className="px-6 py-4"><NameEmail name={item.name} email={item.email} /></td>
                                                 <td className="px-6 py-4">{item.phone || '—'}</td>
                                                 <td className="px-6 py-4">{t(`roles.${item.role}`, item.role)}</td>
                                                 <td className="kalima-number px-6 py-4 text-primary">{item.count || 0}</td>
@@ -147,7 +156,7 @@ export default function EmployeePerformancePage() {
                                                         size="sm"
                                                         className="h-8 gap-1.5 text-xs font-medium"
                                                         onClick={() => {
-                                                            const query = range ? `?from=${range.from || ''}&to=${range.to || ''}` : '';
+                                                            const query = range ? `?${new URLSearchParams({ from: range.from || '', to: range.to || '', ...(range.fromTime && { from_time: range.fromTime }), ...(range.toTime && { to_time: range.toTime }) })}` : '';
                                                             navigate(`/admin/employee-performance/${item.id}${query}`);
                                                         }}
                                                     >
@@ -160,7 +169,7 @@ export default function EmployeePerformancePage() {
                                     })
                                 ) : (
                                     <tr>
-                                        <td colSpan="9" className="px-6 py-8 text-center text-muted-foreground">
+                                        <td colSpan="8" className="px-6 py-8 text-center text-muted-foreground">
                                             {t('table.noData', 'No data available')}
                                         </td>
                                     </tr>
