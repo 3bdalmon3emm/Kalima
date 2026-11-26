@@ -3,6 +3,9 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Copy, FileSpreadsheet, LogOut, Minimize, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
+import { Input } from '@/components/ui/input';
+import Pager, { useDebounced } from '@/components/exams/Pager';
+import ResultsSummary from '@/components/exams/ResultsSummary';
 import { Button } from '@/components/ui/button';
 import LoadingSpinner from '@/components/ui/loading-spinner';
 import TeacherFilter from './TeacherFilter';
@@ -28,21 +31,24 @@ export default function ResultsTab({ exam }) {
     const { t, i18n } = useTranslation('exams');
     const [filter, setFilter] = useState('all');
     const [teacher, setTeacher] = useState('all');
-    const [teachers, setTeachers] = useState([]);
+    const [search, setSearch] = useState('');
+    const q = useDebounced(search.trim());
+    const [page, setPage] = useState(1);
     const [data, setData] = useState(null);
     const { exportData, loading: exporting } = useExport();
-    const key = `${filter}|${teacher}`;
+    const key = `${filter}|${teacher}|${q}|${page}`;
 
-    useEffect(() => {
-        exGet(`/exams/${exam.id}/teachers`).then((rows) => setTeachers(rows.map((r) => r.teacher))).catch(() => {});
-    }, [exam.id]);
+    // A new filter or search starts again from the first page.
+    useEffect(() => { setPage(1); }, [filter, teacher, q]);
+
+    const loadTeachers = (term, p) => exGet(`/exams/${exam.id}/teacher-options`, { q: term, page: p });
 
     useEffect(() => {
         let cancelled = false;
-        const params = { ...(filter !== 'all' && { status: filter }), ...(teacher !== 'all' && { teacher_ids: teacher }) };
+        const params = { page, ...(q && { q }), ...(filter !== 'all' && { status: filter }), ...(teacher !== 'all' && { teacher_ids: teacher }) };
         exGet(`/exams/${exam.id}/attempts`, params)
             .then((d) => !cancelled && setData({ ...d, key }))
-            .catch((err) => { if (!cancelled) { setData({ attempts: [], counts: {}, key }); showError(err, t('errors.load')); } });
+            .catch((err) => { if (!cancelled) { setData({ items: [], counts: {}, key }); showError(err, t('errors.load')); } });
         return () => { cancelled = true; };
     }, [exam.id, key]); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -61,11 +67,13 @@ export default function ResultsTab({ exam }) {
     return (
         <div className="space-y-3">
             <div className="flex flex-wrap items-center gap-2">
-                <TeacherFilter teachers={teachers} value={teacher} onChange={setTeacher} />
+                <TeacherFilter load={loadTeachers} value={teacher} onChange={setTeacher} />
+                <Input className="w-64" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('results.searchStudents')} />
                 <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting}>
                     {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
                 </Button>
             </div>
+            {data?.summary && <ResultsSummary summary={data.summary} passPercent={exam.pass_percent} />}
             <div className="flex flex-wrap gap-2">
                 {FILTERS.map((f) => (
                     <Button key={f} size="sm" variant={filter === f ? 'default' : 'outline'} onClick={() => setFilter(f)}>
@@ -75,7 +83,7 @@ export default function ResultsTab({ exam }) {
                 ))}
             </div>
 
-            {data?.key !== key ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !data.attempts.length ? (
+            {data?.key !== key ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !data.items.length ? (
                 <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t('results.empty')}</p>
             ) : (
                 <div className="overflow-x-auto rounded-lg border">
@@ -93,7 +101,7 @@ export default function ResultsTab({ exam }) {
                             </tr>
                         </thead>
                         <tbody>
-                            {data.attempts.map((a) => (
+                            {data.items.map((a) => (
                                 <tr key={a.id} className="border-t align-middle">
                                     <td className="p-2">
                                         <div className="flex items-center gap-2">
@@ -140,6 +148,7 @@ export default function ResultsTab({ exam }) {
                     </table>
                 </div>
             )}
+            {data?.key === key && <Pager data={data} onPage={setPage} />}
             <p className="flex flex-wrap gap-3 text-xs text-muted-foreground">
                 <span className="inline-flex items-center gap-1"><LogOut className="h-3.5 w-3.5" />{t('results.tabLeaves')}</span>
                 <span className="inline-flex items-center gap-1"><Minimize className="h-3.5 w-3.5" />{t('results.fullscreenExits')}</span>

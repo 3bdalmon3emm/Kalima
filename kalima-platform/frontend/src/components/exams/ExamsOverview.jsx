@@ -1,14 +1,21 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { Minus, TrendingDown, TrendingUp, UserRound } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import LoadingSpinner from '@/components/ui/loading-spinner';
+import { showError } from '@/components/admin/question-bank/BankDialogs';
+import Pager from './Pager';
 
-// "My exams" for a student, and the same view of a child for their parent:
-// the school year, the performance indicator (one card per subject and
-// type) and every exam taken with its attempts. resultHref(row, attempt)
-// says where an attempt opens; none means it does not open.
+// "My exams" for a student, and the same view of a child for their parent
+// and of any student for the admin: the school year, the year at a glance,
+// the performance indicator (one card per subject and type) and every exam
+// taken with all its attempts, a page at a time. load(params) asks the
+// server with { year, subject_id, type, page }; the year, subject and type
+// are chosen on the server so the indicator and the summary cover every
+// exam, not just the page. resultHref(row, attempt) says where an attempt
+// opens; none means it does not open.
 
 const ALL = 'all';
 
@@ -48,20 +55,31 @@ function Trend({ trend, t }) {
     return <span className={`inline-flex items-center gap-1 text-sm font-semibold ${cls}`}><Icon className="h-4 w-4" />{t(`mine.trend.${trend}`)}</span>;
 }
 
-export default function ExamsOverview({ data, onYear, resultHref }) {
+export default function ExamsOverview({ load, resultHref }) {
     const { t, i18n } = useTranslation('exams');
+    const [year, setYear] = useState(null);
     const [subject, setSubject] = useState(ALL);
     const [type, setType] = useState(ALL);
+    const [page, setPage] = useState(1);
+    const [data, setData] = useState(null);
     const dateFmt = useMemo(() => new Intl.DateTimeFormat(i18n.language === 'ar' ? 'ar-EG' : 'en-GB', { day: 'numeric', month: 'short', year: 'numeric' }), [i18n.language]);
 
-    const subjects = useMemo(() => {
-        const m = new Map();
-        for (const r of data.rows) m.set(r.subject?.id ?? 0, r.subject?.title ?? t('mine.noSubject'));
-        return [...m.entries()];
-    }, [data, t]);
+    useEffect(() => {
+        let cancelled = false;
+        const params = { page, ...(year !== null && { year }), ...(subject !== ALL && { subject_id: subject }), ...(type !== ALL && { type }) };
+        load(params).then((d) => !cancelled && setData(d)).catch((err) => { if (!cancelled) { setData((prev) => prev); showError(err, t('errors.load')); } });
+        return () => { cancelled = true; };
+    }, [year, subject, type, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
-    const rows = data.rows.filter((r) => (subject === ALL || String(r.subject?.id ?? 0) === subject) && (type === ALL || r.exam.type === type));
-    const indicators = data.indicators.filter((g) => (subject === ALL || String(g.subject?.id ?? 0) === subject) && (type === ALL || g.type === type));
+    // Another year starts over with every subject; any new filter starts at
+    // the first page.
+    const onYear = (y) => { setYear(y); setSubject(ALL); setPage(1); };
+    const onSubject = (v) => { setSubject(v); setPage(1); };
+    const onType = (v) => { setType(v); setPage(1); };
+
+    if (!data) return <div className="flex justify-center py-16"><LoadingSpinner /></div>;
+    const subjects = (data.subjects || []).map((x) => [x.id, x.title ?? t('mine.noSubject')]);
+    const { rows, indicators, summary } = data;
 
     const status = (a) => {
         if (a.status === 'in_progress') return <Badge variant="outline">{t('mine.running')}</Badge>;
@@ -80,14 +98,14 @@ export default function ExamsOverview({ data, onYear, resultHref }) {
                         ))}
                     </SelectContent>
                 </Select>
-                <Select value={subject} onValueChange={setSubject}>
+                <Select value={subject} onValueChange={onSubject}>
                     <SelectTrigger className="w-44"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value={ALL}>{t('mine.allSubjects')}</SelectItem>
                         {subjects.map(([id, title]) => <SelectItem key={id} value={String(id)}>{title}</SelectItem>)}
                     </SelectContent>
                 </Select>
-                <Select value={type} onValueChange={setType}>
+                <Select value={type} onValueChange={onType}>
                     <SelectTrigger className="w-40"><SelectValue /></SelectTrigger>
                     <SelectContent>
                         <SelectItem value={ALL}>{t('mine.allTypes')}</SelectItem>
@@ -96,6 +114,24 @@ export default function ExamsOverview({ data, onYear, resultHref }) {
                     </SelectContent>
                 </Select>
             </div>
+
+            {summary && (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-6" data-testid="overview-summary">
+                    {[
+                        [t('mine.summary.exams'), summary.exams],
+                        [t('mine.summary.attempts'), summary.attempts],
+                        [t('mine.summary.graded'), summary.graded],
+                        [t('mine.summary.passed'), summary.passed, 'text-green-700 dark:text-green-400'],
+                        [t('mine.summary.failed'), summary.failed, summary.failed ? 'text-destructive' : ''],
+                        [t('mine.summary.average'), summary.average === null ? '—' : `${summary.average}%`],
+                    ].map(([label, value, tone]) => (
+                        <div key={label} className="rounded-lg border bg-card px-3 py-2">
+                            <p className="text-[11px] text-muted-foreground">{label}</p>
+                            <p className={`text-lg font-bold tabular-nums ${tone || ''}`}>{value}</p>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             <section className="space-y-3">
                 <h2 className="text-lg font-bold">{t('mine.indicator')}</h2>
@@ -165,6 +201,7 @@ export default function ExamsOverview({ data, onYear, resultHref }) {
                         ))}
                     </div>
                 )}
+                <Pager data={data} onPage={setPage} />
             </section>
         </div>
     );

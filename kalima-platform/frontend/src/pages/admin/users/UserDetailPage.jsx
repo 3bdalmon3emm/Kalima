@@ -23,6 +23,7 @@ import StudentCard from '@/components/admin/users/details/StudentCard';
 import LecturerCard from '@/components/admin/users/details/LecturerCard';
 import AssistantCard from '@/components/admin/users/details/AssistantCard';
 import AssistantTeachersCard from '@/components/admin/users/details/AssistantTeachersCard';
+import StudentExamsCard from '@/components/admin/users/details/StudentExamsCard';
 import ParentCard from '@/components/admin/users/details/ParentCard';
 import UsersCreatedCard from '@/components/admin/users/details/UsersCreatedCard';
 
@@ -387,6 +388,9 @@ export default function UserDetailPage() {
 
                 </div>
             </div>
+
+            {/* Every exam the student took, with all attempts and the indicator. */}
+            {isStudent && <StudentExamsCard studentId={selectedUser.id} />}
         </div>
     );
 }

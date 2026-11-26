@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -10,7 +10,8 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import LinkQrDialog from '@/components/exams/LinkQrDialog';
 import TeacherAssignDialog from './TeacherAssignDialog';
-import { TeacherAvatar, formatDate, teacherMatches } from './FolderTeachersPanel';
+import { TeacherAvatar, formatDate } from './FolderTeachersPanel';
+import Pager, { usePagedList } from '@/components/exams/Pager';
 import { ex, examLink, exGet, exSend } from './api';
 
 export const STATE_STYLE = {
@@ -27,12 +28,10 @@ export const STATE_STYLE = {
 // their own link: copy, QR, close/open, and dates that differ from the rest.
 export default function ExamTeachersTab({ exam }) {
     const { t } = useTranslation('exams');
-    const [rows, setRows] = useState(null);
     const [dialog, setDialog] = useState(null);
-    const [term, setTerm] = useState('');
-
-    const load = () => exGet(`/exams/${exam.id}/teachers`).then(setRows).catch((err) => showError(err, t('errors.load')));
-    useEffect(() => { load(); }, [exam.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    const list = usePagedList(({ q, page }) => exGet(`/exams/${exam.id}/teachers`, { q, page }), [exam.id], (err) => showError(err, t('errors.load')));
+    const { term, setTerm, data, reload: load } = list;
+    const rows = data?.items;
 
     const act = async (fn, message) => {
         try {
@@ -46,7 +45,8 @@ export default function ExamTeachersTab({ exam }) {
     };
 
     if (!rows) return <div className="flex justify-center py-10"><LoadingSpinner /></div>;
-    const shown = rows.filter((row) => teacherMatches(row.teacher, term));
+    const shown = rows;
+    const any = data.total > 0 || !!list.q;
 
     return (
         <div className="space-y-4">
@@ -55,11 +55,11 @@ export default function ExamTeachersTab({ exam }) {
                 {!exam.archived_at && <Button size="sm" onClick={() => setDialog({ type: 'add' })}><Plus className="h-4 w-4" />{t('teachers.addOnExam')}</Button>}
             </div>
             {!exam.published_at && <p className="rounded-md bg-amber-50 p-3 text-sm text-amber-800 dark:bg-amber-900/30 dark:text-amber-200">{t('teachers.notPublishedHint')}</p>}
-            {rows.length > 0 && (
+            {any && (
                 <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={t('teachers.searchTeachers')} className="sm:w-80" />
             )}
             {shown.length === 0 ? (
-                <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">{t(rows.length ? 'search.none' : 'teachers.none')}</p>
+                <p className="rounded-lg border border-dashed p-10 text-center text-muted-foreground">{t(list.q ? 'search.none' : 'teachers.none')}</p>
             ) : (
                 <div className="space-y-3">
                     {shown.map((row) => (
@@ -121,6 +121,7 @@ export default function ExamTeachersTab({ exam }) {
                     ))}
                 </div>
             )}
+            <Pager data={data} onPage={list.setPage} />
 
             <TeacherAssignDialog
                 open={dialog?.type === 'add'}
