@@ -724,11 +724,13 @@ class UserManagementService {
               provider_email: email,
             },
           },
+          // Both portals, like the Admin and the SubAdmin: the store side is
+          // what lets a Moderator into the dashboard.
           user_roles: {
-            create: {
-              portal: portal_enum.academy,
-              role: role_enum.Moderator,
-            },
+            create: [
+              { portal: portal_enum.store, role: role_enum.Moderator },
+              { portal: portal_enum.academy, role: role_enum.Moderator },
+            ],
           },
           user_analytics: {
             create: {},
