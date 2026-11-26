@@ -20,6 +20,9 @@ import { exportOptions, multiExportFile } from "../services/resultsExportMulti";
 import "../services/examResultsExport";
 import { uploadSound } from "../services/media.service";
 import { parseExamSettings, parseMark, parseRules } from "../services/examInput";
+import { paging, searchTerm } from "../services/paging";
+import { studentExamsService } from "../services/studentExams.service";
+import { overviewArgs } from "./overviewArgs";
 
 // Building exams, mounted at /api/v2/exam-admin. All staff (Admin, SubAdmin, Moderator).
 
@@ -99,7 +102,7 @@ router.get("/archive", handle(async (_req, res) => {
 
 router.get("/exams", handle(async (req, res) => {
   const subjectId = optionalId(req.query.subject_id, "subject_id") ?? undefined;
-  res.json(ok(await examsService.search(String(req.query.q ?? "").trim(), subjectId)));
+  res.json(ok(await examsService.search(searchTerm(req.query.q), subjectId, paging(req.query))));
 }));
 
 router.get("/exams/:id", handle(async (req, res) => {
@@ -204,7 +207,8 @@ router.get("/exams/:id/attempts", handle(async (req, res) => {
   res.json(ok(await resultsService.list(idParam(req), {
     status: typeof req.query.status === "string" ? req.query.status : undefined,
     teacherIds: teacherIdsParam(req.query.teacher_ids),
-  })));
+    q: searchTerm(req.query.q),
+  }, paging(req.query))));
 }));
 
 // Excel/CSV of results: ?exam_id=&teacher_ids=&status=&format=xlsx
@@ -289,11 +293,11 @@ router.put("/attempts/:id/grades", handle(async (req, res) => {
 const datePair = (body: any) => ({ startsAt: date(body?.starts_at, "starts_at"), endsAt: date(body?.ends_at, "ends_at") });
 
 router.get("/teachers/search", handle(async (req, res) => {
-  res.json(ok(await teacherLinksService.searchTeachers(typeof req.query.q === "string" ? req.query.q : "")));
+  res.json(ok(await teacherLinksService.searchTeachers(searchTerm(req.query.q), paging(req.query))));
 }));
 
 router.get("/folders/:id/teachers", handle(async (req, res) => {
-  res.json(ok(await teacherLinksService.folderTeachers(idParam(req))));
+  res.json(ok(await teacherLinksService.folderTeachers(idParam(req), searchTerm(req.query.q), paging(req.query))));
 }));
 
 router.post("/folders/:id/teachers", handle(async (req, res) => {
@@ -304,7 +308,18 @@ router.post("/folders/:id/teachers", handle(async (req, res) => {
 }));
 
 router.get("/exams/:id/teachers", handle(async (req, res) => {
-  res.json(ok(await teacherLinksService.examTeachers(idParam(req))));
+  res.json(ok(await teacherLinksService.examTeachers(idParam(req), searchTerm(req.query.q), paging(req.query))));
+}));
+
+// The exam's teachers by name only, for the results filter.
+router.get("/exams/:id/teacher-options", handle(async (req, res) => {
+  res.json(ok(await teacherLinksService.examTeacherOptions(idParam(req), searchTerm(req.query.q), paging(req.query))));
+}));
+
+// One student's exams for the admin: every attempt, the year's summary and
+// the performance indicator, as the student sees them.
+router.get("/students/:id/exams", handle(async (req, res) => {
+  res.json(ok(await studentExamsService.overview(idParam(req), ...overviewArgs(req.query))));
 }));
 
 router.post("/exams/:id/teachers", handle(async (req, res) => {
@@ -364,8 +379,7 @@ const assertRole = async (id: number, role: "Assistant" | "Teacher") => {
 };
 
 router.get("/assistants/:id/teachers", handle(async (req, res) => {
-  const rows = await prisma.teacher_assistants.findMany({ where: { assistant_user_id: idParam(req) }, select: { teacher_user_id: true } });
-  res.json(ok([...(await teacherLinksService.teacherCards(rows.map((r) => r.teacher_user_id))).values()]));
+  res.json(ok(await teacherLinksService.assistantTeachers(idParam(req), paging(req.query))));
 }));
 
 router.post("/assistants/:id/teachers", handle(async (req, res) => {

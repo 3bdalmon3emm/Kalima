@@ -12,6 +12,7 @@ import { decisionBody, reopenBody } from "./examAdmin.routes";
 import "../services/examResultsExport";
 import { appealsService } from "../services/appeals.service";
 import { attemptsService } from "../services/attempts.service";
+import { paging, searchTerm } from "../services/paging";
 
 // The teacher's (and assistant's) side of exams, mounted at
 // /api/v2/exam-teacher. Every request is limited to the links of the
@@ -26,6 +27,17 @@ const teachersOf = (req: Request) => teacherPortalService.teacherIdsFor(userId(r
 
 router.get("/exams", handle(async (req, res) => {
   res.json(ok(await teacherPortalService.myExams(await teachersOf(req))));
+}));
+
+// A page of the exams in one folder (?folder_id=) or found by name (?q=).
+router.get("/exams/list", handle(async (req, res) => {
+  const folderId = Number(req.query.folder_id);
+  res.json(ok(await teacherPortalService.examList(await teachersOf(req), { folderId: Number.isInteger(folderId) ? folderId : undefined, q: searchTerm(req.query.q) }, paging(req.query))));
+}));
+
+// A page of the students who took the exam through this teacher's links.
+router.get("/exams/:id/students", handle(async (req, res) => {
+  res.json(ok(await teacherPortalService.students(idParam(req), await teachersOf(req), searchTerm(req.query.q), paging(req.query))));
 }));
 
 router.get("/exams/:id", handle(async (req, res) => {

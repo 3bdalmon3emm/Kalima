@@ -3,6 +3,7 @@ import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
 import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { pathIds } from "./folders.service";
+import { paged, paging, personWhere, type Paging } from "./paging";
 
 // Teachers on exams. The admin adds a teacher on an exam folder (everything
 // inside it, now and later) or on one exam; each exam then gets one
@@ -190,18 +191,37 @@ class TeacherLinksService {
   }
 
   // Teachers added directly on a folder.
-  async folderTeachers(folderId: number) {
-    const rows = await this.db.ex_teacher_assignments.findMany({
+  async folderTeachers(folderId: number, term = "", p: Paging = paging()) {
+    const all = await this.db.ex_teacher_assignments.findMany({
       where: { folder_id: folderId, removed_at: null },
-      orderBy: { created_at: "asc" },
+      orderBy: [{ created_at: "asc" }, { id: "asc" }],
+      select: { id: true, teacher_user_id: true },
     });
-    const users = await this.teacherCards(rows.map((r) => r.teacher_user_id));
-    return rows.map((r) => ({ id: r.id, starts_at: r.starts_at, ends_at: r.ends_at, teacher: users.get(r.teacher_user_id) ?? { id: r.teacher_user_id } }));
+    const matching = await this.matchingTeachers(all.map((r) => r.teacher_user_id), term);
+    const shown = matching ? all.filter((r) => matching.has(r.teacher_user_id)) : all;
+    const page = shown.slice(p.skip, p.skip + p.size);
+    const [rows, users] = await Promise.all([
+      this.db.ex_teacher_assignments.findMany({ where: { id: { in: page.map((r) => r.id) } } }),
+      this.teacherCards(page.map((r) => r.teacher_user_id)),
+    ]);
+    const byId = new Map(rows.map((r) => [r.id, r]));
+    return paged(page.map(({ id }) => {
+      const r = byId.get(id)!;
+      return { id: r.id, starts_at: r.starts_at, ends_at: r.ends_at, teacher: users.get(r.teacher_user_id) ?? { id: r.teacher_user_id } };
+    }), shown.length, p);
   }
 
-  // Every teacher who has this exam (directly or through a folder), with
-  // their link and its state.
-  async examTeachers(examId: number) {
+  // Of these teachers, the ones whose name, phone or email matches; null
+  // when there is no search.
+  private async matchingTeachers(ids: number[], term: string): Promise<Set<number> | null> {
+    if (!term) return null;
+    if (!ids.length) return new Set();
+    const users = await this.db.users.findMany({ where: { id: { in: [...new Set(ids)] }, ...personWhere(term) }, select: { id: true } });
+    return new Set(users.map((u) => u.id));
+  }
+
+  // The teachers who have this exam, in name order, by the ids only.
+  private async examTeacherIds(examId: number) {
     const exam = await this.db.ex_exams.findUnique({
       where: { id: examId },
       select: { id: true, archived_at: true, published_at: true, folder: { select: { path: true, name: true } } },
@@ -211,7 +231,30 @@ class TeacherLinksService {
       where: { removed_at: null, OR: [{ exam_id: examId }, { folder_id: { in: pathIds(exam.folder.path) } }] },
       select: { id: true, teacher_user_id: true, folder_id: true, exam_id: true, starts_at: true, ends_at: true },
     });
-    const teacherIds = [...new Set(assignments.map((a) => a.teacher_user_id))];
+    const ids = [...new Set(assignments.map((a) => a.teacher_user_id))];
+    const ordered = ids.length
+      ? (await this.db.users.findMany({ where: { id: { in: ids } }, orderBy: [{ name: "asc" }, { id: "asc" }], select: { id: true } })).map((u) => u.id)
+      : [];
+    return { exam, assignments, ids: ordered };
+  }
+
+  // The exam's teachers for a filter: names only, no links made.
+  async examTeacherOptions(examId: number, term = "", p: Paging = paging()) {
+    const { ids } = await this.examTeacherIds(examId);
+    const matching = await this.matchingTeachers(ids, term);
+    const shown = matching ? ids.filter((id) => matching.has(id)) : ids;
+    const page = shown.slice(p.skip, p.skip + p.size);
+    const users = await this.teacherCards(page);
+    return paged(page.map((id) => users.get(id) ?? { id }), shown.length, p);
+  }
+
+  // Every teacher who has this exam (directly or through a folder), with
+  // their link and its state.
+  async examTeachers(examId: number, term = "", p: Paging = paging()) {
+    const { exam, assignments, ids } = await this.examTeacherIds(examId);
+    const matching = await this.matchingTeachers(ids, term);
+    const shown = matching ? ids.filter((id) => matching.has(id)) : ids;
+    const teacherIds = shown.slice(p.skip, p.skip + p.size);
     for (const t of teacherIds) await this.ensureLinks(t);
     const [links, users, folders] = await Promise.all([
       this.db.ex_links.findMany({ where: { exam_id: examId, teacher_user_id: { in: teacherIds } } }),
@@ -220,7 +263,7 @@ class TeacherLinksService {
     ]);
     const folderName = new Map(folders.map((f) => [f.id, f.name]));
     const now = Date.now();
-    return teacherIds.map((tid) => {
+    return paged(teacherIds.map((tid) => {
       const mine = assignments.filter((a) => a.teacher_user_id === tid);
       const a = this.coveringAssignment(examId, exam.folder.path, mine)!;
       const link = links.find((l) => l.teacher_user_id === tid);
@@ -237,7 +280,7 @@ class TeacherLinksService {
         link: link && { id: link.id, code: link.code, starts_at: link.starts_at, ends_at: link.ends_at, closed_at: link.closed_at, dates_custom: link.dates_custom },
         state,
       };
-    });
+    }), shown.length, p);
   }
 
   // ---------- One link ----------
@@ -298,26 +341,35 @@ class TeacherLinksService {
   }
 
   // Teachers to pick from when adding one.
-  async searchTeachers(term: string) {
+  async searchTeachers(term: string, p: Paging = paging()) {
     const t = term.trim();
-    return this.db.users.findMany({
-      where: {
-        OR: [{ is_deleted: false }, { is_deleted: null }],
-        user_roles: { some: { role: "Teacher" } },
-        ...(t && {
-          AND: [{
-            OR: [
-              { name: { contains: t, mode: "insensitive" } },
-              { email: { contains: t, mode: "insensitive" } },
-              { phone: { contains: t } },
-            ],
-          }],
-        }),
-      },
-      select: { id: true, name: true, email: true, phone: true, profile_pic_url: true },
-      orderBy: { name: "asc" },
-      take: 20,
-    });
+    const where = {
+      OR: [{ is_deleted: false }, { is_deleted: null }],
+      user_roles: { some: { role: "Teacher" as const } },
+      ...(t && { AND: [personWhere(t)] }),
+    };
+    const [items, total] = await Promise.all([
+      this.db.users.findMany({
+        where,
+        select: { id: true, name: true, email: true, phone: true, profile_pic_url: true },
+        orderBy: [{ name: "asc" }, { id: "asc" }],
+        skip: p.skip,
+        take: p.size,
+      }),
+      this.db.users.count({ where }),
+    ]);
+    return paged(items, total, p);
+  }
+
+  // The teachers an assistant works for, a page at a time.
+  async assistantTeachers(assistantId: number, p: Paging = paging()) {
+    const links = await this.db.teacher_assistants.findMany({ where: { assistant_user_id: assistantId }, select: { teacher_user_id: true } });
+    const where = { id: { in: links.map((l) => l.teacher_user_id) } };
+    const [items, total] = await Promise.all([
+      this.db.users.findMany({ where, select: { id: true, name: true, email: true, phone: true, profile_pic_url: true }, orderBy: [{ name: "asc" }, { id: "asc" }], skip: p.skip, take: p.size }),
+      this.db.users.count({ where }),
+    ]);
+    return paged(items, total, p);
   }
 }
 

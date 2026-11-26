@@ -6,6 +6,8 @@ import { teacherLinksService } from "./teacherLinks.service";
 import { examsService } from "./exams.service";
 import { bandFor } from "./attempts.service";
 import { appealsService } from "./appeals.service";
+import { resultsService } from "./results.service";
+import { paged, paging, searchTerm, slicePage, type Paging } from "./paging";
 
 // What a teacher (or an assistant, for the teachers they work for) sees:
 // the exams they were given, their own link to each, and the students who
@@ -29,10 +31,9 @@ class TeacherPortalService {
     return [...ids];
   }
 
-  // Every exam given to these teachers, with its link and counts, and the
-  // folders above it (to draw the tree).
-  async myExams(teacherIds: number[]) {
-    if (!teacherIds.length) return { exams: [], folders: [], teachers: [] };
+  // Every exam given to these teachers, with its link and counts.
+  private async allExams(teacherIds: number[]) {
+    if (!teacherIds.length) return [];
     const links = (await teacherLinksService.linksOf(teacherIds)).filter((l) => !l.exam.archived_at);
     const linkIds = links.map((l) => l.id);
     const [counts, pending, appeals] = await Promise.all([
@@ -42,27 +43,60 @@ class TeacherPortalService {
     ]);
     const countOf = new Map(counts.map((c) => [c.link_id, c._count._all]));
     const pendingOf = new Map(pending.map((c) => [c.link_id, c._count._all]));
-    const folderIds = [...new Set(links.flatMap((l) => pathIds(l.exam.folder.path)))];
-    const folders = await this.db.ex_folders.findMany({ where: { id: { in: folderIds } }, select: { id: true, name: true, parent_id: true, sort_order: true } });
-    const teachers = await teacherLinksService.teacherCards(teacherIds);
     const now = Date.now();
+    return links.map((l) => ({
+      id: l.exam.id,
+      name: l.exam.name,
+      serial: l.exam.serial,
+      type: l.exam.type,
+      folder_id: l.exam.folder.id,
+      path: l.exam.folder.path,
+      teacher_id: l.teacher_user_id,
+      link: { id: l.id, code: l.code, starts_at: l.starts_at, ends_at: l.ends_at, closed_at: l.closed_at },
+      state: l.closed_at ? "closed" : !l.exam.published_at ? "not_published" : now < l.starts_at.getTime() ? "not_started" : now > l.ends_at.getTime() ? "ended" : "open",
+      attempts: countOf.get(l.id) ?? 0,
+      pending: pendingOf.get(l.id) ?? 0,
+      appeals: appeals.get(l.id) ?? 0,
+    }));
+  }
+
+  // The folders above these teachers' exams (to draw the tree), each with
+  // the totals of everything under it. The exams come a page at a time
+  // from examList.
+  async myExams(teacherIds: number[]) {
+    const exams = await this.allExams(teacherIds);
+    if (!exams.length) return { exam_count: 0, folders: [], teachers: [] };
+    const folderIds = [...new Set(exams.flatMap((e) => pathIds(e.path)))];
+    const folders = await this.db.ex_folders.findMany({ where: { id: { in: folderIds } }, select: { id: true, name: true, parent_id: true, sort_order: true } });
+    const totals = new Map<number, { exams: number; own: number; pending: number; appeals: number }>();
+    for (const e of exams) {
+      for (const id of pathIds(e.path)) {
+        const t = totals.get(id) ?? { exams: 0, own: 0, pending: 0, appeals: 0 };
+        t.exams += 1;
+        if (id === e.folder_id) t.own += 1;
+        t.pending += e.pending;
+        t.appeals += e.appeals;
+        totals.set(id, t);
+      }
+    }
+    const teachers = await teacherLinksService.teacherCards(teacherIds);
     return {
+      exam_count: exams.length,
       teachers: [...teachers.values()],
-      folders,
-      exams: links.map((l) => ({
-        id: l.exam.id,
-        name: l.exam.name,
-        serial: l.exam.serial,
-        type: l.exam.type,
-        folder_id: l.exam.folder.id,
-        teacher_id: l.teacher_user_id,
-        link: { id: l.id, code: l.code, starts_at: l.starts_at, ends_at: l.ends_at, closed_at: l.closed_at },
-        state: l.closed_at ? "closed" : !l.exam.published_at ? "not_published" : now < l.starts_at.getTime() ? "not_started" : now > l.ends_at.getTime() ? "ended" : "open",
-        attempts: countOf.get(l.id) ?? 0,
-        pending: pendingOf.get(l.id) ?? 0,
-        appeals: appeals.get(l.id) ?? 0,
-      })),
+      folders: folders.map((f) => ({ ...f, totals: totals.get(f.id) ?? { exams: 0, own: 0, pending: 0, appeals: 0 } })),
     };
+  }
+
+  // A page of the exams directly in one folder, or of those found by name
+  // or number in any folder.
+  async examList(teacherIds: number[], filter: { folderId?: number; q?: string }, p: Paging = paging()) {
+    const term = searchTerm(filter.q).toLowerCase();
+    const all = await this.allExams(teacherIds);
+    const shown = term
+      ? all.filter((e) => e.name.toLowerCase().includes(term) || (e.serial ?? "").toLowerCase().includes(term))
+      : all.filter((e) => e.folder_id === filter.folderId);
+    shown.sort((x, y) => x.name.localeCompare(y.name, "ar") || x.id - y.id || (x.teacher_id ?? 0) - (y.teacher_id ?? 0));
+    return slicePage(shown.map(({ path, ...e }) => e), p);
   }
 
   // The teacher's links to this exam (an assistant may hold several).
@@ -78,13 +112,42 @@ class TeacherPortalService {
     const links = await this.linksTo(examId, teacherIds);
     const details = await examsService.details(examId);
     const { test_link, attempt_count, sections, ...exam } = details as any;
+    return {
+      exam: { ...exam, sections },
+      links: links.map((l) => ({ id: l.id, code: l.code, teacher_id: l.teacher_user_id, starts_at: l.starts_at, ends_at: l.ends_at, closed_at: l.closed_at })),
+      summary: await resultsService.summary({ link_id: { in: links.map((l) => l.id) } }, details.pass_percent),
+    };
+  }
+
+  // A page of the students who came through these teachers' links, the
+  // latest active first, each with every attempt. Search by name, phone or
+  // number runs over all of them.
+  async students(examId: number, teacherIds: number[], q = "", p: Paging = paging()) {
+    const links = await this.linksTo(examId, teacherIds);
+    const exam = await this.db.ex_exams.findUnique({ where: { id: examId }, select: { pass_percent: true } });
+    if (!exam) throw new NotFoundError("Exam not found");
+    const scope = { link_id: { in: links.map((l) => l.id) } };
+    const matching = await resultsService.matchingStudents(scope, searchTerm(q));
+    const where = { ...scope, ...(matching && { student_user_id: { in: matching } }) };
+    const [groups, all] = await Promise.all([
+      this.db.ex_attempts.groupBy({
+        by: ["student_user_id"],
+        where,
+        _max: { started_at: true },
+        orderBy: [{ _max: { started_at: "desc" } }, { student_user_id: "asc" }],
+        skip: p.skip,
+        take: p.size,
+      }),
+      this.db.ex_attempts.findMany({ where, distinct: ["student_user_id"], select: { student_user_id: true } }),
+    ]);
+    const ids = groups.map((g) => g.student_user_id);
     const attempts = await this.db.ex_attempts.findMany({
-      where: { link_id: { in: links.map((l) => l.id) } },
+      where: { ...scope, student_user_id: { in: ids } },
       orderBy: [{ student_user_id: "asc" }, { attempt_no: "asc" }],
       select: { id: true, link_id: true, student_user_id: true, attempt_no: true, status: true, score: true, total: true, submitted_at: true, tab_leaves: true, fullscreen_exits: true, copy_attempts: true },
     });
     const users = await this.db.users.findMany({
-      where: { id: { in: [...new Set(attempts.map((a) => a.student_user_id))] } },
+      where: { id: { in: ids } },
       select: { id: true, name: true, phone: true, profile_pic_url: true, students: { select: { sequenced_id: true, levels: { select: { title: true, title_ar: true } } } } },
     });
     const byId = new Map(users.map((u) => [u.id, u]));
@@ -103,15 +166,12 @@ class TeacherPortalService {
       if (score !== null && (row.best === null || score > row.best)) row.best = score;
       students.set(a.student_user_id, row);
     }
-    return {
-      exam: { ...exam, sections },
-      links: links.map((l) => ({ id: l.id, code: l.code, teacher_id: l.teacher_user_id, starts_at: l.starts_at, ends_at: l.ends_at, closed_at: l.closed_at })),
-      students: [...students.values()].map((s) => {
-        const last = s.attempts[s.attempts.length - 1];
-        const percent = s.best !== null && s.total ? round2((s.best / s.total) * 100) : null;
-        return { ...s, last_status: last.status, percent, band: percent === null ? null : bandFor(percent, details.pass_percent) };
-      }),
-    };
+    const items = ids.map((id) => students.get(id)).filter(Boolean).map((s) => {
+      const last = s.attempts[s.attempts.length - 1];
+      const percent = s.best !== null && s.total ? round2((s.best / s.total) * 100) : null;
+      return { ...s, last_status: last.status, percent, band: percent === null ? null : bandFor(percent, exam.pass_percent) };
+    });
+    return paged(items, all.length, p);
   }
 
   // Every link these teachers ever had, for their appeals.
