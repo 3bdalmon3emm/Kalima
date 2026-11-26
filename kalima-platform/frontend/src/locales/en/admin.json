@@ -1323,7 +1323,9 @@
     "nextYear": "Next year",
     "minutes": "min",
     "pickSection": "Pick a section from the menu.",
-    "confirmerStatsHint": "Every order a staff member confirmed counts for them, then shows where it is now: awaiting delivery, delivered or returned. Deleted orders never count."
+    "confirmerStatsHint": "Every order a staff member confirmed counts for them, then shows where it is now: awaiting delivery, delivered or returned. Deleted orders never count.",
+    "staffSales": "Staff sales",
+    "staffSalesHint": "Every store order a staff member confirmed in the chosen period counts for them, split by where it is now. Deleted orders never count."
   },
   "table": {
     "productName": "Product Name",
@@ -1350,7 +1352,8 @@
     "ordersConfirmedBy": "Orders they confirmed",
     "awaitingDelivery": "Confirmed, not delivered yet",
     "deliveredOrders": "Delivered",
-    "returnedOrders": "Returned"
+    "returnedOrders": "Returned",
+    "staffMember": "Staff member"
   },
   "employeePerformanceDetails": {
     "viewSales": "View Sales",
@@ -1450,12 +1453,13 @@
     "phone": "The staff member's mobile number.",
     "role": "Their role: Admin, SubAdmin or Moderator.",
     "confirmedCount": "Store orders they confirmed in the period that were not returned or deleted (confirmed and delivered).",
-    "productsSold": "The quantities in those orders added up: an order with 3 copies of a book counts 3.",
+    "productsSold": "The quantities in the orders they confirmed that were not returned: an order with 3 copies of a book counts 3.",
     "eBookletsDelivered": "E-booklet orders they handed to the teacher (pressed \"Delivered\") in the period.",
     "actions": "Open the staff member's sales: every order and product.",
     "adminName": "The staff member who created the accounts from the dashboard.",
     "email": "The staff member's email.",
     "createdRole": "\"{{role}}\" accounts this person created from the dashboard in the chosen period. Deleted accounts never count.",
-    "createdAccounts": "Every account they created in the period, staff accounts included. An account with several roles counts once."
+    "createdAccounts": "Every account they created in the period, staff accounts included. An account with several roles counts once.",
+    "staffMember": "The staff member's name, with their email and mobile under it."
   }
 }

@@ -493,6 +493,27 @@ class PurchasesService {
       eBookletDeliveries.map((g) => [g.actor_user_id as number, g._count._all]),
     );
 
+    // 2c. The orders each one confirmed, by where they are now: waiting for
+    // delivery, delivered or returned (deleted orders never count).
+    const byStatusRows = await this.db.purchases.groupBy({
+      by: ["confirmed_by", "status"],
+      _count: { _all: true },
+      where: {
+        confirmed_by: { in: adminIds },
+        status: { in: [...SOLD_STATUSES, "returned"] },
+        deleted_at: null,
+        is_deleted: { not: true },
+        confirmed_at: when,
+      },
+    });
+    const byStatusMap = new Map<number, Record<string, number>>();
+    for (const row of byStatusRows) {
+      if (row.confirmed_by === null) continue;
+      const entry = byStatusMap.get(row.confirmed_by) ?? {};
+      entry[row.status] = row._count._all;
+      byStatusMap.set(row.confirmed_by, entry);
+    }
+
     // 3. Merge data
     const stats = admins.map((admin) => ({
       id: admin.id,
@@ -503,6 +524,12 @@ class PurchasesService {
       count: countsMap.get(admin.id) || 0,
       productsSold: productsSoldMap.get(admin.id) || 0,
       eBookletsDelivered: eBookletsMap.get(admin.id) || 0,
+      byStatus: {
+        confirmed: byStatusMap.get(admin.id)?.confirmed || 0,
+        delivered: byStatusMap.get(admin.id)?.delivered || 0,
+        returned: byStatusMap.get(admin.id)?.returned || 0,
+      },
+      ordersConfirmed: Object.values(byStatusMap.get(admin.id) ?? {}).reduce((sum, n) => sum + n, 0),
     }));
 
     return {

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { Activity, CheckCircle, Users, BarChart3, ShoppingBag } from 'lucide-react';
+import { Activity, Users, BarChart3, ShoppingBag } from 'lucide-react';
 import { useEmployeePerformance } from '@/hooks/admin/useEmployeePerformance';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -34,10 +34,8 @@ export default function EmployeePerformancePage() {
     const isAdmin = [...storeRoles, ...academyRoles].includes('Admin');
     const {
         loading,
-        confirmerStats,
         confirmedCount,
         createdAccounts,
-        fetchConfirmerStats,
         fetchConfirmedCount,
         fetchCreatedAccounts
     } = useEmployeePerformance();
@@ -46,13 +44,12 @@ export default function EmployeePerformancePage() {
     const [range, setRange] = useState(RANGE_PRESETS.month);
 
     useEffect(() => {
-        fetchConfirmerStats(range);
         fetchConfirmedCount(range);
         fetchCreatedAccounts(range);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [range?.from, range?.to, range?.fromTime, range?.toTime, !range]);
 
-    if (loading && !confirmerStats && !confirmedCount && !createdAccounts) {
+    if (loading && !confirmedCount && !createdAccounts) {
         return (
             <div className="flex h-[50vh] items-center justify-center">
                 <LoadingSpinner className="h-8 w-8 text-primary" />
@@ -81,80 +78,45 @@ export default function EmployeePerformancePage() {
                 <DayRangeFilter value={range} onChange={setRange} withTime />
             </div>
 
-            {/* Confirmer Stats (Who handled how many) */}
-            <section data-testid="ep-confirmer-stats-section">
-                <SectionTitle icon={CheckCircle}>{t('dashboard.confirmerStats', 'Confirmer Statistics')}</SectionTitle>
-                <p className="-mt-2 mb-3 text-xs text-muted-foreground">{t('dashboard.confirmerStatsHint', 'Every order a staff member confirmed counts for them, split by where it is now.')}</p>
-                <Card className="shadow-sm">
-                    <CardContent className="p-0 overflow-x-auto">
-                        <table className="kalima-data-table text-start">
-                            <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
-                                <tr>
-                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.nameEmail')}>{t('table.nameEmail', 'Name and email')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.ordersConfirmedBy')}>{t('table.ordersConfirmedBy', 'Orders they confirmed')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.awaitingDelivery')}>{t('table.awaitingDelivery', 'Confirmed, not delivered yet')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.deliveredOrders')}>{t('table.deliveredOrders', 'Delivered')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.returnedOrders')}>{t('table.returnedOrders', 'Returned')}</HintLabel></th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {confirmerStats && confirmerStats.length > 0 ? (
-                                    confirmerStats.map((item, idx) => (
-                                        <tr key={item.user?.id || idx}>
-                                            <td className="px-6 py-4"><NameEmail name={item.user?.name} email={item.user?.email} /></td>
-                                            <td className="kalima-number px-6 py-4 font-semibold">{item.totalHandled || 0}</td>
-                                            <td className="kalima-number px-6 py-4 text-amber-600">{item.byStatus?.confirmed || 0}</td>
-                                            <td className="kalima-number px-6 py-4 text-emerald-600">{item.byStatus?.delivered || 0}</td>
-                                            <td className="kalima-number px-6 py-4 text-destructive">{item.byStatus?.returned || 0}</td>
-                                        </tr>
-                                    ))
-                                ) : (
-                                    <tr>
-                                        <td colSpan="5" className="px-6 py-8 text-center text-muted-foreground">
-                                            {t('table.noData', 'No data available')}
-                                        </td>
-                                    </tr>
-                                )}
-                            </tbody>
-                        </table>
-                    </CardContent>
-                </Card>
-            </section>
-
-            {/* Confirmed Purchase Count (Monthly breakdown) */}
-            <section data-testid="ep-confirmed-count-section">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
-                    <SectionTitle icon={BarChart3}>{t('dashboard.confirmedPurchasesByAdmin', 'Confirmed Purchases by Admin')}</SectionTitle>
-                </div>
+            {/* Staff sales: every store order each one confirmed, split by where it is now, with products and e-booklets. */}
+            <section data-testid="ep-staff-sales-section">
+                <SectionTitle icon={BarChart3}>{t('dashboard.staffSales', 'Staff sales')}</SectionTitle>
+                <p className="-mt-2 mb-3 text-xs text-muted-foreground">{t('dashboard.staffSalesHint', 'Every store order a staff member confirmed in the period counts for them, split by where it is now. Deleted orders never count.')}</p>
                 {loading && !confirmedCount && <LoadingSpinner className="h-6 w-6 text-primary mb-4" />}
                 <Card className="shadow-sm">
                     <CardContent className="p-0 overflow-x-auto">
                         <table className="kalima-data-table text-start">
                             <thead className="text-xs text-muted-foreground uppercase bg-muted/50">
                                 <tr>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.id')}>{t('table.id', 'ID')}</HintLabel></th>
-                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.nameEmail')}>{t('table.nameEmail', 'Name and email')}</HintLabel></th>
-                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.phone')}>{t('table.phone', 'Phone')}</HintLabel></th>
-                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.role')}>{t('table.role', 'Role')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.confirmedCount')}>{t('table.confirmedCount', 'Store Sales')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.productsSold')}>{t('table.productsSold', 'Products Sold')}</HintLabel></th>
-                                    <th className="kalima-number px-6 py-3 font-medium"><HintLabel hint={t('hints.eBookletsDelivered')}>{t('table.eBookletsDelivered', 'E-Booklets Delivered')}</HintLabel></th>
-                                    <th className="px-6 py-3 font-medium text-center"><HintLabel hint={t('hints.actions')}>{t('table.actions', 'Actions')}</HintLabel></th>
+                                    <th className="px-6 py-3 font-medium text-start"><HintLabel hint={t('hints.staffMember')}>{t('table.staffMember', 'Staff member')}</HintLabel></th>
+                                    <th className="px-4 py-3 font-medium text-start"><HintLabel hint={t('hints.role')}>{t('table.role', 'Role')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.ordersConfirmedBy')}>{t('table.ordersConfirmedBy', 'Orders they confirmed')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.awaitingDelivery')}>{t('table.awaitingDelivery', 'Awaiting delivery')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.deliveredOrders')}>{t('table.deliveredOrders', 'Delivered')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.returnedOrders')}>{t('table.returnedOrders', 'Returned')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.productsSold')}>{t('table.productsSold', 'Products Sold')}</HintLabel></th>
+                                    <th className="kalima-number px-4 py-3 font-medium"><HintLabel hint={t('hints.eBookletsDelivered')}>{t('table.eBookletsDelivered', 'E-Booklets Delivered')}</HintLabel></th>
+                                    <th className="px-4 py-3 font-medium text-center"><HintLabel hint={t('hints.actions')}>{t('table.actions', 'Actions')}</HintLabel></th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {confirmedCount && confirmedCount.length > 0 ? (
-                                    confirmedCount.map((item, idx) => {
-                                        return (
-                                            <tr key={idx}>
-                                                <td className="kalima-number px-6 py-4">{item.id}</td>
-                                                <td className="px-6 py-4"><NameEmail name={item.name} email={item.email} /></td>
-                                                <td className="px-6 py-4">{item.phone || '—'}</td>
-                                                <td className="px-6 py-4">{t(`roles.${item.role}`, item.role)}</td>
-                                                <td className="kalima-number px-6 py-4 text-primary">{item.count || 0}</td>
-                                                <td className="kalima-number px-6 py-4 text-primary">{item.productsSold || 0}</td>
-                                                <td className="kalima-number px-6 py-4 text-primary">{item.eBookletsDelivered || 0}</td>
-                                                <td className="px-6 py-4 text-center">
+                                    [...confirmedCount]
+                                        .sort((x, y) => (y.ordersConfirmed || 0) - (x.ordersConfirmed || 0) || (y.eBookletsDelivered || 0) - (x.eBookletsDelivered || 0))
+                                        .map((item) => (
+                                            <tr key={item.id}>
+                                                <td className="px-6 py-4">
+                                                    <NameEmail name={item.name} email={item.email} />
+                                                    {item.phone && <p className="mt-0.5 text-xs text-muted-foreground" dir="ltr">{item.phone}</p>}
+                                                </td>
+                                                <td className="px-4 py-4">{t(`roles.${item.role}`, item.role)}</td>
+                                                <td className="kalima-number px-4 py-4 font-semibold">{item.ordersConfirmed || 0}</td>
+                                                <td className="kalima-number px-4 py-4 text-amber-600">{item.byStatus?.confirmed || 0}</td>
+                                                <td className="kalima-number px-4 py-4 text-emerald-600">{item.byStatus?.delivered || 0}</td>
+                                                <td className="kalima-number px-4 py-4 text-destructive">{item.byStatus?.returned || 0}</td>
+                                                <td className="kalima-number px-4 py-4 text-primary">{item.productsSold || 0}</td>
+                                                <td className="kalima-number px-4 py-4 text-primary">{item.eBookletsDelivered || 0}</td>
+                                                <td className="px-4 py-4 text-center">
                                                     <Button
                                                         variant="outline"
                                                         size="sm"
@@ -169,11 +131,10 @@ export default function EmployeePerformancePage() {
                                                     </Button>
                                                 </td>
                                             </tr>
-                                        )
-                                    })
+                                        ))
                                 ) : (
                                     <tr>
-                                        <td colSpan="8" className="px-6 py-8 text-center text-muted-foreground">
+                                        <td colSpan="9" className="px-6 py-8 text-center text-muted-foreground">
                                             {t('table.noData', 'No data available')}
                                         </td>
                                     </tr>
