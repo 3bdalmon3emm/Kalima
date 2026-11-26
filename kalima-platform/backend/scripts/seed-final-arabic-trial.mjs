@@ -310,14 +310,14 @@ const SECTIONS = [
 ];
 
 async function ensureTeacher(look) {
-  const found = (await api('GET', `/exam-admin/teachers/search?q=${encodeURIComponent(TEACHER_EMAIL)}`)).find((u) => u.email === TEACHER_EMAIL);
+  const found = (await api('GET', `/exam-admin/teachers/search?q=${encodeURIComponent(TEACHER_EMAIL)}`)).items.find((u) => u.email === TEACHER_EMAIL);
   if (found) return found;
   await api('POST', '/admin/users', {
     name: 'مدرس التجربة النهائية', email: TEACHER_EMAIL, password: TEST_PASSWORD, phone: '01088800000', role: 'Teacher', gender: 'male',
     is_primary: true, is_preparatory: false, is_secondary: false,
     subject_id: look.arabic?.id, government_id: look.government?.id, zone_id: look.zone?.id,
   });
-  return (await api('GET', `/exam-admin/teachers/search?q=${encodeURIComponent(TEACHER_EMAIL)}`)).find((u) => u.email === TEACHER_EMAIL);
+  return (await api('GET', `/exam-admin/teachers/search?q=${encodeURIComponent(TEACHER_EMAIL)}`)).items.find((u) => u.email === TEACHER_EMAIL);
 }
 
 async function findExam() {
@@ -463,7 +463,7 @@ async function runStudents(look) {
   const { exam } = await findExam();
   if (!exam) throw new Error('Exam not found; run the exam step first.');
   const teacher = await ensureTeacher(look);
-  const link = (await api('GET', `/exam-admin/exams/${exam.id}/teachers`)).find((r) => r.teacher.id === teacher.id)?.link;
+  const link = (await api('GET', `/exam-admin/exams/${exam.id}/teachers?q=${encodeURIComponent(TEACHER_EMAIL)}`)).items.find((r) => r.teacher.id === teacher.id)?.link;
   if (!link) throw new Error('The teacher has no link on the exam.');
 
   const skills = [0.95, 0.85, 0.7, 0.5, 0.3, 0.6, 0.8, 0.4];
