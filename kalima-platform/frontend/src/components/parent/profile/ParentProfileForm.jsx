@@ -38,7 +38,7 @@ export default function ParentProfileForm({
     zonesLoading,
     onGovernmentChange
 }) {
-    const { t } = useTranslation('parent');
+    const { t, i18n } = useTranslation('parent');
 
     const {
         register,
