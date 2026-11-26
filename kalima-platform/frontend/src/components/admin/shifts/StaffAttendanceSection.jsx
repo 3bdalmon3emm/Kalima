@@ -162,16 +162,19 @@ function DayView({ data, onShift }) {
     const from = new Date(data.from).getTime();
     const now = new Date(data.now).getTime();
     const at = (v, fallback) => ((v ? new Date(v).getTime() : fallback) - from) / HOUR;
-    const all = data.employees.flatMap((e) => (e.columns[data.date]?.shifts || []).map((s) => [Math.max(0, at(s.started_at)), Math.min(24, at(s.ended_at, now))]));
-    let h0 = all.length ? Math.floor(Math.min(...all.map((x) => x[0]))) : 8;
-    let h1 = all.length ? Math.ceil(Math.max(...all.map((x) => x[1]))) : 20;
-    if (h1 - h0 < 8) { const pad = Math.ceil((8 - (h1 - h0)) / 2); h0 = Math.max(0, h0 - pad); h1 = Math.min(24, h0 + Math.max(8, h1 - h0 + pad)); }
+    // The whole day, from midnight to midnight, so every hour has its place.
+    const h0 = 0;
+    const h1 = 24;
     const span = h1 - h0;
     // A line and a label on every hour, so a start, an end or a break can be read off the scale.
     const ticks = [];
     for (let h = h0; h <= h1; h += 1) ticks.push(h);
     const pct = (h) => `${((Math.min(Math.max(h, h0), h1) - h0) / span) * 100}%`;
-    const tickLabel = (h) => spokenHour(Number(new Date(from + h * HOUR).toLocaleString('en-GB', { timeZone: 'Africa/Cairo', hour: '2-digit', hourCycle: 'h23' })), lang);
+    // Two rows over the bars: the parts of the day, then each hour's number.
+    const hourNumber = (h) => (lang === 'ar' ? (h % 12 || 12).toLocaleString('ar-EG') : String(h % 12 || 12));
+    const bands = lang === 'ar'
+        ? [[0, 4, 'بالليل'], [4, 6, 'الفجر'], [6, 12, 'الصبح'], [12, 15, 'الضهر'], [15, 18, 'العصر'], [18, 19, 'المغرب'], [19, 24, 'بالليل']]
+        : [[0, 12, 'AM'], [12, 24, 'PM']];
     // Bars run from the page's start side, so the hours read like the text.
     const side = i18n.dir() === 'rtl' ? 'right' : 'left';
 
@@ -180,8 +183,22 @@ function DayView({ data, onShift }) {
             <div className="min-w-[640px]">
                 <div className="flex items-center gap-3 border-b px-4 py-2 text-[11px] text-muted-foreground">
                     <div className="w-48 shrink-0" />
-                    <div className="relative h-5 flex-1">
-                        {ticks.map((h) => <span key={h} className="absolute -translate-x-1/2 whitespace-nowrap text-[10px] font-medium tabular-nums rtl:translate-x-1/2" style={{ [side]: pct(h) }}>{tickLabel(h)}</span>)}
+                    <div className="flex-1 space-y-1">
+                        <div className="relative h-5">
+                            {bands.map(([a, b, name], i) => (
+                                <span
+                                    key={`${a}-${name}`}
+                                    className={`absolute inset-y-0 flex items-center justify-center overflow-hidden rounded text-[11px] font-semibold ${i % 2 ? 'bg-muted/40' : 'bg-muted/80'} text-foreground/80`}
+                                    style={{ [side]: pct(a), width: `calc(${pct(b)} - ${pct(a)})` }}
+                                    title={`${spokenHour(a, lang)} – ${spokenHour(b % 24, lang)}`}
+                                >
+                                    <span className="truncate px-1">{name}</span>
+                                </span>
+                            ))}
+                        </div>
+                        <div className="relative h-4">
+                            {ticks.map((h) => <span key={h} className="absolute -translate-x-1/2 whitespace-nowrap text-[10px] font-medium tabular-nums rtl:translate-x-1/2" style={{ [side]: pct(h) }} title={spokenHour(h % 24, lang)}>{hourNumber(h)}</span>)}
+                        </div>
                     </div>
                     <div className="w-20 shrink-0 text-end"><HintLabel hint={t('hints.total')}>{t('report.total')}</HintLabel></div>
                 </div>
