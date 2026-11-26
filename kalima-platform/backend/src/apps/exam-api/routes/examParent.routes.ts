@@ -7,6 +7,7 @@ import { NotFoundError } from "../../../libs/errors";
 import { handle, idParam, userId } from "../http";
 import { studentExamsService } from "../services/studentExams.service";
 import { attemptsService } from "../services/attempts.service";
+import { overviewArgs } from "./overviewArgs";
 
 // A parent following their children's exams, mounted at /api/v2/exam-parent.
 // The parent sees what the child sees: the same list, indicator and result
@@ -40,8 +41,7 @@ router.get("/children", handle(async (req, res) => {
 
 router.get("/children/:id/exams", handle(async (req, res) => {
   const child = await childOf(userId(req), idParam(req));
-  const year = req.query.year === undefined ? undefined : Number(req.query.year);
-  res.json(ok(await studentExamsService.overview(child, Number.isInteger(year) ? year : undefined)));
+  res.json(ok(await studentExamsService.overview(child, ...overviewArgs(req.query))));
 }));
 
 router.get("/children/:id/attempts/:attemptId", handle(async (req, res) => {

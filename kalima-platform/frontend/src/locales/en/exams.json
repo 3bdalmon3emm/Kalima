@@ -377,7 +377,8 @@
     "teacher": "Teacher",
     "allTeachers": "All teachers",
     "adminLink": "Admin test link",
-    "export": "Export Excel"
+    "export": "Export Excel",
+    "searchStudents": "Search by name, phone or student number"
   },
   "grading": {
     "mark": "Mark",
@@ -590,7 +591,15 @@
     "countExam_one": "1 exam",
     "countExam_other": "{{count}} exams",
     "countHomework_one": "1 homework",
-    "countHomework_other": "{{count}} homework"
+    "countHomework_other": "{{count}} homework",
+    "summary": {
+      "exams": "Exams and homework",
+      "attempts": "Attempts",
+      "graded": "Graded",
+      "passed": "Passed",
+      "failed": "Failed",
+      "average": "Average"
+    }
   },
   "parent": {
     "title": "Children's exams",
@@ -629,5 +638,26 @@
     "summary_other": "{{count}} exams picked",
     "pickExam": "Pick at least one exam",
     "failed": "Export failed"
+  },
+  "pager": {
+    "prev": "Previous",
+    "next": "Next",
+    "of": "Page {{page}} of {{pages}}",
+    "total": "Total {{count}}",
+    "more": "Show more",
+    "shown": "Showing {{shown}} of {{total}}"
+  },
+  "summary": {
+    "students": "Students",
+    "graded": "Graded",
+    "passed": "Passed",
+    "failed": "Failed",
+    "average": "Average",
+    "highest": "Highest",
+    "lowest": "Lowest"
+  },
+  "studentCard": {
+    "title": "Student's exams",
+    "hint": "Every exam and homework they took, with all attempts, and their performance in each subject as the student sees it."
   }
 }

@@ -6,6 +6,7 @@ import { pathIds } from "./folders.service";
 import { teacherLinksService } from "./teacherLinks.service";
 import { examFoldersService } from "./examFolders.service";
 import { questionsService } from "./questions.service";
+import { paged, paging, type Paging } from "./paging";
 import { ExamSettings, DIFFICULTY_KEYS, RuleInput } from "./examInput";
 
 // Exams: settings, sections, their questions and, for random exams, the draw
@@ -170,31 +171,36 @@ class ExamsService {
     await this.db.$transaction(ids.map((id, i) => this.db.ex_exams.update({ where: { id }, data: { sort_order: i + 1 } })));
   }
 
-  async search(term: string, subjectId?: number) {
-    const exams = await this.db.ex_exams.findMany({
-      where: {
-        archived_at: null,
-        ...(subjectId && { subject_id: subjectId }),
-        ...(term && {
-          OR: [
-            { name: { contains: term, mode: "insensitive" } },
-            { serial: { contains: term, mode: "insensitive" } },
-          ],
-        }),
-      },
-      orderBy: { updated_at: "desc" },
-      take: 50,
-      select: {
-        id: true, name: true, serial: true, type: true, mode: true, published_at: true, folder_id: true,
-        folder: { select: { path: true } },
-        subjects: { select: { id: true, title: true } },
-      },
-    });
-    const visible = [];
-    for (const { folder, ...e } of exams) {
-      if (!(await examFoldersService.isHidden(folder.path))) visible.push(e);
-    }
-    return visible;
+  // Exams found by name or number, newest edit first, a page at a time.
+  // Exams in an archived folder (or under one) are left out in the query
+  // itself, so every page is full and the total is right.
+  async search(term: string, subjectId: number | undefined, p: Paging = paging()) {
+    const archived = await this.db.ex_folders.findMany({ where: { archived_at: { not: null } }, select: { id: true } });
+    const where = {
+      archived_at: null,
+      ...(subjectId && { subject_id: subjectId }),
+      ...(archived.length && { folder: { NOT: { OR: archived.map((f) => ({ path: { contains: `/${f.id}/` } })) } } }),
+      ...(term && {
+        OR: [
+          { name: { contains: term, mode: "insensitive" as const } },
+          { serial: { contains: term, mode: "insensitive" as const } },
+        ],
+      }),
+    };
+    const [exams, total] = await Promise.all([
+      this.db.ex_exams.findMany({
+        where,
+        orderBy: [{ updated_at: "desc" }, { id: "desc" }],
+        skip: p.skip,
+        take: p.size,
+        select: {
+          id: true, name: true, serial: true, type: true, mode: true, published_at: true, folder_id: true,
+          subjects: { select: { id: true, title: true } },
+        },
+      }),
+      this.db.ex_exams.count({ where }),
+    ]);
+    return paged(exams, total, p);
   }
 
   // Publishing opens the exam to its links. A total that differs from the

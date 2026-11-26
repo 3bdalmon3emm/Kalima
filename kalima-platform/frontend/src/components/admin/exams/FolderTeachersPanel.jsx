@@ -10,6 +10,7 @@ import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from '
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import TeacherAssignDialog from './TeacherAssignDialog';
 import { ex, exGet, exSend } from './api';
+import Pager, { usePagedList } from '@/components/exams/Pager';
 
 export const formatDate = (v) => (v ? new Date(v).toLocaleString('ar-EG', { dateStyle: 'medium', timeStyle: 'short' }) : '—');
 
@@ -31,14 +32,12 @@ export function TeacherAvatar({ teacher, className = 'h-9 w-9' }) {
 // now and later. The ZIP holds the QR of every one of those links.
 export default function FolderTeachersPanel({ folder }) {
     const { t } = useTranslation('exams');
-    const [rows, setRows] = useState(null);
     const [dialog, setDialog] = useState(null);
     const [zipping, setZipping] = useState(null);
-    const [term, setTerm] = useState('');
-    const shown = rows && rows.filter((r) => teacherMatches(r.teacher, term));
-
-    const load = () => exGet(`/folders/${folder.id}/teachers`).then(setRows).catch((err) => showError(err, t('errors.load')));
-    useEffect(() => { setRows(null); load(); }, [folder.id]); // eslint-disable-line react-hooks/exhaustive-deps
+    const list = usePagedList(({ q, page }) => exGet(`/folders/${folder.id}/teachers`, { q, page }), [folder.id], (err) => showError(err, t('errors.load')));
+    const { term, setTerm, data, reload: load } = list;
+    const rows = data?.items;
+    const shown = rows;
 
     const zip = async (row) => {
         setZipping(row.id);
@@ -77,11 +76,11 @@ export default function FolderTeachersPanel({ folder }) {
                 </div>
                 {!folder.hidden && <Button size="sm" onClick={() => setDialog({ type: 'add' })}><Plus className="h-4 w-4" />{t('teachers.add')}</Button>}
             </div>
-            {rows?.length > 0 && (
+            {(data?.total > 0 || !!list.q) && (
                 <Input value={term} onChange={(e) => setTerm(e.target.value)} placeholder={t('teachers.searchTeachers')} />
             )}
             {!rows ? <div className="flex justify-center py-4"><LoadingSpinner /></div>
-                : shown.length === 0 ? <p className="py-3 text-center text-sm text-muted-foreground">{t(rows.length ? 'search.none' : 'teachers.none')}</p>
+                : shown.length === 0 ? <p className="py-3 text-center text-sm text-muted-foreground">{t(list.q ? 'search.none' : 'teachers.none')}</p>
                     : (
                         <div className="divide-y">
                             {shown.map((row) => (
@@ -102,6 +101,7 @@ export default function FolderTeachersPanel({ folder }) {
                             ))}
                         </div>
                     )}
+            <Pager data={data} onPage={list.setPage} />
             <TeacherAssignDialog
                 open={dialog?.type === 'add'}
                 onOpenChange={(o) => !o && setDialog(null)}

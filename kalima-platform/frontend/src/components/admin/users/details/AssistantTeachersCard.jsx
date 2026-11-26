@@ -8,23 +8,30 @@ import { Input } from '@/components/ui/input';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { TeacherAvatar } from '@/components/admin/exams/FolderTeachersPanel';
 import { exGet, exSend } from '@/components/admin/exams/api';
+import Pager, { useDebounced } from '@/components/exams/Pager';
 
 // The teachers an assistant works for: the assistant sees those teachers'
 // exams, students and results as they do.
 export default function AssistantTeachersCard({ assistantId }) {
     const { t } = useTranslation('exams');
-    const [linked, setLinked] = useState([]);
+    const [data, setData] = useState(null);
+    const [page, setPage] = useState(1);
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState([]);
+    const q = useDebounced(query.trim());
+    const [results, setResults] = useState({ items: [], page: 1, pages: 1 });
+    const linked = data?.items || [];
 
-    const load = () => exGet(`/assistants/${assistantId}/teachers`).then(setLinked).catch(() => {});
-    useEffect(() => { load(); }, [assistantId]); // eslint-disable-line react-hooks/exhaustive-deps
+    const load = () => exGet(`/assistants/${assistantId}/teachers`, { page }).then((d) => {
+        if (!d.items.length && page > 1) setPage(d.pages); else setData(d);
+    }).catch(() => {});
+    useEffect(() => { load(); }, [assistantId, page]); // eslint-disable-line react-hooks/exhaustive-deps
 
     useEffect(() => {
-        if (!query.trim()) { setResults([]); return undefined; }
-        const timer = setTimeout(() => exGet('/teachers/search', { q: query }).then(setResults).catch(() => {}), 300);
-        return () => clearTimeout(timer);
-    }, [query]);
+        if (!q) { setResults({ items: [], page: 1, pages: 1 }); return; }
+        exGet('/teachers/search', { q }).then(setResults).catch(() => {});
+    }, [q]);
+    const loadMore = () => exGet('/teachers/search', { q, page: results.page + 1 })
+        .then((next) => setResults((r) => ({ ...next, items: [...r.items, ...next.items] }))).catch(() => {});
 
     const act = async (fn, message) => {
         try {
@@ -55,11 +62,12 @@ export default function AssistantTeachersCard({ assistantId }) {
                         </Button>
                     </div>
                 ))}
+                <Pager data={data} onPage={setPage} />
                 <div className="relative">
                     <Search className="absolute start-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                     <Input className="ps-9" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('assistant.search')} />
                 </div>
-                {results.filter((u) => !linked.some((l) => l.id === u.id)).map((u) => (
+                {results.items.filter((u) => !linked.some((l) => l.id === u.id)).map((u) => (
                     <button key={u.id} type="button" className="flex w-full items-center gap-3 rounded-md p-2 text-start hover:bg-muted"
                         onClick={() => act(() => exSend('post', `/assistants/${assistantId}/teachers`, { teacher_id: u.id }), t('assistant.linked'))}>
                         <TeacherAvatar teacher={u} className="h-8 w-8" />
@@ -67,6 +75,9 @@ export default function AssistantTeachersCard({ assistantId }) {
                         <span className="text-xs text-primary">{t('assistant.link')}</span>
                     </button>
                 ))}
+                {results.page < results.pages && (
+                    <Button variant="ghost" size="sm" className="w-full" onClick={loadMore}>{t('pager.more')}</Button>
+                )}
             </CardContent>
         </Card>
     );

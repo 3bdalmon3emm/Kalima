@@ -9,6 +9,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import { adminApi, formatMark, teacherApi } from '@/components/admin/exams/api';
 import AppealCard from '@/components/exams/AppealCard';
+import Pager from '@/components/exams/Pager';
 import { ReviewItem } from '@/pages/exams/ExamResultPage';
 
 // Every appeal in one place: waiting ones first (oldest first), answered
@@ -42,8 +43,8 @@ export default function ExamAppealsPage({ teacher = false }) {
     const pages = useMemo(() => {
         if (!data) return 1;
         const total = status === 'pending' ? data.counts.pending : data.counts.answered;
-        return Math.max(Math.ceil(total / data.page_size), 1);
-    }, [data, status]);
+        return { page, pages: Math.max(Math.ceil(total / data.page_size), 1), total };
+    }, [data, status, page]);
 
     const base = teacher ? '/teacher/exams' : '/admin/exams';
 
@@ -106,13 +107,7 @@ export default function ExamAppealsPage({ teacher = false }) {
                                     </div>
                                 );
                             })}
-                            {pages > 1 && (
-                                <div className="flex items-center justify-center gap-3">
-                                    <Button size="sm" variant="outline" disabled={page <= 1} onClick={() => setPage((p) => p - 1)}>{t('appeals.prev')}</Button>
-                                    <span className="text-sm text-muted-foreground">{page} / {pages}</span>
-                                    <Button size="sm" variant="outline" disabled={page >= pages} onClick={() => setPage((p) => p + 1)}>{t('appeals.next')}</Button>
-                                </div>
-                            )}
+                            <Pager data={pages} onPage={setPage} />
                         </div>
                     )}
         </div>
