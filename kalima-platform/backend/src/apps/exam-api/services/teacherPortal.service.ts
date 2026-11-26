@@ -52,6 +52,7 @@ class TeacherPortalService {
       folder_id: l.exam.folder.id,
       path: l.exam.folder.path,
       teacher_id: l.teacher_user_id,
+      sort_order: l.exam.sort_order,
       link: { id: l.id, code: l.code, starts_at: l.starts_at, ends_at: l.ends_at, closed_at: l.closed_at },
       state: l.closed_at ? "closed" : !l.exam.published_at ? "not_published" : now < l.starts_at.getTime() ? "not_started" : now > l.ends_at.getTime() ? "ended" : "open",
       attempts: countOf.get(l.id) ?? 0,
@@ -95,8 +96,10 @@ class TeacherPortalService {
     const shown = term
       ? all.filter((e) => e.name.toLowerCase().includes(term) || (e.serial ?? "").toLowerCase().includes(term))
       : all.filter((e) => e.folder_id === filter.folderId);
-    shown.sort((x, y) => x.name.localeCompare(y.name, "ar") || x.id - y.id || (x.teacher_id ?? 0) - (y.teacher_id ?? 0));
-    return slicePage(shown.map(({ path, ...e }) => e), p);
+    // A folder keeps the admin's order; a search sorts by name, numbers as numbers.
+    const byName = (x: { name: string }, y: { name: string }) => x.name.localeCompare(y.name, "ar", { numeric: true });
+    shown.sort((x, y) => (term ? byName(x, y) : x.sort_order - y.sort_order) || byName(x, y) || x.id - y.id || (x.teacher_id ?? 0) - (y.teacher_id ?? 0));
+    return slicePage(shown.map(({ path, sort_order, ...e }) => e), p);
   }
 
   // The teacher's links to this exam (an assistant may hold several).

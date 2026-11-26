@@ -322,7 +322,7 @@ class TeacherLinksService {
         exam: {
           select: {
             id: true, name: true, serial: true, type: true, mode: true, description: true, duration_minutes: true,
-            published_at: true, archived_at: true, folder_id: true, subject_id: true,
+            published_at: true, archived_at: true, folder_id: true, subject_id: true, sort_order: true,
             folder: { select: { id: true, name: true, path: true } },
           },
         },
