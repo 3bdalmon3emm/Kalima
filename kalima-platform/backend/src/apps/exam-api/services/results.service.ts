@@ -4,6 +4,7 @@ import { BadRequestError, NotFoundError } from "../../../libs/errors";
 import { attemptsService, bandFor } from "./attempts.service";
 import { rescore } from "./scoring";
 import { examNotify } from "./examNotify";
+import { paged, paging, personWhere, searchTerm, type Paging } from "./paging";
 
 // The results side of an exam: every attempt with its score and how often
 // the student left the page, full screen or tried to copy, and grading the
@@ -63,28 +64,75 @@ class ResultsService {
     return { link: { teacher_user_id: { in: teacherIds.filter((t) => t > 0) } } };
   }
 
-  async list(examId: number, filter: { status?: string; teacherIds?: number[] } = {}) {
+  // Students of these attempts whose name, phone or number matches; null
+  // when there is no search.
+  async matchingStudents(where: object, term: string): Promise<number[] | null> {
+    if (!term) return null;
+    const ids = (await this.db.ex_attempts.findMany({ where, distinct: ["student_user_id"], select: { student_user_id: true } })).map((a) => a.student_user_id);
+    if (!ids.length) return [];
+    return (await this.db.users.findMany({ where: { id: { in: ids }, ...personWhere(term) }, select: { id: true } })).map((u) => u.id);
+  }
+
+  // A page of attempts at an exam, newest first. The counts and the summary
+  // cover every attempt of the chosen teachers, whatever the page.
+  async list(examId: number, filter: { status?: string; teacherIds?: number[]; q?: string } = {}, p: Paging = paging()) {
     const exam = await this.db.ex_exams.findUnique({ where: { id: examId }, select: { id: true, pass_percent: true } });
     if (!exam) throw new NotFoundError("Exam not found");
     const status = ["in_progress", "pending", "done"].includes(filter.status ?? "") ? (filter.status as any) : undefined;
-    const attempts = await this.db.ex_attempts.findMany({
-      where: { exam_id: examId, ...(status && { status }), ...this.linkWhere(filter.teacherIds) },
-      orderBy: [{ started_at: "desc" }, { id: "desc" }],
-      include: { link: { select: { code: true, teacher_user_id: true } } },
-      take: 1000,
-    });
+    const scope = { exam_id: examId, ...this.linkWhere(filter.teacherIds) };
+    const matching = await this.matchingStudents(scope, searchTerm(filter.q));
+    const where = { ...scope, ...(status && { status }), ...(matching && { student_user_id: { in: matching } }) };
+    const [attempts, total, counts, summary] = await Promise.all([
+      this.db.ex_attempts.findMany({
+        where,
+        orderBy: [{ started_at: "desc" }, { id: "desc" }],
+        include: { link: { select: { code: true, teacher_user_id: true } } },
+        skip: p.skip,
+        take: p.size,
+      }),
+      this.db.ex_attempts.count({ where }),
+      this.db.ex_attempts.groupBy({ by: ["status"], where: { ...scope, ...(matching && { student_user_id: { in: matching } }) }, _count: { _all: true } }),
+      this.summary(scope, exam.pass_percent),
+    ]);
     const people = await this.students([
       ...attempts.map((a) => a.student_user_id),
       ...attempts.map((a) => a.link.teacher_user_id).filter((id): id is number => id !== null),
     ]);
-    const counts = await this.db.ex_attempts.groupBy({ by: ["status"], where: { exam_id: examId, ...this.linkWhere(filter.teacherIds) }, _count: { _all: true } });
     return {
       counts: Object.fromEntries(counts.map((c) => [c.status, c._count._all])),
-      attempts: attempts.map((a) => ({
+      summary,
+      ...paged(attempts.map((a) => ({
         ...this.row(a, exam.pass_percent),
         student: people.get(a.student_user_id) ?? null,
         link: { code: a.link.code, teacher: a.link.teacher_user_id ? people.get(a.link.teacher_user_id)?.name ?? null : null },
-      })),
+      })), total, p),
+    };
+  }
+
+  // Every student's best finished attempt: how many took it, how many
+  // passed, the average and the best and lowest percent.
+  async summary(where: object, passPercent: number) {
+    const done = await this.db.ex_attempts.findMany({
+      where: { ...where, status: "done" },
+      select: { student_user_id: true, score: true, total: true },
+    });
+    const students = await this.db.ex_attempts.findMany({ where, distinct: ["student_user_id"], select: { student_user_id: true } });
+    const best = new Map<number, number>();
+    for (const a of done) {
+      const total = num(a.total);
+      const percent = total ? (num(a.score) / total) * 100 : 0;
+      if (!best.has(a.student_user_id) || percent > best.get(a.student_user_id)!) best.set(a.student_user_id, percent);
+    }
+    const list = [...best.values()];
+    const passed = list.filter((x) => x >= passPercent).length;
+    return {
+      students: students.length,
+      graded: list.length,
+      passed,
+      failed: list.length - passed,
+      average: list.length ? round2(list.reduce((s, x) => s + x, 0) / list.length) : null,
+      highest: list.length ? round2(Math.max(...list)) : null,
+      lowest: list.length ? round2(Math.min(...list)) : null,
     };
   }
 

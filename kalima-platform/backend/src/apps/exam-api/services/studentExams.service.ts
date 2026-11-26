@@ -1,5 +1,6 @@
 import { prisma } from "../../../libs/db/prisma";
 import type { PrismaClient } from "../../../libs/db/prisma";
+import { paging, slicePage, type Paging } from "./paging";
 
 // A student's exams and homework across every teacher's link, grouped one
 // row per link, and the performance indicator: per school year, per subject,
@@ -43,7 +44,7 @@ function trendOf(points: Point[]) {
 class StudentExamsService {
   constructor(private db: PrismaClient = prisma) {}
 
-  async overview(studentId: number, year?: number) {
+  async overview(studentId: number, year?: number, filter: { subject?: number; type?: string } = {}, p: Paging = paging({}, 10)) {
     const attempts = await this.db.ex_attempts.findMany({
       where: { student_user_id: studentId },
       orderBy: [{ link_id: "asc" }, { attempt_no: "asc" }],
@@ -99,7 +100,24 @@ class StudentExamsService {
     const years = [...new Set(rows.map((r) => r.school_year))].sort((a, b) => b - a);
     const current = schoolYearOf(new Date());
     const selected = year !== undefined && years.includes(year) ? year : years.includes(current) ? current : years[0] ?? current;
-    const inYear = rows.filter((r) => r.school_year === selected);
+    const yearRows = rows.filter((r) => r.school_year === selected);
+    // The subjects of the year for the filter, before filtering.
+    const subjectMap = new Map<number, string | null>();
+    for (const r of yearRows) subjectMap.set(r.subject?.id ?? 0, r.subject?.title ?? null);
+    const subjects = [...subjectMap.entries()].map(([id, title]) => ({ id, title }));
+    const type = filter.type === "exam" || filter.type === "homework" ? filter.type : undefined;
+    const inYear = yearRows.filter((r) => (filter.subject === undefined || (r.subject?.id ?? 0) === filter.subject) && (!type || r.exam.type === type));
+
+    // The year at a glance, over every row that matches (not just the page).
+    const counted = inYear.filter((r) => r.counted);
+    const summary = {
+      exams: inYear.length,
+      graded: counted.length,
+      passed: counted.filter((r) => r.counted!.passed).length,
+      failed: counted.filter((r) => !r.counted!.passed).length,
+      attempts: inYear.reduce((n, r) => n + r.attempts.length, 0),
+      average: counted.length ? round1(counted.reduce((n, r) => n + r.counted!.percent, 0) / counted.length) : null,
+    };
 
     // The indicator: one group per subject and type, points in date order.
     const groups = new Map<string, { subject: (typeof rows)[number]["subject"]; type: string; points: Point[] }>();
@@ -122,7 +140,11 @@ class StudentExamsService {
     });
     indicators.sort((a, b) => (a.subject?.title ?? "￿").localeCompare(b.subject?.title ?? "￿", "ar") || a.type.localeCompare(b.type));
 
-    return { counted_attempt: COUNTED_ATTEMPT, years, year: selected, current_year: current, rows: inYear, indicators };
+    const page = slicePage(inYear, p);
+    return {
+      counted_attempt: COUNTED_ATTEMPT, years, year: selected, current_year: current, subjects, summary, indicators,
+      rows: page.items, page: page.page, page_size: page.page_size, total: page.total, pages: page.pages,
+    };
   }
 }
 
