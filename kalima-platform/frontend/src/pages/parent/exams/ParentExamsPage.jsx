@@ -8,7 +8,7 @@ import LoadingSpinner from '@/components/ui/loading-spinner';
 import { showError } from '@/components/admin/question-bank/BankDialogs';
 import ExamsOverview from '@/components/exams/ExamsOverview';
 
-const get = async (path) => (await axios.get(`/exam-parent${path}`)).data.data;
+const get = async (path, params) => (await axios.get(`/exam-parent${path}`, { params })).data.data;
 
 // A parent's view of their children's exams: pick a child, then the same
 // "my exams" page the child has. ?child= keeps the choice in the address.
@@ -16,8 +16,6 @@ export default function ParentExamsPage() {
     const { t } = useTranslation('exams');
     const [params, setParams] = useSearchParams();
     const [children, setChildren] = useState(null);
-    const [year, setYear] = useState(null);
-    const [data, setData] = useState(null);
 
     useEffect(() => { get('/children').then(setChildren).catch((err) => { setChildren([]); showError(err, t('errors.load')); }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -27,13 +25,7 @@ export default function ParentExamsPage() {
         return children.some((c) => c.id === wanted) ? wanted : children[0].id;
     }, [children, params]);
 
-    useEffect(() => {
-        if (!childId) return;
-        setData(null);
-        get(`/children/${childId}/exams${year === null ? '' : `?year=${year}`}`).then(setData).catch((err) => showError(err, t('errors.load')));
-    }, [childId, year]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const pick = (id) => { setYear(null); setParams({ child: String(id) }); };
+    const pick = (id) => setParams({ child: String(id) });
 
     return (
         <div className="space-y-6">
@@ -69,9 +61,8 @@ export default function ParentExamsPage() {
                             </button>
                         ))}
                     </div>
-                    {data
-                        ? <ExamsOverview data={data} onYear={setYear} resultHref={(r, a) => `/parent/exams/${childId}/result/${a.id}`} />
-                        : <div className="flex justify-center py-16"><LoadingSpinner /></div>}
+                    {/* A new child starts over: its own year, filters and first page. */}
+                    <ExamsOverview key={childId} load={(p) => get(`/children/${childId}/exams`, p)} resultHref={(r, a) => `/parent/exams/${childId}/result/${a.id}`} />
                 </>
             )}
         </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -15,6 +15,8 @@ import ReopenDialog from '@/components/exams/ReopenDialog';
 import { formatDate } from '@/components/admin/exams/FolderTeachersPanel';
 import { examLink, formatMark, teacherApi } from '@/components/admin/exams/api';
 import { useExport } from '@/hooks/useExport';
+import Pager, { usePagedList } from '@/components/exams/Pager';
+import ResultsSummary from '@/components/exams/ResultsSummary';
 
 const STATUS_STYLE = {
     pending: 'border-amber-400 bg-amber-50 text-amber-800 dark:bg-amber-950/40 dark:text-amber-200',
@@ -32,17 +34,16 @@ export default function TeacherExamPage() {
     const [data, setData] = useState(null);
     const [qr, setQr] = useState(null);
     const [reopen, setReopen] = useState(null);
-    const [search, setSearch] = useState('');
     const { exportData, loading: exporting } = useExport();
 
+    // The exam, its links and the summary; the students come a page at a
+    // time, searched on the server.
     const load = () => teacherApi.get(`/exams/${id}`).then(setData).catch((err) => showError(err, t('errors.load')));
     useEffect(() => { setData(null); load(); }, [id]); // eslint-disable-line react-hooks/exhaustive-deps
-
-    const students = useMemo(() => {
-        const q = search.trim().toLowerCase();
-        if (!data || !q) return data?.students || [];
-        return data.students.filter((s) => [s.student.name, s.student.phone, s.student.serial].some((v) => v && String(v).toLowerCase().includes(q)));
-    }, [data, search]);
+    const list = usePagedList(({ q, page }) => teacherApi.get(`/exams/${id}/students`, { q, page }), [id], (err) => showError(err, t('errors.load')));
+    const students = list.data?.items || [];
+    const search = list.term;
+    const setSearch = list.setTerm;
 
     if (!data) return <div className="flex justify-center py-16"><LoadingSpinner /></div>;
     const { exam } = data;
@@ -88,18 +89,19 @@ export default function TeacherExamPage() {
 
             <Tabs value={tab} onValueChange={(v) => setParams({ tab: v }, { replace: true })}>
                 <TabsList>
-                    <TabsTrigger value="students">{t('teacher.students', { count: data.students.length })}</TabsTrigger>
+                    <TabsTrigger value="students">{t('teacher.students', { count: data.summary?.students ?? 0 })}</TabsTrigger>
                     <TabsTrigger value="preview">{t('teacher.preview')}</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="students" className="space-y-3 pt-2">
+                    <ResultsSummary summary={data.summary} passPercent={exam.pass_percent} />
                     <div className="flex flex-wrap items-center gap-2">
                         <Input className="max-w-xs" value={search} onChange={(e) => setSearch(e.target.value)} placeholder={t('teacher.searchStudents')} />
-                        <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting || !data.students.length}>
+                        <Button size="sm" variant="outline" className="ms-auto" onClick={exportExcel} disabled={exporting || !data.summary?.students}>
                             {exporting ? <LoadingSpinner className="h-4 w-4" /> : <FileSpreadsheet className="h-4 w-4" />}{t('results.export')}
                         </Button>
                     </div>
-                    {!students.length ? (
+                    {!list.data ? <div className="flex justify-center py-10"><LoadingSpinner /></div> : !students.length ? (
                         <p className="rounded-lg border border-dashed p-6 text-center text-sm text-muted-foreground">{t('results.empty')}</p>
                     ) : (
                         <div className="overflow-x-auto rounded-lg border">
@@ -160,6 +162,7 @@ export default function TeacherExamPage() {
                             </table>
                         </div>
                     )}
+                    <Pager data={list.data} onPage={list.setPage} />
                 </TabsContent>
 
                 <TabsContent value="preview" className="pt-2">
@@ -178,7 +181,7 @@ export default function TeacherExamPage() {
                 open={!!reopen}
                 onOpenChange={(o) => !o && setReopen(null)}
                 studentName={reopen?.name}
-                send={async (body) => { await teacherApi.send('post', `/attempts/${reopen.attemptId}/reopen`, body); load(); }}
+                send={async (body) => { await teacherApi.send('post', `/attempts/${reopen.attemptId}/reopen`, body); load(); list.reload(); }}
             />
         </div>
     );

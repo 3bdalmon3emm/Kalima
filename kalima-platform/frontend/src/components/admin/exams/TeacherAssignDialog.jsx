@@ -13,7 +13,8 @@ import { exGet, toLocalInput } from './api';
 export default function TeacherAssignDialog({ open, onOpenChange, onSubmit, teacher = null, initial = null, title }) {
     const { t } = useTranslation('exams');
     const [query, setQuery] = useState('');
-    const [results, setResults] = useState([]);
+    const [results, setResults] = useState({ items: [], page: 1, pages: 1 });
+    const [more, setMore] = useState(false);
     const [picked, setPicked] = useState(null);
     const [dates, setDates] = useState({ starts_at: '', ends_at: '' });
     const [saving, setSaving] = useState(false);
@@ -34,10 +35,19 @@ export default function TeacherAssignDialog({ open, onOpenChange, onSubmit, teac
         if (!open || teacher) return undefined;
         let cancelled = false;
         const timer = setTimeout(() => {
-            exGet('/teachers/search', { q: query }).then((r) => !cancelled && setResults(r)).catch(() => {});
+            exGet('/teachers/search', { q: query.trim() }).then((r) => !cancelled && setResults(r)).catch(() => {});
         }, 300);
         return () => { cancelled = true; clearTimeout(timer); };
     }, [query, open, teacher]);
+
+    // The next page of matches, under the ones already shown.
+    const loadMore = async () => {
+        setMore(true);
+        try {
+            const next = await exGet('/teachers/search', { q: query.trim(), page: results.page + 1 });
+            setResults((r) => ({ ...next, items: [...r.items, ...next.items] }));
+        } catch { /* keep what is shown */ } finally { setMore(false); }
+    };
 
     const submit = async () => {
         setSaving(true);
@@ -63,8 +73,8 @@ export default function TeacherAssignDialog({ open, onOpenChange, onSubmit, teac
                                 <Input className="ps-9" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('teachers.search')} autoFocus />
                             </div>
                             <div className="max-h-56 space-y-1 overflow-y-auto rounded-md border p-1">
-                                {results.length === 0 && <p className="p-3 text-center text-sm text-muted-foreground">{t('teachers.noResults')}</p>}
-                                {results.map((u) => (
+                                {results.items.length === 0 && <p className="p-3 text-center text-sm text-muted-foreground">{t('teachers.noResults')}</p>}
+                                {results.items.map((u) => (
                                     <button key={u.id} type="button" onClick={() => setPicked(u)}
                                         className={`flex w-full items-center gap-3 rounded-md p-2 text-start ${picked?.id === u.id ? 'bg-primary/10 ring-1 ring-primary' : 'hover:bg-muted'}`}>
                                         <span className="flex h-8 w-8 shrink-0 items-center justify-center overflow-hidden rounded-full bg-muted">
@@ -76,7 +86,13 @@ export default function TeacherAssignDialog({ open, onOpenChange, onSubmit, teac
                                         </span>
                                     </button>
                                 ))}
+                                {results.page < results.pages && (
+                                    <Button type="button" variant="ghost" size="sm" className="w-full" onClick={loadMore} disabled={more}>
+                                        {more && <LoadingSpinner className="h-4 w-4" />}{t('pager.more')}
+                                    </Button>
+                                )}
                             </div>
+                            {results.total > 0 && <p className="text-xs text-muted-foreground">{t('pager.shown', { shown: results.items.length, total: results.total })}</p>}
                         </div>
                     )}
                     {teacher && <p className="font-medium">{teacher.name}</p>}

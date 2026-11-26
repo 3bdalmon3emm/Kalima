@@ -405,7 +405,8 @@
     "teacher": "المدرس",
     "allTeachers": "كل المدرسين",
     "adminLink": "رابط تجربة الإدارة",
-    "export": "تصدير Excel"
+    "export": "تصدير Excel",
+    "searchStudents": "دوّر بالاسم أو الموبايل أو رقم الطالب"
   },
   "grading": {
     "mark": "درجة الإجابة",
@@ -657,7 +658,15 @@
     "countHomework_two": "واجبين",
     "countHomework_few": "{{count}} واجبات",
     "countHomework_many": "{{count}} واجب",
-    "countHomework_other": "{{count}} واجب"
+    "countHomework_other": "{{count}} واجب",
+    "summary": {
+      "exams": "امتحانات وواجبات",
+      "attempts": "محاولات",
+      "graded": "اتصححت",
+      "passed": "نجح",
+      "failed": "منجحش",
+      "average": "المتوسط"
+    }
   },
   "parent": {
     "title": "امتحانات أبنائي",
@@ -702,5 +711,26 @@
     "summary_other": "{{count}} امتحان مختار",
     "pickExam": "اختار امتحان على الأقل",
     "failed": "التصدير منفعش"
+  },
+  "pager": {
+    "prev": "السابق",
+    "next": "التالي",
+    "of": "صفحة {{page}} من {{pages}}",
+    "total": "الإجمالي {{count}}",
+    "more": "اعرض أكتر",
+    "shown": "ظاهر {{shown}} من {{total}}"
+  },
+  "summary": {
+    "students": "الطلاب",
+    "graded": "اتصححوا",
+    "passed": "نجحوا",
+    "failed": "منجحوش",
+    "average": "المتوسط",
+    "highest": "أعلى نسبة",
+    "lowest": "أقل نسبة"
+  },
+  "studentCard": {
+    "title": "امتحانات الطالب",
+    "hint": "كل امتحان وواجب حله، بكل محاولاته، ومؤشر أدائه في كل مادة زي ما الطالب بيشوفه."
   }
 }

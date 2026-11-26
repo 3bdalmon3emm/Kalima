@@ -14,20 +14,24 @@ import { NameDialog, showError } from '@/components/admin/question-bank/BankDial
 import SoundsPanel from '@/components/admin/exams/SoundsPanel';
 import { AddFolderTeacherDialog, FolderTeachersDialog } from '@/components/admin/exams/FolderTeachersPanel';
 import { exGet, exSend } from '@/components/admin/exams/api';
+import Pager from '@/components/exams/Pager';
 
 // Search exams by name or serial anywhere in the tree.
 function ExamSearch() {
     const { t } = useTranslation('exams');
     const [term, setTerm] = useState('');
     const [results, setResults] = useState(null);
-    const submit = async (e) => {
-        e.preventDefault();
+    const [asked, setAsked] = useState(null);
+    // Every match, a page at a time; nothing is cut off.
+    const fetchPage = async (q, page) => {
         try {
-            setResults(await exGet('/exams', { q: term.trim() }));
+            setResults(await exGet('/exams', { q, page }));
+            setAsked(q);
         } catch (err) {
             showError(err, t('errors.load'));
         }
     };
+    const submit = (e) => { e.preventDefault(); fetchPage(term.trim(), 1); };
     return (
         <div className="space-y-2">
             <form onSubmit={submit} className="flex gap-2">
@@ -36,8 +40,8 @@ function ExamSearch() {
             </form>
             {results && (
                 <div className="rounded-lg border bg-card divide-y">
-                    {results.length === 0 && <p className="p-3 text-sm text-muted-foreground">{t('search.none')}</p>}
-                    {results.map((e) => (
+                    {results.items.length === 0 && <p className="p-3 text-sm text-muted-foreground">{t('search.none')}</p>}
+                    {results.items.map((e) => (
                         <Link key={e.id} to={`/admin/exams/${e.id}`} className="flex items-center gap-2 p-3 hover:bg-muted/50">
                             <FileText className="h-4 w-4 text-primary" />
                             <span className="flex-1 truncate">{e.name}</span>
@@ -47,6 +51,7 @@ function ExamSearch() {
                     ))}
                 </div>
             )}
+            {results && <Pager data={results} onPage={(p) => fetchPage(asked, p)} />}
         </div>
     );
 }

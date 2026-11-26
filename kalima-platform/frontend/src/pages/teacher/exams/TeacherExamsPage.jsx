@@ -10,6 +10,7 @@ import { showError } from '@/components/admin/question-bank/BankDialogs';
 import LinkQrDialog from '@/components/exams/LinkQrDialog';
 import { STATE_STYLE } from '@/components/admin/exams/ExamTeachersTab';
 import { teacherApi } from '@/components/admin/exams/api';
+import Pager, { usePagedList } from '@/components/exams/Pager';
 
 // "My exams": the folders the admin gave this teacher as cards (open one to
 // see its subfolders and exams), with the teacher's own link on every exam.
@@ -19,10 +20,17 @@ export default function TeacherExamsPage() {
     const { t } = useTranslation('exams');
     const [data, setData] = useState(null);
     const [params, setParams] = useSearchParams();
-    const [search, setSearch] = useState('');
     const [qr, setQr] = useState(null);
 
-    useEffect(() => { teacherApi.get('/exams').then(setData).catch((err) => { setData({ folders: [], exams: [], teachers: [] }); showError(err, t('errors.load')); }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    // The folder tree with each folder's totals; the exams of the open
+    // folder (or of a search) come a page at a time.
+    useEffect(() => { teacherApi.get('/exams').then(setData).catch((err) => { setData({ folders: [], exam_count: 0, teachers: [] }); showError(err, t('errors.load')); }); }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    const folderParam = params.get('folder') || '';
+    const list = usePagedList(({ q, page }) => (q || folderParam
+        ? teacherApi.get('/exams/list', { q, page, ...(!q && { folder_id: folderParam }) })
+        : Promise.resolve({ items: [], page: 1, pages: 1, total: 0 })), [folderParam], (err) => showError(err, t('errors.load')));
+    const search = list.term;
+    const setSearch = list.setTerm;
 
     const tree = useMemo(() => {
         if (!data) return null;
@@ -32,27 +40,11 @@ export default function TeacherExamsPage() {
             const parent = ids.has(f.parent_id) ? f.parent_id : null;
             kids.set(parent, [...(kids.get(parent) || []), f]);
         }
-        for (const list of kids.values()) list.sort((a, b) => a.sort_order - b.sort_order || a.id - b.id);
-        const exams = new Map();
-        for (const e of data.exams) exams.set(e.folder_id, [...(exams.get(e.folder_id) || []), e]);
+        for (const siblings of kids.values()) siblings.sort((a, b) => a.sort_order - b.sort_order || a.id - b.id);
         const byId = new Map(data.folders.map((f) => [f.id, f]));
-        // Each folder's totals count everything under it.
-        const totals = new Map();
-        const sum = (id) => {
-            if (totals.has(id)) return totals.get(id);
-            const own = exams.get(id) || [];
-            const total = { exams: own.length, pending: own.reduce((s, e) => s + e.pending, 0), appeals: own.reduce((s, e) => s + e.appeals, 0) };
-            for (const c of kids.get(id) || []) {
-                const sub = sum(c.id);
-                total.exams += sub.exams;
-                total.pending += sub.pending;
-                total.appeals += sub.appeals;
-            }
-            totals.set(id, total);
-            return total;
-        };
-        for (const f of data.folders) sum(f.id);
-        return { ids, kids, exams, byId, totals };
+        // Each folder's totals (everything under it) come from the server.
+        const totals = new Map(data.folders.map((f) => [f.id, f.totals]));
+        return { ids, kids, byId, totals };
     }, [data]);
 
     if (!data) return <div className="flex justify-center py-16"><LoadingSpinner /></div>;
@@ -80,6 +72,7 @@ export default function TeacherExamsPage() {
     const wanted = Number(params.get('folder'));
     const current = tree.byId.get(wanted) ?? null;
     const open = (id) => { setSearch(''); setParams(id ? { folder: String(id) } : {}); };
+    const shownExams = list.data?.items || [];
 
     // The way from the top folder down to the open one.
     const trail = [];
@@ -103,10 +96,9 @@ export default function TeacherExamsPage() {
         );
     };
 
-    const q = search.trim().toLowerCase();
-    const found = q ? data.exams.filter((e) => e.name.toLowerCase().includes(q) || (e.serial || '').toLowerCase().includes(q)) : null;
+    const found = list.q ? shownExams : null;
     const folders = tree.kids.get(current ? current.id : null) || [];
-    const exams = current ? tree.exams.get(current.id) || [] : [];
+    const exams = current ? shownExams : [];
 
     return (
         <div className="mx-auto max-w-5xl space-y-6">
@@ -114,7 +106,7 @@ export default function TeacherExamsPage() {
                 <h1 className="text-2xl font-bold">{t('teacher.title')}</h1>
                 <p className="text-sm text-muted-foreground">{t('teacher.subtitle')}</p>
             </div>
-            {data.exams.length === 0 ? (
+            {data.exam_count === 0 ? (
                 <div className="rounded-lg border border-dashed p-12 text-center text-muted-foreground">
                     <FileText className="mx-auto mb-3 h-10 w-10 opacity-50" />{t('teacher.empty')}
                 </div>
@@ -126,7 +118,9 @@ export default function TeacherExamsPage() {
                     </div>
                     {found ? (
                         <div className="space-y-2">
-                            {found.length ? found.map(examRow) : <p className="py-8 text-center text-sm text-muted-foreground">{t('teacher.noMatch')}</p>}
+                            {!list.data ? <div className="flex justify-center py-6"><LoadingSpinner /></div>
+                                : found.length ? found.map(examRow) : <p className="py-8 text-center text-sm text-muted-foreground">{t('teacher.noMatch')}</p>}
+                            <Pager data={list.data} onPage={list.setPage} />
                         </div>
                     ) : (
                         <>
@@ -143,6 +137,7 @@ export default function TeacherExamsPage() {
                             )}
                             {folders.length > 0 && <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">{folders.map(folderCard)}</div>}
                             {exams.length > 0 && <div className="space-y-2">{exams.map(examRow)}</div>}
+                            {current && <Pager data={list.data} onPage={list.setPage} />}
                         </>
                     )}
                 </>
